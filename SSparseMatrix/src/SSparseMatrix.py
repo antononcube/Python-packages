@@ -38,7 +38,7 @@ class SSparseMatrix:
 
     def row_names(self):
         if isinstance(self.rowNames, dict):
-            return self.rowNames.keys
+            return self.rowNames.keys()
         else:
             return self.rowNames
 
@@ -154,8 +154,6 @@ class SSparseMatrix:
         # I am not sure should we check that : self.column_names() == other.row_names()
         # It might be too restrictive.
         if isinstance(other, SSparseMatrix):
-            print(self.shape())
-            print(other.shape())
             self.sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
             # We keep the row names i.e. self.rowNames = self.row_names_dict()
             self.colNames = other.column_names_dict()
