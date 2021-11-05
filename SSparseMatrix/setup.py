@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="SSparseMatrix-antononcube",
-    version="0.0.1",
+    version="0.1.0",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="SSparseMatrix package based on SciPy sparse matrices.",
