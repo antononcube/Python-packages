@@ -14,7 +14,7 @@ from scipy.sparse import lil_matrix
 from scipy.sparse import *
 
 
-class MyTestCase(unittest.TestCase):
+class BasicFunctionalities(unittest.TestCase):
     mat = [[1, 0, 0, 4, 0], [0, 2, 0, 0, 0], [0, 0, 0, 0, 2], [0, 0, 3, 0, 0]]
     mat2 = [[1, 0, 4], [0, 2, 0], [0, 0, 0], [0, 0, 3]]
     rmat = 0
@@ -63,8 +63,20 @@ class MyTestCase(unittest.TestCase):
         self.rmat2 = self.rmat
         new_cols = [str(x) for x in range(self.rmat.columns_count())]
         self.rmat2.set_column_names(new_cols)
-        print(self.rmat2.column_names())
         self.assertTrue(sorted(self.rmat2.column_names()) == sorted(new_cols))
+
+    def test_transpose_1(self):
+
+        self.test_rmat()
+
+        rmat2 = copy.deepcopy(self.rmat).transpose()
+
+        self.assertTrue(
+            sorted(rmat2.row_names()) == sorted(self.rmat.column_names()) and
+            sorted(rmat2.column_names()) == sorted(self.rmat.row_names()) and
+            rmat2.sparse_matrix().shape[0] == self.rmat.sparse_matrix().shape[1] and
+            rmat2.sparse_matrix().shape[1] == self.rmat.sparse_matrix().shape[0]
+        )
 
 
 if __name__ == '__main__':
