@@ -38,7 +38,7 @@ class SSparseMatrix:
 
     def row_names(self):
         if isinstance(self.rowNames, dict):
-            return self.rowNames.keys()
+            return list(self.rowNames.keys())
         else:
             return self.rowNames
 
@@ -47,17 +47,23 @@ class SSparseMatrix:
 
     def column_names(self):
         if isinstance(self.colNames, dict):
-            return self.colNames.keys()
+            return list(self.colNames.keys())
         else:
             return self.colNames
 
     def dimension_names(self):
-        return self.dimensionNames.keys()
+        return list(self.dimensionNames.keys())
 
     def rows_count(self):
         return self.sparse_matrix().shape[0]
 
+    def nrows(self):
+        return self.sparse_matrix().shape[0]
+
     def columns_count(self):
+        return self.sparse_matrix().shape[1]
+
+    def ncols(self):
         return self.sparse_matrix().shape[1]
 
     def shape(self):
@@ -75,30 +81,34 @@ class SSparseMatrix:
             if scipy.sparse.issparse(smat2):
                 self.sparseMatrix = smat2
         else:
-            TypeError("The first argument is expected to a matrix is or can be coerced to csr sparse matrix.")
+            raise TypeError("The first argument is expected to a matrix is or can be coerced to csr sparse matrix.")
             return None
         return self
 
-    def set_row_names(self, arg):
-        if isinstance(arg, dict) and len(arg) == self.rows_count():
-            self.rowNames = arg
-        elif isinstance(arg, list) and len(arg) == self.rows_count():
-            self.rowNames = dict(zip(arg, range(0, len(arg))))
+    def set_row_names(self, *args):
+        if len(args) == 0:
+            self.set_row_names([str(x) for x in range(0, self.rows_count())])
+        elif isinstance(args[0], dict) and len(args[0]) == self.rows_count():
+            self.rowNames = args[0]
+        elif isinstance(args[0], list) and len(args[0]) == self.rows_count():
+            self.rowNames = dict(zip(args[0], range(0, len(args[0]))))
         else:
-            TypeError(
-                "The first argument is expected to be a string-to-index dictionary or a list of strings of length %d.",
+            raise TypeError(
+                "The first argument is expected to be a string-to-index dictionary or a list of strings of length %s." %
                 self.rows_count())
             return None
         return self
 
-    def set_column_names(self, arg):
-        if isinstance(arg, dict) and len(arg) == self.columns_count():
-            self.colNames = arg
-        elif isinstance(arg, list) and len(arg) == self.columns_count():
-            self.colNames = dict(zip(arg, range(0, len(arg))))
+    def set_column_names(self, *args):
+        if len(args) == 0:
+            return self.set_column_names([str(x) for x in range(0, self.columns_count())])
+        elif isinstance(args[0], dict) and len(args[0]) == self.columns_count():
+            self.colNames = args[0]
+        elif isinstance(args[0], list) and len(args[0]) == self.columns_count():
+            self.colNames = dict(zip(args[0], range(0, len(args[0]))))
         else:
-            TypeError(
-                "The first argument is expected to be a string-to-index dictionary or a list of strings of length %d." %
+            raise TypeError(
+                "The first argument is expected to be a string-to-index dictionary or a list of strings of length %s." %
                 self.columns_count())
             return None
         return self
@@ -133,6 +143,21 @@ class SSparseMatrix:
         return self
 
     # ------------------------------------------------------------------
+    # Add
+    # ------------------------------------------------------------------
+    def add(self, other):
+        if isinstance(other, SSparseMatrix) and \
+                self.row_names() == other.row_names() and \
+                self.column_names() == other.column_names():
+            self.sparseMatrix = self.sparse_matrix() + other.sparse_matrix()
+        elif scipy.sparse.issparse(other):
+            self.sparseMatrix = self.sparse_matrix() + other
+        else:
+            raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
+            return None
+        return self
+
+    # ------------------------------------------------------------------
     # Multiply
     # ------------------------------------------------------------------
     def multiply(self, other):
@@ -143,7 +168,7 @@ class SSparseMatrix:
         elif scipy.sparse.issparse(other):
             self.sparseMatrix = self.sparse_matrix().multiply(other)
         else:
-            print("The first argument is expected to be src object or sparse.csr_matrix object.")
+            raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
         return self
 
@@ -161,7 +186,7 @@ class SSparseMatrix:
             self.sparseMatrix = self.sparse_matrix().dot(other)
             self.colNames = None
         else:
-            print("The first argument is expected to be src object or sparse.csr_matrix object.")
+            raise TypeError("The first argument is expected to be src object or sparse.csr_matrix object.")
             return None
         return self
 
