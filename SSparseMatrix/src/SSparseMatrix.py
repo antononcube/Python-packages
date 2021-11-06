@@ -3,7 +3,7 @@ import copy
 import numpy
 import scipy
 from scipy import sparse
-
+import copy
 
 def is_sparse_matrix(obj):
     return isinstance(obj, SSparseMatrix) and scipy.sparse.issparse(obj.sparse_matrix())
@@ -68,6 +68,9 @@ class SSparseMatrix:
 
     def shape(self):
         return self.sparse_matrix().shape
+
+    def copy(self):
+        return copy.deepcopy(self)
 
     # ------------------------------------------------------------------
     # Setters
@@ -191,9 +194,24 @@ class SSparseMatrix:
         return self
 
     # ------------------------------------------------------------------
+    # Summation
+    # ------------------------------------------------------------------
+    def row_sums(self):
+        return self.sparse_matrix().sum(axis=1).flatten().tolist()[0]
+
+    def row_sums_dict(self):
+        return dict(zip(self.row_names(), self.row_sums()))
+
+    def column_sums(self):
+        return self.sparse_matrix().sum(axis=0).flatten().tolist()[0]
+
+    def column_sums_dict(self):
+        return dict(zip(self.column_names(), self.column_sums()))
+
+    # ------------------------------------------------------------------
     # Print outs
     # ------------------------------------------------------------------
-    def print_matrix(self):
+    def print_matrix(self, boundary=True):
         table_data = numpy.asarray(self.sparse_matrix().todense())
 
         invRowNames = {v: k for k, v in self.row_names_dict().items()}
@@ -202,9 +220,17 @@ class SSparseMatrix:
         col_names = [invColumnNames[x] for x in sorted(invColumnNames.keys())]
         row_names = [invRowNames[x] for x in sorted(invRowNames.keys())]
 
-        fStr = (self.columns_count() + 1) * "{: >20} "
+        fStr = "{: >20} |" + self.columns_count() * "{: >20} "
+
+        if boundary:
+            print(len(fStr.format("", *col_names)) * "=")
+
         print(fStr.format("", *col_names))
+        print(len(fStr.format("", *col_names)) * "-")
 
         for i in range(self.rows_count()):
             row = table_data[i]
             print(fStr.format(row_names[i], *row))
+
+        if boundary:
+            print(len(fStr.format("", *col_names)) * "=")
