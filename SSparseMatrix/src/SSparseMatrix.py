@@ -287,16 +287,20 @@ class SSparseMatrix:
         # It might be too restrictive.
         if is_sparse_matrix(other):
             self.sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
+            self.sparseMatrix.eliminate_zeros()
             # We keep the row names i.e. self.rowNames = self.row_names_dict()
             self.colNames = other.column_names_dict()
         elif scipy.sparse.issparse(other):
             self.sparseMatrix = self.sparse_matrix().dot(other)
+            self.sparseMatrix.eliminate_zeros()
             self.set_column_names()
         elif isinstance(other, list) or isinstance(other, numpy.ndarray):
             vec = self.sparse_matrix().dot(other)
             rowInds = [x for x in range(self.rows_count())]
             colInds = [0 for x in range(self.rows_count())]
-            self.set_sparse_matrix(scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(self.rows_count(), 1)))
+            res = scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(self.rows_count(), 1))
+            res.eliminate_zeros()
+            self.set_sparse_matrix(res)
             self.set_column_names()
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
@@ -319,6 +323,54 @@ class SSparseMatrix:
         return dict(zip(self.column_names(), self.column_sums()))
 
     # ------------------------------------------------------------------
+    # Impose row names
+    # ------------------------------------------------------------------
+    def impose_row_names(self, names):
+        if isinstance(names, list):
+            raise AttributeError(".row_names is not implemented yet.")
+            return self
+        else:
+            raise TypeError("The first argument is expected to be a list of strings.")
+            return None
+
+    # ------------------------------------------------------------------
+    # Impose column names
+    # ------------------------------------------------------------------
+    def impose_column_names(self, names):
+        if isinstance(names, list):
+            return self.transpose().impose_row_names(names).transpose()
+        else:
+            raise TypeError("The first argument is expected to be a list of strings.")
+            return None
+
+    # ------------------------------------------------------------------
+    # Row and column binding
+    # ------------------------------------------------------------------
+    def row_bind(self, other):
+        if is_sparse_matrix(other):
+
+            if not (sorted(self.column_names()) == sorted(other.column_names())).all:
+                raise TypeError("The column names of the two SSparseMatrix objects are expected to be the same.")
+                return None
+
+            if (self.column_names() == other.column_names()).all:
+                res = SSparseMatrix(scipy.sparse.vstack([self.sparse_matrix(), other.sparse_matrix()]))
+
+            # Special handling of duplication of row names in the result.
+            rn_dict = self.row_names_dict() | other.row_names_dict()
+            if len(rn_dict) == self.rows_count() + other.rows_count():
+                res.set_row_names(self.row_names() + other.row_names())
+            else:
+                res.set_row_names([x + ".1" for x in self.row_names()] + [x + ".2" for x in other.row_names()])
+
+            return res
+
+    def column_bind(self, other):
+        # This "delegation" to row_bind is sub-optimal;
+        # proper column binding should be implemented.
+        return self.copy().transpose().row_bind(other.copy().transpose())
+
+    # ------------------------------------------------------------------
     # Print outs
     # ------------------------------------------------------------------
     def print_matrix(self, boundary=True, ndigits=-1):
@@ -335,7 +387,9 @@ class SSparseMatrix:
             return None
 
         if ndigits < 1:
-            nds = math.ceil(math.log(self.sparse_matrix().max(), 10)) + 1
+            # Not good enough for automatic determination
+            # nds = math.ceil(math.log(self.sparse_matrix().max(), 10)) + 1
+            nds = 8
         else:
             nds = ndigits
 
@@ -355,3 +409,8 @@ class SSparseMatrix:
 
         if boundary:
             print(len(fStr.format("", *col_names)) * "=")
+
+    def __str__(self, *args):
+        # This has to be modified
+        # self.print_matrix(*args)
+        return "__str__ not implemented"
