@@ -9,11 +9,14 @@ smat.set_column_names(["a", "b", "c", "d"])
 # Print the sparse matrix
 smat.print_matrix()
 
+# Here is the dense version of the sparse matrix
+print(smat.sparse_matrix().todense())
+
 # Multiply with the transpose and print
 smat2 = smat.dot(smat.transpose())
 smat2.print_matrix()
 
-# Multiply with a list-vector:
+# Multiply with a list-vector
 smat3 = smat.dot([1, 2, 1, 0])
 smat3.print_matrix()
 
@@ -27,10 +30,10 @@ smat[["A", "D", "B"], :].print_matrix()
 # Get subset of columns
 smat[:, ['a', 'c']].print_matrix()
 
-# Row sums:
+# Row sums
 print(smat.row_sums())
 print(smat.row_sums_dict())
 
-# Column sums:
+# Column sums
 print(smat.column_sums())
 print(smat.column_sums_dict())

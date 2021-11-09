@@ -59,10 +59,10 @@ Setup:
 from SSparseMatrix.src.SSparseMatrix import *
 ```
 
-Create a sparse matrix with named rows and columns (a SSparseMatrix object):
+Create a sparse matrix with named rows and columns (a `SSparseMatrix` object):
 
 ```python
-mat = [[1, 0, 4, 16], [4, 0, 0, 10], [0, 9, 5, 5], [0, 0, 1, 0], [0, 0, 0, 5]]
+mat = [[1, 0, 0, 3], [4, 0, 0, 5], [0, 3, 0, 5], [0, 0, 1, 0], [0, 0, 0, 5]]
 smat = SSparseMatrix(mat)
 smat.set_row_names(["A", "B", "C", "D", "E"])
 smat.set_column_names(["a", "b", "c", "d"])
