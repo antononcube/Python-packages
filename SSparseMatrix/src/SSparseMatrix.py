@@ -4,6 +4,7 @@ import numpy
 import scipy
 from scipy import sparse
 import copy
+import math
 
 
 # ======================================================================
@@ -314,7 +315,7 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Print outs
     # ------------------------------------------------------------------
-    def print_matrix(self, boundary=True):
+    def print_matrix(self, boundary=True, implicit=False, ndigits=-1):
         table_data = numpy.asarray(self.sparse_matrix().todense())
 
         invRowNames = {v: k for k, v in self.row_names_dict().items()}
@@ -323,7 +324,18 @@ class SSparseMatrix:
         col_names = [invColumnNames[x] for x in sorted(invColumnNames.keys())]
         row_names = [invRowNames[x] for x in sorted(invRowNames.keys())]
 
-        fStr = "{: >20} |" + self.columns_count() * "{: >20} "
+        if not isinstance(ndigits, int):
+            raise TypeError("The argument ndigits is expected an integer.")
+            return None
+
+        if ndigits < 1:
+            nds = math.ceil(math.log(self.sparse_matrix().max(), 10)) + 1
+        else:
+            nds = ndigits
+
+        fColSpec = "{: >" + str(max([len(x) for x in self.row_names()])) + "}"
+        fSpec = "{: >" + str(nds) + "}"
+        fStr = fColSpec + " |" + self.columns_count() * fSpec
 
         if boundary:
             print(len(fStr.format("", *col_names)) * "=")
