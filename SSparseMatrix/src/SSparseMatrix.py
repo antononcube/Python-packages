@@ -289,9 +289,15 @@ class SSparseMatrix:
             self.sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
             # We keep the row names i.e. self.rowNames = self.row_names_dict()
             self.colNames = other.column_names_dict()
-        elif scipy.sparse.issparse(other):
+        elif is_sparse_matrix(other):
             self.sparseMatrix = self.sparse_matrix().dot(other)
             self.colNames = None
+        elif isinstance(other, list) or isinstance(other, numpy.ndarray):
+            vec = self.sparse_matrix().dot(other)
+            rowInds = [x for x in range(self.rows_count())]
+            colInds = [0 for x in range(self.rows_count())]
+            self.set_sparse_matrix(scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(self.rows_count(), 1)))
+            self.set_column_names()
         else:
             raise TypeError("The first argument is expected to be src object or sparse.csr_matrix object.")
             return None
@@ -315,7 +321,7 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Print outs
     # ------------------------------------------------------------------
-    def print_matrix(self, boundary=True, implicit=False, ndigits=-1):
+    def print_matrix(self, boundary=True, ndigits=-1):
         table_data = numpy.asarray(self.sparse_matrix().todense())
 
         invRowNames = {v: k for k, v in self.row_names_dict().items()}
@@ -325,7 +331,7 @@ class SSparseMatrix:
         row_names = [invRowNames[x] for x in sorted(invRowNames.keys())]
 
         if not isinstance(ndigits, int):
-            raise TypeError("The argument ndigits is expected an integer.")
+            raise TypeError("The argument ndigits is expected to be an integer.")
             return None
 
         if ndigits < 1:
