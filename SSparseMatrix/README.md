@@ -6,16 +6,18 @@ This package attempts to cover as many as possible of the functionalities for
 sparse matrix objects that are provided by R’s Matrix library. 
 
 - [X] Sub-matrix extraction by row and column names
+   - [X] Single element access
+   - [X] Slices (with integers)
+   - [X] Subsets of row names and column names
 - [X] Row and column names propagation for dot products
    - [X] Lists
    - [X] Dense vectors (`numpy.array`)
-   - [ ] Dense matrices
-   - [X] Standard sparse matrices
+   - [X] `scipy` sparse matrices
    - [X] `SSparseMatrix` objects
 - [X] Row and column binding sparse matrices
 - [X] Row and column sums 
 - [X] Transposing
-- Etc. 
+- [X] Pretty printing
 
 This package more or less follows the design of the
 Mathematica package
@@ -145,7 +147,7 @@ print(smat.row_sums_dict())
 
 Column sums:
 
-```
+```python
 print(smat.column_sums())
 print(smat.column_sums_dict())
 # [5, 3, 1, 18]
