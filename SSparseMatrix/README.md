@@ -41,15 +41,17 @@ pip install ./SSparseMatrix
 
 ## Usage examples
 
+The usage examples below can be run through the file ["examples.py"](./examples.py).
+
 ### Creation
 
-Setup
+Setup:
 
 ```python
 from SSparseMatrix.src.SSparseMatrix import *
 ```
 
-Create a sparse matrix with named rows and columns (a SSparseMatrix object)
+Create a sparse matrix with named rows and columns (a SSparseMatrix object):
 
 ```python
 mat = [[1, 0, 4, 16], [4, 0, 0, 10], [0, 9, 5, 5], [0, 0, 1, 0], [0, 0, 0, 5]]
@@ -128,6 +130,7 @@ smat[:, ['a', 'c']].print_matrix()
 **Remark:** The current implementation of `scipy` (1.7.1) does not allow retrieval
 of sub-matrices with by specifying *both* row and column subsets. 
 
+**Remark:** "Standard" slices with integers also work. 
 
 ### Sums
 
