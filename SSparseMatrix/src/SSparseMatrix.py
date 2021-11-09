@@ -285,13 +285,13 @@ class SSparseMatrix:
     def dot(self, other):
         # I am not sure should we check that : self.column_names() == other.row_names()
         # It might be too restrictive.
-        if isinstance(other, SSparseMatrix):
+        if is_sparse_matrix(other):
             self.sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
             # We keep the row names i.e. self.rowNames = self.row_names_dict()
             self.colNames = other.column_names_dict()
-        elif is_sparse_matrix(other):
+        elif scipy.sparse.issparse(other):
             self.sparseMatrix = self.sparse_matrix().dot(other)
-            self.colNames = None
+            self.set_column_names()
         elif isinstance(other, list) or isinstance(other, numpy.ndarray):
             vec = self.sparse_matrix().dot(other)
             rowInds = [x for x in range(self.rows_count())]
@@ -299,7 +299,7 @@ class SSparseMatrix:
             self.set_sparse_matrix(scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(self.rows_count(), 1)))
             self.set_column_names()
         else:
-            raise TypeError("The first argument is expected to be src object or sparse.csr_matrix object.")
+            raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
         return self
 
