@@ -24,11 +24,17 @@ smat3.print_matrix()
 print(smat["A", "d"])
 print(smat[0, 3])
 
-# Get subset of rows
+# Get sub-matrix using row names
 smat[["A", "D", "B"], :].print_matrix()
 
-# Get subset of columns
+# Get sub-matrix using row indices
+smat[[0, 3, 1], :].print_matrix()
+
+# Get sub-matrix with columns names
 smat[:, ['a', 'c']].print_matrix()
+
+# Get sub-matrix with columns indices
+smat[:, [0, 2]].print_matrix()
 
 # Row sums
 print(smat.row_sums())
