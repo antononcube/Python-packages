@@ -14,10 +14,16 @@ sparse matrix objects that are provided by R’s Matrix library.
    - [X] Dense vectors (`numpy.array`)
    - [X] `scipy` sparse matrices
    - [X] `SSparseMatrix` objects
-- [X] Row and column binding sparse matrices
 - [X] Row and column sums 
 - [X] Transposing
 - [X] Pretty printing
+- [ ] Row and column binding of `SSparseMatrix` objects
+  - [ ] Row binding
+  - [ ] Column binding
+- [ ] "Export" functions
+  - [ ] Triplets
+  - [ ] Row-dictionaries
+  - [ ] Column-dictionaries
 
 This package more or less follows the design of the
 Mathematica package
@@ -77,6 +83,8 @@ smat.print_matrix()
 # ===========
 ```
 
+### Multiplication
+
 Multiply with the transpose and print:
 
 ```python
@@ -92,6 +100,28 @@ smat2.print_matrix()
 # E | 15 25 25  0 25
 # ==================
 ```
+
+Multiply with a list-vector:
+
+```python
+smat3 = smat.copy().dot([1, 2, 1, 0])
+smat3.print_matrix()
+# =====
+#   | 0
+# -----
+# A | 1
+# B | 4
+# C | 6
+# D | 1
+# E | 0
+# =====
+```
+
+**Remark:** The type of the `.dot` argument can be:
+- `SSparseMatrix`
+- `list`
+- `numpy.array`
+- `scipy.sparse.csr_matrix`
 
 ### Slices
 
@@ -153,6 +183,12 @@ print(smat.column_sums_dict())
 # [5, 3, 1, 18]
 # {'a': 5, 'b': 3, 'c': 1, 'd': 18}
 ```
+
+-------
+
+## Larger data
+
+*TBD...*
 
 -------
 
