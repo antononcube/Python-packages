@@ -242,70 +242,74 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Transpose
     # ------------------------------------------------------------------
-    def transpose(self):
-        self.sparseMatrix = self.sparse_matrix().transpose()
-        t = self.colNames
-        self.colNames = self.rowNames
-        self.rowNames = t
-        return self
+    def transpose(self, inplace=False):
+        obj = self if inplace else self.copy()
+        obj.sparseMatrix = obj.sparse_matrix().transpose()
+        t = obj.colNames
+        obj.colNames = obj.rowNames
+        obj.rowNames = t
+        return obj
 
     # ------------------------------------------------------------------
     # Add
     # ------------------------------------------------------------------
-    def add(self, other):
+    def add(self, other, inplace=False):
+        obj = self if inplace else self.copy()
         if isinstance(other, SSparseMatrix) and \
-                self.row_names() == other.row_names() and \
-                self.column_names() == other.column_names():
-            self.sparseMatrix = self.sparse_matrix() + other.sparse_matrix()
+                obj.row_names() == other.row_names() and \
+                obj.column_names() == other.column_names():
+            obj.sparseMatrix = obj.sparse_matrix() + other.sparse_matrix()
         elif scipy.sparse.issparse(other):
-            self.sparseMatrix = self.sparse_matrix() + other
+            obj.sparseMatrix = obj.sparse_matrix() + other
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
-        return self
+        return obj
 
     # ------------------------------------------------------------------
     # Multiply
     # ------------------------------------------------------------------
-    def multiply(self, other):
+    def multiply(self, other, inplace=False):
+        obj = self if inplace else self.copy()
         if isinstance(other, SSparseMatrix) and \
-                self.row_names() == other.row_names() and \
-                self.column_names() == other.column_names():
-            self.sparseMatrix = self.sparse_matrix().multiply(other.sparse_matrix())
+                obj.row_names() == other.row_names() and \
+                obj.column_names() == other.column_names():
+            obj.sparseMatrix = obj.sparse_matrix().multiply(other.sparse_matrix())
         elif scipy.sparse.issparse(other):
-            self.sparseMatrix = self.sparse_matrix().multiply(other)
+            obj.sparseMatrix = obj.sparse_matrix().multiply(other)
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
-        return self
+        return obj
 
     # ------------------------------------------------------------------
     # Dot
     # ------------------------------------------------------------------
-    def dot(self, other):
+    def dot(self, other, inplace=False):
         # I am not sure should we check that : self.column_names() == other.row_names()
         # It might be too restrictive.
+        obj = self if inplace else self.copy()
         if is_sparse_matrix(other):
-            self.sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
-            self.sparseMatrix.eliminate_zeros()
+            obj.sparseMatrix = obj.sparse_matrix().dot(other.sparse_matrix())
+            obj.sparseMatrix.eliminate_zeros()
             # We keep the row names i.e. self.rowNames = self.row_names_dict()
-            self.colNames = other.column_names_dict()
+            obj.colNames = other.column_names_dict()
         elif scipy.sparse.issparse(other):
-            self.sparseMatrix = self.sparse_matrix().dot(other)
-            self.sparseMatrix.eliminate_zeros()
-            self.set_column_names()
+            obj.sparseMatrix = obj.sparse_matrix().dot(other)
+            obj.sparseMatrix.eliminate_zeros()
+            obj.set_column_names()
         elif isinstance(other, list) or isinstance(other, numpy.ndarray):
-            vec = self.sparse_matrix().dot(other)
-            rowInds = [x for x in range(self.rows_count())]
-            colInds = [0 for x in range(self.rows_count())]
-            res = scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(self.rows_count(), 1))
+            vec = obj.sparse_matrix().dot(other)
+            rowInds = [x for x in range(obj.rows_count())]
+            colInds = [0 for x in range(obj.rows_count())]
+            res = scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(obj.rows_count(), 1))
             res.eliminate_zeros()
-            self.set_sparse_matrix(res)
-            self.set_column_names()
+            obj.set_sparse_matrix(res)
+            obj.set_column_names()
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
-        return self
+        return obj
 
     # ------------------------------------------------------------------
     # Summation
@@ -410,7 +414,7 @@ class SSparseMatrix:
         if boundary:
             print(len(fStr.format("", *col_names)) * "=")
 
-    def __str__(self, *args):
-        # This has to be modified
-        # self.print_matrix(*args)
-        return "__str__ not implemented"
+    # def __str__(self, *args):
+    #     # This has to be modified
+    #     # self.print_matrix(*args)
+    #     return "__str__ not implemented"
