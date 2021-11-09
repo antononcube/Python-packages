@@ -88,7 +88,7 @@ smat.print_matrix()
 Multiply with the transpose and print:
 
 ```python
-smat2 = smat.copy().dot(smat.copy().transpose())
+smat2 = smat.dot(smat.transpose())
 smat2.print_matrix()
 # ==================
 #   |  A  B  C  D  E
@@ -104,7 +104,7 @@ smat2.print_matrix()
 Multiply with a list-vector:
 
 ```python
-smat3 = smat.copy().dot([1, 2, 1, 0])
+smat3 = smat.dot([1, 2, 1, 0])
 smat3.print_matrix()
 # =====
 #   | 0

@@ -10,11 +10,11 @@ smat.set_column_names(["a", "b", "c", "d"])
 smat.print_matrix()
 
 # Multiply with the transpose and print
-smat2 = smat.copy().dot(smat.copy().transpose())
+smat2 = smat.dot(smat.transpose())
 smat2.print_matrix()
 
 # Multiply with a list-vector:
-smat3 = smat.copy().dot([1, 2, 1, 0])
+smat3 = smat.dot([1, 2, 1, 0])
 smat3.print_matrix()
 
 # Get single element
