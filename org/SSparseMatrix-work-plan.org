@@ -4,7 +4,8 @@
 #+OPTIONS: toc:1 num:0
 
 * Introduction
-- This org-mode files has work plan list and unit test list that correspond (and hopefully reflect) the development of the Python package ~SSparseMatrix~.
+- This org-mode file has a work plan list and a unit test list that correspond (and hopefully reflect) the development of the Python package
+[[https://github.com/antononcube/Python-packages/tree/main/SSparseMatrix][~SSparseMatrix~]].
 * Work plan [41%] [5/12]
 ** Object structure
 - [X] Sparse matrix
