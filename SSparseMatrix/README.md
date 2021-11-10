@@ -1,7 +1,8 @@
 # Sparse matrices with named rows and columns
 
 ## In brief
-This package attempts to cover as many as possible of the functionalities for 
+
+This Python package attempts to cover as many as possible of the functionalities for 
 sparse matrix objects that are provided by R’s Matrix library. 
 
 - [X] Sub-matrix extraction by row and column names
@@ -64,13 +65,6 @@ smat.set_row_names(["A", "B", "C", "D", "E"])
 smat.set_column_names(["a", "b", "c", "d"])
 ```
 
-
-
-
-    <SSparseMatrix.src.SSparseMatrix.SSparseMatrix at 0x1112ec8b0>
-
-
-
 Print the created sparse matrix:
 
 
@@ -88,6 +82,21 @@ smat.print_matrix()
     E |       0       0       0       5
     ===================================
 
+
+## Structure
+
+The `SSparseMatrix` objects have a simple structure. Here are the attributes:
+- `sparseMatrix`
+- `rowNames`
+- `colNames`
+- `dimNames`
+
+Here are the methods to "query" `SSparseMatrix` objects:
+- `sparse_matrix()`
+- `row_names()` and `row_names_dict()`
+- `column_names()` and `column_names_dict()`
+- `shape()`
+- `dimension_names()`
 
  Here is the dense version of the sparse matrix:
 
@@ -231,6 +240,11 @@ smat[:, [0, 2]].print_matrix()
     ===================
 
 
+**Remark:** The current implementation of `scipy` (1.7.1) does not allow retrieval
+of sub-matrices by specifying *both* row and column ranges or slices. 
+
+**Remark:** "Standard" slices with integers also work. 
+
 ## Row and column sums
 
 Row sums and dictionary of row sums:
@@ -257,6 +271,20 @@ print(smat.column_sums_dict())
     {'a': 5, 'b': 3, 'c': 1, 'd': 18}
 
 
+## In place computations
+
+- The methods for setting row- and column-names are "in place" methods -- no new `SSparseMatrix` objects a created.
+
+- The dot product, arithmetic, and transposing methods have a optional argument whether to do computations in place or not. 
+    - By default, the computations are *not* in place: new objects are created.
+    - The name of the optional argument is "inplace".
+ 
+- The class `SSparseMatrix` has the method `copy()` that produces deep copies when invoked.
+
+## Unit tests
+
+The unit tests (so far) are broken into functionalities; see the folder [./tests](./tests). Similar unit tests are given in [AAp2].
+
 ## References
 
 ### Articles
@@ -270,6 +298,11 @@ print(smat.column_sums_dict())
 
 [AAp1] Anton Antonov,
 [SSparseMatrix.m](https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m),
+(2018),
+[MathematicaForPrediction at GitHub](https://github.com/antononcube/MathematicaForPrediction).
+
+[AAp2] Anton Antonov,
+[SSparseMatrix Mathematica unit tests](https://github.com/antononcube/MathematicaForPrediction/blob/master/UnitTests/SSparseMatrix-tests.wlt),
 (2018),
 [MathematicaForPrediction at GitHub](https://github.com/antononcube/MathematicaForPrediction).
 
