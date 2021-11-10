@@ -1,0 +1,130 @@
+#+TITLE: SSparseMatrix work plan
+#+AUTHOR: Anton Antonov
+#+TODO: TODO ONGOING MAYBE | DONE CANCELED 
+#+OPTIONS: toc:1 num:0
+
+* Introduction
+- This org-mode files has work plan list and unit test list that correspond (and hopefully reflect) the development of the Python package ~SSparseMatrix~.
+* Work plan [41%] [5/12]
+** Object structure
+- [X] Sparse matrix
+  - ~scipy.sparse.csr_matrix~
+- [X] Row names
+  - ~dict~
+- [X] Column names
+  - ~dict~
+- [X] Dimension names
+  - ~dict~
+** TODO Core functionalities [75%] [3/4]
+*** DONE Getters [100%] [8/8]
+- [X] Sparse matrix
+- [X] Row names
+- [X] Column names
+- [X] Dimension names
+- [X] Shape
+- [X] Rows count
+- [X] Columns count
+- [X] Deep copy
+*** DONE Setters [100%] [4/4]
+- [X] Sparse matrix
+  - ~csr_matrix~ is preferred 
+- [X] Row names
+  - [X] Default row names
+  - [X] List spec
+  - [X] Dictionary spec
+- [X] Column names
+  - [X] Default row names
+  - [X] List spec
+  - [X] Dictionary spec
+- [X] Dimension names
+  - [X] Default row names
+  - [X] List spec
+  - [X] Dictionary spec
+*** DONE Transposing
+- The first non-trivial operation to make
+*** TODO Pretty printing [75%] [3/4]
+- Important to have in order to visualize results during development.
+- [X] Object method
+- [X] Digits specifications
+- [X] Whether to have boundary or not
+- [ ] Printing into a string
+  - In order to have ~__str__~ implementation that ~print~ can use.
+** TODO Point-wise arithmetic [0%] [0/3]
+- [-] Multiplication [25%] [1/4]
+  - [X] ~SSparseMatrix~
+  - [ ] scalar
+  - [ ] ~numpy.array~
+  - [ ] ~scipy.sparse.csr_matrix~
+- [-] Addition [25%] [1/4]
+  - [X] ~SSparseMatrix~
+  - [ ] scalar
+  - [ ] ~numpy.array~
+  - [ ] ~scipy.sparse.csr_matrix~
+** TODO Point-wise functions [0%] [0/4]
+- [ ] Figure out general delegation mechanism
+- [ ] Abs
+- [ ] Log
+** TODO Whole matrix functions 
+- [ ] Matrix Power
+- [ ] Matrix norm
+** DONE Element access and sub-matrices [100%] [4/4]
+- [X] Single element access
+  - [X] By indexes
+  - [X] By row- and column name
+- [X] Sub-matrix by index slice spec
+  - [X] Row spec
+  - [X] Column spec
+  - /Using both specs is not implemented in ~scipy.sparse~/
+- [X] Sub-matrix by list of names
+  - [X] Row spec
+  - [X] Column spec
+  - /Using both specs is not implemented in ~scipy.sparse~/
+- [X] Mixed specs
+  - Works "out of the box"
+** TODO Element setting / assignment 
+** TODO Sum-matrix setting / assignment
+** DONE Dot product [100%] [4/4]
+ - [X] ~SSparseMatrix~
+ - [X] ~scipy.sparse.csr_matrix~
+ - [X] ~list~
+ - [X] ~numpy.array~
+** DONE Sums [%] [/]
+- [X] Row sums
+- [X] Row sums dictionary
+- [X] Column sums
+- [X] Column sums dictionary
+** DONE Matrix concatenations [%] [/]
+- [X] Row binding
+- [X] Column binding
+** DONE Impose names [100%] [2/2]
+- [X] Impose row names
+- [X] Impose column names
+  - Done through transposing
+** TODO Export
+- [ ] Triplets
+* TODO Unit tests [16%] [1/6]
+- The unit tests (so far) are made with small matrices in order to make easier visual verification (by humans.)
+** TODO Basic functionalities [71%] [5/7]
+- [X] Creation
+- [X] Get row names
+- [X] Get column names
+- [ ] Set row names
+- [X] Set column names
+- [ ] Set dimensions names
+- [X] Transposing
+** DONE Dot product [100%] [3/3]
+- [X] ~SSparseMatrix~ by ~SSparseMatrix~
+  - Dot product by object's transpose
+- [X] Vector-list
+- [X] ~numpy.array~
+** TODO Point-wise operations [66%] [2/3]
+- [X] Addition
+- [X] Multiplication
+- [ ] Unitizing
+  - [ ] Default
+  - [ ] By threshold
+** TODO Row and column binding
+- [ ] Row binding with proper matrices
+- [ ] Column binding
+** TODO Impose names 
+** TODO Sums
