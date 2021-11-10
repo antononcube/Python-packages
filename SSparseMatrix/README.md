@@ -17,13 +17,18 @@ sparse matrix objects that are provided by R’s Matrix library.
 - [X] Row and column sums 
 - [X] Transposing
 - [X] Pretty printing
-- [ ] Row and column binding of `SSparseMatrix` objects
-  - [ ] Row binding
-  - [ ] Column binding
+- [X] Row and column binding of `SSparseMatrix` objects
+  - [X] Row binding
+  - [X] Column binding
 - [ ] "Export" functions
   - [ ] Triplets
   - [ ] Row-dictionaries
   - [ ] Column-dictionaries
+
+The full list of features and development status can be found in the 
+[org-mode](https://orgmode.org)
+file
+[SSparseMatrix-work-plan.org](../org/SSparseMatrix-work-plan.org).
 
 This package more or less follows the design of the
 Mathematica package
