@@ -1,5 +1,3 @@
-import copy
-
 import numpy
 import scipy
 from scipy import sparse
