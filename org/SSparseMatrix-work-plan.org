@@ -128,3 +128,20 @@
 - [ ] Column binding
 ** TODO Impose names 
 ** TODO Sums
+* TODO Documentation [%50] [1/2]
+** DONE First version
+- [X] Just the basics:
+  - [X] Creation
+  - [X] Object structure
+  - [X] Dot product
+  - [X] Transpose
+  - [X] Sub-matrices
+  - [X] Row and column sums
+  - [X] Deep copies and in-place computations
+  - [X] References
+- [X] ~examples.py~
+- [X] Jupyter notebook
+- [X] README.md
+  - [X] Based on the Jupyter notebook
+  - [C] From ~examples.py~
+** TODO Advanced use cases
