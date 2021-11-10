@@ -348,7 +348,7 @@ class SSparseMatrix:
             return None
 
     # ------------------------------------------------------------------
-    # Row and column binding
+    # Row binding
     # ------------------------------------------------------------------
     def row_bind(self, other):
         if is_sparse_matrix(other):
@@ -363,23 +363,55 @@ class SSparseMatrix:
                 mat = scipy.sparse.vstack([self.sparse_matrix(), other[:, self.column_names()].sparse_matrix()])
                 res = SSparseMatrix(mat)
 
+            # Set the column names
             res.set_column_names(self.column_names())
+
             # Special handling of duplication of row names in the result.
             rn_dict = self.row_names_dict() | other.row_names_dict()
             if len(rn_dict) == (self.rows_count() + other.rows_count()):
                 res.set_row_names(self.row_names() + other.row_names())
             else:
                 res.set_row_names([x + ".1" for x in self.row_names()] + [x + ".2" for x in other.row_names()])
+
             return res
+
         else:
             raise TypeError("The first argument is expected to be a SSparseMatrix object.")
             return None
 
+    # ------------------------------------------------------------------
+    # Column binding
+    # ------------------------------------------------------------------
+    # Although there is an "easy" implementation using transposed matrices
+    # it is considered potentially too slow.
     def column_bind(self, other):
-        # This "delegation" to row_bind is sub-optimal;
-        # proper column binding should be implemented.
-        res = self.copy().transpose().row_bind(other.copy().transpose())
-        return res.transpose(inplace=True)
+        if is_sparse_matrix(other):
+
+            if not (sorted(self.row_names()) == sorted(other.row_names())):
+                raise TypeError("The row names of the two SSparseMatrix objects are expected to be the same.")
+                return None
+
+            if self.row_names() == other.row_names():
+                res = SSparseMatrix(scipy.sparse.hstack([self.sparse_matrix(), other.sparse_matrix()]))
+            else:
+                mat = scipy.sparse.hstack([self.sparse_matrix(), other[self.row_names(),:].sparse_matrix()])
+                res = SSparseMatrix(mat)
+
+            # Set the row names
+            res.set_row_names(self.row_names())
+
+            # Special handling of duplication of row names in the result.
+            cn_dict = self.column_names_dict() | other.column_names_dict()
+            if len(cn_dict) == (self.columns_count() + other.columns_count()):
+                res.set_column_names(self.column_names() + other.column_names())
+            else:
+                res.set_column_names([x + ".1" for x in self.column_names()] + [x + ".2" for x in other.column_names()])
+
+            return res
+
+        else:
+            raise TypeError("The first argument is expected to be a SSparseMatrix object.")
+            return None
 
     # ------------------------------------------------------------------
     # Print outs
