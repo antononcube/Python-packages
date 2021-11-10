@@ -330,19 +330,34 @@ class SSparseMatrix:
     # Impose row names
     # ------------------------------------------------------------------
     def impose_row_names(self, names):
-        if isinstance(names, list):
-            raise AttributeError(".row_names is not implemented yet.")
-            return self
-        else:
+        obj = self.copy()
+
+        if not isinstance(names, list):
             raise TypeError("The first argument is expected to be a list of strings.")
             return None
+
+        missingRows = list(set(names) - set(obj.row_names()))
+        nMissingRows = len(missingRows)
+
+        if nMissingRows > 0:
+            # Rows are missing in the matrix
+            complMat = scipy.sparse.coo_matrix((numpy.array([0]), (numpy.array([0]), numpy.array([0]))),
+                                               shape=(nMissingRows, obj.columns_count()))
+
+            complMat = SSparseMatrix(complMat)
+            complMat.set_row_names(missingRows)
+            complMat.set_column_names(obj.column_names())
+
+            obj = obj.row_bind(complMat)
+
+        return obj[names, :]
 
     # ------------------------------------------------------------------
     # Impose column names
     # ------------------------------------------------------------------
     def impose_column_names(self, names):
         if isinstance(names, list):
-            return self.transpose().impose_row_names(names).transpose()
+            return self.transpose().impose_row_names(names).transpose(inplace=True)
         else:
             raise TypeError("The first argument is expected to be a list of strings.")
             return None
