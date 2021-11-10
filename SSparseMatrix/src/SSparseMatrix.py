@@ -142,6 +142,19 @@ class SSparseMatrix:
             return None
         return self
 
+    def set_dimension_names(self, *args):
+        if len(args) == 0:
+            self.set_dimension_names([str(x) for x in (0, 1)])
+        elif isinstance(args[0], dict) and len(args[0]) == 2:
+            self.dimNames = args[0]
+        elif isinstance(args[0], list) and len(args[0]) == 2:
+            self.dimNames = dict(zip(args[0], range(0, len(args[0]))))
+        else:
+            raise TypeError(
+                "The first argument is expected to be a string-to-index dictionary or a list of strings of length 2.")
+            return None
+        return self
+
     # ------------------------------------------------------------------
     # Access
     # ------------------------------------------------------------------
