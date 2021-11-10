@@ -22,7 +22,7 @@ smat.set_column_names(["a", "b", "c", "d"])
 class DotProduct(unittest.TestCase):
 
     def test_dot_matrix(self):
-        smat2 = smat.copy().dot(copy.deepcopy(smat).transpose())
+        smat2 = smat.copy().dot(smat.copy().transpose())
         smat3 = smat.sparse_matrix().dot(smat.sparse_matrix().transpose())
         smat4 = SSparseMatrix(smat3)
         smat4.set_row_names(smat.row_names())
