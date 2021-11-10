@@ -49,7 +49,7 @@ class SSparseMatrix:
         self.sparseMatrix = None
         self.rowNames = None
         self.colNames = None
-        self.dimensionNames = None
+        self.dimNames = None
         if len(args) == 1:
             self.set_sparse_matrix(args[0])
         elif len(args) > 1:
@@ -80,7 +80,7 @@ class SSparseMatrix:
             return self.colNames
 
     def dimension_names(self):
-        return list(self.dimensionNames.keys())
+        return list(self.dimNames.keys())
 
     def rows_count(self):
         return self.sparse_matrix().shape[0]
