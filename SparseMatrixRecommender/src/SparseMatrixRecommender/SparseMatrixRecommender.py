@@ -88,7 +88,8 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Create with matrices
     # ------------------------------------------------------------------
-    def create_from_matrices(self, smats, addTagTypesToColumnNames=False, tagValueSeparator=":", numericalColumnsAsCategorical=False):
+    def create_from_matrices(self, smats, addTagTypesToColumnNames=False, tagValueSeparator=":",
+                             numericalColumnsAsCategorical=False):
 
         if not is_smat_dict(smats):
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
@@ -104,6 +105,41 @@ class SparseMatrixRecommender:
         return self
 
     # ------------------------------------------------------------------
+    # To smr vector
+    # ------------------------------------------------------------------
+    def _to_smr_vector(self, arg, things_dict, thing_name, ref_name):
+
+        if not isinstance(self._M, SSparseMatrix):
+            raise TypeError("Cannot find recommendation matrix.")
+            return None
+
+        if is_str_list(arg):
+            dvec = dict.fromkeys(arg, 1)
+            return self._to_smr_vector(dvec, things_dict, thing_name, ref_name)
+        elif is_scored_tags_dict(arg):
+            known_keys = {key: value for (key, value) in arg.items() if key in things_dict}
+            if len(known_keys) == 0:
+                raise LookupError("None of the tags is a valid recommendation matrix " + thing_name + " name.")
+                return None
+            elif len(known_keys) < len(arg):
+                raise LookupError("Not all tags are valid recommendation matrix " + thing_name + " names.")
+
+            res_row_inds = [things_dict[k] for (k, v) in known_keys.items()]
+            res_col_inds = [0 for x in range(len(res_row_inds))]
+            res_vals = list(known_keys.values())
+            smat = scipy.sparse.csr_matrix((res_vals, (res_row_inds, res_col_inds)), shape=(len(things_dict), 1))
+            res = SSparseMatrix(smat)
+            res.set_row_names(list(things_dict.keys()))
+            res.set_column_names()
+            self.set_value(res)
+            return self
+        else:
+            raise TypeError(
+                "The first argument is expected to be a list of " + ref_name + ", a dictionary of scored "
+                + ref_name + "," + " or SSparseMatrix object.")
+            return None
+
+    # ------------------------------------------------------------------
     # To profile vector
     # ------------------------------------------------------------------
     def to_profile_vector(self, arg):
@@ -112,37 +148,27 @@ class SparseMatrixRecommender:
             raise TypeError("Cannot find recommendation matrix.")
             return None
 
-        if is_str_list(arg):
-            dvec = dict.fromkeys(arg, 1)
-            return self.to_profile_vector(dvec)
-        elif is_scored_tags_dict(arg):
-            known_keys = {key: value for (key, value) in arg.items() if key in self._M.column_names_dict()}
-            if len(known_keys) == 0:
-                raise LookupError("None of the tags is a valid recommendation matrix column name.")
-                return None
-            elif len(known_keys) < len(arg):
-                raise LookupError("Not all tags are valid recommendation matrix column names.")
+        return self._to_smr_vector(arg, things_dict=self._M.column_names_dict(), thing_name="column", ref_name="tags")
 
-            res_row_inds = [self._M.column_names_dict()[k] for (k, v) in known_keys.items()]
-            res_col_inds = [0 for x in range(len(res_row_inds))]
-            res_vals = list(known_keys.values())
-            smat = scipy.sparse.csr_matrix((res_vals, (res_row_inds, res_col_inds)), shape=(self._M.columns_count(), 1))
-            res = SSparseMatrix(smat)
-            res.set_row_names(self._M.column_names())
-            res.set_column_names()
-            self.set_value(res)
-            return self
-        else:
-            raise TypeError(
-                "The first argument is expected to be a list of tags, a dictionary of scored tags," +
-                " or SSparseMatrix objects.")
+    # ------------------------------------------------------------------
+    # To history vector
+    # ------------------------------------------------------------------
+    def to_history_vector(self, arg):
+
+        if not isinstance(self._M, SSparseMatrix):
+            raise TypeError("Cannot find recommendation matrix.")
             return None
+
+        return self._to_smr_vector(arg, things_dict=self._M.row_names_dict(), thing_name="row", ref_name="items")
 
     # ------------------------------------------------------------------
     # Recommend by profile
     # ------------------------------------------------------------------
-    def recommend_by_profile(self, profile):
-        if isinstance(profile, dict) or isinstance(profile, list):
+    def recommend_by_profile(self, profile, nrecs=10):
+
+        if isinstance(profile, str):
+            vec = self.to_profile_vector([profile]).take_value()
+        elif isinstance(profile, dict) or isinstance(profile, list):
             vec = self.to_profile_vector(profile).take_value()
         elif is_sparse_matrix(profile):
             vec = profile
@@ -153,5 +179,66 @@ class SparseMatrixRecommender:
         recs = self.take_M().dot(vec)
         recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
         recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
+
+        if isinstance(nrecs, int) and nrecs < len(recs):
+            recs = dict(list(recs.items())[0:nrecs])
+        elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
+            raise TypeError("The second argument, nrecs, is expected to be an integer or None.")
+            return None
+
         self._value = recs
+        return self
+
+    # ------------------------------------------------------------------
+    # Recommend by history
+    # ------------------------------------------------------------------
+    def recommend(self, history, nrecs=10):
+
+        if isinstance(history, str):
+            vec = self.to_history_vector([history]).take_value().transpose()
+        elif isinstance(history, dict) or isinstance(history, list):
+            vec = self.to_history_vector(history).take_value().transpose()
+        elif is_sparse_matrix(history):
+            vec = history
+        else:
+            raise TypeError("The first argument is expected to be a list of items or a dictionary of scored items.")
+            return None
+
+        recs = self.take_M().dot(vec.dot(self.take_M()).transpose())
+        recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
+        recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
+
+        if isinstance(nrecs, int) and nrecs < len(recs):
+            recs = dict(list(recs.items())[0:nrecs])
+        elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
+            raise TypeError("The second argument, nrecs, is expected to be an integer or None.")
+            return None
+
+        self._value = recs
+        return self
+
+    # ------------------------------------------------------------------
+    # Join across
+    # ------------------------------------------------------------------
+    def join_across(self, data, on):
+
+        if not isinstance(self.take_value(), dict):
+            raise TypeError("The pipeline value is expected to be a dictionary of scored items.")
+            return None
+
+        if not isinstance(data, pandas.core.frame.DataFrame):
+            raise TypeError("The first argument is expected to be a data frame.")
+            return None
+
+        if not isinstance(on, str):
+            raise TypeError("The second argument expected to be a string.")
+            return None
+
+        recs = self.take_value()
+        dfRecs = pandas.DataFrame()
+        dfRecs[on] = list(recs.keys())
+        dfRecs["Score"] = list(recs.values())
+
+        self.set_value(dfRecs.merge(data, on=on))
+
         return self
