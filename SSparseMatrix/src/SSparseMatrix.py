@@ -76,7 +76,6 @@ class SSparseMatrix:
             self.set_sparse_matrix(kwargs.get("matrix"))
 
         if len(args) < 3 and "row_names" in kwargs:
-            print(kwargs.get("row_names"))
             self.set_row_names(kwargs.get("row_names"))
 
         if len(args) < 3 and "column_names" in kwargs:
