@@ -166,6 +166,7 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     def recommend_by_profile(self, profile, nrecs=10):
 
+        # Make scored tags vector
         if isinstance(profile, str):
             vec = self.to_profile_vector([profile]).take_value()
         elif isinstance(profile, dict) or isinstance(profile, list):
@@ -176,24 +177,33 @@ class SparseMatrixRecommender:
             raise TypeError("The first argument is expected to be a list of tags or a dictionary of scored tags.")
             return None
 
+        # Compute the recommendations
         recs = self.take_M().dot(vec)
+
+        # Take non-zero score recommendations
         recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
+
+        # Reverse sort
         recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
 
+        # Give top-n recs
         if isinstance(nrecs, int) and nrecs < len(recs):
             recs = dict(list(recs.items())[0:nrecs])
         elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
             raise TypeError("The second argument, nrecs, is expected to be an integer or None.")
             return None
 
+        # Assign obtained recommendations to the pipeline value
         self._value = recs
+
         return self
 
     # ------------------------------------------------------------------
     # Recommend by history
     # ------------------------------------------------------------------
-    def recommend(self, history, nrecs=10):
+    def recommend(self, history, nrecs=10, remove_history=True):
 
+        # Make scored items vector
         if isinstance(history, str):
             vec = self.to_history_vector([history]).take_value().transpose()
         elif isinstance(history, dict) or isinstance(history, list):
@@ -201,20 +211,36 @@ class SparseMatrixRecommender:
         elif is_sparse_matrix(history):
             vec = history
         else:
-            raise TypeError("The first argument is expected to be a list of items or a dictionary of scored items.")
+            raise TypeError("The first argument is expected to be a list of items, a dictionary of scored items" +
+                            " or a SSparseMatrix object with " + self._M.rows_count() + " columns.")
             return None
 
+        # Compute the recommendations
         recs = self.take_M().dot(vec.dot(self.take_M()).transpose())
+
+        # Take non-zero scores recommendations
         recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
+
+        # Remove history
+        if remove_history:
+            hist_set = vec.column_sums_dict()
+            hist_set = set({key for (key, value) in hist_set.items() if value > 0})
+
+            recs = {key: value for (key, value) in recs.items() if not key in hist_set}
+
+        # Reverse sort
         recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
 
+        # Give top-n recs
         if isinstance(nrecs, int) and nrecs < len(recs):
             recs = dict(list(recs.items())[0:nrecs])
         elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
             raise TypeError("The second argument, nrecs, is expected to be an integer or None.")
             return None
 
+        # Assign obtained recommendations to the pipeline value
         self._value = recs
+
         return self
 
     # ------------------------------------------------------------------
