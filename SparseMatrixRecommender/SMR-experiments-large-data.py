@@ -3,11 +3,11 @@ import pandas
 from SparseMatrixRecommender.src.SparseMatrixRecommender.CrossTabulate import *
 from SparseMatrixRecommender.src.SparseMatrixRecommender.SparseMatrixRecommender import *
 
-
 dfTitanic = pandas.read_csv("/Volumes/Macintosh HD 1/Users/antonov/MathematicaVsR/Data/MathematicaVsR-Data-Titanic.csv")
 dfTitanic["id"] = [str(x) for x in dfTitanic["id"]]
 
-aSMats = cross_tabulate(data=dfTitanic, index="id", columns=["passengerClass", "passengerSex", "passengerAge", "passengerSurvival"])
+aSMats = cross_tabulate(data=dfTitanic, index="id",
+                        columns=["passengerClass", "passengerSex", "passengerAge", "passengerSurvival"])
 
 print(dfTitanic.head(12))
 
@@ -16,14 +16,31 @@ print(type(aSMats))
 for s in aSMats.items():
     print(s[0], " : ", s[1].shape())
 
+print(160 * "=")
+print("Recommend by profile")
+print(160 * "-")
+
 smrObj = SparseMatrixRecommender()
-recs = smrObj.create_from_matrices(aSMats).recommend_by_profile(["male", "died", "1st"]).take_value()
+smrObj = smrObj.create_from_matrices(aSMats)
 
-dfRecs = pandas.DataFrame()
-dfRecs["id"] = list(recs.keys())
-dfRecs["Score"] = list(recs.values())
-dfRecs = dfRecs[dfRecs["Score"] == 3]
-print(dfRecs)
+# recs = smrObj.create_from_matrices(aSMats).recommend_by_profile(["male", "died", "1st"]).take_value()
+#
+recs = (smrObj
+        .create_from_matrices(aSMats)
+        .recommend_by_profile({"male": 1.2, "died": 1.4, "1st": 0.3}, nrecs=12)
+        .join_across(dfTitanic, on="id")
+        .take_value())
 
-# print(dfTitanic[dfTitanic["id"].isin(recs.keys())])
-print(dfRecs.merge(dfTitanic, on="id"))
+print(recs)
+
+print(160 * "=")
+print("Recommend by history")
+print(160 * "-")
+
+recs = (smrObj
+        .create_from_matrices(aSMats)
+        .recommend("10", nrecs=12)
+        .join_across(dfTitanic, on="id")
+        .take_value())
+
+print(recs)
