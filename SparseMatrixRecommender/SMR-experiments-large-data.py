@@ -3,7 +3,9 @@ import pandas
 from SparseMatrixRecommender.src.SparseMatrixRecommender.CrossTabulate import *
 from SparseMatrixRecommender.src.SparseMatrixRecommender.SparseMatrixRecommender import *
 
-dfTitanic = pandas.read_csv("/Volumes/Macintosh HD 1/Users/antonov/MathematicaVsR/Data/MathematicaVsR-Data-Titanic.csv")
+dfTitanic = pandas.read_csv(
+    "https://raw.githubusercontent.com/antononcube/MathematicaVsR/master/Data/MathematicaVsR-Data-Titanic.csv")
+
 dfTitanic["id"] = [str(x) for x in dfTitanic["id"]]
 
 aSMats = cross_tabulate(data=dfTitanic, index="id",
@@ -39,7 +41,7 @@ print(160 * "-")
 
 recs = (smrObj
         .create_from_matrices(aSMats)
-        .recommend("10", nrecs=12)
+        .recommend("10", nrecs=12, remove_history=False)
         .join_across(dfTitanic, on="id")
         .take_value())
 
