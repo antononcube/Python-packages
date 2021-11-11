@@ -4,14 +4,8 @@
 import unittest
 
 from SSparseMatrix.src.SSparseMatrix import *
-import pandas
 import scipy
 import numpy
-from scipy import sparse
-
-from pandas.testing import assert_frame_equal
-from scipy.sparse import lil_matrix
-from scipy.sparse import *
 
 
 class BasicFunctionalities(unittest.TestCase):
@@ -26,12 +20,36 @@ class BasicFunctionalities(unittest.TestCase):
         obj2 = SSparseMatrix(self.mat)
         self.assertTrue(obj1.eq(obj2))
 
+    def test_make_2(self):
+        obj1 = SSparseMatrix()
+        obj1.set_sparse_matrix(self.mat)
+        obj1.set_row_names(list("ABCD"))
+        obj1.set_column_names(list("abcde"))
+        obj2 = SSparseMatrix(self.mat, list("ABCD"), list("abcde"))
+        self.assertTrue(obj1.eq(obj2))
+
+    def test_make_3(self):
+        obj1 = SSparseMatrix()
+        obj1.set_sparse_matrix(self.mat)
+        obj1.set_row_names(list("0123"))
+        obj1.set_column_names(list("01234"))
+        obj2 = SSparseMatrix(matrix=self.mat, row_names="", column_names="")
+        self.assertTrue(obj1.eq(obj2))
+
+    def test_make_4(self):
+        obj1 = SSparseMatrix()
+        obj1.set_sparse_matrix(self.mat)
+        obj1.set_row_names(list("ABCD"))
+        obj1.set_column_names(list("01234"))
+        obj2 = SSparseMatrix(self.mat, row_names=list("ABCD"), column_names="")
+        self.assertTrue(obj1.eq(obj2))
+
     def test_mat(self):
-        self.mat = csr_matrix(self.mat)
+        self.mat = scipy.sparse.csr_matrix(self.mat)
         self.assertTrue(scipy.sparse.issparse(self.mat))
 
     def test_mat_2(self):
-        self.mat2 = csr_matrix(self.mat2)
+        self.mat2 = scipy.sparse.csr_matrix(self.mat2)
         self.assertTrue(scipy.sparse.issparse(self.mat2))
 
     def test_rmat(self):
