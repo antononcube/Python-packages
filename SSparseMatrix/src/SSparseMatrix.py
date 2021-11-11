@@ -145,9 +145,9 @@ class SSparseMatrix:
 
     def set_row_names(self, *args):
         if len(args) == 0:
-            self.set_row_names([str(x) for x in range(0, self.rows_count())])
+            return self.set_row_names([str(x) for x in range(0, self.rows_count())])
         elif isinstance(args[0], str):
-            self.set_row_names([args[0] + str(x) for x in range(0, self.rows_count())])
+            return self.set_row_names([args[0] + str(x) for x in range(0, self.rows_count())])
         elif isinstance(args[0], dict) and len(args[0]) == self.rows_count():
             self._rowNames = args[0]
         elif isinstance(args[0], list) and len(args[0]) == self.rows_count():
