@@ -1,7 +1,8 @@
-import pandas
-
+import ssl
 from SparseMatrixRecommender.src.SparseMatrixRecommender.CrossTabulate import *
 from SparseMatrixRecommender.src.SparseMatrixRecommender.SparseMatrixRecommender import *
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 dfTitanic = pandas.read_csv(
     "https://raw.githubusercontent.com/antononcube/MathematicaVsR/master/Data/MathematicaVsR-Data-Titanic.csv")
