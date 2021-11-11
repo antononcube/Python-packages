@@ -12,9 +12,17 @@ def is_sparse_matrix(obj):
     return isinstance(obj, SSparseMatrix) and scipy.sparse.issparse(obj.sparse_matrix())
 
 
-def make_from_sparse_matrix(smat):
+def make_s_sparse_matrix(matrix, rows="", columns=""):
     obj = SSparseMatrix()
-    return obj.set_sparse_matrix(smat)
+    obj.set_sparse_matrix(matrix)
+
+    if not isinstance(rows, type(None)):
+        obj.set_row_names(rows)
+
+    if not isinstance(columns, type(None)):
+        obj.set_column_names(columns)
+
+    return obj
 
 
 def is_int_like(x):
@@ -47,12 +55,13 @@ class SSparseMatrix:
     _colNames = None
     _dimNames = None
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         self._id = "SSparseMatrix"
         self._sparseMatrix = None
         self._rowNames = None
         self._colNames = None
         self._dimNames = None
+
         if len(args) == 1:
             self.set_sparse_matrix(args[0])
         elif len(args) == 3:
@@ -62,6 +71,16 @@ class SSparseMatrix:
         elif len(args) > 1:
             raise TypeError("""No arguments, a matrix argument, or a matrix argument 
             and row and column names are expected.""")
+
+        if len(args) == 0 and "matrix" in kwargs:
+            self.set_sparse_matrix(kwargs.get("matrix"))
+
+        if len(args) < 3 and "row_names" in kwargs:
+            print(kwargs.get("row_names"))
+            self.set_row_names(kwargs.get("row_names"))
+
+        if len(args) < 3 and "column_names" in kwargs:
+            self.set_column_names(kwargs.get("column_names"))
 
     # ------------------------------------------------------------------
     #  Getters
@@ -127,6 +146,8 @@ class SSparseMatrix:
     def set_row_names(self, *args):
         if len(args) == 0:
             self.set_row_names([str(x) for x in range(0, self.rows_count())])
+        elif isinstance(args[0], str):
+            self.set_row_names([args[0] + str(x) for x in range(0, self.rows_count())])
         elif isinstance(args[0], dict) and len(args[0]) == self.rows_count():
             self._rowNames = args[0]
         elif isinstance(args[0], list) and len(args[0]) == self.rows_count():
@@ -141,6 +162,8 @@ class SSparseMatrix:
     def set_column_names(self, *args):
         if len(args) == 0:
             return self.set_column_names([str(x) for x in range(0, self.columns_count())])
+        elif isinstance(args[0], str):
+            return self.set_column_names([args[0] + str(x) for x in range(0, self.columns_count())])
         elif isinstance(args[0], dict) and len(args[0]) == self.columns_count():
             self._colNames = args[0]
         elif isinstance(args[0], list) and len(args[0]) == self.columns_count():
