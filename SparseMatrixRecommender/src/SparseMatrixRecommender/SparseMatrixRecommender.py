@@ -1,6 +1,6 @@
 from SSparseMatrix.src.SSparseMatrix import SSparseMatrix
 from SSparseMatrix.src.SSparseMatrix import is_sparse_matrix
-from SparseMatrixRecommender.src.SparseMatrixRecommender import CrossTabulate
+from SparseMatrixRecommender.src.SparseMatrixRecommender.CrossTabulate import cross_tabulate
 import pandas
 import scipy
 
@@ -88,21 +88,69 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Create with matrices
     # ------------------------------------------------------------------
-    def create_from_matrices(self, smats, addTagTypesToColumnNames=False, tagValueSeparator=":",
+    def create_from_matrices(self, matrices,
+                             addTagTypesToColumnNames=False,
+                             tagValueSeparator=":",
                              numericalColumnsAsCategorical=False):
 
-        if not is_smat_dict(smats):
+        if not is_smat_dict(matrices):
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
             return None
 
         self._M = None
-        for k in smats:
+        for k in matrices:
             if is_sparse_matrix(self._M):
-                self._M = self._M.column_bind(smats[k])
+                self._M = self._M.column_bind(matrices[k])
             else:
-                self._M = smats[k]
+                self._M = matrices[k]
 
         return self
+
+    # ------------------------------------------------------------------
+    # Create form long form
+    # ------------------------------------------------------------------
+    def create_from_long_form(self, data,
+                              item_column_mame="Item",
+                              tag_type_column_name="TagType",
+                              tag_column_name="Tag",
+                              weight_column_name="Weight",
+                              addTagTypesToColumnNames=False,
+                              tagValueSeparator=":",
+                              numericalColumnsAsCategorical=False):
+
+        if not isinstance(data, pandas.core.frame.DataFrame):
+            raise TypeError("""The first argument is expected to be data frame with columns that correspond
+            to items, tag type, tag values, and tag weights.""")
+            return None
+
+        # We make a dictionary of matrices and hand it over to create_from_matrices.
+
+        # Group by tag type
+        gb = data.groupby(tag_type_column_name)
+
+        # Cross tabulate the data frame subset for each tag type
+        aSMats = {x: cross_tabulate(gb.get_group(x),
+                                    index=item_column_mame,
+                                    columns=tag_column_name,
+                                    values=weight_column_name) for x in gb.groups}
+
+
+        # [print(k, ":", v.shape()) for (k, v) in aSMats.items()]
+
+        # Find all row names
+        all_row_names = []
+        for rns in [x.row_names() for x in aSMats.values()]:
+            all_row_names += rns
+        all_row_names = list(set(all_row_names))
+
+        # Impose row names over each matrix
+        aSMats = {k: v.impose_row_names(all_row_names) for (k, v) in aSMats.items()}
+
+        # Delegate creation
+        return self.create_from_matrices(matrices=aSMats,
+                                         addTagTypesToColumnNames=addTagTypesToColumnNames,
+                                         tagValueSeparator=tagValueSeparator,
+                                         numericalColumnsAsCategorical=numericalColumnsAsCategorical)
 
     # ------------------------------------------------------------------
     # To smr vector
