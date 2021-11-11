@@ -194,7 +194,7 @@ class SparseMatrixRecommender:
             return None
 
         # Assign obtained recommendations to the pipeline value
-        self._value = recs
+        self.set_value(recs)
 
         return self
 
@@ -239,7 +239,7 @@ class SparseMatrixRecommender:
             return None
 
         # Assign obtained recommendations to the pipeline value
-        self._value = recs
+        self.set_value(recs)
 
         return self
 
@@ -260,11 +260,15 @@ class SparseMatrixRecommender:
             raise TypeError("The second argument expected to be a string.")
             return None
 
+        # Make a data frame from the recommendations in the pipeline value
         recs = self.take_value()
         dfRecs = pandas.DataFrame()
         dfRecs[on] = list(recs.keys())
         dfRecs["Score"] = list(recs.values())
 
-        self.set_value(dfRecs.merge(data, on=on))
+        # Left join recommendations with the given data frame
+        # Using .join does not work because .join uses indexes.
+        # Hence using merge
+        self.set_value(dfRecs.merge(data, on=on, how="left"))
 
         return self
