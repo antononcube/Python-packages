@@ -6,6 +6,12 @@ smat = SSparseMatrix(mat)
 smat.set_row_names(["A", "B", "C", "D", "E"])
 smat.set_column_names(["a", "b", "c", "d"])
 
+# smat2 = SSparseMatrix(mat, list("ABCDE"), list("abcd"))
+# smat2.print_matrix()
+
+# smat3 = SSparseMatrix(matrix=mat, row_names="", column_names=list("abcd"))
+# smat3.print_matrix()
+
 # Print the sparse matrix
 smat.print_matrix()
 
