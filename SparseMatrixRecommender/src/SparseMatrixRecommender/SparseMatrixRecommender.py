@@ -292,6 +292,37 @@ class SparseMatrixRecommender:
         return self
 
     # ------------------------------------------------------------------
+    # Profile
+    # ------------------------------------------------------------------
+    def profile(self, history):
+
+        # Make scored items vector
+        if isinstance(history, str):
+            vec = self.to_history_vector([history]).take_value().transpose()
+        elif isinstance(history, dict) or isinstance(history, list):
+            vec = self.to_history_vector(history).take_value().transpose()
+        elif is_sparse_matrix(history):
+            vec = history
+        else:
+            raise TypeError("The first argument is expected to be a list of items, a dictionary of scored items" +
+                            " or a SSparseMatrix object with " + self._M.rows_count() + " columns.")
+            return None
+
+        # Compute the profile
+        prof = vec.dot(self.take_M())
+
+        # Take non-zero scores tags
+        prof = {key: value for (key, value) in prof.column_sums_dict().items() if value > 0}
+
+        # Reverse sort
+        prof = dict(sorted(prof.items(), key=lambda item: -item[1]))
+
+        # Assign obtained prof to the pipeline value
+        self.set_value(prof)
+
+        return self
+
+    # ------------------------------------------------------------------
     # Join across
     # ------------------------------------------------------------------
     def join_across(self, data, on):
