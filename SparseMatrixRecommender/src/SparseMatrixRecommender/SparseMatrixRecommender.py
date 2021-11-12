@@ -99,10 +99,57 @@ class SparseMatrixRecommender:
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
             return None
 
-        self._matrices = matrices
-        self._M = column_bind(matrices)
+        if addTagTypesToColumnNames:
+            self._matrices = {k: v.set_column_names([k + tagValueSeparator + y for y in v.column_names()]) for (k, v) in matrices.items()}
+        else:
+            self._matrices = matrices
+
+        self._M = column_bind(self._matrices)
 
         return self
+
+    # ------------------------------------------------------------------
+    # Create form wide form
+    # ------------------------------------------------------------------
+    def create_from_wide_form(self, data, item_column_name, columns,
+                              addTagTypesToColumnNames=False,
+                              tagValueSeparator=":",
+                              numericalColumnsAsCategorical=False):
+
+        if not isinstance(data, pandas.core.frame.DataFrame):
+            raise TypeError("The first argument is expected to be data frame.")
+            return None
+
+        # Make a set of column names
+        dataColNames = set(data.keys())
+
+        # Check if the specified item column name is known
+        if item_column_name not in dataColNames:
+            raise TypeError("Unknown item column name: " + repr(item_column_name) + ".")
+            return None
+
+        # Get automatic columns
+        if isinstance(columns, type(None)):
+            columns = [k for k in data.keys() if k != item_column_name]
+
+        if not is_str_list(columns):
+            raise TypeError("""The second argument is expected to be a list of strings.""")
+            return None
+
+        # Create a dictionary of matrices
+        for cn in columns:
+            if cn not in dataColNames:
+                raise TypeError("Unknown column name: " + repr(cn) + ".")
+                return None
+
+        # Cross tabulate across all specified columns
+        aSMats = cross_tabulate(data=data, index=item_column_name, columns=columns)
+
+        # Delegate creation
+        return self.create_from_matrices(matrices=aSMats,
+                                         addTagTypesToColumnNames=addTagTypesToColumnNames,
+                                         tagValueSeparator=tagValueSeparator,
+                                         numericalColumnsAsCategorical=numericalColumnsAsCategorical)
 
     # ------------------------------------------------------------------
     # Create form long form
@@ -155,7 +202,8 @@ class SparseMatrixRecommender:
                                     local_weight_func="None",
                                     normalizer_func="Cosine"):
 
-        self._matrices = {k: apply_term_weight_functions(v, global_weight_func, local_weight_func, normalizer_func) for (k, v) in self._matrices.items()}
+        self._matrices = {k: apply_term_weight_functions(v, global_weight_func, local_weight_func, normalizer_func) for
+                          (k, v) in self._matrices.items()}
 
         self._M = column_bind(self._matrices)
 
