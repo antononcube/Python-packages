@@ -1,6 +1,8 @@
 from SSparseMatrix.src.SSparseMatrix import SSparseMatrix
+from SSparseMatrix.src.SSparseMatrix import column_bind
 from SSparseMatrix.src.SSparseMatrix import is_sparse_matrix
 from SparseMatrixRecommender.src.SparseMatrixRecommender.CrossTabulate import cross_tabulate
+from SparseMatrixRecommender.src.SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
 import pandas
 import scipy
 
@@ -97,12 +99,8 @@ class SparseMatrixRecommender:
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
             return None
 
-        self._M = None
-        for k in matrices:
-            if is_sparse_matrix(self._M):
-                self._M = self._M.column_bind(matrices[k])
-            else:
-                self._M = matrices[k]
+        self._matrices = matrices
+        self._M = column_bind(matrices)
 
         return self
 
@@ -134,9 +132,6 @@ class SparseMatrixRecommender:
                                     columns=tag_column_name,
                                     values=weight_column_name) for x in gb.groups}
 
-
-        # [print(k, ":", v.shape()) for (k, v) in aSMats.items()]
-
         # Find all row names
         all_row_names = []
         for rns in [x.row_names() for x in aSMats.values()]:
@@ -151,6 +146,20 @@ class SparseMatrixRecommender:
                                          addTagTypesToColumnNames=addTagTypesToColumnNames,
                                          tagValueSeparator=tagValueSeparator,
                                          numericalColumnsAsCategorical=numericalColumnsAsCategorical)
+
+    # ------------------------------------------------------------------
+    # Apply LSI functions
+    # ------------------------------------------------------------------
+    def apply_term_weight_functions(self,
+                                    global_weight_func="IDF",
+                                    local_weight_func="None",
+                                    normalizer_func="Cosine"):
+
+        self._matrices = {k: apply_term_weight_functions(v, global_weight_func, local_weight_func, normalizer_func) for (k, v) in self._matrices.items()}
+
+        self._M = column_bind(self._matrices)
+
+        return self
 
     # ------------------------------------------------------------------
     # To smr vector
