@@ -41,7 +41,7 @@ The usage examples below can be also run through the file ["examples.py"](./exam
 ### Install from GitHub
 
 ```shell
-pip install -e git+https://github.com/antononcube/Python-packages.git#egg=SSparseMatrix-antononcube\&subdirectory=SSparseMatrix
+pip install -e git+https://github.com/antononcube/Python-packages.git#egg=SSparseMatrix\&subdirectory=SSparseMatrix
 ```
 
 ### From local directory
