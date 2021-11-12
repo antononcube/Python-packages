@@ -326,6 +326,13 @@ class SSparseMatrix:
         return obj
 
     # ------------------------------------------------------------------
+    # Unitize
+    # ------------------------------------------------------------------
+    def unitize(self):
+        self.set_sparse_matrix(self.sparse_matrix().astype(bool).astype(float))
+        return self
+
+    # ------------------------------------------------------------------
     # Dot
     # ------------------------------------------------------------------
     def dot(self, other, inplace=False):
