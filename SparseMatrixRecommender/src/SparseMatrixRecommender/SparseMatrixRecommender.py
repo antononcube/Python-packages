@@ -91,16 +91,16 @@ class SparseMatrixRecommender:
     # Create with matrices
     # ------------------------------------------------------------------
     def create_from_matrices(self, matrices,
-                             addTagTypesToColumnNames=False,
-                             tagValueSeparator=":",
-                             numericalColumnsAsCategorical=False):
+                             add_tag_types_to_column_names=False,
+                             tag_value_separator=":",
+                             numerical_columns_as_categorical=False):
 
         if not is_smat_dict(matrices):
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
             return None
 
-        if addTagTypesToColumnNames:
-            self._matrices = {k: v.set_column_names([k + tagValueSeparator + y for y in v.column_names()]) for (k, v) in matrices.items()}
+        if add_tag_types_to_column_names:
+            self._matrices = {k: v.set_column_names([k + tag_value_separator + y for y in v.column_names()]) for (k, v) in matrices.items()}
         else:
             self._matrices = matrices
 
@@ -112,9 +112,9 @@ class SparseMatrixRecommender:
     # Create form wide form
     # ------------------------------------------------------------------
     def create_from_wide_form(self, data, item_column_name, columns,
-                              addTagTypesToColumnNames=False,
-                              tagValueSeparator=":",
-                              numericalColumnsAsCategorical=False):
+                              add_tag_types_to_column_names=False,
+                              tag_value_separator=":",
+                              numerical_columns_as_categorical=False):
 
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("The first argument is expected to be data frame.")
@@ -147,9 +147,9 @@ class SparseMatrixRecommender:
 
         # Delegate creation
         return self.create_from_matrices(matrices=aSMats,
-                                         addTagTypesToColumnNames=addTagTypesToColumnNames,
-                                         tagValueSeparator=tagValueSeparator,
-                                         numericalColumnsAsCategorical=numericalColumnsAsCategorical)
+                                         add_tag_types_to_column_names=add_tag_types_to_column_names,
+                                         tag_value_separator=tag_value_separator,
+                                         numericalColumnsAsCategorical=numerical_columns_as_categorical)
 
     # ------------------------------------------------------------------
     # Create form long form
@@ -159,9 +159,9 @@ class SparseMatrixRecommender:
                               tag_type_column_name="TagType",
                               tag_column_name="Tag",
                               weight_column_name="Weight",
-                              addTagTypesToColumnNames=False,
-                              tagValueSeparator=":",
-                              numericalColumnsAsCategorical=False):
+                              add_tag_types_to_column_names=False,
+                              tag_value_separator=":",
+                              numerical_columns_as_categorical=False):
 
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("""The first argument is expected to be data frame with columns that correspond
@@ -190,9 +190,9 @@ class SparseMatrixRecommender:
 
         # Delegate creation
         return self.create_from_matrices(matrices=aSMats,
-                                         addTagTypesToColumnNames=addTagTypesToColumnNames,
-                                         tagValueSeparator=tagValueSeparator,
-                                         numericalColumnsAsCategorical=numericalColumnsAsCategorical)
+                                         add_tag_types_to_column_names=add_tag_types_to_column_names,
+                                         tag_value_separator=tag_value_separator,
+                                         numericalColumnsAsCategorical=numerical_columns_as_categorical)
 
     # ------------------------------------------------------------------
     # Apply LSI functions
