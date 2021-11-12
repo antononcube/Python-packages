@@ -149,7 +149,7 @@ class SparseMatrixRecommender:
         return self.create_from_matrices(matrices=aSMats,
                                          add_tag_types_to_column_names=add_tag_types_to_column_names,
                                          tag_value_separator=tag_value_separator,
-                                         numericalColumnsAsCategorical=numerical_columns_as_categorical)
+                                         numerical_columns_as_categorical=numerical_columns_as_categorical)
 
     # ------------------------------------------------------------------
     # Create form long form
