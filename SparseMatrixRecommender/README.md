@@ -25,6 +25,22 @@ For more theoretical description see the article [AA1].
 
 ------
 
+## Installation
+
+### Install from GitHub
+
+```shell
+pip install -e git+https://github.com/antononcube/Python-packages.git#egg=SparseMatrixRecommender\&subdirectory=SparseMatrixRecommender
+```
+
+### From local directory
+
+```shell
+pip install ./SparseMatrixRecommender
+```
+
+------
+
 ## Related Python packages
 
 This package is based on the Python package 
