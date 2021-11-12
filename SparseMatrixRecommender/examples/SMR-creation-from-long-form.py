@@ -26,3 +26,13 @@ recs = (smrObj
         .take_value())
 
 print(recs)
+
+print(160 * "=")
+print("Profile")
+print(160 * "-")
+
+prof = (smrObj
+        .profile(["Statistics-FisherIris"])
+        .take_value())
+
+print(prof)
