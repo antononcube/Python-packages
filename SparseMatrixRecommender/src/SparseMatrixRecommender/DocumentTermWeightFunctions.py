@@ -134,6 +134,7 @@ def apply_term_weight_functions(doc_term_matrix,
     # Multiply with the global weights
     diagMat = scipy.sparse.diags(diagonals=[globalWeights], offsets=[0])
     mat = mat.dot(diagMat)
+    mat.set_column_names(doc_term_matrix.column_names())
 
     # Normalizing.
     if normalizer_func.lower() == "Cosine".lower():
