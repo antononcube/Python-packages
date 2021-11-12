@@ -285,8 +285,8 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Transpose
     # ------------------------------------------------------------------
-    def transpose(self, inplace=False):
-        obj = self if inplace else self.copy()
+    def transpose(self, in_place=False):
+        obj = self if in_place else self.copy()
         obj._sparseMatrix = obj.sparse_matrix().transpose()
         t = obj._colNames
         obj._colNames = obj._rowNames
@@ -296,8 +296,8 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Add
     # ------------------------------------------------------------------
-    def add(self, other, inplace=False):
-        obj = self if inplace else self.copy()
+    def add(self, other, in_place=False):
+        obj = self if in_place else self.copy()
         if isinstance(other, SSparseMatrix) and \
                 obj.row_names() == other.row_names() and \
                 obj.column_names() == other.column_names():
@@ -312,8 +312,8 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Multiply
     # ------------------------------------------------------------------
-    def multiply(self, other, inplace=False):
-        obj = self if inplace else self.copy()
+    def multiply(self, other, in_place=False):
+        obj = self if in_place else self.copy()
         if isinstance(other, SSparseMatrix) and \
                 obj.row_names() == other.row_names() and \
                 obj.column_names() == other.column_names():
@@ -335,10 +335,10 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Dot
     # ------------------------------------------------------------------
-    def dot(self, other, inplace=False):
+    def dot(self, other, in_place=False):
         # I am not sure should we check that : self.column_names() == other.row_names()
         # It might be too restrictive.
-        obj = self if inplace else self.copy()
+        obj = self if in_place else self.copy()
         if is_sparse_matrix(other):
             obj._sparseMatrix = obj.sparse_matrix().dot(other.sparse_matrix())
             obj._sparseMatrix.eliminate_zeros()
@@ -407,7 +407,7 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     def impose_column_names(self, names):
         if isinstance(names, list):
-            return self.transpose().impose_row_names(names).transpose(inplace=True)
+            return self.transpose().impose_row_names(names).transpose(in_place=True)
         else:
             raise TypeError("The first argument is expected to be a list of strings.")
             return None
