@@ -45,6 +45,25 @@ def is_str_like(x):
             return False
 
 
+# ------------------------------------------------------------------
+# Column binding
+# ------------------------------------------------------------------
+def column_bind(matrices):
+    if isinstance(matrices, list):
+        return column_bind(dict(zip([str(x) for x in range(len(matrices))], matrices)))
+    elif isinstance(matrices, dict):
+        res = None
+        for k in matrices:
+            if is_sparse_matrix(res) and is_sparse_matrix(matrices[k]):
+                res = res.column_bind(matrices[k])
+            else:
+                res = matrices[k]
+        return res
+    else:
+        raise TypeError("The first argument is expected to be a list or dictionary of SSparseMatrix objects.")
+        return None
+
+
 # ======================================================================
 # Class definition
 # ======================================================================
@@ -459,7 +478,7 @@ class SSparseMatrix:
             if self.row_names() == other.row_names():
                 res = SSparseMatrix(scipy.sparse.hstack([self.sparse_matrix(), other.sparse_matrix()]))
             else:
-                mat = scipy.sparse.hstack([self.sparse_matrix(), other[self.row_names(),:].sparse_matrix()])
+                mat = scipy.sparse.hstack([self.sparse_matrix(), other[self.row_names(), :].sparse_matrix()])
                 res = SSparseMatrix(mat)
 
             # Set the row names
