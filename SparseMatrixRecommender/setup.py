@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="SparseMatrixRecommender-antononcube",
+    name="SparseMatrixRecommender",
     version="0.1.0",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
@@ -12,6 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages",
+    install_requires=['numpy', 'scipy', 'SSparseMatrix'],
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
