@@ -1,5 +1,5 @@
-from SparseMatrixRecommender.src.SparseMatrixRecommender.CrossTabulate import *
-from SparseMatrixRecommender.src.SparseMatrixRecommender.SparseMatrixRecommender import *
+from SparseMatrixRecommender.SparseMatrixRecommender import *
+import pandas
 import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context

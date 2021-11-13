@@ -1,6 +1,6 @@
 import pandas
 import scipy
-from SSparseMatrix.src.SSparseMatrix import SSparseMatrix
+from SSparseMatrix import SSparseMatrix
 
 
 def cross_tabulate(data, index, columns, values=None, aggfunc=None):

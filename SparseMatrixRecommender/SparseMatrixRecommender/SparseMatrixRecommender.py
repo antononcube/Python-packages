@@ -1,8 +1,8 @@
-from SSparseMatrix.src.SSparseMatrix import SSparseMatrix
-from SSparseMatrix.src.SSparseMatrix import column_bind
-from SSparseMatrix.src.SSparseMatrix import is_sparse_matrix
-from SparseMatrixRecommender.src.SparseMatrixRecommender.CrossTabulate import cross_tabulate
-from SparseMatrixRecommender.src.SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
+from SSparseMatrix import SSparseMatrix
+from SSparseMatrix import column_bind
+from SSparseMatrix import is_sparse_matrix
+from SparseMatrixRecommender.SparseMatrixRecommender.CrossTabulate import cross_tabulate
+from SparseMatrixRecommender.SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
 import pandas
 import scipy
 
@@ -192,7 +192,7 @@ class SparseMatrixRecommender:
         return self.create_from_matrices(matrices=aSMats,
                                          add_tag_types_to_column_names=add_tag_types_to_column_names,
                                          tag_value_separator=tag_value_separator,
-                                         numericalColumnsAsCategorical=numerical_columns_as_categorical)
+                                         numerical_columns_as_categorical=numerical_columns_as_categorical)
 
     # ------------------------------------------------------------------
     # Apply LSI functions
