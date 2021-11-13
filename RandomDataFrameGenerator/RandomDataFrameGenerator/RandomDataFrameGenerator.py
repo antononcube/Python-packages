@@ -14,6 +14,17 @@ def _is_str_keys_dict(obj):
     return isinstance(obj, dict) and all([isinstance(k, str) for (k, v) in obj.items()])
 
 
+def _is_func_list(obj):
+    return isinstance(obj, list) and \
+           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in obj])
+
+
+def _is_func_dict(obj):
+    return isinstance(obj, dict) and \
+           _is_str_list(list(obj.keys())) and \
+           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in list(obj.values())])
+
+
 def random_data_frame(n_rows=None,
                       columns_spec=None,
                       form="wide",
@@ -49,21 +60,40 @@ def random_data_frame(n_rows=None,
     if isinstance(column_names, type(None)):
         column_names = random_word(size=mn_cols, kind='Common')
 
-    # Generate random values
-    aDFColumns = {}
+    # Generators
+    aDefaultGenerators = {}
     for cn in column_names:
         my_rand = random.random()
         if my_rand < 0.3:
-            aDFColumns[cn] = random_word
+            aDefaultGenerators[cn] = random_word
         elif my_rand < 0.5:
-            aDFColumns[cn] = random_string
+            aDefaultGenerators[cn] = random_string
         elif my_rand < 0.8:
-            aDFColumns[cn] = numpy.random.normal
+            aDefaultGenerators[cn] = numpy.random.normal
         else:
-            aDFColumns[cn] = numpy.random.poisson
+            aDefaultGenerators[cn] = numpy.random.poisson
+
+    if isinstance(generators, type(None)):
+
+        aGenerators = aDefaultGenerators
+
+    elif _is_func_list(generators):
+
+        aGenerators = generators
+        while len(aGenerators) < mn_cols:
+            aGenerators = aGenerators + aGenerators
+        aGenerators = dict(zip(column_names, aGenerators[0:mn_cols]))
+
+    elif _is_func_dict(generators):
+
+        common_keys = set(aDefaultGenerators) & set(generators)
+        aGenerators = aDefaultGenerators | {x: generators[x] for x in common_keys}
+
+    else:
+        raise TypeError("Unknown type of generators specification.")
+        return None
 
     # Generate data frame
-    dfRand = pandas.DataFrame.from_dict({k: f(size=mn_rows) for (k, f) in aDFColumns.items()})
+    dfRand = pandas.DataFrame.from_dict({k: f(size=mn_rows) for (k, f) in aGenerators.items()})
 
     return dfRand
-
