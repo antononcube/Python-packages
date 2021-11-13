@@ -23,21 +23,23 @@ def random_data_frame(n_rows=None,
     # Process number of rows
     mn_rows = n_rows
     if isinstance(mn_rows, type(None)):
-        mn_rows = numpy.random.poisson(lam=20, size=1)
+        mn_rows = int(numpy.random.poisson(lam=20, size=1))
+        mn_rows = 1 if mn_rows == 0 else mn_rows
     elif not isinstance(mn_rows, int) and mn_rows > 0:
         raise ValueError("The first argument 'n_rows' is expected to be a positive integer or None.")
         return None
 
     # Process number of columns
-    mn_col = None
+    mn_cols = None
     column_names = None
     if isinstance(columns_spec, type(None)):
-        mn_col = numpy.random.poisson(lam=7, size=1)
+        mn_cols = int(numpy.random.poisson(lam=7, size=1)[0])
+        mn_cols = 1 if mn_cols == 0 else mn_cols
     elif _is_str_list(columns_spec):
         column_names = columns_spec
-        mn_col = len(column_names)
+        mn_cols = len(column_names)
     elif isinstance(columns_spec, int) and columns_spec > 0:
-        mn_col = columns_spec
+        mn_cols = columns_spec
     else:
         TypeError("""The second, columns specification argument is expected to be a positive integer,
         a list of strings, or None.""")
@@ -45,7 +47,7 @@ def random_data_frame(n_rows=None,
 
     # Column names generator
     if isinstance(column_names, type(None)):
-        column_names = random_word(size=mn_col, kind='Common')
+        column_names = random_word(size=mn_cols, kind='Common')
 
     # Generate random values
     aDFColumns = {}
