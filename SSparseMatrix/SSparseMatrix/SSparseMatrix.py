@@ -207,7 +207,7 @@ class SSparseMatrix:
         return self
 
     # ------------------------------------------------------------------
-    # Access
+    # Predicates
     # ------------------------------------------------------------------
     def is_key_like(self, x):
         """Is x appropriate as a key into a SSparseMatrix object? Returns True
@@ -498,6 +498,62 @@ class SSparseMatrix:
             return None
 
     # ------------------------------------------------------------------
+    # Triplets
+    # ------------------------------------------------------------------
+    def triplets(self):
+        A = self.sparse_matrix().tocoo()
+        return list(zip([self.row_names()[i] for i in A.row],
+                        [self.column_names()[i] for i in A.col],
+                        A.data))
+
+    # ------------------------------------------------------------------
+    # Representation
+    # ------------------------------------------------------------------
+    def __str__(self):
+        maxprint = self.sparse_matrix().getmaxprint()
+
+        A = self.sparse_matrix().tocoo()
+        A2 = ([self.row_names()[i] for i in A.row],
+              [self.column_names()[i] for i in A.col],
+              A.data)
+
+        # Helper function to output "(i,j)  v"
+        def to_str(row, col, data):
+            triples = zip(list(zip(row, col)), data)
+            return '\n'.join([('  %s\t%s' % t) for t in triples])
+
+        if self.sparse_matrix().nnz > maxprint:
+            half = maxprint // 2
+            out = to_str(A2[0][:half], A2[1][:half], A2[2][:half])
+            out += "\n  :\t:\n"
+            half = maxprint - maxprint // 2
+            out += to_str(A2[0][-half:], A2[1][-half:], A2[2][-half:])
+        else:
+            out = to_str(A2[0], A2[1], A2[2])
+
+        return out
+
+    def __repr__(self):
+        res = repr(self.sparse_matrix())
+        return res.replace("sparse matrix", "sparse matrix with named rows and columns")
+
+    # ------------------------------------------------------------------
+    # Wolfram Language form
+    # ------------------------------------------------------------------
+    def wl(self):
+        A = self.sparse_matrix().tocoo()
+        triplets = list(zip([x + 1 for x in A.row], [x + 1 for x in A.col], A.data))
+
+        out = ','.join([('{%s,%s}->%s' % t) for t in triplets])
+        out = '{' + out + '}'
+
+        rows_wl = str(self.row_names()).replace("'", "\"").replace("[", "{").replace("]", "}")
+        cols_wl = str(self.column_names()).replace("'", "\"").replace("[", "{").replace("]", "}")
+
+        return "<| \"SparseMatrix\" -> SparseArray[" + out + ", {" + str(self.rows_count()) + ', ' + str(
+            self.columns_count()) + "}]," + "\"RowNames\" -> " + rows_wl + ", \"ColumnNames\" -> " + cols_wl + "|>"
+
+    # ------------------------------------------------------------------
     # Print outs
     # ------------------------------------------------------------------
     def print_matrix(self, boundary=True, dotted_implicit=True, ndigits=-1):
@@ -546,8 +602,3 @@ class SSparseMatrix:
 
         if boundary:
             print(len(fStr.format("", *col_names)) * "=")
-
-    # def __str__(self, *args):
-    #     # This has to be modified
-    #     # self.print_matrix(*args)
-    #     return "__str__ not implemented"
