@@ -36,20 +36,17 @@ Mathematica package
 
 The usage examples below can be also run through the file ["examples.py"](./examples/examples.py).
 
+------
+
 ## Installation
 
-### Install from GitHub
+Install from GitHub:
 
 ```shell
-pip install -e git+https://github.com/antononcube/Python-packages.git#egg=SSparseMatrix\&subdirectory=SSparseMatrix
+pip install git+https://github.com/antononcube/Python-packages.git#egg=SSparseMatrix\&subdirectory=SSparseMatrix
 ```
 
-### From local directory
-
-```shell
-pip install ./SSparseMatrix
-```
-
+------
 
 ## Setup and creation
 
@@ -87,6 +84,7 @@ smat.print_matrix()
     E |       .       .       .       5
     ===================================
 
+------
 
 ## Structure
 
@@ -116,6 +114,7 @@ print(smat.sparse_matrix().todense())
      [0 0 1 0]
      [0 0 0 5]]
 
+------
 
 ## Multiplication
 
@@ -162,6 +161,8 @@ smat3.print_matrix()
 - `list`
 - `numpy.array`
 - `scipy.sparse.csr_matrix`
+
+------
 
 ## Slices
 
@@ -250,6 +251,8 @@ of sub-matrices by specifying *both* row and column ranges or slices.
 
 **Remark:** "Standard" slices with integers also work. 
 
+------
+
 ## Row and column sums
 
 Row sums and dictionary of row sums:
@@ -276,6 +279,8 @@ print(smat.column_sums_dict())
     {'a': 5, 'b': 3, 'c': 1, 'd': 18}
 
 
+------
+
 ## In place computations
 
 - The methods for setting row- and column-names are "in place" methods -- no new `SSparseMatrix` objects a created.
@@ -286,9 +291,13 @@ print(smat.column_sums_dict())
  
 - The class `SSparseMatrix` has the method `copy()` that produces deep copies when invoked.
 
+------
+
 ## Unit tests
 
 The unit tests (so far) are broken into functionalities; see the folder [./tests](./tests). Similar unit tests are given in [AAp2].
+
+------
 
 ## References
 
