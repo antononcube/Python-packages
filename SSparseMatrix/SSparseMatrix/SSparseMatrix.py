@@ -535,7 +535,7 @@ class SSparseMatrix:
 
     def __repr__(self):
         res = repr(self.sparse_matrix())
-        return res.replace("sparse matrix", "sparse matrix with named rows and columns")
+        return res.replace("sparse matrix", "SSparseMatrix (sparse matrix with named rows and columns)")
 
     # ------------------------------------------------------------------
     # Wolfram Language form
