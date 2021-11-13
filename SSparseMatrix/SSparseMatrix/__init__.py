@@ -1,0 +1,5 @@
+
+from SSparseMatrix.SSparseMatrix import SSparseMatrix
+from SSparseMatrix.SSparseMatrix import make_s_sparse_matrix
+from SSparseMatrix.SSparseMatrix import is_sparse_matrix
+from SSparseMatrix.SSparseMatrix import column_bind
