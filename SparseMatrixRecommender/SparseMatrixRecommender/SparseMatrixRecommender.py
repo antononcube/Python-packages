@@ -1,8 +1,8 @@
 from SSparseMatrix import SSparseMatrix
 from SSparseMatrix import column_bind
 from SSparseMatrix import is_sparse_matrix
-from SparseMatrixRecommender.SparseMatrixRecommender.CrossTabulate import cross_tabulate
-from SparseMatrixRecommender.SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
+from .CrossTabulate import cross_tabulate
+from .DocumentTermWeightFunctions import apply_term_weight_functions
 import pandas
 import scipy
 
@@ -408,3 +408,20 @@ class SparseMatrixRecommender:
         self.set_value(dfRecs.merge(data, on=on, how="left"))
 
         return self
+
+    # ------------------------------------------------------------------
+    # Representation
+    # ------------------------------------------------------------------
+    def __str__(self):
+        k = 0
+        res = "SparseMatrixRecommender object with %d tag types:" % len(self._matrices)
+        for m in self._matrices:
+            res = res + "\n" + str(k) + ". tag type: " + m + "\n"
+            res = res + repr(self._matrices[m])
+            k = k + 1
+        return res
+
+    def __repr__(self):
+        return "<Sparse matrix recommender object with matrix dimensions %dx%d\n" \
+               "\tand with %d tag types>" % \
+               (self._M.sparse_matrix().shape + (len(self._matrices),))
