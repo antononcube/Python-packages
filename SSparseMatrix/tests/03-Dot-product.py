@@ -3,15 +3,9 @@
 
 import unittest
 
-from SSparseMatrix.src.SSparseMatrix import *
-import pandas
-import scipy
+from SSparseMatrix.SSparseMatrix import *
 import numpy
-from scipy import sparse
 
-from pandas.testing import assert_frame_equal
-from scipy.sparse import lil_matrix
-from scipy.sparse import *
 
 mat = [[1, 0, 4, 16], [4, 0, 0, 10], [0, 9, 5, 5], [0, 0, 1, 0], [0, 0, 0, 5]]
 smat = SSparseMatrix(mat)

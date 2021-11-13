@@ -3,7 +3,7 @@
 
 import unittest
 
-from SSparseMatrix.src.SSparseMatrix import *
+from SSparseMatrix.SSparseMatrix import *
 import scipy
 import numpy
 
