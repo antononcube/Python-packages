@@ -534,8 +534,11 @@ class SSparseMatrix:
         return out
 
     def __repr__(self):
+        tsize = self.sparse_matrix().shape[0] * self.sparse_matrix().shape[1]
         res = repr(self.sparse_matrix())
-        return res.replace("sparse matrix", "SSparseMatrix (sparse matrix with named rows and columns)")
+        res = res.replace("sparse matrix", "SSparseMatrix (sparse matrix with named rows and columns)")
+        res = res.replace("format>", "format, and fill-in " + str(self.sparse_matrix().nnz / tsize) + ">")
+        return res
 
     # ------------------------------------------------------------------
     # Wolfram Language form
