@@ -550,13 +550,13 @@ class SSparseMatrix:
         rows_wl = str(self.row_names()).replace("'", "\"").replace("[", "{").replace("]", "}")
         cols_wl = str(self.column_names()).replace("'", "\"").replace("[", "{").replace("]", "}")
 
-        return "<| \"SparseMatrix\" -> SparseArray[" + out + ", {" + str(self.rows_count()) + ', ' + str(
-            self.columns_count()) + "}]," + "\"RowNames\" -> " + rows_wl + ", \"ColumnNames\" -> " + cols_wl + "|>"
+        return "<| \"SparseMatrix\" -> SparseArray[" + out + ", {" + str(self.rows_count()) + ', ' + \
+               str(self.columns_count()) + "}]," + "\"RowNames\" -> " + rows_wl + ", \"ColumnNames\" -> " + cols_wl + "|>"
 
     # ------------------------------------------------------------------
     # Print outs
     # ------------------------------------------------------------------
-    def print_matrix(self, boundary=True, dotted_implicit=True, ndigits=-1):
+    def print_matrix(self, boundary=True, dotted_implicit=True, n_digits=-1):
         table_data = numpy.asarray(self.sparse_matrix().todense())
 
         invRowNames = {v: k for k, v in self.row_names_dict().items()}
@@ -565,16 +565,16 @@ class SSparseMatrix:
         col_names = [invColumnNames[x] for x in sorted(invColumnNames.keys())]
         row_names = [invRowNames[x] for x in sorted(invRowNames.keys())]
 
-        if not isinstance(ndigits, int):
-            raise TypeError("The argument ndigits is expected to be an integer.")
+        if not isinstance(n_digits, int):
+            raise TypeError("The argument n_digits is expected to be an integer.")
             return None
 
-        if ndigits < 1:
+        if n_digits < 1:
             # Not good enough for automatic determination
             # nds = math.ceil(math.log(self.sparse_matrix().max(), 10)) + 1
             nds = 8
         else:
-            nds = ndigits
+            nds = n_digits
 
         nds = max(nds, max([len(cn) for cn in self.column_names()]) + 1)
 
