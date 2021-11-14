@@ -20,26 +20,26 @@ for a more detailed introduction.
 Here is random data frame with 14 rows:
 
 ```python
-import random
 import RandomDataFrameGenerator
-random.seed(556)
-random_fata_frame(14)
+random.seed(32)
+dfRane = random_data_frame(14)
+print(dfRand.to_string())
 
-#    microfarad    cognizant     schist distillation      silkscreen     smelt    avowal
-# 1   128.41662 incapacitate 104.646227    139.82694    stemmatology  84.58968 105.23215
-# 2    60.64684    Anaphalis  60.115781     94.78120              AC  80.13380  56.82287
-# 3    74.36977        Bevin 105.786429     74.99358     three-sided  96.29678  81.08573
-# 4   106.38133  Cynoglossum  86.558457     73.15772      homologous 106.26842  89.79793
-# 5   108.22410   cockleburr  96.419656    158.43356         benight  21.46612  88.48630
-# 6   112.75338     assignor  96.690191    121.88561       Collinsia  37.87241  57.44803
-# 7   108.29561     sinciput 156.283083     85.82031 insignificantly  90.15897 123.91021
-# 8   125.81305   adulterant   5.815316    124.43350    unacquainted  83.83798 159.71666
-# 9   143.34763   herniation 154.085376     98.29034         formula  87.43241 118.33813
-# 10   59.78724      contemn 106.490506    117.72419         Odonata 111.13304 109.65395
-# 11   54.83056     handbill  62.201833    100.10282           hoary  73.74650  90.24583
-# 12   86.89153           GI 164.618819     42.90729         outrage  95.84622 111.37075
-# 13  117.43177       ramble 149.006736    131.44364     headquarter  52.73246 122.40366
-# 14   59.40202        jiffy  80.626660     59.43358             CO2 141.99879 112.86204
+#    catchy     fuzzy      dinnerware  loathsomeness  headset
+# 0   8az0M  0.078031             Sin      -0.391173        0
+# 1   yNo1P  0.809265       rampantly       0.348174        0
+# 2   7SnVa -0.951322          mostly       1.318833        3
+# 3   vwSVw  0.556764   uncoordinated       0.526345        0
+# 4   yOIFz  1.086967               2       1.174088        1
+# 5   ObVl9 -0.637250   stabilisation       1.314369        0
+# 6   hjtS9 -0.392690      confluence       1.468195        0
+# 7   imrAT -0.033134         Skagway       0.476832        2
+# 8   BuEWs -1.564054           Adams       0.275945        1
+# 9   Oqqsm -0.752404         ribband      -0.468248        0
+# 10  bFNVD  1.133413         exbibit       0.131164        0
+# 11  XnGLN -0.064703  incompressible       0.638114        0
+# 12  KBLv9  0.007437        eutectic       1.483483        2
+# 13  qyByv -1.572413          potful       0.597814        0
 ```
 
 Here is a random data frame with 10 rows, 
@@ -49,23 +49,23 @@ and specified minimum of non-missing values:
 
 ```python
 random.seed(169)
-random_data_frame(
-     nrow = 10,
-     column_names_generator = random_word,
-     generators = [numpy.random.uniform, random_string, random_pet_name, numpy.random.normal],
-     min_number_of_values = 50)
+dfRand = random_data_frame(n_rows=10,
+                           column_names_generator=random_word,
+                           generators=[numpy.random.uniform, random_string, random_pet_name, numpy.random.normal],
+                           min_number_of_values=50)
+print(dfRand.to_string())
 
-#       padder anaerobe      trunks      blain  mincingly sufficiently
-# 1  0.3047487       eM       Mitzu  1.1060173 0.67791920          NaN
-# 2  0.1833649      QYV         NaN  1.1292480 0.02718936          qNM
-# 3  0.3633935      Lvz   Mr. Darcy -0.7413958 0.57505996        vOIjG
-# 4        NaN       CA   Buttercup -0.5036046 0.65113661         rSIm
-# 5  0.6189841    mgNsl      Athena  0.7535618 0.51157628          znO
-# 6  0.8200943    ztcqa       Piper  0.5253288        NaN          VFu
-# 7  0.9958427      NaN   Jo Jo Cat -0.5989310 0.79725662           Xy
-# 8  0.6062899     NGlA Ox Kawakubo -0.4286492 0.86762227          kAl
-# 9  0.9202223  knwbSrB         NaN  0.7347059 0.48381914           lf
-# 10 0.5919762      xQB        Huso -0.7915235 0.69749880         SVxK
+#     Hampton shucks      Vilno  dome-shaped  sulfuric Seminole communicant  sobriquet
+# 1  0.498390  04SCf       Finn    -0.290356  0.756939    RLv6D         Bob   0.588488
+# 2  0.486743  MF2CA     Pepper    -1.608808  0.656198    qQT1S     Charlie        NaN
+# 3  0.363327  secTK     Sophie     0.364216  0.696118    WOA23      Biscut        NaN
+# 4  0.664976  jqIwa     Gertie    -0.708367       NaN    j0C2Y       Buffy   0.673890
+# 5  0.265121  RC6fx      Hazel    -0.281875       NaN    IpQA7        Mary   0.033396
+# 6  0.063899  59NEZ    Charlie    -0.849697  0.391148    1uJMZ       Yoshi        NaN
+# 7  0.829103  WndMz        NaN    -0.736641  0.683741    RanIL        Maya  -0.170062
+# 8  0.418702  jAYFy        Doc    -1.332957       NaN      NaN         NaN  -0.376430
+# 9  0.447908    NaN  Guinevere    -0.343796  0.614561    09EHW         NaN   0.340890
+# 0       NaN    NaN        NaN    -2.407066  0.294698    8SBNf    Staccato        NaN
 ```
 
 
