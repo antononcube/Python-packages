@@ -1,6 +1,7 @@
 import random
 import pandas
 import numpy
+import warnings
 from strgen import StringGenerator
 import pkg_resources
 
@@ -147,3 +148,108 @@ def random_pet_name(size=1, species=None, weighted=True):
     if size == 1:
         return res[0]
     return res
+
+
+# ===========================================================
+# Random pet pretentious job title
+# ===========================================================
+
+pretentiousJobTitleWords = {
+    'english':
+        {
+            'uno': ['Lead', 'Senior', 'Direct', 'Corporate', 'Dynamic',
+                    'Future', 'Product', 'National', 'Regional', 'District',
+                    'Central', 'Global', 'Relational', 'Customer', 'Investor',
+                    'Dynamic', 'International', 'Legacy', 'Forward', 'Interactive',
+                    'Internal', 'Human', 'Chief', 'Principal'],
+            'zwei': ('Solutions', 'Program', 'Brand', 'Security', 'Research',
+                     'Marketing', 'Directives', 'Implementation', 'Integration',
+                     'Functionality', 'Response', 'Paradigm', 'Tactics', 'Identity',
+                     'Markets', 'Group', 'Resonance', 'Applications', 'Optimization',
+                     'Operations', 'Infrastructure', 'Intranet', 'Communications',
+                     'Web', 'Branding', 'Quality', 'Assurance', 'Impact', 'Mobility',
+                     'Ideation', 'Data', 'Creative', 'Configuration',
+                     'Accountability', 'Interactions', 'Factors', 'Usability',
+                     'Metrics', 'Team'),
+            'trois': ('Supervisor', 'Associate', 'Executive', 'Liason',
+                      'Officer', 'Manager', 'Engineer', 'Specialist', 'Director',
+                      'Coordinator', 'Administrator', 'Architect', 'Analyst',
+                      'Designer', 'Planner', 'Synergist', 'Orchestrator', 'Technician',
+                      'Developer', 'Producer', 'Consultant', 'Assistant',
+                      'Facilitator', 'Agent', 'Representative', 'Strategist')
+        },
+    'bulgarian':
+        {
+            'uno': ('Бъдещ', 'Водещ', 'Главен', 'Старши', 'Човешки', 'Вътрешен',
+                    'Глобален', 'Директен', 'Клиентов', 'Областен', 'Динамичен',
+                    'Динамичен', 'Централен', 'Инвестиращ', 'Национален', 'Регионален',
+                    'Релационен', 'Наследствен', 'Прогресивен', 'Интерактивен',
+                    'Корпоративен', 'Международен', 'Продукционен'),
+            'zwei': ('Идеи', 'Групи', 'Данни', 'Екипи', 'Марки', 'Мрежи',
+                     'Пазари', 'Отговори', 'Решения', 'Тактики', 'Фактори', 'Интранет',
+                     'Качество', 'Операции', 'Програми', 'Директиви', 'Маркетинг',
+                     'Мобилност', 'Отчетност', 'Парадигми', 'Прилагане', 'Резонанси',
+                     'Сигурност', 'Брандиране', 'Интеграция', 'Показатели', 'Приложения',
+                     'Въздействие', 'Идентичност', 'Изследвания', 'Комуникации',
+                     'Креативност', 'Оптимизация', 'Осигуряване', 'Конфигурации',
+                     'Използваемост', 'Взаимодействия', 'Функционалности',
+                     'Инфраструктурата'),
+            'trois': ('Агент', 'Плановик', 'Техник', 'Инженер', 'Стратег',
+                      'Архитект', 'Асистент', 'Дизайнер', 'Директор', 'Мениджър',
+                      'Началник', 'Служител', 'Посредник', 'Продуцент', 'Синергист',
+                      'Сътрудник', 'Анализатор', 'Изпълнител', 'Консултант', 'Специалист',
+                      'Координатор', 'Оркестратор', 'Разработчик', 'Супервайзор',
+                      'Фасилитатор', 'Представител', 'Проектант', 'Администратор'),
+            'conjunction': ('на', 'по')
+        }
+}
+
+
+def random_pretentious_job_title(size: int = 1, number_of_words=3, language: str = 'English'):
+    mnumber_of_words = number_of_words
+    if not (isinstance(number_of_words, type(None)) or isinstance(number_of_words, int) and 0 < number_of_words < 4):
+        raise TypeError("""The argument 'number-of-words' is expected to be one of 1, 2, 3, or None. 
+            Continue using 3.""")
+        mnumber_of_words = 3
+        return None
+
+    mlanguage = language.lower()
+    if mlanguage not in set(pretentiousJobTitleWords.keys()):
+        warnings.warn("""The argument 'language' is expected to be one of { %pretentiousJobTitleWords.keys()} or None. 
+            Continuing with 'English'.""")
+        mlanguage = 'English'
+
+    if not size > 0:
+        warnings.warn("The argument 'size' is expected to be non-negative integer.")
+        return None
+
+    phrases = []
+
+    for i in range(size):
+        n = mnumber_of_words
+        if isinstance(mnumber_of_words, type(None)):
+            n = random.choice([1, 2, 3])
+
+        r_title = [random.choice(pretentiousJobTitleWords[mlanguage]['uno']),
+                   random.choice(pretentiousJobTitleWords[mlanguage]['zwei']),
+                   random.choice(pretentiousJobTitleWords[mlanguage]['trois'])]
+
+        if mlanguage == "bulgarian":
+
+            conj = random.choice(pretentiousJobTitleWords[mlanguage]["conjunction"])
+
+            if n == 2:
+                r_title = [r_title[2], conj, r_title[1]]
+            elif n == 3:
+                r_title = [r_title[0], r_title[2], conj, r_title[1]]
+            else:
+                r_title = [r_title[2], ]
+
+            phrases = phrases + [' '.join(r_title)]
+
+        else:
+
+            r_title = r_title[3 - n:3]
+            phrases = phrases + [' '.join(r_title)]
+
+    return phrases
