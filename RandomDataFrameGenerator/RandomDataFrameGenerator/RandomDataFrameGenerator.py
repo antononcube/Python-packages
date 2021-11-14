@@ -1,8 +1,8 @@
 import random
 import pandas
 import numpy
+import itertools
 from .RandomFunctions import random_string
-from .RandomFunctions import random_pet_name
 from .RandomFunctions import random_word
 
 
@@ -22,11 +22,13 @@ def _is_func_list(obj):
 def _is_func_dict(obj):
     return isinstance(obj, dict) and \
            _is_str_list(list(obj.keys())) and \
-           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in list(obj.values())])
+           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in
+                list(obj.values())])
 
 
 def random_data_frame(n_rows=None,
                       columns_spec=None,
+                      column_names_generator=None,
                       form="wide",
                       generators=None,
                       min_number_of_values=None, max_number_of_values=None,
@@ -40,7 +42,7 @@ def random_data_frame(n_rows=None,
         raise ValueError("The first argument 'n_rows' is expected to be a positive integer or None.")
         return None
 
-    # Process number of columns
+    # Process columns spec
     mn_cols = None
     column_names = None
     if isinstance(columns_spec, type(None)):
@@ -57,8 +59,16 @@ def random_data_frame(n_rows=None,
         return None
 
     # Column names generator
-    if isinstance(column_names, type(None)):
-        column_names = random_word(size=mn_cols, kind='Common')
+    if isinstance(columns_spec, type(None)):
+        if isinstance(column_names_generator, type(None)):
+            column_names = random_word(size=mn_cols, kind='Common')
+        elif isinstance(column_names_generator, type(random_word)):
+            column_names = column_names_generator(mn_cols)
+        elif isinstance(column_names_generator, type(numpy.random.poisson)):
+            column_names = column_names_generator(size=mn_cols)
+        else:
+            raise TypeError("The column names generator is expected to be None or a function.")
+            return None
 
     # Generators
     aDefaultGenerators = {}
@@ -93,7 +103,62 @@ def random_data_frame(n_rows=None,
         raise TypeError("Unknown type of generators specification.")
         return None
 
-    # Generate data frame
-    dfRand = pandas.DataFrame.from_dict({k: f(size=mn_rows) for (k, f) in aGenerators.items()})
+    # Max Number Of Values
+    if isinstance(max_number_of_values, type(None)):
+        mmax_number_of_values = mn_rows * mn_cols
+    elif isinstance(max_number_of_values, int) and max_number_of_values > 0:
+        mmax_number_of_values = max_number_of_values
+    else:
+        raise TypeError("The argument max_number_of_values is expected to be a non-negative integer or None.")
+        return None
+
+    # Min Number Of Values
+    if isinstance(min_number_of_values, type(None)):
+        mmin_number_of_values = mmax_number_of_values
+    elif isinstance(min_number_of_values, int) and min_number_of_values > 0:
+        mmin_number_of_values = min_number_of_values
+        if mmin_number_of_values > mmax_number_of_values:
+            mmin_number_of_values = mmax_number_of_values
+    else:
+        raise TypeError("The argument min_number_of_values is expected to be a non-negative integer or None.")
+        return None
+
+    # Form
+    if isinstance(form, type(None)):
+        form = "long" if random.random() < 0.3 else "wide"
+
+    if not (isinstance(form, str) and form.lower() in {"long", "wide"}):
+        raise TypeError(
+            "The argument form is expected to be None or one of \"Long\" or \"Wide\". Continuing using \"Wide\".")
+        mform = "wide"
+    else:
+        mform = form.lower()
+
+    # Generate coordinate pairs for the random values
+    dfPairs = []
+    # This is probably a "premature optimization" implementation,
+    # but it has to be considered for large n_rows * n_cols values.
+    while len(dfPairs) < mmin_number_of_values:
+        dfPairs2 = numpy.random.randint(low=0,
+                                        high=mn_rows * mn_cols,
+                                        size=numpy.random.randint(low=mmin_number_of_values,
+                                                                  high=mmax_number_of_values + 1))
+        dfPairs2 = list(dfPairs2)
+
+        if len(dfPairs) == 0:
+            dfPairs = list(dict.fromkeys(sorted(dfPairs2)))
+        else:
+            dfPairs = list(dict.fromkeys(sorted(dfPairs + dfPairs2)))
+
+    dfPairs = [(x // mn_rows, x % mn_rows) for x in dfPairs]
+    dfPairs.sort(key=lambda x: x[0])
+    colGroups = [(key, [x for (_, x) in value]) for key, value in itertools.groupby(dfPairs, lambda x: x[0])]
+
+    # Generate data frame columns
+    dfRand = {column_names[k]: dict(zip(rowInds, aGenerators[column_names[k]](size=mn_rows))) for (k, rowInds) in colGroups}
+    dfRand = pandas.DataFrame(dfRand)
+
+    if mform == "long":
+        dfRand = dfRand.melt()
 
     return dfRand
