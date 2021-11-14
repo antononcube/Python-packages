@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages",
     packages=setuptools.find_packages(),
-    install_requires=['random', 'numpy', 'pandas', 'StringGenerator'],
+    install_requires=['numpy', 'pandas', 'StringGenerator'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD-3",
@@ -21,5 +21,5 @@ setuptools.setup(
     ],
     include_package_data=True,
     package_data={'': ['resources/*.csv']},
-    python_requires='>=3.9',
+    python_requires='>=3.7',
 )
