@@ -2,6 +2,7 @@ import random
 import pandas
 import numpy
 import itertools
+import warnings
 from .RandomFunctions import random_string
 from .RandomFunctions import random_word
 
@@ -67,7 +68,9 @@ def random_data_frame(n_rows=None,
         elif isinstance(column_names_generator, type(numpy.random.poisson)):
             column_names = column_names_generator(size=mn_cols)
         else:
-            raise TypeError("The column names generator is expected to be None or a function.")
+            raise TypeError(
+                "The column names generator is expected to be None, a function, or an object of type " + str(
+                    type(numpy.random.poisson)) + ".")
             return None
 
     # Generators
@@ -128,7 +131,7 @@ def random_data_frame(n_rows=None,
         form = "long" if random.random() < 0.3 else "wide"
 
     if not (isinstance(form, str) and form.lower() in {"long", "wide"}):
-        raise TypeError(
+        warnings.warn(
             "The argument form is expected to be None or one of \"Long\" or \"Wide\". Continuing using \"Wide\".")
         mform = "wide"
     else:
@@ -155,10 +158,19 @@ def random_data_frame(n_rows=None,
     colGroups = [(key, [x for (_, x) in value]) for key, value in itertools.groupby(dfPairs, lambda x: x[0])]
 
     # Generate data frame columns
-    dfRand = {column_names[k]: dict(zip(rowInds, aGenerators[column_names[k]](size=mn_rows))) for (k, rowInds) in colGroups}
+    dfRand = {column_names[k]: dict(zip(rowInds, aGenerators[column_names[k]](size=mn_rows))) for (k, rowInds) in
+              colGroups}
     dfRand = pandas.DataFrame(dfRand)
 
+    if row_names:
+        dfRand.index = ["id." + str(x) for x in range(dfRand.shape[0])]
+
     if mform == "long":
-        dfRand = dfRand.melt()
+        if row_names:
+            dfRowNames = pandas.DataFrame({"row_name": dfRand.index})
+            dfRand = pandas.concat([dfRand.reset_index(drop=True), dfRowNames], axis=1)
+            dfRand = dfRand.melt(id_vars="row_name")
+        else:
+            dfRand = dfRand.melt()
 
     return dfRand
