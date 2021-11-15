@@ -5,7 +5,7 @@
 
 * Introduction
 - This org-mode file has a work plan list and a unit test list that correspond (and hopefully reflect) the development of the Python package [[https://github.com/antononcube/Python-packages/tree/main/SSparseMatrix][SSparseMatrix]].
-* Work plan [42%] [6/14]
+* Work plan [50%] [7/14]
 ** DONE Object structure
 - [X] Sparse matrix
   - ~scipy.sparse.csr_matrix~
@@ -49,17 +49,17 @@
 - [X] Whether to have boundary or not
 - [ ] Printing into a string
   - In order to have ~__str__~ implementation that ~print~ can use.
-** TODO Point-wise arithmetic [0%] [0/3]
-- [-] Multiplication [25%] [1/4]
+** TODO Point-wise arithmetic [0%] [0/2]
+- [-] Multiplication [75%] [3/4]
   - [X] ~SSparseMatrix~
-  - [ ] scalar
+  - [X] Scalar
   - [ ] ~numpy.array~
-  - [ ] ~scipy.sparse.csr_matrix~
-- [-] Addition [25%] [1/4]
+  - [X] ~scipy.sparse.csr_matrix~
+- [-] Addition [75%] [3/4]
   - [X] ~SSparseMatrix~
-  - [ ] scalar
+  - [X] Scalar
   - [ ] ~numpy.array~
-  - [ ] ~scipy.sparse.csr_matrix~
+  - [X] ~scipy.sparse.csr_matrix~
 ** TODO Point-wise functions [0%] [0/4]
 - [ ] Figure out general delegation mechanism
 - [ ] Abs
@@ -101,8 +101,11 @@
 - [X] Impose row names
 - [X] Impose column names
   - Done through transposing
-** TODO Export
-- [ ] Triplets
+** DONE Representation [100%] [4/4]
+- [X] Triplets
+- [X] Wolfram Language form
+- [X] String ~__str__~
+- [X] Concise form ~__repr__~
 ** TODO Revisit row and column names setting
 - [ ] Check the row names are unique
 - [ ] Check the column names are unique
@@ -122,18 +125,28 @@
   - Dot product by object's transpose
 - [X] Vector-list
 - [X] ~numpy.array~
-** TODO Point-wise operations [66%] [2/3]
-- [X] Addition
-- [X] Multiplication
-- [-] Unitizing
-  - [X] Default
+** TODO Point-wise operations [0%] [0/3]
+- [ ] Addition
+  - [ ] ~SSparseMatrix~ object
+  - [ ] ~scipy.sparse.csr_matrix~ object
+  - [ ] Scalar
+- [ ] Multiplication
+  - [ ] ~SSparseMatrix~ object
+  - [ ] ~scipy.sparse.csr_matrix~ object
+  - [ ] Scalar
+- [ ] Unitizing
+  - [ ] Default
   - [ ] By threshold
 ** TODO Row and column binding
-- [X] Row binding with proper matrices
-- [X] Column binding
+- [ ] Row binding with proper matrices
+- [ ] Column binding
 ** TODO Impose names 
+- [ ] Row names
+- [ ] Column names
 ** TODO Sums
-* TODO Documentation [%50] [1/2]
+* TODO Documentation [%50] [2/3]
+** DONE Usage messages
+- Usage message for each method.
 ** DONE First version
 - [X] Just the basics:
   - [X] Creation
