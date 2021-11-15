@@ -158,8 +158,8 @@ def random_data_frame(n_rows=None,
     colGroups = [(key, [x for (_, x) in value]) for key, value in itertools.groupby(dfPairs, lambda x: x[0])]
 
     # Generate data frame columns
-    dfRand = {column_names[k]: dict(zip(rowInds, aGenerators[column_names[k]](size=mn_rows))) for (k, rowInds) in
-              colGroups}
+    dfRand = {column_names[k]: dict(zip(rowInds, aGenerators[column_names[k]](size=mn_rows)))
+              for (k, rowInds) in colGroups}
     dfRand = pandas.DataFrame(dfRand)
 
     if row_names:
