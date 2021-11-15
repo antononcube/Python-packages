@@ -73,14 +73,15 @@ print(dfRand.to_string())
 
 ## TODO
 
-1. [ ] Extensive unit tests
-2. [ ] Efficient long form data frame generation for large data frames 
+1. [X] Usage message for each module function
+2. [ ] Extensive unit tests
+3. [ ] Efficient long form data frame generation for large data frames 
    - Right now the long form data frames are derived from the wide form ones.
    - That is inefficient for large data frames:
      - `pandas` uses the `NaN` for the missing values
    - The long form can be generated directly without generating the corresponding wide form first.
-3. [ ] Detailed usage examples
-4. [ ] Correlated columns specification(s)
+4. [ ] Detailed usage examples
+5. [ ] Correlated columns specification(s)
 
 ------
 
