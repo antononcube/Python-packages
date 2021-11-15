@@ -60,7 +60,7 @@ def random_data_frame(n_rows=None,
         return None
 
     # Column names generator
-    if isinstance(columns_spec, type(None)):
+    if isinstance(columns_spec, type(None)) or isinstance(columns_spec, int):
         if isinstance(column_names_generator, type(None)):
             column_names = random_word(size=mn_cols, kind='Common')
         elif isinstance(column_names_generator, type(random_word)):
