@@ -14,6 +14,7 @@ See the document
 for a more detailed introduction.
 ([This is the corresponding Jupyter notebook]()
 
+------
 
 ## Examples
 
@@ -68,6 +69,20 @@ print(dfRand.to_string())
 # 0       NaN    NaN        NaN    -2.407066  0.294698    8SBNf    Staccato        NaN
 ```
 
+------
+
+## TODO
+
+1. [ ] Extensive unit tests
+2. [ ] Efficient long form data frame generation for large data frames 
+   - Right now the long form data frames are derived from the wide form ones.
+   - That is inefficient for large data frames:
+     - `pandas` uses the `NaN` for the missing values
+   - The long form can be generated directly without generating the corresponding wide form first.
+3. [ ] Detailed usage examples
+4. [ ] Correlated columns specification(s)
+
+------
 
 ## References
 
