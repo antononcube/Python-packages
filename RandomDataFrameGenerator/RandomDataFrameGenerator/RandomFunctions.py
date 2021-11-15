@@ -124,6 +124,7 @@ dfPetNames = load_pet_names()
 
 
 def random_pet_name(size=1, species=None, weighted=True):
+    """Generates random pet names; popularity-based weighted sampling and species can be specified."""
     if size == 0:
         raise TypeError("The first argument is expected to be a positive integer.")
 
@@ -206,6 +207,7 @@ pretentiousJobTitleWords = {
 
 
 def random_pretentious_job_title(size: int = 1, number_of_words=3, language: str = 'English'):
+    """Generates pretentious job titles with specified number of words and language."""
     mnumber_of_words = number_of_words
     if not (isinstance(number_of_words, type(None)) or isinstance(number_of_words, int) and 0 < number_of_words < 4):
         raise TypeError("""The argument 'number-of-words' is expected to be one of 1, 2, 3, or None. 

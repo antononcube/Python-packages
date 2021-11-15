@@ -34,6 +34,7 @@ def random_data_frame(n_rows=None,
                       generators=None,
                       min_number_of_values=None, max_number_of_values=None,
                       row_names=False):
+    """Generates random tabular data frame."""
     # Process number of rows
     mn_rows = n_rows
     if isinstance(mn_rows, type(None)):
@@ -55,7 +56,7 @@ def random_data_frame(n_rows=None,
     elif isinstance(columns_spec, int) and columns_spec > 0:
         mn_cols = columns_spec
     else:
-        TypeError("""The second, columns specification argument is expected to be a positive integer,
+        raise TypeError("""The second, columns specification argument is expected to be a positive integer,
         a list of strings, or None.""")
         return None
 
