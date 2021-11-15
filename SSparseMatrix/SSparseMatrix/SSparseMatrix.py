@@ -45,6 +45,10 @@ def is_str_like(x):
             return False
 
 
+def _is_num_like(x):
+    return isinstance(x, int) or isinstance(x, float) or isinstance(x, complex)
+
+
 # ------------------------------------------------------------------
 # Column binding
 # ------------------------------------------------------------------
@@ -75,6 +79,13 @@ class SSparseMatrix:
     _dimNames = None
 
     def __init__(self, *args, **kwargs):
+        """Creation of a SSparseMatrix object.
+           The first argument is expected to be scipy sparse object.
+           The second argument and third argument, if provided,
+           are expected to be row names and column names respectively.
+           Alternatively, the corresponding named arguments
+           "row_names" and "column_names" can be used.
+        """
         self._id = "SSparseMatrix"
         self._sparseMatrix = None
         self._rowNames = None
@@ -104,51 +115,64 @@ class SSparseMatrix:
     #  Getters
     # ------------------------------------------------------------------
     def sparse_matrix(self) -> scipy.sparse.csc.csc_matrix:
+        """Sparse matrix."""
         return self._sparseMatrix
 
     def row_names_dict(self):
+        """Row names to indices dictionary."""
         return self._rowNames
 
     def row_names(self):
+        """Row names."""
         if isinstance(self._rowNames, dict):
             return list(self._rowNames.keys())
         else:
             return self._rowNames
 
     def column_names_dict(self):
+        """Column names to indices dictionary."""
         return self._colNames
 
     def column_names(self):
+        """Column names."""
         if isinstance(self._colNames, dict):
             return list(self._colNames.keys())
         else:
             return self._colNames
 
     def dimension_names(self):
+        """Dimension names."""
         return list(self._dimNames.keys())
 
     def rows_count(self):
+        """Number of rows."""
         return self.sparse_matrix().shape[0]
 
     def nrows(self):
+        """Number of rows."""
         return self.sparse_matrix().shape[0]
 
     def columns_count(self):
+        """Number of columns."""
         return self.sparse_matrix().shape[1]
 
     def ncols(self):
+        """Number of columns."""
         return self.sparse_matrix().shape[1]
 
     def shape(self):
+        """Shape."""
         return self.sparse_matrix().shape
 
     def copy(self):
+        """Deep copy."""
         return copy.deepcopy(self)
 
     # ------------------------------------------------------------------
     # Setters
     # ------------------------------------------------------------------
     def set_sparse_matrix(self, arg):
+        """Set sparse matrix names. (In place operation.)"""
         if scipy.sparse.issparse(arg):
             self._sparseMatrix = arg.tocsr()
             return self
@@ -162,6 +186,7 @@ class SSparseMatrix:
         return self
 
     def set_row_names(self, *args):
+        """Set row names. (In place operation.)"""
         if len(args) == 0:
             return self.set_row_names([str(x) for x in range(0, self.rows_count())])
         elif isinstance(args[0], str):
@@ -178,6 +203,7 @@ class SSparseMatrix:
         return self
 
     def set_column_names(self, *args):
+        """Set column names. (In place operation.)"""
         if len(args) == 0:
             return self.set_column_names([str(x) for x in range(0, self.columns_count())])
         elif isinstance(args[0], str):
@@ -194,6 +220,7 @@ class SSparseMatrix:
         return self
 
     def set_dimension_names(self, *args):
+        """Set dimension names. (In place operation.)"""
         if len(args) == 0:
             self.set_dimension_names([str(x) for x in (0, 1)])
         elif isinstance(args[0], dict) and len(args[0]) == 2:
@@ -286,6 +313,7 @@ class SSparseMatrix:
     # Predicates
     # ------------------------------------------------------------------
     def eq(self, other):
+        """Equivalence with another SSparseMatrix object."""
         if is_sparse_matrix(other):
 
             res = self.sparse_matrix() != other.sparse_matrix()
@@ -305,6 +333,7 @@ class SSparseMatrix:
     # Transpose
     # ------------------------------------------------------------------
     def transpose(self, in_place=False):
+        """Transpose."""
         obj = self if in_place else self.copy()
         obj._sparseMatrix = obj.sparse_matrix().transpose()
         t = obj._colNames
@@ -316,12 +345,14 @@ class SSparseMatrix:
     # Add
     # ------------------------------------------------------------------
     def add(self, other, in_place=False):
+        """Element-wise addition with another SSparseMatrix object,
+         or a scipy sparse matrix, or a scalar."""
         obj = self if in_place else self.copy()
         if isinstance(other, SSparseMatrix) and \
                 obj.row_names() == other.row_names() and \
                 obj.column_names() == other.column_names():
             obj._sparseMatrix = obj.sparse_matrix() + other.sparse_matrix()
-        elif scipy.sparse.issparse(other):
+        elif scipy.sparse.issparse(other) or _is_num_like(other):
             obj._sparseMatrix = obj.sparse_matrix() + other
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
@@ -332,12 +363,14 @@ class SSparseMatrix:
     # Multiply
     # ------------------------------------------------------------------
     def multiply(self, other, in_place=False):
+        """Element-wise multiplication with another SSparseMatrix object,
+         or a scipy sparse matrix, or a scalar."""
         obj = self if in_place else self.copy()
         if isinstance(other, SSparseMatrix) and \
                 obj.row_names() == other.row_names() and \
                 obj.column_names() == other.column_names():
             obj._sparseMatrix = obj.sparse_matrix().multiply(other.sparse_matrix())
-        elif scipy.sparse.issparse(other):
+        elif scipy.sparse.issparse(other) or _is_num_like(other):
             obj._sparseMatrix = obj.sparse_matrix().multiply(other)
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
@@ -348,6 +381,7 @@ class SSparseMatrix:
     # Unitize
     # ------------------------------------------------------------------
     def unitize(self):
+        """Make all non-zero elements 1."""
         self.set_sparse_matrix(self.sparse_matrix().astype(bool).astype(float))
         return self
 
@@ -355,6 +389,8 @@ class SSparseMatrix:
     # Dot
     # ------------------------------------------------------------------
     def dot(self, other, in_place=False):
+        """Dot product with another object that is a SSparseMatrix object, or scipy sparse matrix,
+        or a list, or a numpy array."""
         # I am not sure should we check that : self.column_names() == other.row_names()
         # It might be too restrictive.
         obj = self if in_place else self.copy()
@@ -384,21 +420,26 @@ class SSparseMatrix:
     # Summation
     # ------------------------------------------------------------------
     def row_sums(self):
+        """Give the row sums"""
         return self.sparse_matrix().sum(axis=1).flatten().tolist()[0]
 
     def row_sums_dict(self):
+        """Give a dictionary of the row-names to row-sums."""
         return dict(zip(self.row_names(), self.row_sums()))
 
     def column_sums(self):
+        """Give the column sums."""
         return self.sparse_matrix().sum(axis=0).flatten().tolist()[0]
 
     def column_sums_dict(self):
+        """Give a dictionary of the column-names to column-sums."""
         return dict(zip(self.column_names(), self.column_sums()))
 
     # ------------------------------------------------------------------
     # Impose row names
     # ------------------------------------------------------------------
     def impose_row_names(self, names):
+        """Impose row names. (New SSparseMatrix object is created.)"""
         obj = self.copy()
 
         if not isinstance(names, list):
@@ -425,6 +466,7 @@ class SSparseMatrix:
     # Impose column names
     # ------------------------------------------------------------------
     def impose_column_names(self, names):
+        """Impose column names. (New SSparseMatrix object is created.)"""
         if isinstance(names, list):
             return self.transpose().impose_row_names(names).transpose(in_place=True)
         else:
@@ -435,6 +477,7 @@ class SSparseMatrix:
     # Row binding
     # ------------------------------------------------------------------
     def row_bind(self, other):
+        """Row binding with another SSparseMatrix object."""
         if is_sparse_matrix(other):
 
             if not (sorted(self.column_names()) == sorted(other.column_names())):
@@ -469,6 +512,7 @@ class SSparseMatrix:
     # Although there is an "easy" implementation using transposed matrices
     # it is considered potentially too slow.
     def column_bind(self, other):
+        """Column binding with another SSparseMatrix object."""
         if is_sparse_matrix(other):
 
             if not (sorted(self.row_names()) == sorted(other.row_names())):
@@ -501,6 +545,7 @@ class SSparseMatrix:
     # Triplets
     # ------------------------------------------------------------------
     def triplets(self):
+        """Give a list of triplets (row, column, value) of the SSparseMatrix object."""
         A = self.sparse_matrix().tocoo()
         return list(zip([self.row_names()[i] for i in A.row],
                         [self.column_names()[i] for i in A.col],
@@ -510,6 +555,7 @@ class SSparseMatrix:
     # Representation
     # ------------------------------------------------------------------
     def __str__(self):
+        """String form of SSparseMatrix object that resembles that of scipy sparse matrices."""
         maxprint = self.sparse_matrix().getmaxprint()
 
         A = self.sparse_matrix().tocoo()
@@ -534,6 +580,7 @@ class SSparseMatrix:
         return out
 
     def __repr__(self):
+        """Representation of SSparseMatrix object."""
         tsize = self.sparse_matrix().shape[0] * self.sparse_matrix().shape[1]
         res = repr(self.sparse_matrix())
         res = res.replace("sparse matrix", "SSparseMatrix (sparse matrix with named rows and columns)")
@@ -544,6 +591,7 @@ class SSparseMatrix:
     # Wolfram Language form
     # ------------------------------------------------------------------
     def wl(self):
+        """Wolfram Language (WL) full form representation of the SSparseMatrix object."""
         A = self.sparse_matrix().tocoo()
         triplets = list(zip([x + 1 for x in A.row], [x + 1 for x in A.col], A.data))
 
@@ -560,6 +608,7 @@ class SSparseMatrix:
     # Print outs
     # ------------------------------------------------------------------
     def print_matrix(self, boundary=True, dotted_implicit=True, n_digits=-1):
+        """Pretty printing of the SSparseMatrix object."""
         table_data = numpy.asarray(self.sparse_matrix().todense())
 
         invRowNames = {v: k for k, v in self.row_names_dict().items()}
