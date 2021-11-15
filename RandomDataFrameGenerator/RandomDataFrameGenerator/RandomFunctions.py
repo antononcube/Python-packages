@@ -125,7 +125,7 @@ dfPetNames = load_pet_names()
 
 def random_pet_name(size=1, species=None, weighted=True):
     """Generates random pet names; popularity-based weighted sampling and species can be specified."""
-    if size == 0:
+    if not (isinstance(size, int) and size > 0):
         raise TypeError("The first argument is expected to be a positive integer.")
 
     allSpecies = set(["Any", "Cat", "Dog", "Goat", "Pig"])
@@ -142,9 +142,12 @@ def random_pet_name(size=1, species=None, weighted=True):
     if isinstance(species, type(None)) or species.capitalize() == 'Any':
         res = numpy.random.choice(dfPetNames.Name, size=size, p=weights)
     else:
-        res = numpy.random.choice(dfPetNames[dfPetNames.Species == species.capitalize()].Name,
-                                  size=size,
-                                  p=weights)
+        dfPetNames2 = dfPetNames[dfPetNames.Species == species.capitalize()]
+        names = list(dfPetNames2.Name)
+        weights = list(dfPetNames2.Weight)
+        sws = sum(weights)
+        weights = [x / sws for x in weights]
+        res = numpy.random.choice(names, size=size, p=weights)
 
     if size == 1:
         return res[0]
