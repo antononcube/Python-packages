@@ -25,6 +25,7 @@ def _normalize_sparse_by_max(smat, abs_max=False):
 # Global weights
 # ===========================================================
 def global_term_function_weights(doc_term_matrix, func="None"):
+    """Find the global term function weights for a specified SSparseMatrix object and function name."""
     if not isinstance(doc_term_matrix, SSparseMatrix):
         raise TypeError("The argument docTermMat is expected to be a SSparseMatrix object.")
         return None
@@ -93,6 +94,7 @@ def apply_term_weight_functions(doc_term_matrix,
                                 global_weight_func="None",
                                 local_weight_func="None",
                                 normalizer_func="None"):
+    """Apply specified LSI functions to the entries of SSparseMatrix object."""
     if not isinstance(doc_term_matrix, SSparseMatrix):
         raise TypeError("The argument docTermMat is expected to be a SSparseMatrix object.")
         return None

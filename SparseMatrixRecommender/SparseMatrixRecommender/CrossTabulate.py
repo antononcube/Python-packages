@@ -4,6 +4,7 @@ from SSparseMatrix import SSparseMatrix
 
 
 def cross_tabulate(data, index, columns, values=None, aggfunc=None):
+    """Cross tabulate to a SSparseMatrix object."""
     if isinstance(columns, str):
         if isinstance(data, pandas.core.frame.DataFrame) and isinstance(values, str):
             return _cross_tabulate_3(var1=data[index], var2=data[columns], values=data[values])

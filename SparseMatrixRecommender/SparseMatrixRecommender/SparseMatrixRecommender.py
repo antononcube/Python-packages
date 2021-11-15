@@ -49,21 +49,26 @@ class SparseMatrixRecommender:
     # Getters
     # ------------------------------------------------------------------
     def take_M(self):
+        """Take the recommendation matrix."""
         return self._M
 
     def take_matrices(self):
+        """Take the tag-type sub-matrices."""
         return self._matrices
 
     def take_value(self):
+        """Take the pipeline value."""
         return self._value
 
     def take_data(self):
+        """Take data."""
         return self._data
 
     # ------------------------------------------------------------------
     # Setters
     # ------------------------------------------------------------------
     def set_M(self, arg):
+        """Set recommendation matrix."""
         if is_sparse_matrix(arg):
             self._M = arg
         else:
@@ -72,6 +77,7 @@ class SparseMatrixRecommender:
         return self
 
     def set_matrices(self, arg):
+        """Set recommendation sub-matrices."""
         if is_smat_dict(arg):
             self._matrices = arg
         else:
@@ -80,10 +86,12 @@ class SparseMatrixRecommender:
         return self
 
     def set_value(self, arg):
+        """Set pipeline value."""
         self._value = arg
         return self
 
     def set_data(self, arg):
+        """Set data."""
         self._data = arg
         return self
 
@@ -94,13 +102,14 @@ class SparseMatrixRecommender:
                              add_tag_types_to_column_names=False,
                              tag_value_separator=":",
                              numerical_columns_as_categorical=False):
-
+        """Create the recommendation matrix from tag type sub-matrices."""
         if not is_smat_dict(matrices):
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
             return None
 
         if add_tag_types_to_column_names:
-            self._matrices = {k: v.set_column_names([k + tag_value_separator + y for y in v.column_names()]) for (k, v) in matrices.items()}
+            self._matrices = {k: v.set_column_names([k + tag_value_separator + y for y in v.column_names()]) for (k, v)
+                              in matrices.items()}
         else:
             self._matrices = matrices
 
@@ -115,7 +124,7 @@ class SparseMatrixRecommender:
                               add_tag_types_to_column_names=False,
                               tag_value_separator=":",
                               numerical_columns_as_categorical=False):
-
+        """Create the recommendation matrix from wide form data frame."""
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("The first argument is expected to be data frame.")
             return None
@@ -162,7 +171,7 @@ class SparseMatrixRecommender:
                               add_tag_types_to_column_names=False,
                               tag_value_separator=":",
                               numerical_columns_as_categorical=False):
-
+        """Create the recommendation matrix from long form data frame."""
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("""The first argument is expected to be data frame with columns that correspond
             to items, tag type, tag values, and tag weights.""")
@@ -201,7 +210,7 @@ class SparseMatrixRecommender:
                                     global_weight_func="IDF",
                                     local_weight_func="None",
                                     normalizer_func="Cosine"):
-
+        """Apply LSI functions to the entries of the recommendation matrix."""
         self._matrices = {k: apply_term_weight_functions(v, global_weight_func, local_weight_func, normalizer_func) for
                           (k, v) in self._matrices.items()}
 
@@ -248,7 +257,7 @@ class SparseMatrixRecommender:
     # To profile vector
     # ------------------------------------------------------------------
     def to_profile_vector(self, arg):
-
+        """Convert a list or a dictionary into a profile SSparseMatrix object (with one column.)"""
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
             return None
@@ -259,7 +268,7 @@ class SparseMatrixRecommender:
     # To history vector
     # ------------------------------------------------------------------
     def to_history_vector(self, arg):
-
+        """Convert a list or a dictionary into a profile SSparseMatrix object (with one column.)"""
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
             return None
@@ -270,7 +279,10 @@ class SparseMatrixRecommender:
     # Recommend by profile
     # ------------------------------------------------------------------
     def recommend_by_profile(self, profile, nrecs=10):
-
+        """Recommend by profile.
+           The argument 'profile' can be a tag, a list of tags, a dictionary of scored tags.
+           If the argument 'nrecs' is None, then all items with non-zero scores are returned.
+        """
         # Make scored tags vector
         if isinstance(profile, str):
             vec = self.to_profile_vector([profile]).take_value()
@@ -295,7 +307,7 @@ class SparseMatrixRecommender:
         if isinstance(nrecs, int) and nrecs < len(recs):
             recs = dict(list(recs.items())[0:nrecs])
         elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
-            raise TypeError("The second argument, nrecs, is expected to be an integer or None.")
+            raise TypeError("The second argument, nrecs, is expected to be a positive integer or None.")
             return None
 
         # Assign obtained recommendations to the pipeline value
@@ -307,7 +319,10 @@ class SparseMatrixRecommender:
     # Recommend by history
     # ------------------------------------------------------------------
     def recommend(self, history, nrecs=10, remove_history=True):
-
+        """Recommend by history.
+           The argument 'history' can be an item (string), a list of items, a dictionary of scored items.
+           If the argument 'nrecs' is None, then all items with non-zero scores are returned.
+        """
         # Make scored items vector
         if isinstance(history, str):
             vec = self.to_history_vector([history]).take_value().transpose()
@@ -340,7 +355,7 @@ class SparseMatrixRecommender:
         if isinstance(nrecs, int) and nrecs < len(recs):
             recs = dict(list(recs.items())[0:nrecs])
         elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
-            raise TypeError("The second argument, nrecs, is expected to be an integer or None.")
+            raise TypeError("The second argument, nrecs, is expected to be a positive integer or None.")
             return None
 
         # Assign obtained recommendations to the pipeline value
@@ -352,7 +367,9 @@ class SparseMatrixRecommender:
     # Profile
     # ------------------------------------------------------------------
     def profile(self, history):
-
+        """Profile of a history.
+        The argument 'history' can be an item (string), a list of items, a dictionary of scored items.
+        """
         # Make scored items vector
         if isinstance(history, str):
             vec = self.to_history_vector([history]).take_value().transpose()
@@ -383,7 +400,7 @@ class SparseMatrixRecommender:
     # Join across
     # ------------------------------------------------------------------
     def join_across(self, data, on):
-
+        """Join recommendations dictionary (scored items) with a corresponding data frame."""
         if not isinstance(self.take_value(), dict):
             raise TypeError("The pipeline value is expected to be a dictionary of scored items.")
             return None
@@ -422,6 +439,7 @@ class SparseMatrixRecommender:
         return res
 
     def __repr__(self):
+        """Representation of SparseMatrixRecommender object."""
         return "<Sparse matrix recommender object with matrix dimensions %dx%d\n" \
                "\tand with %d tag types>" % \
                (self._M.sparse_matrix().shape + (len(self._matrices),))

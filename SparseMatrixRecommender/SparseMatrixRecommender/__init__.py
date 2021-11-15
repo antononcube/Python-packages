@@ -1,4 +1,4 @@
-
+"""Sparse Matrix Recommender (SMR) package for creating SMR objects and computing recommendations with them."""
 from SparseMatrixRecommender.CrossTabulate import cross_tabulate
 from SparseMatrixRecommender.DocumentTermWeightFunctions import global_term_function_weights
 from SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
