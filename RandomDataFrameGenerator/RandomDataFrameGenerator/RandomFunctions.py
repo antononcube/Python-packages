@@ -257,4 +257,6 @@ def random_pretentious_job_title(size: int = 1, number_of_words=3, language: str
             r_title = r_title[3 - n:3]
             phrases = phrases + [' '.join(r_title)]
 
+    if size == 1:
+        return phrases[0]
     return phrases
