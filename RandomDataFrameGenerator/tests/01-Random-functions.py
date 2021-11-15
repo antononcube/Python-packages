@@ -22,8 +22,8 @@ def _is_func_list(obj):
 def _is_func_dict(obj):
     return isinstance(obj, dict) and \
            _is_str_list(list(obj.keys())) and \
-           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in
-                list(obj.values())])
+           all([isinstance(x, type(random_word)) or
+                isinstance(x, type(numpy.random.poisson)) for x in list(obj.values())])
 
 
 class BasicFunctionalities(unittest.TestCase):
