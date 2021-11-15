@@ -56,7 +56,7 @@ class BasicFunctionalities(unittest.TestCase):
         res = random_word(size=12, kind="Known")
         self.assertTrue(_is_str_list(res))
 
-    def test_random_pen_name_1(self):
+    def test_random_pet_name_1(self):
         res = random_pet_name()
         self.assertTrue(isinstance(res, str))
 
@@ -70,6 +70,22 @@ class BasicFunctionalities(unittest.TestCase):
 
     def test_random_pet_name_4(self):
         res = random_pet_name(size=12, species="Cat")
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_pretentious_job_title_1(self):
+        res = random_pretentious_job_title()
+        self.assertTrue(isinstance(res, str))
+
+    def test_random_pretentious_job_title_2(self):
+        res = random_pretentious_job_title(size=12)
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_pretentious_job_title_3(self):
+        res = random_pretentious_job_title(size=12, number_of_words=2)
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_pretentious_job_title_4(self):
+        res = random_pretentious_job_title(size=12, language="Bulgarian")
         self.assertTrue(_is_str_list(res))
 
 
