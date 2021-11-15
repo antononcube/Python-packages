@@ -27,16 +27,10 @@ For more theoretical description see the article [AA1].
 
 ## Installation
 
-### Install from GitHub
+To install from GitHub use the shell command:
 
 ```shell
-pip install -e git+https://github.com/antononcube/Python-packages.git#egg=SparseMatrixRecommender\&subdirectory=SparseMatrixRecommender
-```
-
-### From local directory
-
-```shell
-pip install ./SparseMatrixRecommender
+python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=SparseMatrixRecommender\&subdirectory=SparseMatrixRecommender
 ```
 
 ------

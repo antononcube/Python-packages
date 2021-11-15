@@ -16,6 +16,16 @@ for a more detailed introduction.
 
 ------
 
+## Installation 
+
+To install from GitHub use the shell command:
+
+```shell
+python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomDataFrameGenerator\&subdirectory=RandomDataFrameGenerator
+```
+
+------
+
 ## Examples
 
 Here is random data frame with 14 rows:
