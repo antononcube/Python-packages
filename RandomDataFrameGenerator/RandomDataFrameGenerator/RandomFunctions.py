@@ -151,7 +151,7 @@ def random_pet_name(size=1, species=None, weighted=True):
 
     if size == 1:
         return res[0]
-    return res
+    return list(res)
 
 
 # ===========================================================
