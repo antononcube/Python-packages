@@ -1,4 +1,4 @@
-# Sparse Matrix Recommender (SMR) package
+# Sparse Matrix Recommender (SMR) Python package
 
 ## In brief
 
