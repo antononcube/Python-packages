@@ -4,8 +4,8 @@
 import unittest
 
 import pandas.core.frame
-from RandomDataFrameGenerator.RandomFunctions import *
-from RandomDataFrameGenerator.RandomDataFrameGenerator import *
+from RandomDataGenerators.RandomFunctions import *
+from RandomDataGenerators.RandomDataFrameGenerator import *
 
 
 def _is_num_list(obj):

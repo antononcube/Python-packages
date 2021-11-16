@@ -1,9 +1,9 @@
 import random
 import numpy.random
-from RandomDataFrameGenerator import random_data_frame
-from RandomDataFrameGenerator import random_word
-from RandomDataFrameGenerator import random_pet_name
-from RandomDataFrameGenerator import random_string
+from RandomDataGenerators import random_data_frame
+from RandomDataGenerators import random_word
+from RandomDataGenerators import random_pet_name
+from RandomDataGenerators import random_string
 
 random.seed(991)
 print(random_data_frame())

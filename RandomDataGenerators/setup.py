@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="RandomDataFrameGenerator",
+    name="RandomDataGenerators",
     version="0.1.0",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",

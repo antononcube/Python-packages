@@ -21,7 +21,7 @@ for a more detailed introduction.
 To install from GitHub use the shell command:
 
 ```shell
-python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomDataFrameGenerator\&subdirectory=RandomDataFrameGenerator
+python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomDataGenerators\&subdirectory=RandomDataGenerators
 ```
 
 ------
@@ -31,7 +31,7 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 Here is random data frame with 14 rows:
 
 ```python
-import RandomDataFrameGenerator
+import RandomDataGenerators
 random.seed(32)
 dfRane = random_data_frame(14)
 print(dfRand.to_string())

@@ -3,7 +3,7 @@
 
 import unittest
 
-from RandomDataFrameGenerator.RandomFunctions import *
+from RandomDataGenerators.RandomFunctions import *
 
 
 def _is_str_list(obj):

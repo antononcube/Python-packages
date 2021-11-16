@@ -9,7 +9,7 @@ import pkg_resources
 # ===========================================================
 # Load words
 # ===========================================================
-def load_words():
+def load_words_data_frame():
     """Return a dataframe with words.
 
     Contains the following fields:
@@ -27,7 +27,7 @@ def load_words():
 # ===========================================================
 # Load pet names
 # ===========================================================
-def load_pet_names():
+def load_pet_names_data_frame():
     """Return a dataframe with pet names.
 
     Contains the following fields:
@@ -76,7 +76,7 @@ def random_string(size=1, chars=5):
 # ===========================================================
 
 # Read resources
-dfWords = load_words()
+dfWords = load_words_data_frame()
 
 
 def random_word(size=1, kind=None, language="English"):
@@ -120,7 +120,7 @@ def random_word(size=1, kind=None, language="English"):
 # Random pet names
 # ===========================================================
 
-dfPetNames = load_pet_names()
+dfPetNames = load_pet_names_data_frame()
 
 
 def random_pet_name(size=1, species=None, weighted=True):
