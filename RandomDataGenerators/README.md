@@ -1,4 +1,4 @@
-# Random Data Frame Generator in Python
+# Random Data Generators Python package
 
 ## In brief
 
