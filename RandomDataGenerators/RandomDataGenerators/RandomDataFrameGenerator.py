@@ -27,14 +27,7 @@ def _is_func_dict(obj):
                 list(obj.values())])
 
 
-def random_data_frame(n_rows=None,
-                      columns_spec=None,
-                      column_names_generator=None,
-                      form="wide",
-                      generators=None,
-                      min_number_of_values=None, max_number_of_values=None,
-                      row_names=False):
-    """Generates random tabular data frame."""
+def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
     # Process number of rows
     mn_rows = n_rows
     if isinstance(mn_rows, type(None)):
@@ -70,9 +63,25 @@ def random_data_frame(n_rows=None,
             column_names = column_names_generator(size=mn_cols)
         else:
             raise TypeError(
-                "The column names generator is expected to be None, a function, or an object of type " + str(
-                    type(numpy.random.poisson)) + ".")
+                "The column names generator is expected to be None, a function, or an object of type " +
+                str(type(numpy.random.poisson)) + ".")
             return None
+
+    return [mn_rows, mn_cols, column_names]
+
+
+def random_data_frame(n_rows=None,
+                      columns_spec=None,
+                      column_names_generator=None,
+                      form="wide",
+                      generators=None,
+                      min_number_of_values=None, max_number_of_values=None,
+                      row_names=False):
+    """Generates random tabular data frame."""
+    # Process rows and columns specs
+    mn_rows, mn_cols, column_names = _process_row_and_column_specs(n_rows=n_rows,
+                                                                   columns_spec=columns_spec,
+                                                                   column_names_generator=column_names_generator)
 
     # Generators
     aDefaultGenerators = {}
