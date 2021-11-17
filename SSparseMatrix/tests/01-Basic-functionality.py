@@ -8,6 +8,7 @@ import scipy
 import numpy
 import copy
 
+
 class BasicFunctionalities(unittest.TestCase):
     mat = [[1, 0, 0, 4, 0], [0, 2, 0, 0, 0], [0, 0, 0, 0, 2], [0, 0, 3, 0, 0]]
     mat2 = [[1, 0, 4], [0, 2, 0], [0, 0, 0], [0, 0, 3]]
@@ -84,7 +85,6 @@ class BasicFunctionalities(unittest.TestCase):
         self.assertTrue(sorted(self.rmat2.column_names()) == sorted(new_cols))
 
     def test_transpose_1(self):
-
         self.test_rmat()
 
         rmat2 = copy.deepcopy(self.rmat).transpose()
