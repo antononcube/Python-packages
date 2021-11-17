@@ -394,7 +394,7 @@ class SSparseMatrix:
     # Unitize
     # ------------------------------------------------------------------
     def unitize(self):
-        """Make all non-zero elements 1."""
+        """Make all non-zero elements 1. (In place operation.)"""
         self.set_sparse_matrix(self.sparse_matrix().astype(bool).astype(float))
         return self
 
@@ -406,24 +406,28 @@ class SSparseMatrix:
         or a list, or a numpy array."""
         # I am not sure should we check that : self.column_names() == other.row_names()
         # It might be too restrictive.
-        obj = self if in_place else self.copy()
+        # obj = self if in_place else self.copy()
+        obj = self if in_place else SSparseMatrix()
         if is_sparse_matrix(other):
-            obj._sparseMatrix = obj.sparse_matrix().dot(other.sparse_matrix())
+            obj._sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
             obj._sparseMatrix.eliminate_zeros()
             # We keep the row names i.e. self.rowNames = self.row_names_dict()
-            obj._colNames = other.column_names_dict()
+            obj.set_column_names(other.column_names_dict())
+            obj.set_row_names(self.row_names_dict())
         elif scipy.sparse.issparse(other):
-            obj._sparseMatrix = obj.sparse_matrix().dot(other)
+            obj._sparseMatrix = self.sparse_matrix().dot(other)
             obj._sparseMatrix.eliminate_zeros()
             obj.set_column_names()
+            obj.set_row_names(self.row_names_dict())
         elif isinstance(other, list) or isinstance(other, numpy.ndarray):
-            vec = obj.sparse_matrix().dot(other)
-            rowInds = [x for x in range(obj.rows_count())]
-            colInds = [0 for x in range(obj.rows_count())]
-            res = scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(obj.rows_count(), 1))
+            vec = self.sparse_matrix().dot(other)
+            rowInds = [x for x in range(self.rows_count())]
+            colInds = [0 for x in range(self.rows_count())]
+            res = scipy.sparse.coo_matrix((vec, (rowInds, colInds)), shape=(self.rows_count(), 1))
             res.eliminate_zeros()
             obj.set_sparse_matrix(res)
             obj.set_column_names()
+            obj.set_row_names(self.row_names_dict())
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
