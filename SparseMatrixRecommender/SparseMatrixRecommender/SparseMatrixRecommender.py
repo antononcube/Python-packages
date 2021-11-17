@@ -24,6 +24,20 @@ def is_scored_tags_dict(obj):
            all([isinstance(x, int) or isinstance(x, float) for x in obj.values()])
 
 
+def _get_non_zero_columns(ssmat):
+    smat = ssmat.sparse_matrix().tocoo()
+    cns = ssmat.column_names()
+    cns2 = [cns[i] for i in smat.col]
+    return dict(zip(cns2, smat.data))
+
+
+def _get_non_zero_rows(ssmat):
+    smat = ssmat.sparse_matrix().tocoo()
+    rns = ssmat.row_names()
+    rns2 = [rns[i] for i in smat.row]
+    return dict(zip(rns2, smat.data))
+
+
 # ======================================================================
 # Class definition
 # ======================================================================
@@ -336,7 +350,7 @@ class SparseMatrixRecommender:
             return None
 
         # Compute the recommendations
-        recs = self.take_M().dot(vec.dot(self.take_M()).transpose())
+        recs = self.take_M().dot(vec.dot(self.take_M()).transpose(in_place=True))
 
         # Take non-zero scores recommendations
         recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
