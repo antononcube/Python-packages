@@ -355,7 +355,7 @@ class SSparseMatrix:
                 obj.row_names() == other.row_names() and \
                 obj.column_names() == other.column_names():
             obj._sparseMatrix = obj.sparse_matrix() + other.sparse_matrix()
-        elif scipy.sparse.issparse(other) or _is_num_like(other):
+        elif scipy.sparse.issparse(other):
             obj._sparseMatrix = obj.sparse_matrix() + other
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
