@@ -22,7 +22,7 @@ Here is random data frame with 14 rows:
 
 ```python
 from RandomSparseMatrix.RandomFunctions import random_sparse_matrix
-rmat=random_sparse_matrix(5, 5, max_number_of_values=10)
+rmat=random_sparse_matrix(4, 4, max_number_of_values=10)
 rmat.print_matrix(n_digits=20)
 
 # ===========================================================================================
