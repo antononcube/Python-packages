@@ -236,7 +236,18 @@ class SparseMatrixRecommender:
     # To smr vector
     # ------------------------------------------------------------------
     def _to_smr_vector(self, arg, things_dict, thing_name, ref_name):
+        """To SMR vector
+        :type arg: str|dict
+        :param arg: A list of items or tags, or a dictionary of scored items or tags.
 
+        :param things_dict: Set items or tags.
+        :param thing_name: Which matrix axis, one of "column" or "row"
+
+        :param ref_name: Reference name, one of "item" or "tag"
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
+        """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
             return None
@@ -271,7 +282,14 @@ class SparseMatrixRecommender:
     # To profile vector
     # ------------------------------------------------------------------
     def to_profile_vector(self, arg):
-        """Convert a list or a dictionary into a profile SSparseMatrix object (with one column.)"""
+        """Convert a list or a dictionary into a profile SSparseMatrix (with one column.)
+
+        :type arg: str|list|dict
+        :param arg: A tag, a list of tags, or dictionary of scored tags.
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
+        """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
             return None
@@ -282,7 +300,14 @@ class SparseMatrixRecommender:
     # To history vector
     # ------------------------------------------------------------------
     def to_history_vector(self, arg):
-        """Convert a list or a dictionary into a profile SSparseMatrix object (with one column.)"""
+        """Convert a list or a dictionary into a profile SSparseMatrix (with one column.)
+
+        :type arg: str|list|dict
+        :param arg: A item, a list of item, or dictionary of scored items.
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
+        """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
             return None
@@ -294,8 +319,14 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     def recommend_by_profile(self, profile, nrecs=10):
         """Recommend by profile.
-           The argument 'profile' can be a tag, a list of tags, a dictionary of scored tags.
-           If the argument 'nrecs' is None, then all items with non-zero scores are returned.
+        :type profile: str|list|dict
+        :param profile: A tag, a list of tags, a dictionary of scored tags.
+
+        :type nrecs: int|None
+        :param nrecs: A positive integer or None. If it is None, then all items with non-zero scores are returned.
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
         """
         # Make scored tags vector
         if isinstance(profile, str):
@@ -334,8 +365,18 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     def recommend(self, history, nrecs=10, remove_history=True):
         """Recommend by history.
-           The argument 'history' can be an item (string), a list of items, a dictionary of scored items.
-           If the argument 'nrecs' is None, then all items with non-zero scores are returned.
+
+        :type history: str|list|dict
+        :param history: An item (string), a list of items, a dictionary of scored items.
+
+        :type nrecs: int|None
+        :param nrecs: A positive integer or None. If it is None, then all items with non-zero scores are returned.
+
+        :type remove_history: bool
+        :param remove_history: Should the the history be removed from the result recommendations or not?
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
         """
         # Make scored items vector
         if isinstance(history, str):
@@ -382,7 +423,12 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     def profile(self, history):
         """Profile of a history.
-        The argument 'history' can be an item (string), a list of items, a dictionary of scored items.
+
+        :type history: str|list|dict
+        :param history: An item (string), a list of items, a dictionary of scored items.
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
         """
         # Make scored items vector
         if isinstance(history, str):
@@ -413,8 +459,18 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Join across
     # ------------------------------------------------------------------
-    def join_across(self, data, on):
-        """Join recommendations dictionary (scored items) with a corresponding data frame."""
+    def join_across(self, data, on=None):
+        """Join recommendations dictionary (scored items) with a corresponding data frame.
+
+        :type data: pandas.core.DataFrame
+        :param data: A data frame.
+
+        :type on: str|None
+        :param on: Field corresponding to the items, i.e. row-names of self._M.
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
+        """
         if not isinstance(self.take_value(), dict):
             raise TypeError("The pipeline value is expected to be a dictionary of scored items.")
             return None
@@ -423,20 +479,26 @@ class SparseMatrixRecommender:
             raise TypeError("The first argument is expected to be a data frame.")
             return None
 
-        if not isinstance(on, str):
+        if not (isinstance(on, str) or isinstance(on, type(None))):
             raise TypeError("The second argument expected to be a string.")
             return None
+
+        # Automatic on values
+        mon = on
+        if isinstance(on, type(None)):
+            mon = [x for x in list(data.columns) if x.lower() == "id"]
+            mon = data.columns[0] if len(mon) == 0 else mon[0]
 
         # Make a data frame from the recommendations in the pipeline value
         recs = self.take_value()
         dfRecs = pandas.DataFrame()
-        dfRecs[on] = list(recs.keys())
+        dfRecs[mon] = list(recs.keys())
         dfRecs["Score"] = list(recs.values())
 
         # Left join recommendations with the given data frame
         # Using .join does not work because .join uses indexes.
-        # Hence using merge
-        self.set_value(dfRecs.merge(data, on=on, how="left"))
+        # Hence using merge.
+        self.set_value(dfRecs.merge(data, on=mon, how="left"))
 
         return self
 
