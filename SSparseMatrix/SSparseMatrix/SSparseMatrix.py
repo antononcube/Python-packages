@@ -171,12 +171,15 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Setters
     # ------------------------------------------------------------------
-    def set_sparse_matrix(self, arg):
+    def set_sparse_matrix(self, arg, as_is=False):
         """Set sparse matrix names. (In place operation.)"""
         if scipy.sparse.issparse(arg):
-            self._sparseMatrix = arg.tocsr()
+            if as_is:
+                self._sparseMatrix = arg
+            else:
+                self._sparseMatrix = arg.tocsr()
             return self
-        elif isinstance(arg, list):
+        elif isinstance(arg, list) or isinstance(arg, numpy.ndarray):
             smat2 = scipy.sparse.csr_matrix(arg)
             if scipy.sparse.issparse(smat2):
                 self._sparseMatrix = smat2
