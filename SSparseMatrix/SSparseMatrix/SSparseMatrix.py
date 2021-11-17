@@ -1,8 +1,7 @@
 import numpy
 import scipy
 from scipy import sparse
-import copy
-import math
+import pickle
 
 
 # ======================================================================
@@ -164,9 +163,20 @@ class SSparseMatrix:
         """Shape."""
         return self.sparse_matrix().shape
 
+    # ------------------------------------------------------------------
+    # Copying
+    # ------------------------------------------------------------------
     def copy(self):
         """Deep copy."""
-        return copy.deepcopy(self)
+        return pickle.loads(pickle.dumps(self, -1))
+
+    def __copy__(self):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    def __deepcopy__(self, memodict={}):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
 
     # ------------------------------------------------------------------
     # Setters
