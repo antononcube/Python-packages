@@ -6,7 +6,7 @@ import unittest
 from SSparseMatrix.SSparseMatrix import *
 import scipy
 import numpy
-
+import copy
 
 class BasicFunctionalities(unittest.TestCase):
     mat = [[1, 0, 0, 4, 0], [0, 2, 0, 0, 0], [0, 0, 0, 0, 2], [0, 0, 3, 0, 0]]
