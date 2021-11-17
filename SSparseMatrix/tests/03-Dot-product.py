@@ -61,18 +61,37 @@ class DotProduct(unittest.TestCase):
         self.assertTrue(smat2.eq(smat3))
 
     def test_dot_list_1(self):
+        # Verify matrix-vector(list) dot product
+
         vec2 = [1, 1, 3, 4]
-        smat2 = smat.copy().dot(vec2)
+
+        smat2 = smat.dot(vec2)
+
+        # Using scipy.sparse.csr_matrix dot product
         res2 = smat.sparse_matrix().dot(vec2)
-        vec2 = [smat[i, 0] for i in range(smat2.rows_count())]
-        self.assertTrue((res2 == vec2).all)
+
+        # From the SSparseMatrix object derive a vector
+        # (which is of type numpy.ndarray)
+        vec3 = [smat2[i, 0] for i in range(smat2.rows_count())]
+
+        # Verify same vectors
+        self.assertTrue(all(list(res2 == vec3)))
 
     def test_dot_ndarray_1(self):
+        # Verify matrix-vector(numpy.ndarray) dot product
+
         vec3 = numpy.array([1, 1, 3, 4])
-        smat3 = smat.copy().dot(vec3)
+
+        smat3 = smat.dot(vec3)
+
+        # Using scipy.sparse.csr_matrix dot product
         res3 = smat.sparse_matrix().dot(vec3)
-        vec3 = [smat[i, 0] for i in range(smat3.rows_count())]
-        self.assertTrue((res3 == vec3).all)
+
+        # From SSparseMatrix object derive a vector
+        vec4 = [smat3[i, 0] for i in range(smat3.rows_count())]
+
+        # Verify same vectors
+        self.assertTrue(all(list(res3 == vec4)))
 
 
 if __name__ == '__main__':
