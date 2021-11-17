@@ -4,6 +4,7 @@ from RandomDataGenerators import random_word
 from SparseMatrixRecommender import cross_tabulate
 import numpy
 import random
+import math
 
 
 def random_sparse_matrix(n_rows=None,
@@ -17,9 +18,6 @@ def random_sparse_matrix(n_rows=None,
 
     if isinstance(generators, type(None)):
         mgenerators = [lambda size: numpy.random.normal(loc=10, scale=2, size=size)]
-
-    if isinstance(min_number_of_values, type(None)):
-        min_number_of_values = 2
 
     mn_rows, mn_cols, column_names = RandomDataGenerators.RandomDataFrameGenerator._process_row_and_column_specs(
         n_rows=n_rows,
@@ -35,11 +33,19 @@ def random_sparse_matrix(n_rows=None,
         columns_spec=mn_rows,
         column_names_generator=mrow_names_generator)
 
+    mmax_number_of_values = max_number_of_values
+    if isinstance(max_number_of_values, type(None)):
+        mmax_number_of_values = max(1, math.floor(0.1 * mn_rows * mn_cols))
+
+    mmin_number_of_values = min_number_of_values
+    if isinstance(min_number_of_values, type(None)):
+        mmin_number_of_values = 2
+
     dfRandLong = random_data_frame(n_rows=mn_rows,
                                    columns_spec=column_names,
                                    generators=mgenerators,
-                                   max_number_of_values=max_number_of_values,
-                                   min_number_of_values=min_number_of_values,
+                                   max_number_of_values=mmax_number_of_values,
+                                   min_number_of_values=mmin_number_of_values,
                                    row_names=True,
                                    form='Long')
     dfRandLong = dfRandLong.fillna(0)
