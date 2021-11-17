@@ -32,6 +32,12 @@ class PointwiseOperations(unittest.TestCase):
         rmat2.set_row_names(rmat.row_names())
         self.assertTrue(rmat.multiply(rmat).eq(rmat2))
 
+    def test_multiply_scalar_1(self):
+        rmat2 = SSparseMatrix(rmat.sparse_matrix().multiply(3.0))
+        rmat2.set_column_names(rmat.column_names())
+        rmat2.set_row_names(rmat.row_names())
+        self.assertTrue(rmat.multiply(3.0).eq(rmat2))
+
 
 if __name__ == '__main__':
     unittest.main()
