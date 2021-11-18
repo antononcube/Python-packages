@@ -33,7 +33,9 @@ def load_titanic_data_frame():
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
     stream = pkg_resources.resource_stream(__name__, 'resources/dfTitanic.csv')
-    return pandas.read_csv(stream, encoding='latin-1')
+    dfData = pandas.read_csv(stream, encoding='latin-1')
+    dfData["id"] = ["id." + str(x) for x in dfData["id"]]
+    return dfData
 
 
 # ===========================================================
@@ -44,7 +46,6 @@ def load_mushroom_data_frame():
 
     Mushroom edibility
     ------------------
-
     This data set consists of 8124 records of the physical
     characteristics of gilled mushrooms in the Agaricus and Lepiota family,
     along with their edibility.
@@ -56,5 +57,6 @@ def load_mushroom_data_frame():
     # stream.read()
     stream = pkg_resources.resource_stream(__name__, 'resources/dfMushroom.csv.gz')
     dfData = pandas.read_csv(stream, compression='gzip')
+    dfData["id"] = ["id." + str(x) for x in dfData["id"]]
     return dfData
 
