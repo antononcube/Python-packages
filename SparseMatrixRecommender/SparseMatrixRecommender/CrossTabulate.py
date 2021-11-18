@@ -1,13 +1,35 @@
+import numpy
 import pandas
 import scipy
+import bisect
 from SSparseMatrix import SSparseMatrix
 
 
 def cross_tabulate(data, index, columns, values=None, aggfunc=None, str_nan="None", num_nan=0):
-    """Cross tabulate to a SSparseMatrix object."""
+    """Cross tabulate to a SSparseMatrix object.
+
+    :type data: pandas.core.frame.DataFrame
+    :param data: Data frame to be cross tabulated.
+
+    :type index: str
+    :param index: Column name for the rows of the result sparse matrix.
+
+    :type columns: str|list
+    :param columns: Column name(s) of the data frame for the columns of the result sparse matrix.
+
+    :type values: str|None
+    :param values: Column name of the data frame for the values in the result sparse matrix.
+
+    :param aggfunc: Aggregation function for the values.
+
+    :param str_nan: Value to replace NaNs in the categorical columns.
+    :param num_nan: Value to replace NaNs in the numerical columns.
+    :return: SSparseMatrix|dict
+    """
     if isinstance(columns, str):
         if isinstance(data, pandas.core.frame.DataFrame) and isinstance(values, str):
-            return _cross_tabulate_3(var1=data[index], var2=data[columns].fillna(str_nan), values=data[values].fill_nan(num_nan))
+            return _cross_tabulate_3(var1=data[index], var2=data[columns].fillna(str_nan),
+                                     values=data[values].fill_nan(num_nan))
         elif isinstance(data, pandas.core.frame.DataFrame):
             return _cross_tabulate_2(var1=data[index], var2=data[columns].fillna(str_nan))
         else:
@@ -48,3 +70,44 @@ def _cross_tabulate_3(var1, var2, values):
     smat.set_column_names([str(x) for x in col_names])
 
     return smat
+
+
+def categorize_to_intervals(vec, breaks=None, probs=None, interval_names=False):
+    """Categorize to intervals.
+
+    :type vec: list|numpy.ndarray
+    :param vec: A numerical vector to be categorized.
+    :param breaks: A numerical vector with breaks to be used. If None then numpy.quantile is used.
+    :param probs: Probabilities to find quantiles with.
+    :param interval_names: Should the intervals be represented with integers or with character names?
+    :return resVec: List of integers or list of strings.
+    """
+    if not (isinstance(vec, list) or isinstance(numpy.ndarray)):
+        raise TypeError("The first argument 'vec' is expected to be a list or numpy.ndarray.")
+        return None
+
+    mprobs = probs
+    if isinstance(probs, type(None)):
+        mprobs = [x * 0.1 for x in range(0, 11)]
+    elif isinstance(probs, list) or isinstance(probs, numpy.ndarray):
+        mprobs = sorted(list(set(probs)))
+    else:
+        raise TypeError("The third argument, 'probs', is expected to be a list, numpy.ndarray, or None.")
+        return None
+
+    if isinstance(breaks, type(None)):
+        mbreaks = numpy.quantile(vec, mprobs)
+        mbreaks = sorted(list(set(mbreaks)))
+    elif isinstance(breaks, list) or isinstance(breaks, numpy.ndarray):
+        mbreaks = sorted(list(set(breaks)))
+    else:
+        raise TypeError("The second argument, 'breaks', is expected to be a list, numpy.ndarray, or None.")
+        return None
+
+    resVec = [bisect.bisect_left(a=mbreaks, x=x) for x in vec]
+
+    if interval_names:
+        interval_names = [str(mbreaks[i]) + "≤v<" + str(mbreaks[i+1]) for i in range(len(mbreaks)-1)]
+        resVec = [interval_names[i] if i < len(interval_names) else interval_names[-1] for i in resVec]
+
+    return resVec
