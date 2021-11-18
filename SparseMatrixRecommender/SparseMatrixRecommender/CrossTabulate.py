@@ -3,13 +3,13 @@ import scipy
 from SSparseMatrix import SSparseMatrix
 
 
-def cross_tabulate(data, index, columns, values=None, aggfunc=None):
+def cross_tabulate(data, index, columns, values=None, aggfunc=None, str_nan="None", num_nan=0):
     """Cross tabulate to a SSparseMatrix object."""
     if isinstance(columns, str):
         if isinstance(data, pandas.core.frame.DataFrame) and isinstance(values, str):
-            return _cross_tabulate_3(var1=data[index], var2=data[columns], values=data[values])
+            return _cross_tabulate_3(var1=data[index], var2=data[columns].fillna(str_nan), values=data[values].fill_nan(num_nan))
         elif isinstance(data, pandas.core.frame.DataFrame):
-            return _cross_tabulate_2(var1=data[index], var2=data[columns])
+            return _cross_tabulate_2(var1=data[index], var2=data[columns].fillna(str_nan))
         else:
             raise TypeError(
                 "The first argument is expected to be a data frame.")
