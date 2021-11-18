@@ -19,5 +19,6 @@ setuptools.setup(
         "License :: OSI Approved :: GPL-3",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.9',
+    package_data={'': ['resources/*.csv', 'resources/*.csv.zip']},
+    python_requires='>=3.7',
 )
