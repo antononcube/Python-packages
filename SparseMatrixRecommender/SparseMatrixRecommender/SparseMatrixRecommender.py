@@ -112,11 +112,20 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Create with matrices
     # ------------------------------------------------------------------
-    def create_from_matrices(self, matrices,
+    def create_from_matrices(self, matrices: dict,
                              add_tag_types_to_column_names=False,
                              tag_value_separator=":",
                              numerical_columns_as_categorical=False):
-        """Create the recommendation matrix from tag type sub-matrices."""
+        """Create the recommendation matrix from tag type sub-matrices.
+
+        :type matrices: dict
+        :param matrices: Tag type sub-matrices.
+        :param add_tag_types_to_column_names: Should tag types be used as prefixes or not?
+        :param tag_value_separator: String to separate tag-type prefixes from tags
+                                   (in the column names of the recommendation matrix).
+        :param numerical_columns_as_categorical: Should numerical columns be turned into categorical or not?
+        :return: self: SparseMatrixObject
+        """
         if not is_smat_dict(matrices):
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
             return None
@@ -138,7 +147,17 @@ class SparseMatrixRecommender:
                               add_tag_types_to_column_names=False,
                               tag_value_separator=":",
                               numerical_columns_as_categorical=False):
-        """Create the recommendation matrix from wide form data frame."""
+        """Create the recommendation matrix from wide form data frame.
+
+        :param data: A data frame with wide form(at) data.
+        :param item_column_name: Name of the column with the items.
+        :param columns: Which columns to use for making the recommendations matrix.
+        :param add_tag_types_to_column_names: Should tag types be used as prefixes or not?
+        :param tag_value_separator: String to separate tag-type prefixes from tags
+                                   (in the column names of the recommendation matrix).
+        :param numerical_columns_as_categorical: Should numerical columns be turned into categorical or not?
+        :return: self: SparseMatrixObject
+        """
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("The first argument is expected to be data frame.")
             return None
@@ -178,14 +197,26 @@ class SparseMatrixRecommender:
     # Create form long form
     # ------------------------------------------------------------------
     def create_from_long_form(self, data,
-                              item_column_mame="Item",
+                              item_column_name="Item",
                               tag_type_column_name="TagType",
                               tag_column_name="Tag",
                               weight_column_name="Weight",
                               add_tag_types_to_column_names=False,
                               tag_value_separator=":",
                               numerical_columns_as_categorical=False):
-        """Create the recommendation matrix from long form data frame."""
+        """Create the recommendation matrix from long form data frame.
+
+        :param data: A data frame with long form(at) data.
+        :param item_column_name: Name of the column with the items.
+        :param tag_type_column_name: Name of the column with the tag types.
+        :param tag_column_name: Name of the column with the tags.
+        :param weight_column_name: Name of the column with the tag weights.
+        :param add_tag_types_to_column_names: Should tag types be used as prefixes or not?
+        :param tag_value_separator: String to separate tag-type prefixes from tags
+                                   (in the column names of the recommendation matrix).
+        :param numerical_columns_as_categorical: Should numerical columns be turned into categorical or not?
+        :return: self: SparseMatrixObject
+        """
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("""The first argument is expected to be data frame with columns that correspond
             to items, tag type, tag values, and tag weights.""")
@@ -198,7 +229,7 @@ class SparseMatrixRecommender:
 
         # Cross tabulate the data frame subset for each tag type
         aSMats = {x: cross_tabulate(gb.get_group(x),
-                                    index=item_column_mame,
+                                    index=item_column_name,
                                     columns=tag_column_name,
                                     values=weight_column_name) for x in gb.groups}
 
@@ -224,7 +255,13 @@ class SparseMatrixRecommender:
                                     global_weight_func="IDF",
                                     local_weight_func="None",
                                     normalizer_func="Cosine"):
-        """Apply LSI functions to the entries of the recommendation matrix."""
+        """Apply LSI functions to the entries of the recommendation matrix.
+
+        :param global_weight_func: LSI global term weight function. One of "ColumnSum", "Entropy", "IDF", "None".
+        :param local_weight_func: LSI local term weight function. One of "Binary", "Log", "None".
+        :param normalizer_func: LSI normalizer function. One of "Cosine", "None", "RowSum".
+        :return: self: SparseMatrixObject
+        """
         self._matrices = {k: apply_term_weight_functions(v, global_weight_func, local_weight_func, normalizer_func) for
                           (k, v) in self._matrices.items()}
 
