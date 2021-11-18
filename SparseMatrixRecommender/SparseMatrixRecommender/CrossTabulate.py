@@ -29,7 +29,7 @@ def cross_tabulate(data, index, columns, values=None, aggfunc=None, str_nan="Non
     if isinstance(columns, str):
         if isinstance(data, pandas.core.frame.DataFrame) and isinstance(values, str):
             return _cross_tabulate_3(var1=data[index], var2=data[columns].fillna(str_nan),
-                                     values=data[values].fill_nan(num_nan))
+                                     values=numpy.nan_to_num(x=data[values], nan=num_nan))
         elif isinstance(data, pandas.core.frame.DataFrame):
             return _cross_tabulate_2(var1=data[index], var2=data[columns].fillna(str_nan))
         else:
@@ -107,7 +107,19 @@ def categorize_to_intervals(vec, breaks=None, probs=None, interval_names=False):
     resVec = [bisect.bisect_left(a=mbreaks, x=x) for x in vec]
 
     if interval_names:
-        interval_names = [str(mbreaks[i]) + "≤v<" + str(mbreaks[i+1]) for i in range(len(mbreaks)-1)]
+        interval_names = [str(mbreaks[i]) + "≤v<" + str(mbreaks[i + 1]) for i in range(len(mbreaks) - 1)]
         resVec = [interval_names[i] if i < len(interval_names) else interval_names[-1] for i in resVec]
 
     return resVec
+
+
+def numerical_column_to_s_sparse_matrix(data: pandas.core.frame.DataFrame, index: str, column: str):
+    """Convert a numerical column of data frame into SSparseMatrix (with one column.)
+
+    :param data: A data frame.
+    :param index: The index/ID column of the data frame.
+    :param column: The numerical column to be converted.
+    :return: SSparseMatrix
+    """
+    data2 = pandas.DataFrame({"Index": data[index], "Variable": column, "Values": data[column]})
+    return cross_tabulate(data=data2, index="Index", columns="Variable", values="Values")
