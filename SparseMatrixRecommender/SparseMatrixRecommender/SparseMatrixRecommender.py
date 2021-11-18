@@ -79,6 +79,29 @@ class SparseMatrixRecommender:
         return self._data
 
     # ------------------------------------------------------------------
+    # Echoers
+    # ------------------------------------------------------------------
+    def echo_M(self):
+        """Echo the recommendation matrix."""
+        print(self._M)
+        return self
+
+    def echo_matrices(self):
+        """Echo the tag-type sub-matrices."""
+        print(self._matrices)
+        return self
+
+    def echo_value(self):
+        """Echo the pipeline value."""
+        print(self._value)
+        return self
+
+    def echo_data(self):
+        """Echo data."""
+        print(self._data)
+        return self
+
+    # ------------------------------------------------------------------
     # Setters
     # ------------------------------------------------------------------
     def set_M(self, arg):
@@ -143,7 +166,8 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Create form wide form
     # ------------------------------------------------------------------
-    def create_from_wide_form(self, data, item_column_name, columns,
+    def create_from_wide_form(self, data, item_column_name,
+                              columns=None,
                               add_tag_types_to_column_names=False,
                               tag_value_separator=":",
                               numerical_columns_as_categorical=False):
