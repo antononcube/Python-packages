@@ -639,6 +639,28 @@ class SSparseMatrix:
                str(self.columns_count()) + "}]," + "\"RowNames\" -> " + rows_wl + ", \"ColumnNames\" -> " + cols_wl + "|>"
 
     # ------------------------------------------------------------------
+    # Convert to Wolfram Language (deferred)
+    # ------------------------------------------------------------------
+    def to_wl(self):
+        """Convert to Wolfram Language form (deferred.)
+
+        See WL package
+        [SSparseMatrix.m](https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m).
+
+        The actual definition (most likely) uses the dictionary representation, self.to_dict().
+        (The function SSparseMatrix`ToSSparseMatrix knows how to make SSparseMatrix objects from that representation.)
+
+        Here is a definition with the declaration of the package wolframclient:
+
+        ..code:: python
+            from wolframclient.language import wl
+
+            def to_wl(self):
+                return wl.SSparseMatrix.ToSSparseMatrix(self.to_dict())
+        """
+        pass
+
+    # ------------------------------------------------------------------
     # Print outs
     # ------------------------------------------------------------------
     def print_matrix(self, boundary=True, dotted_implicit=True, n_digits=-1):
