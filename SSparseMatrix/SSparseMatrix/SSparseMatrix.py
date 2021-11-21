@@ -71,7 +71,6 @@ def column_bind(matrices):
 # Class definition
 # ======================================================================
 class SSparseMatrix:
-    _id = "SSparseMatrix"
     _sparseMatrix = None
     _rowNames = None
     _colNames = None
@@ -85,7 +84,6 @@ class SSparseMatrix:
            Alternatively, the corresponding named arguments
            "row_names" and "column_names" can be used.
         """
-        self._id = "SSparseMatrix"
         self._sparseMatrix = None
         self._rowNames = None
         self._colNames = None
@@ -605,7 +603,26 @@ class SSparseMatrix:
         return res
 
     # ------------------------------------------------------------------
-    # Wolfram Language form
+    # To dictionary form
+    # ------------------------------------------------------------------
+    def to_dict(self):
+        """Convert to dictionary form.
+
+        Returns dictionary representation of the SSparseMatrix object with keys
+        ['rowIndexes', 'columnIndexes', 'values', 'shape', 'rowNames', 'columnNames'].
+
+        The keys ['rowIndexes', 'columnIndexes', 'values'] correspond to the result of scipy.sparse.find.
+
+        The row- and column indices are given separately from the row- and column names in order
+        to facilitate rapid conversion and serialization.
+        """
+        res = scipy.sparse.find(self.sparse_matrix())
+        res = dict(zip(['rowIndexes', 'columnIndexes', 'values'], res))
+        res = res | {"shape": self.shape(), "rowNames": self.row_names(), "columnNames": self.column_names()}
+        return res
+
+    # ------------------------------------------------------------------
+    # Wolfram Language full form
     # ------------------------------------------------------------------
     def wl(self):
         """Wolfram Language (WL) full form representation of the SSparseMatrix object."""
