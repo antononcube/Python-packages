@@ -644,8 +644,11 @@ class SSparseMatrix:
     def to_wl(self):
         """Convert to Wolfram Language form (deferred.)
 
-        See WL package
-        [SSparseMatrix.m](https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m).
+        See the GitHub repository
+        `Wolfram Client for Python: <https://github.com/wolframResearch/WolframClientForPython>`_.
+
+        See the WL package
+        `SSparseMatrix.m <https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m>`_.
 
         The actual definition (most likely) uses the dictionary representation, self.to_dict().
         (The function SSparseMatrix`ToSSparseMatrix knows how to make SSparseMatrix objects from that representation.)
