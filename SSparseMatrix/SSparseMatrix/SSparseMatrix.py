@@ -439,7 +439,7 @@ class SSparseMatrix:
             obj._sparseMatrix.eliminate_zeros()
             obj.set_column_names()
             obj.set_row_names(self.row_names_dict())
-        elif isinstance(other, list) or isinstance(other, numpy.ndarray):
+        elif isinstance(other, list):
             vec = self.sparse_matrix().dot(other)
             rowInds = [x for x in range(self.rows_count())]
             colInds = [0 for x in range(self.rows_count())]
@@ -447,7 +447,10 @@ class SSparseMatrix:
             res.eliminate_zeros()
             obj.set_sparse_matrix(res)
             obj.set_column_names()
-            obj.set_row_names(self.row_names())
+            obj.set_row_names(self.row_names_dict())
+        elif isinstance(other, numpy.ndarray):
+            vec = scipy.sparse.csr_matrix(other)
+            obj = self.dot(vec)
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
