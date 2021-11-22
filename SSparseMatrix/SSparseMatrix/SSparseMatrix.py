@@ -432,6 +432,44 @@ class SSparseMatrix:
         return obj
 
     # ------------------------------------------------------------------
+    # Maximums
+    # ------------------------------------------------------------------
+    def row_maximums(self):
+        """Give the row maximums"""
+        return self.sparse_matrix().max(axis=1).todense().flatten().tolist()[0]
+
+    def row_maximums_dict(self):
+        """Give a dictionary of the row-names to row-maximums."""
+        return dict(zip(self.row_names(), self.row_maximums()))
+
+    def column_maximums(self):
+        """Give the column maximums."""
+        return self.sparse_matrix().max(axis=0).todense().flatten().tolist()[0]
+
+    def column_maximums_dict(self):
+        """Give a dictionary of the column-names to column-maximums."""
+        return dict(zip(self.column_names(), self.column_maximums()))
+
+    # ------------------------------------------------------------------
+    # Minimums
+    # ------------------------------------------------------------------
+    def row_minimums(self):
+        """Give the row minimums"""
+        return self.sparse_matrix().min(axis=1).todense().flatten().tolist()[0]
+
+    def row_minimums_dict(self):
+        """Give a dictionary of the row-names to row-minimums."""
+        return dict(zip(self.row_names(), self.row_minimums()))
+
+    def column_minimums(self):
+        """Give the column minimums."""
+        return self.sparse_matrix().min(axis=0).todense().flatten().tolist()[0]
+
+    def column_minimums_dict(self):
+        """Give a dictionary of the column-names to column-mins."""
+        return dict(zip(self.column_names(), self.column_minimums()))
+
+    # ------------------------------------------------------------------
     # Summation
     # ------------------------------------------------------------------
     def row_sums(self):
@@ -713,3 +751,7 @@ class SSparseMatrix:
 
         if boundary:
             print(len(fStr.format("", *col_names)) * "=")
+
+    # ------------------------------------------------------------------
+    # Delegation
+    # ------------------------------------------------------------------
