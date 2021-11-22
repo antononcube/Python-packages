@@ -12,7 +12,8 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages",
-    install_requires=['numpy', 'scipy', 'pandas', 'SSparseMatrix', 'SparseMatrixRecommender'],
+    install_requires=['numpy', 'scipy', 'pandas', 'stop-words', 'snowballstemmer',
+                      'SSparseMatrix', 'SparseMatrixRecommender'],
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
