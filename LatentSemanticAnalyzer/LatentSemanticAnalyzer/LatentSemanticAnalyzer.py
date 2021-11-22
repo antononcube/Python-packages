@@ -9,6 +9,7 @@ import stop_words as stop_words_package
 import pandas
 import scipy
 import scipy.sparse.linalg
+import scipy.spatial
 import numpy
 import warnings
 
@@ -22,6 +23,34 @@ def _is_str_list(obj):
 
 def _is_str_dict(obj):
     return isinstance(obj, dict) and _is_str_list(list(obj.keys())) and _is_str_list(list(obj.values()))
+
+
+def _left_normalize_matrix_product(W, H):
+    d = [scipy.sparse.linalg.norm(W[:, i].sparse_matrix()) for i in range(W.columns_count())]
+    S = scipy.sparse.diags(diagonals=[d], offsets=[0])
+    SI = scipy.sparse.diags(diagonals=[[1 / x if abs(x) > 0 else 0 for x in d]], offsets=[0])
+
+    SI = SSparseMatrix(SI, row_names=H.row_names(), column_names=H.row_names())
+
+    return {"W": W.dot(S), "H": SI.dot(H)}
+
+
+def _right_normalize_matrix_product(W, H):
+    d = [scipy.sparse.linalg.norm(H[:, i].sparse_matrix()) for i in range(H.rows_count())]
+    S = scipy.sparse.diags(diagonals=[d], offsets=[0])
+    SI = scipy.sparse.diags(diagonals=[[1 / x if abs(x) > 0 else 0 for x in d]], offsets=[0])
+
+    S = SSparseMatrix(S, row_names=H.row_names(), column_names=H.row_names())
+
+    return {"W": W.dot(SI), "H": S.dot(H)}
+
+
+def _sort_dict(x):
+    return dict([(k, v) for k, v in sorted(x.items(), key=lambda item: item[1])])
+
+
+def _reverse_sort_dict(x):
+    return dict([(k, v) for k, v in sorted(x.items(), key=lambda item: -item[1])])
 
 
 # ======================================================================
@@ -121,6 +150,16 @@ class LatentSemanticAnalyzer:
             return None
         return self
 
+    def set_weighted_document_term_matrix(self, arg):
+        """Set weighted document-term matrix."""
+        if is_sparse_matrix(arg):
+            self._wDocTermMat = arg
+            self._terms = arg.column_names()
+        else:
+            raise TypeError("The first argument is expected to be a SSparseMatrix object.")
+            return None
+        return self
+
     def set_global_term_weights(self, arg):
         """Set global term weights value."""
         self._globalWeights = arg
@@ -211,11 +250,18 @@ class LatentSemanticAnalyzer:
                        min_number_of_documents_per_term: int = 12,
                        method: str = "SVD",
                        max_steps: int = 100):
+        """Extract topics.
 
+        :param number_of_topics: Number of topics to extract.
+        :param min_number_of_documents_per_term: Minimum number of documents per term.
+        :param method: Method for matrix factorization. (Only "SVD" currently implemented.)
+        :param max_steps: Maximum number of steps for the matrix factorization algorith,
+        :return self:
+        """
         # Take terms present in large enough number of documents
         smat01 = self.take_document_term_matrix().unitize()
         cs = smat01.column_sums_dict()
-        ccols = [key for (key, value) in cs.items() if value > min_number_of_documents_per_term]
+        ccols = [key for (key, value) in cs.items() if value >= min_number_of_documents_per_term]
 
         smat = self.take_weighted_doc_term_mat()[:, ccols]
 
@@ -247,4 +293,54 @@ class LatentSemanticAnalyzer:
         self._H.set_row_names(topic_names)
         self._W.set_column_names(topic_names)
 
+        return self
+
+    def extract_statistical_thesaurus(self, words: list, n: int = 12, method: str = "euclidian"):
+        """Extract statistical thesaurus.
+
+        :param words: Words to find statistical thesaurus entries for.
+        :param n: Number of nearest neighbors per word.
+        :param method: Method for nearest neighbors finding.
+        :return self:
+        """
+        if not _is_str_list(words):
+            raise TypeError("The first argument, 'words', is expected to be a list of strings.")
+
+        factRes = _left_normalize_matrix_product(self.take_W(), self.take_H())
+
+        # Using Cosine similarity is not a good idea
+        if method.lower() == "cosine":
+            smrObj = (SparseMatrixRecommender()
+                      .create_from_matrices({"Words": factRes["H"].transpose()})
+                      .apply_term_weight_functions(global_weight_func="None",
+                                                   local_weight_func="None",
+                                                   normalizer_func="Cosine"))
+
+            res = dict([(w, smrObj.recommend(history=w, nrecs=n, remove_history=False).take_value()) for w in words])
+        elif method.lower() == "kdtree":
+            matDist = scipy.spatial.KDTree(factRes["H"].transpose().sparse_matrix().todense())
+            print(matDist)
+            matDist2 = SSparseMatrix(matDist,
+                                     row_names=factRes["H"].column_names(),
+                                     column_names=factRes["H"].column_names())
+            matDist3 = matDist2[words, :]
+            res = matDist3.row_dictionaries(sort=True)
+            res = dict([(k, v.items()[-n:-1]) for (k, v) in res.items()])
+        else:
+            H = factRes["H"]
+            H.print_matrix(n_digits=25)
+            res = {}
+            for w in words:
+                M = H[:, [w, ]].dot(numpy.ones([1, H.columns_count()]))
+                M.set_column_names(H.column_names())
+                M = M.add(H.multiply(-1))
+                M = M.multiply(M)
+                M = M.sparse_matrix().sqrt()
+                M2 = SSparseMatrix(M, row_names=H.row_names(), column_names=H.column_names())
+                dists = _sort_dict(M2.column_sums_dict())
+                if len(dists) > n+1:
+                    dists = dict(list(dists.items())[0:n+1])
+                res = res | {w: dists}
+
+        self.set_value(res)
         return self
