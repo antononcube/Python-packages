@@ -705,8 +705,8 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Wolfram Language full form
     # ------------------------------------------------------------------
-    def wl(self):
-        """Wolfram Language (WL) full form representation of the SSparseMatrix object."""
+    def to_wl_string(self):
+        """Wolfram Language (WL) full form representation string of the SSparseMatrix object."""
         A = self.sparse_matrix().tocoo()
         triplets = list(zip([x + 1 for x in A.row], [x + 1 for x in A.col], A.data))
 
@@ -716,8 +716,8 @@ class SSparseMatrix:
         rows_wl = str(self.row_names()).replace("'", "\"").replace("[", "{").replace("]", "}")
         cols_wl = str(self.column_names()).replace("'", "\"").replace("[", "{").replace("]", "}")
 
-        return "<| \"SparseMatrix\" -> SparseArray[" + out + ", {" + str(self.rows_count()) + ', ' + \
-               str(self.columns_count()) + "}]," + "\"RowNames\" -> " + rows_wl + ", \"ColumnNames\" -> " + cols_wl + "|>"
+        return "Association[\"SparseMatrix\"->SparseArray[" + out + ",{" + str(self.rows_count()) + ', ' + \
+               str(self.columns_count()) + "}]," + "\"RowNames\"->" + rows_wl + ",\"ColumnNames\"->" + cols_wl + "]"
 
     # ------------------------------------------------------------------
     # Convert to Wolfram Language (deferred)
@@ -798,17 +798,18 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Delegation methods
     # ------------------------------------------------------------------
-    _delegated_queries = ["asformat", "asfptype", "astype", "check_format", "count_nonzero",
+    _delegated_queries = {"asformat", "asfptype", "astype", "check_format", "count_nonzero",
                           "data", "diagonal", "dtype", "format", "getcol", "getformat", "getH",
                           "getmaxprint", "getnnz", "getrow", "get_shape", "has_canonical_format",
                           "has_sorted_indices", "indices", "indptr", "maxprint", "ndim", "nnz",
                           "nonzero", "shape", "toarray", "tobsr", "tocoo", "tocsc", "tocsr",
-                          "todense", "todia", "todok", "tolil"]
-    _delegated_mat = ["arcsin", "arcsinh", "arctan", "arctanh", "argmax", "argmin",
+                          "todense", "todia", "todok", "tolil"}
+
+    _delegated_mat = {"arcsin", "arcsinh", "arctan", "arctanh", "argmax", "argmin",
                       "ceil", "deg2rad", "eliminate_zeros", "expm1", "floor",
                       "log1p", "power", "prune", "rad2deg", "rint",
                       "sign", "sin", "sinh", "sort_indices", "sorted_indices",
-                      "sqrt", "tan", "tanh", "trunc"]
+                      "sqrt", "tan", "tanh", "trunc"}
 
     # ------------------------------------------------------------------
     # Delegation
