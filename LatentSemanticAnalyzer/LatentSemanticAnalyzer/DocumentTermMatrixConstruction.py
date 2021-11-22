@@ -78,7 +78,7 @@ def to_bag_of_words(docs,
 def document_term_matrix(docs):
     """Document term matrix.
 
-    :type docs: list|dict
+    :type docs: dict|list
     :param docs: Documents
 
     :rtype smat: SSparseMatrix
@@ -86,7 +86,7 @@ def document_term_matrix(docs):
     """
     if _is_str_list(docs):
         ids = ["id." + str(i) for i in range(len(docs))]
-        document_term_matrix(dict(zip(ids, docs)))
+        return document_term_matrix(dict(zip(ids, docs)))
     elif not _is_str_dict(docs):
         raise TypeError("The first argument is expected to be list of strings or a dictionary of strings.")
 
@@ -94,6 +94,5 @@ def document_term_matrix(docs):
     ids = list(docs.keys())
     dfDocTerms = [pandas.DataFrame({"ID": ids[i], "Word": docTerms[i]}) for i in range(len(docTerms))]
     dfDocTerms = pandas.concat(dfDocTerms)
-    print(dfDocTerms)
     res = cross_tabulate(dfDocTerms, "ID", "Word")
     return res
