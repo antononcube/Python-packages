@@ -221,19 +221,22 @@ class LatentSemanticAnalyzer:
 
         # Compute matrix factors
         if method.lower() in {"SVD".lower(), "SingularValueDecomposition".lower()}:
-            u, s, ct = scipy.sparse.linalg.svds(A=smat.sparse_matrix(),
+            u, s, vt = scipy.sparse.linalg.svds(A=smat.sparse_matrix(),
                                                 k=number_of_topics,
                                                 maxiter=max_steps)
         else:
             raise ValueError("The argument 'method' is expected to 'SVD'.")
             return None
 
+        # Scale V with S (in order to get H)
+        svt = scipy.sparse.diags(diagonals=[s], offsets=[0]).dot(vt)
+
         # Automatic topic names
         topic_names = ["topic." + str(i) for i in range(u.shape[1])]
 
         # Set factors
         self._W = SSparseMatrix(u, row_names=smat.row_names(), column_names=topic_names)
-        self._H = SSparseMatrix(ct, row_names=topic_names, column_names=smat.column_names())
+        self._H = SSparseMatrix(svt, row_names=topic_names, column_names=smat.column_names())
 
         # Automatic topic names re-do
         topic_names = dict(
