@@ -753,5 +753,36 @@ class SSparseMatrix:
             print(len(fStr.format("", *col_names)) * "=")
 
     # ------------------------------------------------------------------
+    # Delegation methods
+    # ------------------------------------------------------------------
+    _delegated_queries = ["asformat", "asfptype", "astype", "check_format", "count_nonzero",
+                          "data", "diagonal", "dtype", "format", "getcol", "getformat", "getH",
+                          "getmaxprint", "getnnz", "getrow", "get_shape", "has_canonical_format",
+                          "has_sorted_indices", "indices", "indptr", "maxprint", "ndim", "nnz",
+                          "nonzero", "shape", "toarray", "tobsr", "tocoo", "tocsc", "tocsr",
+                          "todense", "todia", "todok", "tolil"]
+    _delegated_mat = ["arcsin", "arcsinh", "arctan", "arctanh", "argmax", "argmin",
+                      "ceil", "deg2rad", "eliminate_zeros", "expm1", "floor",
+                      "log1p", "power", "prune", "rad2deg", "rint",
+                      "sign", "sin", "sinh", "sort_indices", "sorted_indices",
+                      "sqrt", "tan", "tanh", "trunc"]
+
+    # ------------------------------------------------------------------
     # Delegation
     # ------------------------------------------------------------------
+    def __getattr__(self, method_name):
+        if method_name in self._delegated_queries:
+
+            res = getattr(self.sparse_matrix(), method_name)
+            return res
+
+        elif method_name in self._delegated_mat:
+
+            def delegated_method(*args, **kwargs):
+                resMat = getattr(self.sparse_matrix(), method_name)(*args, **kwargs)
+                return SSparseMatrix(resMat, row_names=self.row_names(), column_names=self.column_names())
+
+            return delegated_method
+
+        else:
+            return getattr(SSparseMatrix, method_name)
