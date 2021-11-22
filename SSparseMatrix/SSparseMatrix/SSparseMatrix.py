@@ -447,7 +447,7 @@ class SSparseMatrix:
             res.eliminate_zeros()
             obj.set_sparse_matrix(res)
             obj.set_column_names()
-            obj.set_row_names(self.row_names_dict())
+            obj.set_row_names(self.row_names())
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
             return None
