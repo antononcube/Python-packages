@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import scipy
 from scipy import sparse
@@ -46,6 +48,10 @@ def is_str_like(x):
 
 def _is_num_like(x):
     return isinstance(x, int) or isinstance(x, float) or isinstance(x, complex)
+
+
+def _reverse_sort_dict(x):
+    return dict([(k, v) for k, v in sorted(x.items(), key=lambda item: -item[1])])
 
 
 # ------------------------------------------------------------------
@@ -619,6 +625,27 @@ class SSparseMatrix:
         return list(zip([self.row_names()[i] for i in A.row],
                         [self.column_names()[i] for i in A.col],
                         A.data))
+
+    # ------------------------------------------------------------------
+    # Row dictionaries
+    # ------------------------------------------------------------------
+    def row_dictionaries(self, sort=False):
+        """Row dictionaries."""
+        triplets = self.triplets()
+        triplets.sort(key=lambda x: x[0])
+        rowGroups = dict([(key, dict([(col, v) for (_, col, v) in value]))
+                          for key, value in itertools.groupby(triplets, lambda x: x[0])])
+        if sort:
+            rowGroups = dict([(k, _reverse_sort_dict(v)) for (k, v) in rowGroups.items()])
+        return rowGroups
+
+    # ------------------------------------------------------------------
+    # Column dictionaries
+    # ------------------------------------------------------------------
+    def column_dictionaries(self, sort=False):
+        """Column dictionaries."""
+        # Could be done directly if some performance issues come up...
+        return self.transpose().row_dictionaries(sort=sort)
 
     # ------------------------------------------------------------------
     # Representation
