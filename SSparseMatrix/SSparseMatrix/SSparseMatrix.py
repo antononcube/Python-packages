@@ -353,6 +353,22 @@ class SSparseMatrix:
         return obj
 
     # ------------------------------------------------------------------
+    # Conjugate transpose
+    # ------------------------------------------------------------------
+    def conjugate(self, in_place=False):
+        """Conjugate elementwise."""
+        obj = self if in_place else self.copy()
+        obj._sparseMatrix = obj.sparse_matrix().conj()
+        return obj
+
+    def conjugate_transpose(self, in_place=False):
+        """Conjugate transpose."""
+        obj = self if in_place else self.copy()
+        obj.conjugate(in_place=True)
+        obj.transpose(in_place=True)
+        return obj
+
+    # ------------------------------------------------------------------
     # Add
     # ------------------------------------------------------------------
     def add(self, other, in_place=False):
