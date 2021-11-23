@@ -1,5 +1,8 @@
+import warnings
+
 from SparseMatrixRecommender import SparseMatrixRecommender
 from SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
+from SparseMatrixRecommender.DocumentTermWeightFunctions import global_term_function_weights
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import document_term_matrix
 from SSparseMatrix import SSparseMatrix
 from SSparseMatrix import is_sparse_matrix
@@ -62,7 +65,10 @@ class LatentSemanticAnalyzer:
     _W = None
     _H = None
     _globalWeights = None
+    _localWeightFunction = None
+    _normalizerFunction = None
     _stemRules = None
+    _wordsPattern = None
     _value = None
 
     # ------------------------------------------------------------------
@@ -109,6 +115,10 @@ class LatentSemanticAnalyzer:
         """Take the stemming rules."""
         return self._stemmingRules
 
+    def take_words_pattern(self):
+        """Take the words pattern."""
+        return self._wordsPattern
+
     def take_W(self):
         """Take the left factor matrix."""
         return self._W
@@ -119,7 +129,15 @@ class LatentSemanticAnalyzer:
 
     def take_global_term_weights(self):
         """Take the global term weights."""
-        return self._data
+        return self._globalWeights
+
+    def take_local_weight_function(self):
+        """Take the local weight function."""
+        return self._localWeightFunction
+
+    def take_normalizer_function(self):
+        """Take the normalizer function."""
+        return self._normalizerFunction
 
     def take_value(self):
         """Take the pipeline value."""
@@ -161,6 +179,16 @@ class LatentSemanticAnalyzer:
         self._globalWeights = arg
         return self
 
+    def set_local_weight_function(self, arg):
+        """Set local term weight function."""
+        self._localWeightFunction = arg
+        return self
+
+    def set_normalizer_function(self, arg):
+        """Set normalizer function."""
+        self._normalizerFunction = arg
+        return self
+
     def set_terms(self, arg):
         """Set terms."""
         self._terms = arg
@@ -179,6 +207,11 @@ class LatentSemanticAnalyzer:
     def set_stemming_rules(self, arg):
         """Set stemming rules."""
         self._stemmingRules = arg
+        return self
+
+    def set_words_pattern(self, arg):
+        """Set words pattern."""
+        self._wordsPattern = arg
         return self
 
     def set_value(self, arg):
@@ -219,6 +252,7 @@ class LatentSemanticAnalyzer:
         self.set_terms(docTermMat.column_names())
         self.set_stop_words(stop_words)
         self.set_stemming_rules(stemming_rules)
+        self.set_words_pattern(words_pattern)
 
         return self
 
@@ -235,6 +269,12 @@ class LatentSemanticAnalyzer:
                                                         global_weight_func=global_weight_func,
                                                         local_weight_func=local_weight_func,
                                                         normalizer_func=normalizer_func)
+
+        globalWeights = global_term_function_weights(doc_term_matrix=self.take_doc_term_mat())
+
+        self.set_global_term_weights(globalWeights)
+        self.set_local_weight_function(local_weight_func)
+        self.set_normalizer_function(normalizer_func)
 
         return self
 
@@ -274,7 +314,7 @@ class LatentSemanticAnalyzer:
         svt = scipy.sparse.diags(diagonals=[s], offsets=[0]).dot(vt)
 
         # Automatic topic names
-        topic_names = ["topic." + str(i) for i in range(u.shape[1])]
+        topic_names = ["tpc." + str(i) for i in range(u.shape[1])]
 
         # Set factors
         self._W = SSparseMatrix(u, row_names=smat.row_names(), column_names=topic_names)
@@ -294,21 +334,20 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     # Extract statistical thesaurus
     # ------------------------------------------------------------------
-    def extract_statistical_thesaurus(self, words: list, n: int = 12, method: str = "euclidian"):
+    def extract_statistical_thesaurus(self, terms: list, n: int = 12, method: str = "euclidian"):
         """Extract statistical thesaurus.
 
-        :param words: Words to find statistical thesaurus entries for.
+        :param terms: Words to find statistical thesaurus entries for.
         :param n: Number of nearest neighbors per word.
         :param method: Method for nearest neighbors finding.
-        :param as_data_frame: Should the result be given as a data frame or not?
         :return self:
         """
-        if not _is_str_list(words):
+        if not _is_str_list(terms):
             raise TypeError("The first argument, 'words', is expected to be a list of strings.")
 
         factRes = _left_normalize_matrix_product(self.take_W(), self.take_H())
 
-        my_words = [w for w in words if w in self._H.column_names_dict()]
+        my_words = [w for w in terms if w in self._H.column_names_dict()]
 
         if len(my_words) == 0:
             raise ValueError("None of the given words are known.")
@@ -346,7 +385,8 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     # Get statistical thesaurus
     # ------------------------------------------------------------------
-    def get_statistical_thesaurus(self, words,
+    def get_statistical_thesaurus(self,
+                                  terms=None,
                                   number_of_nearest_neighbors=12,
                                   method="cosine",
                                   as_data_frame=True,
@@ -355,7 +395,7 @@ class LatentSemanticAnalyzer:
                                   echo_function=print):
         """Get statistical thesaurus table.
 
-        :param words: Words to find thesaurus entries for.
+        :param terms: Words to find thesaurus entries for.
         :param number_of_nearest_neighbors: Number of nearest neighbors per specified word.
         :param method: Method for nearest neighbors finding.
         :param as_data_frame: Should the result be a data frame (or a dictionary)?
@@ -365,11 +405,11 @@ class LatentSemanticAnalyzer:
         :return self:
         """
 
-        my_words = words
-        if words is None and _is_str_list(self.take_value()):
+        my_words = terms
+        if terms is None and _is_str_list(self.take_value()):
             my_words = self.take_value()
 
-        self.extract_statistical_thesaurus(words=my_words,
+        self.extract_statistical_thesaurus(terms=my_words,
                                            n=number_of_nearest_neighbors,
                                            method=method)
 
@@ -393,7 +433,7 @@ class LatentSemanticAnalyzer:
     # Echo statistical thesaurus
     # ------------------------------------------------------------------
     def echo_statistical_thesaurus(self,
-                                   words=None,
+                                   terms=None,
                                    number_of_nearest_neighbors=12,
                                    method="cosine",
                                    as_data_frame=True,
@@ -401,7 +441,7 @@ class LatentSemanticAnalyzer:
                                    echo_function=lambda x: print(x.to_string())):
         """Echo statistical thesaurus.
 
-        :param words: Words to find thesaurus entries for.
+        :param terms: Words to find thesaurus entries for.
         :param number_of_nearest_neighbors: Number of nearest neighbors per specified word.
         :param method: Method for nearest neighbors finding.
         :param as_data_frame: Should the result be a data frame (or a dictionary)?
@@ -409,11 +449,65 @@ class LatentSemanticAnalyzer:
         :param echo_function: Echo function.
         :return self:
         """
-        self.get_statistical_thesaurus(words=words,
+        self.get_statistical_thesaurus(terms=terms,
                                        number_of_nearest_neighbors=number_of_nearest_neighbors,
                                        method=method,
                                        as_data_frame=as_data_frame,
                                        wide_form=wide_form,
                                        echo=True,
                                        echo_function=echo_function)
+        return self
+
+    # ------------------------------------------------------------------
+    # Represent by terms
+    # ------------------------------------------------------------------
+    def represent_by_terms(self, query, apply_lsi_functions=True):
+        """Represent by terms.
+
+        :param query: A vector of strings or a sparse matrix to be represented in the space of monad's document-term matrix.
+        :param apply_lsi_functions: Should the LSI weight term functions be applied to the result matrix or not?
+        :return self:
+        """
+
+        if isinstance(query, str):
+
+            return self.represent_by_terms(query=[query, ], apply_lsi_functions=apply_lsi_functions)
+
+        elif _is_str_list(query):
+
+            qmat = (LatentSemanticAnalyzer()
+                    .make_document_term_matrix(docs=query,
+                                               stemming_rules=self.take_stemming_rules(),
+                                               stop_words=self.take_stop_words(),
+                                               words_pattern=self.take_words_pattern())
+                    .take_doc_term_mat())
+
+            return self.represent_by_terms(query=qmat, apply_lsi_functions=apply_lsi_functions)
+
+        elif is_sparse_matrix(query):
+
+            qmat = query.impose_column_names(self.take_doc_term_mat().column_names())
+
+            if qmat.sparse_matrix().sum() == 0:
+                raise ValueError("The obtained query matrix has not entries.")
+
+            if apply_term_weight_functions:
+
+                if self.take_global_term_weights() is None or \
+                        self.take_local_weight_function() is None or \
+                        self.take_normalizer_function() is None:
+                    raise AttributeError("""If the argument 'apply_term_weight_functions' is True
+                    then the monad context is expected to have the elements 
+                    '_globalWeights', '_localWeightFunction', '_normalizerFunction'.""")
+
+                qmat = apply_term_weight_functions(doc_term_matrix=qmat,
+                                                   global_weight_func=self.take_global_term_weights(),
+                                                   local_weight_func=self.take_local_weight_function(),
+                                                   normalizer_func=self.take_normalizer_function())
+
+            self.set_value(qmat)
+
+        else:
+            raise TypeError("Unknown type of the argument 'query'.")
+
         return self
