@@ -647,7 +647,10 @@ class LatentSemanticAnalyzer:
 
             elif isinstance(self.take_method(), str) and self.take_method().lower() == "nnmf":
 
-                # invH = SparseMatrixPseudoInverse(smat=self.take_H())
+                # invH = self.take_H()
+                # invH = SSparseMatrix(scipy.sparse.linalg.inv(invH.sparse_matrix()),
+                #                      row_names=self.take_H().column_names(),
+                #                      column_names=self.take_H().row_names())
                 # qmat = qmat.dot(invH)
                 raise ValueError("Algebraic 'nnmf' is not implemented.")
 
