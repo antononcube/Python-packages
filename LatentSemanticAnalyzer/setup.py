@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages",
-    install_requires=['numpy', 'scipy', 'pandas', 'stop-words', 'snowballstemmer',
+    install_requires=['numpy', 'scipy', 'pandas', 'stop-words', 'snowballstemmer', 'Nimfa',
                       'SSparseMatrix', 'SparseMatrixRecommender'],
     packages=setuptools.find_packages(),
     classifiers=[
