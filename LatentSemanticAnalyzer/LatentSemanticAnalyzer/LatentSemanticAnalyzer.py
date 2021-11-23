@@ -13,6 +13,7 @@ import scipy
 import scipy.sparse.linalg
 import nimfa
 
+
 # ======================================================================
 # Utilities
 # ======================================================================
@@ -303,23 +304,31 @@ class LatentSemanticAnalyzer:
 
         # Compute matrix factors
         if method.lower() in {"SVD".lower(), "SingularValueDecomposition".lower()}:
-            u, s, vt = scipy.sparse.linalg.svds(A=smat.sparse_matrix(),
+            W, s, vt = scipy.sparse.linalg.svds(A=smat.sparse_matrix(),
                                                 k=number_of_topics,
                                                 maxiter=max_steps)
+            # Scale V with S (in order to get H)
+            H = scipy.sparse.diags(diagonals=[s], offsets=[0]).dot(vt)
+
+        elif method.lower() in set([x.lower() for x in ["NMF", "NNMF", "NonNegativeMatrixFactorization"]]):
+            nmf = nimfa.Lsnmf(V=smat.sparse_matrix(),
+                              seed='random_vcol',
+                              rank=number_of_topics,
+                              max_iter=max_steps)
+            nmfRes = nmf()
+            W = nmfRes.fit.W
+            H = nmfRes.fit.H
         else:
             raise ValueError("The argument 'method' is expected to 'SVD'.")
             return None
 
-        # Scale V with S (in order to get H)
-        svt = scipy.sparse.diags(diagonals=[s], offsets=[0]).dot(vt)
-
         # Automatic topic names
         nd = math.ceil(math.log10(number_of_topics)) + 1
-        topic_names = ["tpc." + str(i).zfill(nd) for i in range(u.shape[1])]
+        topic_names = ["tpc." + str(i).zfill(nd) for i in range(W.shape[1])]
 
         # Set factors
-        self._W = SSparseMatrix(u, row_names=smat.row_names(), column_names=topic_names)
-        self._H = SSparseMatrix(svt, row_names=topic_names, column_names=smat.column_names())
+        self._W = SSparseMatrix(W, row_names=smat.row_names(), column_names=topic_names)
+        self._H = SSparseMatrix(H, row_names=topic_names, column_names=smat.column_names())
 
         # Automatic topic names re-do
         topic_names = dict(
