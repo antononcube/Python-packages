@@ -291,7 +291,10 @@ class LatentSemanticAnalyzer:
 
         return self
 
-    def extract_statistical_thesaurus(self, words: list, n: int = 12, method: str = "euclidian", as_data_frame=False):
+    # ------------------------------------------------------------------
+    # Extract statistical thesaurus
+    # ------------------------------------------------------------------
+    def extract_statistical_thesaurus(self, words: list, n: int = 12, method: str = "euclidian"):
         """Extract statistical thesaurus.
 
         :param words: Words to find statistical thesaurus entries for.
@@ -337,10 +340,80 @@ class LatentSemanticAnalyzer:
                     dists = dict(list(dists.items())[0:n + 1])
                 res = res | {w: dists}
 
-        if as_data_frame:
-            dfRes = [pandas.DataFrame({"SearchWord": k, "ThesaurusWord": v.keys(), "Distance": v.values()})
-                     for (k, v) in res.items()]
-            res = pandas.concat(dfRes)
-
         self.set_value(res)
+        return self
+
+    # ------------------------------------------------------------------
+    # Get statistical thesaurus
+    # ------------------------------------------------------------------
+    def get_statistical_thesaurus(self, words,
+                                  number_of_nearest_neighbors=12,
+                                  method="cosine",
+                                  as_data_frame=True,
+                                  wide_form=False,
+                                  echo=True,
+                                  echo_function=print):
+        """Get statistical thesaurus table.
+
+        :param words: Words to find thesaurus entries for.
+        :param number_of_nearest_neighbors: Number of nearest neighbors per specified word.
+        :param method: Method for nearest neighbors finding.
+        :param as_data_frame: Should the result be a data frame (or a dictionary)?
+        :param wide_form: Should the thesaurus data frame (table) be in wide form or not?
+        :param echo: Should the thesaurus data frame (table) be echoed or not?
+        :param echo_function: Echo function.
+        :return self:
+        """
+
+        my_words = words
+        if words is None and _is_str_list(self.take_value()):
+            my_words = self.take_value()
+
+        self.extract_statistical_thesaurus(words=my_words,
+                                           n=number_of_nearest_neighbors,
+                                           method=method)
+
+        if as_data_frame:
+            if wide_form:
+                dfRes = pandas.DataFrame({k: list(v.keys()) for (k, v) in self.take_value().items()})
+                dfRes = dfRes.transpose()
+            else:
+                dfRes = [pandas.DataFrame({"SearchTerm": k, "Term": v.keys(), "Term.Distance": v.values()})
+                         for (k, v) in self.take_value().items()]
+                dfRes = pandas.concat(dfRes)
+
+        self.set_value(dfRes)
+
+        if echo:
+            echo_function(dfRes)
+
+        return self
+
+    # ------------------------------------------------------------------
+    # Echo statistical thesaurus
+    # ------------------------------------------------------------------
+    def echo_statistical_thesaurus(self,
+                                   words=None,
+                                   number_of_nearest_neighbors=12,
+                                   method="cosine",
+                                   as_data_frame=True,
+                                   wide_form=False,
+                                   echo_function=lambda x: print(x.to_string())):
+        """Echo statistical thesaurus.
+
+        :param words: Words to find thesaurus entries for.
+        :param number_of_nearest_neighbors: Number of nearest neighbors per specified word.
+        :param method: Method for nearest neighbors finding.
+        :param as_data_frame: Should the result be a data frame (or a dictionary)?
+        :param wide_form: Should the thesaurus data frame (table) be in wide form or not?
+        :param echo_function: Echo function.
+        :return self:
+        """
+        self.get_statistical_thesaurus(words=words,
+                                       number_of_nearest_neighbors=number_of_nearest_neighbors,
+                                       method=method,
+                                       as_data_frame=as_data_frame,
+                                       wide_form=wide_form,
+                                       echo=True,
+                                       echo_function=echo_function)
         return self
