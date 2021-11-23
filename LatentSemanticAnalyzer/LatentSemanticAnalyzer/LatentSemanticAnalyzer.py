@@ -1,5 +1,3 @@
-import warnings
-
 from SparseMatrixRecommender import SparseMatrixRecommender
 from SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
 from SparseMatrixRecommender.DocumentTermWeightFunctions import global_term_function_weights
@@ -7,11 +5,13 @@ from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import document_term_
 from SSparseMatrix import SSparseMatrix
 from SSparseMatrix import is_sparse_matrix
 import stop_words as stop_words_package
+import math
+import warnings
 import pandas
+import numpy
 import scipy
 import scipy.sparse.linalg
-import numpy
-
+import nimfa
 
 # ======================================================================
 # Utilities
@@ -314,7 +314,8 @@ class LatentSemanticAnalyzer:
         svt = scipy.sparse.diags(diagonals=[s], offsets=[0]).dot(vt)
 
         # Automatic topic names
-        topic_names = ["tpc." + str(i) for i in range(u.shape[1])]
+        nd = math.ceil(math.log10(number_of_topics)) + 1
+        topic_names = ["tpc." + str(i).zfill(nd) for i in range(u.shape[1])]
 
         # Set factors
         self._W = SSparseMatrix(u, row_names=smat.row_names(), column_names=topic_names)
@@ -329,6 +330,74 @@ class LatentSemanticAnalyzer:
         self._H.set_row_names(topic_names)
         self._W.set_column_names(topic_names)
 
+        return self
+
+    # ------------------------------------------------------------------
+    # Get topics interpretation
+    # ------------------------------------------------------------------
+    def get_topics_interpretation(self,
+                                  number_of_terms: int = 12,
+                                  as_data_frame=False,
+                                  wide_form=False,
+                                  echo=True,
+                                  echo_function=print):
+        """Get topics interpretation.
+
+        :param number_of_terms: Number of terms per topic.
+        :param as_data_frame: Should the result be a data frame or not?
+        :param wide_form: Should the topics data frame (table) be in wide form or not?
+        :param echo: Should the result be echoed or not?
+        :param echo_function: Echo function
+        :return self:
+        """
+        if number_of_terms < 1:
+            raise TypeError("The argument 'number_of_terms' is expected to be a positive integer.")
+
+        if not (is_sparse_matrix(self.take_W()) and is_sparse_matrix(self.take_H())):
+            raise AttributeError("Cannot find matrix factors.")
+
+        topics = self.take_H().row_dictionaries(sort=True)
+        topics = {k: dict(list(v.items())[0:number_of_terms]) for (k, v) in topics.items()}
+
+        if as_data_frame:
+            if wide_form:
+                dfRes = pandas.DataFrame({k: list(v.keys()) for (k, v) in topics.items()})
+                dfRes = dfRes.transpose()
+            else:
+                dfRes = [pandas.DataFrame({"Topic": k, "Term": v.keys(), "Score": v.values()})
+                         for (k, v) in topics.items()]
+                dfRes = pandas.concat(dfRes)
+        else:
+            dfRes = topics
+
+        self.set_value(dfRes)
+
+        if echo:
+            echo_function(dfRes)
+
+        return self
+
+    # ------------------------------------------------------------------
+    # Echo topics interpretation
+    # ------------------------------------------------------------------
+    def echo_topics_interpretation(self,
+                                   number_of_terms: int = 12,
+                                   as_data_frame=True,
+                                   wide_form=False,
+                                   echo_function=lambda x: print(x.to_string())):
+        """Echo topics table.
+
+        :param number_of_terms: Number of terms per topic.
+        :param as_data_frame: Should the result be a data frame or not?
+        :param wide_form: Should the topics data frame (table) be in wide form or not?
+        :param echo_function: Echo function
+        :return self:
+        """
+        self.get_topics_interpretation(number_of_terms=number_of_terms,
+                                       as_data_frame=as_data_frame,
+                                       wide_form=wide_form,
+                                       echo=True,
+                                       echo_function=echo_function)
         return self
 
     # ------------------------------------------------------------------
