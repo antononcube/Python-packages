@@ -1,17 +1,13 @@
 from SparseMatrixRecommender import SparseMatrixRecommender
-from SparseMatrixRecommender.CrossTabulate import cross_tabulate
 from SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import document_term_matrix
 from SSparseMatrix import SSparseMatrix
-from SSparseMatrix import column_bind
 from SSparseMatrix import is_sparse_matrix
 import stop_words as stop_words_package
 import pandas
 import scipy
 import scipy.sparse.linalg
-import scipy.spatial
 import numpy
-import warnings
 
 
 # ======================================================================
@@ -211,7 +207,7 @@ class LatentSemanticAnalyzer:
         if isinstance(stop_words, bool) and stop_words:
             mstop_words = stop_words_package.get_stop_words('english')
 
-        docs2 = [x.lower() for x in docs]
+        docs2 = {k: v.lower() for (k, v) in aTexts.items()}
         docTermMat = document_term_matrix(docs=docs2,
                                           stop_words=mstop_words,
                                           stemming_rules=stemming_rules,
@@ -295,18 +291,26 @@ class LatentSemanticAnalyzer:
 
         return self
 
-    def extract_statistical_thesaurus(self, words: list, n: int = 12, method: str = "euclidian"):
+    def extract_statistical_thesaurus(self, words: list, n: int = 12, method: str = "euclidian", as_data_frame=False):
         """Extract statistical thesaurus.
 
         :param words: Words to find statistical thesaurus entries for.
         :param n: Number of nearest neighbors per word.
         :param method: Method for nearest neighbors finding.
+        :param as_data_frame: Should the result be given as a data frame or not?
         :return self:
         """
         if not _is_str_list(words):
             raise TypeError("The first argument, 'words', is expected to be a list of strings.")
 
         factRes = _left_normalize_matrix_product(self.take_W(), self.take_H())
+
+        my_words = [w for w in words if w in self._H.column_names_dict()]
+
+        if len(my_words) == 0:
+            raise ValueError("None of the given words are known.")
+
+        my_words = sorted(my_words)
 
         # Using Cosine similarity is not a good idea
         if method.lower() == "cosine":
@@ -316,21 +320,12 @@ class LatentSemanticAnalyzer:
                                                    local_weight_func="None",
                                                    normalizer_func="Cosine"))
 
-            res = dict([(w, smrObj.recommend(history=w, nrecs=n, remove_history=False).take_value()) for w in words])
-        elif method.lower() == "kdtree":
-            matDist = scipy.spatial.KDTree(factRes["H"].transpose().sparse_matrix().todense())
-            print(matDist)
-            matDist2 = SSparseMatrix(matDist,
-                                     row_names=factRes["H"].column_names(),
-                                     column_names=factRes["H"].column_names())
-            matDist3 = matDist2[words, :]
-            res = matDist3.row_dictionaries(sort=True)
-            res = dict([(k, v.items()[-n:-1]) for (k, v) in res.items()])
+            res = dict([(w, smrObj.recommend(history=w, nrecs=n, remove_history=False).take_value()) for w in my_words])
+
         else:
             H = factRes["H"]
-            H.print_matrix(n_digits=25)
             res = {}
-            for w in words:
+            for w in my_words:
                 M = H[:, [w, ]].dot(numpy.ones([1, H.columns_count()]))
                 M.set_column_names(H.column_names())
                 M = M.add(H.multiply(-1))
@@ -338,9 +333,14 @@ class LatentSemanticAnalyzer:
                 M = M.sparse_matrix().sqrt()
                 M2 = SSparseMatrix(M, row_names=H.row_names(), column_names=H.column_names())
                 dists = _sort_dict(M2.column_sums_dict())
-                if len(dists) > n+1:
-                    dists = dict(list(dists.items())[0:n+1])
+                if len(dists) > n + 1:
+                    dists = dict(list(dists.items())[0:n + 1])
                 res = res | {w: dists}
+
+        if as_data_frame:
+            dfRes = [pandas.DataFrame({"SearchWord": k, "ThesaurusWord": v.keys(), "Distance": v.values()})
+                     for (k, v) in res.items()]
+            res = pandas.concat(dfRes)
 
         self.set_value(res)
         return self
