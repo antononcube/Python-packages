@@ -68,6 +68,7 @@ class LatentSemanticAnalyzer:
     _globalWeights = None
     _localWeightFunction = None
     _normalizerFunction = None
+    _method = None
     _stemRules = None
     _wordsPattern = None
     _value = None
@@ -140,6 +141,10 @@ class LatentSemanticAnalyzer:
         """Take the normalizer function."""
         return self._normalizerFunction
 
+    def take_method(self):
+        """Take the method."""
+        return self._method
+
     def take_value(self):
         """Take the pipeline value."""
         return self._value
@@ -188,6 +193,11 @@ class LatentSemanticAnalyzer:
     def set_normalizer_function(self, arg):
         """Set normalizer function."""
         self._normalizerFunction = arg
+        return self
+
+    def set_method(self, arg):
+        """Set the method."""
+        self._method = arg
         return self
 
     def set_terms(self, arg):
@@ -304,20 +314,26 @@ class LatentSemanticAnalyzer:
 
         # Compute matrix factors
         if method.lower() in {"SVD".lower(), "SingularValueDecomposition".lower()}:
+
             W, s, vt = scipy.sparse.linalg.svds(A=smat.sparse_matrix(),
                                                 k=number_of_topics,
                                                 maxiter=max_steps)
             # Scale V with S (in order to get H)
             H = scipy.sparse.diags(diagonals=[s], offsets=[0]).dot(vt)
+            self.set_method("SVD")
 
         elif method.lower() in set([x.lower() for x in ["NMF", "NNMF", "NonNegativeMatrixFactorization"]]):
+
             nmf = nimfa.Lsnmf(V=smat.sparse_matrix(),
                               seed='random_vcol',
                               rank=number_of_topics,
                               max_iter=max_steps)
+
             nmfRes = nmf()
             W = nmfRes.fit.W
             H = nmfRes.fit.H
+            self.set_method("NNMF")
+
         else:
             raise ValueError("The argument 'method' is expected to 'SVD'.")
             return None
@@ -582,6 +598,65 @@ class LatentSemanticAnalyzer:
                                                    global_weight_func=self.take_global_term_weights(),
                                                    local_weight_func=self.take_local_weight_function(),
                                                    normalizer_func=self.take_normalizer_function())
+
+            self.set_value(qmat)
+
+        else:
+            raise TypeError("Unknown type of the argument 'query'.")
+
+        return self
+
+    # ------------------------------------------------------------------
+    # Represent by topics
+    # ------------------------------------------------------------------
+    def represent_by_topics(self, query, apply_lsi_functions=True, method: str = "algebraic"):
+        """Represent by topics.
+
+        :param query: A vector of strings or a sparse matrix to be represented in the space of monad's document-term matrix.
+        :param apply_lsi_functions: Should the LSI weight term functions be applied to the result matrix or not?
+        :param method: Method to find the topics representation with; one of 'algebraic' or 'recommendation'.
+        :return self:
+        """
+
+        if not method.lower() in set([x.lower() for x in ["Algebraic", "Recommendation"]]):
+            raise TypeError("The argument method is expected to be NULL or one of 'algebraic' or 'recommendation'.")
+
+        if isinstance(query, str):
+
+            return self.represent_by_topics(query=[query, ], apply_lsi_functions=apply_lsi_functions, method=method)
+
+        elif _is_str_list(query):
+
+            qmat = self.represent_by_terms(query=query, apply_lsi_functions=apply_lsi_functions).take_value()
+
+            return self.represent_by_topics(query=qmat, apply_lsi_functions=apply_lsi_functions, method=method)
+
+        elif is_sparse_matrix(query):
+
+            qmat = self.represent_by_terms(query=query, apply_lsi_functions=apply_lsi_functions).take_value()
+
+            qmat = query.impose_column_names(self.take_H().column_names())
+
+            if qmat.sparse_matrix().sum() == 0:
+                raise ValueError("The obtained query matrix has not entries.")
+
+            if method.lower() == "recommendation":
+
+                # Same as SVD
+                qmat = qmat.dot(self.take_H().transpose())
+
+            elif isinstance(self.take_method(), str) and self.take_method().lower() == "nnmf":
+
+                # invH = SparseMatrixPseudoInverse(smat=self.take_H())
+                # qmat = qmat.dot(invH)
+                raise ValueError("Algebraic 'nnmf' is not implemented.")
+
+            elif isinstance(self.take_method(), str) and self.take_method().lower() == "svd":
+
+                qmat = qmat.dot(self.take_H().transpose())
+
+            else:
+                raise ValueError("Unknown value of self._method.")
 
             self.set_value(qmat)
 
