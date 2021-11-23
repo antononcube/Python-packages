@@ -32,7 +32,7 @@ def _left_normalize_matrix_product(W, H):
 
     SI = SSparseMatrix(SI, row_names=H.row_names(), column_names=H.row_names())
 
-    return {"W": W.dot(S), "H": SI.dot(H)}
+    return {"W": W.dot(S).set_column_names(W.column_names()), "H": SI.dot(H)}
 
 
 def _right_normalize_matrix_product(W, H):
@@ -42,7 +42,7 @@ def _right_normalize_matrix_product(W, H):
 
     S = SSparseMatrix(S, row_names=H.row_names(), column_names=H.row_names())
 
-    return {"W": W.dot(SI), "H": S.dot(H)}
+    return {"W": W.dot(SI).set_column_names(W.column_names()), "H": S.dot(H)}
 
 
 def _sort_dict(x):
@@ -354,6 +354,43 @@ class LatentSemanticAnalyzer:
 
         self._H.set_row_names(topic_names)
         self._W.set_column_names(topic_names)
+
+        return self
+
+    # ------------------------------------------------------------------
+    # Normalized matrix product components
+    # ------------------------------------------------------------------
+    def normalize_matrix_product(self, normalize_left=True, order_by_significance=True):
+        """Normalized matrix product components.
+
+        :param normalize_left: Should the left component be normalized or not?
+        :param order_by_significance: Should the basis vectors be ordered by their significance?
+        :return self:
+        """
+        if not (is_sparse_matrix(self.take_W()) and is_sparse_matrix(self.take_H())):
+            raise AttributeError("Cannot find matrix factors.")
+
+        if normalize_left:
+            nres = _left_normalize_matrix_product(self.take_W(), self.take_H())
+        else:
+            nres = _right_normalize_matrix_product(self.take_W(), self.take_H())
+
+        if order_by_significance:
+            if normalize_left:
+                topicSFactors = nres["H"].multiply(nres["H"]).row_sums_dict()
+            else:
+                topicSFactors = nres["W"].multiply(nres["W"]).column_sums_dict()
+
+            # Not really needed
+            # topicSFactors = {k: math.sqrt(v) for (k, v) in topicSFactors.items()}
+
+            topicSFactors = _reverse_sort_dict(topicSFactors)
+            print(nres["W"].column_names())
+            nres["W"] = nres["W"][:, list(topicSFactors.keys())]
+            nres["H"] = nres["H"][list(topicSFactors.keys()), :]
+
+        self._W = nres["W"]
+        self._H = nres["H"]
 
         return self
 
