@@ -3,7 +3,7 @@ import pkg_resources
 
 
 # ===========================================================
-# Load words
+# Load Titanic survival
 # ===========================================================
 def load_titanic_data_frame():
     """Return a data frame with Titanic data.
@@ -39,7 +39,7 @@ def load_titanic_data_frame():
 
 
 # ===========================================================
-# Load pet names
+# Load mushrooms data
 # ===========================================================
 def load_mushroom_data_frame():
     """Return a dataframe with mushroom edibility.
