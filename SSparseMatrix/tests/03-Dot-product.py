@@ -20,7 +20,7 @@ class DotProduct(unittest.TestCase):
         # Dot product with the transpose SSparseMatrix
         smat2 = smat.copy().dot(smat.copy().transpose())
 
-        # Dot product with the transpose scipy.sparse.csr_matrx
+        # Dot product with the transpose scipy.sparse.csr_matrix
         smat3 = smat.sparse_matrix().dot(smat.sparse_matrix().transpose())
 
         # Make the SSparseMatrix expected result
