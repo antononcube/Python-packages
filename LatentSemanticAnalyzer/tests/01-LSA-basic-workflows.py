@@ -47,7 +47,7 @@ class LSAWorkflows(unittest.TestCase):
 
         self.lsaObj = self.lsaObj.extract_topics(number_of_topics=20, method="SVD", max_steps=40)
 
-        self.assertTrue(is_sparse_matrix(self.lsaObj.take_W()) and is_sparse_matrix(self.lsaObj.take_H()))
+        self.assertTrue(is_s_sparse_matrix(self.lsaObj.take_W()) and is_s_sparse_matrix(self.lsaObj.take_H()))
 
     def test_represent_by_terms_1(self):
 
@@ -55,7 +55,7 @@ class LSAWorkflows(unittest.TestCase):
                .represent_by_terms(query=self.queries, apply_lsi_functions=True)
                .take_value())
 
-        self.assertTrue(is_sparse_matrix(res)) and res.rows_count() == len(self.queries)
+        self.assertTrue(is_s_sparse_matrix(res)) and res.rows_count() == len(self.queries)
 
     def test_represent_by_topics_1(self):
 
@@ -65,7 +65,7 @@ class LSAWorkflows(unittest.TestCase):
                                     method="recommendation")
                .take_value())
 
-        self.assertTrue(is_sparse_matrix(res)) and res.rows_count() == len(self.queries)
+        self.assertTrue(is_s_sparse_matrix(res)) and res.rows_count() == len(self.queries)
 
 
 if __name__ == '__main__':
