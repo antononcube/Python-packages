@@ -81,6 +81,24 @@ class DotProduct(unittest.TestCase):
         # Verify matrix-vector(numpy.ndarray) dot product
 
         vec3 = numpy.array([1, 1, 3, 4])
+        mat3 = numpy.array([[1, 1, 3, 4], ])
+
+        smat3 = smat.dot(mat3.transpose())
+
+        # Using scipy.sparse.csr_matrix dot product
+        res3 = smat.sparse_matrix().dot(vec3)
+
+        # From SSparseMatrix object derive a vector
+        vec4 = [smat3[i, 0] for i in range(smat3.rows_count())]
+
+        # Verify same vectors
+        self.assertTrue(all(list(res3 == vec4)))
+
+    def test_dot_ndarray_2(self):
+        # Verify matrix-vector(numpy.ndarray) dot product
+        # Modified version of the previous test, test_dot_ndarray_1, not using a numpy matrix.
+
+        vec3 = numpy.array([1, 1, 3, 4])
 
         smat3 = smat.dot(vec3)
 
