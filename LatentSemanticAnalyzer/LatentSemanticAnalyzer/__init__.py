@@ -2,3 +2,4 @@
 from LatentSemanticAnalyzer.LatentSemanticAnalyzer import LatentSemanticAnalyzer
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import to_bag_of_words
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import document_term_matrix
+from LatentSemanticAnalyzer.DataLoaders import load_abstracts_data_frame
