@@ -69,7 +69,7 @@ class BasicFunctionalities(unittest.TestCase):
         self.rmat.set_row_names(["A", "B", "C", "D"])
         self.rmat.set_column_names(["a", "b", "c", "d", "e"])
 
-        self.assertTrue(is_sparse_matrix(self.rmat))
+        self.assertTrue(is_s_sparse_matrix(self.rmat))
 
     def test_row_names_1(self):
         self.test_rmat() and self.assertTrue(self.rmat.row_names() == ["A", "B", "C", "D"])
