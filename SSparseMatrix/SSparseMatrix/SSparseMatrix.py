@@ -449,7 +449,10 @@ class SSparseMatrix:
             obj.set_column_names()
             obj.set_row_names(self.row_names_dict())
         elif isinstance(other, numpy.ndarray):
-            vec = scipy.sparse.csr_matrix(other)
+            if len(other.shape) == 1:
+                vec = scipy.sparse.csr_matrix([other, ]).transpose()
+            else:
+                vec = scipy.sparse.csr_matrix(other)
             obj = self.dot(vec)
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
