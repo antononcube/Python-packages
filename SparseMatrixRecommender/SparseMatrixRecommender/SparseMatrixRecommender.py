@@ -53,11 +53,19 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Init
     # ------------------------------------------------------------------
-    def __init__(*args):
+    def __init__(self, *args, **kwargs):
+        """Creation of a SparseMatrixObject object.
+           The first (optional) argument is expected to be a data frame or a dictionary of SSparseMatrix objects.
+        """
         if len(args) == 1 and isinstance(args[0], pandas.core.frame.DataFrame):
-            _data = args[0]
+            _data = args[1]
         elif len(args) == 1 and is_smat_dict(args[0]):
-            _matrices = args[0]
+            obj = SparseMatrixRecommender().create_from_matrices(args[0])
+            self.set_matrices(obj.take_matrices())
+            self.set_M(obj.take_M())
+            self.set_tag_type_weights(obj.take_tag_type_weights())
+            self.set_data(obj.take_data())
+            self.set_value(obj.take_value())
 
     # ------------------------------------------------------------------
     # Getters
@@ -70,13 +78,17 @@ class SparseMatrixRecommender:
         """Take the tag-type sub-matrices."""
         return self._matrices
 
-    def take_value(self):
-        """Take the pipeline value."""
-        return self._value
+    def take_tag_type_weights(self):
+        """Take the tag type weights."""
+        return self._tagTypeWeights
 
     def take_data(self):
         """Take data."""
         return self._data
+
+    def take_value(self):
+        """Take the pipeline value."""
+        return self._value
 
     # ------------------------------------------------------------------
     # Echoers
@@ -91,14 +103,19 @@ class SparseMatrixRecommender:
         print(self._matrices)
         return self
 
-    def echo_value(self):
-        """Echo the pipeline value."""
-        print(self._value)
+    def echo_tag_type_weights(self):
+        """Echo the tag type weights."""
+        print(self._tagTypeWeights)
         return self
 
     def echo_data(self):
         """Echo data."""
         print(self._data)
+        return self
+
+    def echo_value(self):
+        """Echo the pipeline value."""
+        print(self._value)
         return self
 
     # ------------------------------------------------------------------
@@ -122,14 +139,19 @@ class SparseMatrixRecommender:
             return None
         return self
 
-    def set_value(self, arg):
-        """Set pipeline value."""
-        self._value = arg
+    def set_tag_type_weights(self, arg):
+        """Set the tag type weights."""
+        self._tagTypeWeights = arg
         return self
 
     def set_data(self, arg):
         """Set data."""
         self._data = arg
+        return self
+
+    def set_value(self, arg):
+        """Set pipeline value."""
+        self._value = arg
         return self
 
     # ------------------------------------------------------------------
@@ -561,6 +583,53 @@ class SparseMatrixRecommender:
         # Hence using merge.
         self.set_value(dfRecs.merge(data, on=mon, how="left"))
 
+        return self
+
+    # ------------------------------------------------------------------
+    # To dictionary form
+    # ------------------------------------------------------------------
+    def to_dict(self):
+        """Convert to dictionary form.
+
+        Returns dictionary representation of the SparseMatrixRecommender object with keys:
+        ['matrices', 'tagTypeWeights', 'data', 'value'].
+
+        The value of the keys 'matrices' is a dictionary of dictionaries.
+
+        (Ideally) this function facilitates rapid conversion and serialization.
+        """
+        res = {"matrices": {k: v.to_dict() for (k, v) in self.take_matrices().items()},
+               "tagTypeWeights": self.take_tag_type_weights(),
+               "data": self.take_data(),
+               "value": self.take_value()}
+        return res
+
+    # ------------------------------------------------------------------
+    # From dictionary form
+    # ------------------------------------------------------------------
+    def from_dict(self, arg):
+        """Convert from dictionary form.
+
+        Creates a SparseMatrixRecommender object from a dictionary representation with keys:
+        ['matrices', 'tagTypeWeights', 'data', 'value'].
+
+        The value of the keys 'matrices' is expected to be a dictionary of dictionaries.
+
+        (Ideally) this function facilitates rapid conversion and serialization.
+        """
+        if not (isinstance(arg, dict) and
+                all([x in {'matrices', 'tagTypeWeights', 'data', 'value'} for x in list(arg.keys())])):
+            raise TypeError("""The first argument is expected to be a dictionary with keys:
+            'matrices', 'tagTypeWeights', 'data', 'value'.""")
+
+        if not (isinstance(arg["matrices"], dict) and
+                all([isinstance(x, dict) for x in list(arg["matrices"].values())])):
+            raise TypeError("""The value of 'matrices' is expected to be a dictionary of dictionaries.""")
+
+        self.create_from_matrices({k: SSparseMatrix().from_dict(v) for (k, v) in arg["matrices"].items()})
+        self.set_tag_type_weights(arg["tagTypeWeights"])
+        self.set_data(arg["data"])
+        self.set_value(arg["value"])
         return self
 
     # ------------------------------------------------------------------
