@@ -44,15 +44,27 @@ class LSAWorkflows(unittest.TestCase):
         self.assertTrue(self.lsaObj.take_doc_term_mat().ncol() > 2000)
 
     def test_extract_topics_1(self):
+
         self.lsaObj = self.lsaObj.extract_topics(number_of_topics=20, method="SVD", max_steps=40)
+
         self.assertTrue(is_sparse_matrix(self.lsaObj.take_W()) and is_sparse_matrix(self.lsaObj.take_H()))
 
     def test_represent_by_terms_1(self):
-        res = self.lsaObj.represent_by_terms(query=self.queries, apply_lsi_functions=True)
+
+        res = (self.lsaObj
+               .represent_by_terms(query=self.queries, apply_lsi_functions=True)
+               .take_value())
+
         self.assertTrue(is_sparse_matrix(res)) and res.rows_count() == len(self.queries)
 
     def test_represent_by_topics_1(self):
-        res = self.lsaObj.represent_by_topics(query=self.queries, apply_lsi_functions=True, method="recommendation")
+
+        res = (self.lsaObj
+               .represent_by_topics(query=self.queries,
+                                    apply_lsi_functions=True,
+                                    method="recommendation")
+               .take_value())
+
         self.assertTrue(is_sparse_matrix(res)) and res.rows_count() == len(self.queries)
 
 
