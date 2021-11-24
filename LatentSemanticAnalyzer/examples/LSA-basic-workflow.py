@@ -3,10 +3,10 @@ import pandas
 from SparseMatrixRecommender import SparseMatrixRecommender
 from LatentSemanticAnalyzer.LatentSemanticAnalyzer import *
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import *
+from LatentSemanticAnalyzer.DataLoaders import *
 import snowballstemmer
 
-dfAbstracts = pandas.read_csv(
-    "https://raw.githubusercontent.com/antononcube/SimplifiedMachineLearningWorkflows-book/master/Data/Wolfram-Technology-Conference-2016-to-2019-abstracts.csv")
+dfAbstracts = load_abstracts_data_frame()
 
 # print(dfAbstracts.head())
 
