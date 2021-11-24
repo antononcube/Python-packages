@@ -3,7 +3,7 @@ from SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weigh
 from SparseMatrixRecommender.DocumentTermWeightFunctions import global_term_function_weights
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import document_term_matrix
 from SSparseMatrix import SSparseMatrix
-from SSparseMatrix import is_sparse_matrix
+from SSparseMatrix import is_s_sparse_matrix
 import stop_words as stop_words_package
 import math
 import warnings
@@ -79,7 +79,7 @@ class LatentSemanticAnalyzer:
     def __init__(*args):
         if len(args) == 1 and isinstance(args[0], pandas.core.frame.DataFrame):
             _data = args[0]
-        elif len(args) == 1 and is_sparse_matrix(args[0]):
+        elif len(args) == 1 and is_s_sparse_matrix(args[0]):
             _docTermMat = args[0]
 
     # ------------------------------------------------------------------
@@ -162,7 +162,7 @@ class LatentSemanticAnalyzer:
 
     def set_document_term_matrix(self, arg):
         """Set document-term matrix."""
-        if is_sparse_matrix(arg):
+        if is_s_sparse_matrix(arg):
             self._docTermMat = arg
             self._terms = arg.column_names()
         else:
@@ -172,7 +172,7 @@ class LatentSemanticAnalyzer:
 
     def set_weighted_document_term_matrix(self, arg):
         """Set weighted document-term matrix."""
-        if is_sparse_matrix(arg):
+        if is_s_sparse_matrix(arg):
             self._wDocTermMat = arg
             self._terms = arg.column_names()
         else:
@@ -367,7 +367,7 @@ class LatentSemanticAnalyzer:
         :param order_by_significance: Should the basis vectors be ordered by their significance?
         :return self:
         """
-        if not (is_sparse_matrix(self.take_W()) and is_sparse_matrix(self.take_H())):
+        if not (is_s_sparse_matrix(self.take_W()) and is_s_sparse_matrix(self.take_H())):
             raise AttributeError("Cannot find matrix factors.")
 
         if normalize_left:
@@ -415,7 +415,7 @@ class LatentSemanticAnalyzer:
         if number_of_terms < 1:
             raise TypeError("The argument 'number_of_terms' is expected to be a positive integer.")
 
-        if not (is_sparse_matrix(self.take_W()) and is_sparse_matrix(self.take_H())):
+        if not (is_s_sparse_matrix(self.take_W()) and is_s_sparse_matrix(self.take_H())):
             raise AttributeError("Cannot find matrix factors.")
 
         topics = self.take_H().row_dictionaries(sort=True)
@@ -615,7 +615,7 @@ class LatentSemanticAnalyzer:
 
             return self.represent_by_terms(query=qmat, apply_lsi_functions=apply_lsi_functions)
 
-        elif is_sparse_matrix(query):
+        elif is_s_sparse_matrix(query):
 
             qmat = query.impose_column_names(self.take_doc_term_mat().column_names())
 
@@ -668,7 +668,7 @@ class LatentSemanticAnalyzer:
 
             return self.represent_by_topics(query=qmat, apply_lsi_functions=apply_lsi_functions, method=method)
 
-        elif is_sparse_matrix(query):
+        elif is_s_sparse_matrix(query):
 
             qmat = self.represent_by_terms(query=query, apply_lsi_functions=apply_lsi_functions).take_value()
 
