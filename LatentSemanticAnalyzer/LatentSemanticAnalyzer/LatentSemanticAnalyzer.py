@@ -76,11 +76,15 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     # Init
     # ------------------------------------------------------------------
-    def __init__(*args):
+    def __init__(self, *args, **kwargs):
+        """Creation of LatentSemanticAnalyzer object.
+
+        The first (optional) argument is expected to be a data frame or SSparseMatrix object.
+        """
         if len(args) == 1 and isinstance(args[0], pandas.core.frame.DataFrame):
-            _data = args[0]
+            self.set_data(args[0])
         elif len(args) == 1 and is_s_sparse_matrix(args[0]):
-            _docTermMat = args[0]
+            self.set_document_term_matrix(args[0])
 
     # ------------------------------------------------------------------
     # Getters
@@ -193,6 +197,16 @@ class LatentSemanticAnalyzer:
     def set_normalizer_function(self, arg):
         """Set normalizer function."""
         self._normalizerFunction = arg
+        return self
+
+    def set_W(self, arg):
+        """Set the left matrix factor W."""
+        self._W = arg
+        return self
+
+    def set_H(self, arg):
+        """Set right matrix factor H."""
+        self._H = arg
         return self
 
     def set_method(self, arg):
@@ -704,3 +718,102 @@ class LatentSemanticAnalyzer:
             raise TypeError("Unknown type of the argument 'query'.")
 
         return self
+
+    # ------------------------------------------------------------------
+    # To dictionary form
+    # ------------------------------------------------------------------
+    def to_dict(self):
+        """Convert to dictionary form.
+
+        Returns dictionary representation of the LatentSemanticAnalyzer object with keys:
+        ['matrices', 'W', 'H', 'stemmingRules', 'stopWords', ...].
+
+        The value of the keys 'matrices' is a dictionary of dictionaries.
+
+        (Ideally) this function facilitates rapid conversion and serialization.
+        """
+        dictDT = None
+        if is_s_sparse_matrix(self.take_doc_term_mat()):
+            dictDT = self.take_doc_term_mat().to_dict()
+
+        dictWDT = None
+        if is_s_sparse_matrix(self.take_weighted_doc_term_mat()):
+            dictWDT = self.take_weighted_doc_term_mat().to_dict()
+
+        res = {"matrices": {"docTermMat": dictDT, "wDocTermMat": dictWDT},
+               "W": self.take_W(),
+               "H": self.take_H(),
+               "stemmingRules": self.take_stemming_rules(),
+               "stopWords": self.take_stop_words(),
+               "globalWeights": self.take_global_term_weights(),
+               "localWeightFunction": self.take_local_weight_function(),
+               "normalizerFunction": self.take_normalizer_function(),
+               "method": self.take_method(),
+               "value": self.take_value()}
+        return res
+
+    # ------------------------------------------------------------------
+    # From dictionary form
+    # ------------------------------------------------------------------
+    def from_dict(self, arg):
+        """Convert from dictionary form.
+
+        Creates a LatentSemanticAnalyzer object from a dictionary representation with keys:
+        ['matrices', 'W', 'H', 'stemmingRules', 'stopWords', ...].
+
+        The value of the keys 'matrices' is expected to be a dictionary of dictionaries.
+
+        (Ideally) this function facilitates rapid conversion and serialization.
+        """
+        if not (isinstance(arg, dict) and
+                all([x in arg for x in ['matrices', 'W', 'H', 'stemmingRules', 'stopWords']])):
+            raise TypeError("""The first argument is expected to be a dictionary with keys:
+            'matrices', 'W', 'H', 'stemmingRules', 'stopWords'.""")
+
+        if not (isinstance(arg["matrices"], dict) and
+                "docTermMat" in arg["matrices"] and
+                "wDocTermMat" in arg["matrices"] and
+                all([isinstance(x, dict) or x is None for x in list(arg["matrices"].values())])):
+            raise TypeError("""The value of 'matrices' is expected to be a dictionary of dictionaries or Nones
+            and with keys docTermMat and wDocTermMat.""")
+
+        if arg["matrices"]["docTermMat"] is None:
+            self.set_document_term_matrix(None)
+        else:
+            self.set_document_term_matrix(SSparseMatrix().from_dict(arg["matrices"]["docTermMat"]))
+
+        if arg["matrices"]["wDocTermMat"] is None:
+            self.set_weighted_document_term_matrix(None)
+        else:
+            self.set_weighted_document_term_matrix(SSparseMatrix().from_dict(arg["matrices"]["wDocTermMat"]))
+
+        self.set_stemming_rules(arg["stemmingRules"])
+        self.set_W(arg["W"])
+        self.set_H(arg["H"])
+        self.set_stop_words(arg["stopWords"])
+        self.set_global_term_weights(arg["globalWeights"])
+        self.set_method(arg["method"])
+        self.set_value(arg["value"])
+        self.set_local_weight_function(arg["localWeightFunction"])
+        self.set_normalizer_function(arg["normalizerFunction"])
+        return self
+
+    # ------------------------------------------------------------------
+    # Representation
+    # ------------------------------------------------------------------
+    def __str__(self):
+        if is_s_sparse_matrix(self.take_doc_term_mat()):
+            res = "LatentSemanticAnalyzer object with %d documents and %d terms." % self.take_doc_term_mat().shape()
+        elif is_s_sparse_matrix(self.take_weighted_doc_term_mat()):
+            res = "LatentSemanticAnalyzer object with %d documents and %d terms." % \
+                  self.take_weighted_doc_term_mat().shape()
+        else:
+            res = "LatentSemanticAnalyzer object with no document-term matrix."
+        return res
+
+    def __repr__(self):
+        """Representation of LatentSemanticAnalyzer object."""
+        nTopics = self.take_H().rows_count() if is_s_sparse_matrix(self.take_H()) else 0
+        return "<LatentSemanticAnalyzer object with document-term matrix dimensions %dx%d\n" \
+               "\tand with %d extracted topics>" % \
+               (self.take_doc_term_mat().sparse_matrix().shape + (nTopics,))
