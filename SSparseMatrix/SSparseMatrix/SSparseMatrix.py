@@ -9,7 +9,7 @@ import pickle
 # ======================================================================
 # Utilities
 # ======================================================================
-def is_sparse_matrix(obj):
+def is_s_sparse_matrix(obj):
     return isinstance(obj, SSparseMatrix) and scipy.sparse.issparse(obj.sparse_matrix())
 
 
@@ -63,7 +63,7 @@ def column_bind(matrices):
     elif isinstance(matrices, dict):
         res = None
         for k in matrices:
-            if is_sparse_matrix(res) and is_sparse_matrix(matrices[k]):
+            if is_s_sparse_matrix(res) and is_s_sparse_matrix(matrices[k]):
                 res = res.column_bind(matrices[k])
             else:
                 res = matrices[k]
@@ -331,7 +331,7 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     def eq(self, other):
         """Equivalence with another SSparseMatrix object."""
-        if is_sparse_matrix(other):
+        if is_s_sparse_matrix(other):
 
             res = self.sparse_matrix() != other.sparse_matrix()
 
@@ -428,7 +428,7 @@ class SSparseMatrix:
         # It might be too restrictive.
         # obj = self if in_place else self.copy()
         obj = self if in_place else SSparseMatrix()
-        if is_sparse_matrix(other):
+        if is_s_sparse_matrix(other):
             obj._sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
             obj._sparseMatrix.eliminate_zeros()
             # We keep the row names i.e. self.rowNames = self.row_names_dict()
@@ -556,7 +556,7 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     def row_bind(self, other):
         """Row binding with another SSparseMatrix object."""
-        if is_sparse_matrix(other):
+        if is_s_sparse_matrix(other):
 
             if not (sorted(self.column_names()) == sorted(other.column_names())):
                 raise TypeError("The column names of the two SSparseMatrix objects are expected to be the same.")
@@ -591,7 +591,7 @@ class SSparseMatrix:
     # it is considered potentially too slow.
     def column_bind(self, other):
         """Column binding with another SSparseMatrix object."""
-        if is_sparse_matrix(other):
+        if is_s_sparse_matrix(other):
 
             if not (sorted(self.row_names()) == sorted(other.row_names())):
                 raise TypeError("The row names of the two SSparseMatrix objects are expected to be the same.")
@@ -704,6 +704,32 @@ class SSparseMatrix:
         res = dict(zip(['rowIndexes', 'columnIndexes', 'values'], res))
         res = res | {"shape": self.shape(), "rowNames": self.row_names(), "columnNames": self.column_names()}
         return res
+
+    # ------------------------------------------------------------------
+    # From dictionary form
+    # ------------------------------------------------------------------
+    def from_dict(self, arg):
+        """Convert from dictionary form.
+
+        Creates the SSparseMatrix internals from dictionary representation (of a SSparseMatrix object) with keys
+        ['rowIndexes', 'columnIndexes', 'values', 'shape', 'rowNames', 'columnNames'].
+
+        The keys ['rowIndexes', 'columnIndexes', 'values'] correspond to the result of scipy.sparse.find.
+
+        The row- and column indices are given separately from the row- and column names in order
+        to facilitate rapid conversion and serialization.
+        """
+        if not (isinstance(arg, dict) and
+                all([x in {'rowIndexes', 'columnIndexes', 'values', 'shape', 'rowNames', 'columnNames'}
+                     for x in list(arg.keys())]
+                    )):
+            raise TypeError("""The first argument is expected to be a dictionary with keys:
+            'rowIndexes', 'columnIndexes', 'values', 'shape', 'rowNames', 'columnNames'.""")
+        smat = scipy.sparse.coo_matrix((arg["values"], (arg["rowIndexes"], arg["columnIndexes"])), arg["shape"])
+        self.set_sparse_matrix(smat)
+        self.set_row_names(arg["rowNames"])
+        self.set_column_names(arg["columnNames"])
+        return self
 
     # ------------------------------------------------------------------
     # Wolfram Language full form
