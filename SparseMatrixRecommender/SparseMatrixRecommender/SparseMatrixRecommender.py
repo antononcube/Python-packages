@@ -1,6 +1,6 @@
 from SSparseMatrix import SSparseMatrix
 from SSparseMatrix import column_bind
-from SSparseMatrix import is_sparse_matrix
+from SSparseMatrix import is_s_sparse_matrix
 from .CrossTabulate import cross_tabulate
 from .DocumentTermWeightFunctions import apply_term_weight_functions
 import pandas
@@ -106,7 +106,7 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     def set_M(self, arg):
         """Set recommendation matrix."""
-        if is_sparse_matrix(arg):
+        if is_s_sparse_matrix(arg):
             self._M = arg
         else:
             raise TypeError("The first argument is expected to be a SSparseMatrix object.")
@@ -394,7 +394,7 @@ class SparseMatrixRecommender:
             vec = self.to_profile_vector([profile]).take_value()
         elif isinstance(profile, dict) or isinstance(profile, list):
             vec = self.to_profile_vector(profile).take_value()
-        elif is_sparse_matrix(profile):
+        elif is_s_sparse_matrix(profile):
             vec = profile
         else:
             raise TypeError("The first argument is expected to be a list of tags or a dictionary of scored tags.")
@@ -444,7 +444,7 @@ class SparseMatrixRecommender:
             vec = self.to_history_vector([history]).take_value().transpose()
         elif isinstance(history, dict) or isinstance(history, list):
             vec = self.to_history_vector(history).take_value().transpose()
-        elif is_sparse_matrix(history):
+        elif is_s_sparse_matrix(history):
             vec = history
         else:
             raise TypeError("The first argument is expected to be a list of items, a dictionary of scored items" +
@@ -496,7 +496,7 @@ class SparseMatrixRecommender:
             vec = self.to_history_vector([history]).take_value().transpose()
         elif isinstance(history, dict) or isinstance(history, list):
             vec = self.to_history_vector(history).take_value().transpose()
-        elif is_sparse_matrix(history):
+        elif is_s_sparse_matrix(history):
             vec = history
         else:
             raise TypeError("The first argument is expected to be a list of items, a dictionary of scored items" +

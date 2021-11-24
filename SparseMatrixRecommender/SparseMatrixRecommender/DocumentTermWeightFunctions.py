@@ -1,5 +1,5 @@
 from SSparseMatrix import SSparseMatrix
-from SSparseMatrix import is_sparse_matrix
+from SSparseMatrix import is_s_sparse_matrix
 import scipy
 import numpy
 import math
