@@ -1,0 +1,89 @@
+#+TITLE: LatentSemanticAnalyzer work plan
+#+AUTHOR: Anton Antonov
+#+TODO: TODO ONGOING MAYBE | DONE CANCELED 
+#+OPTIONS: toc:1 num:0
+
+* Introduction
+- This org-mode file has a work plan list and a unit test list that correspond (and hopefully reflect) the development of the Python package [[https://github.com/antononcube/Python-packages/tree/main/LatentSemanticAnalyzer][LatentSemanticAnalyzer]].
+* Work plan [37%] [3/8]
+** DONE Object structure
+- [X] Document-term matrix
+  - A ~SSparseMatrix~ object.
+- [X] Weighted document-term matrix
+  - A ~SSparseMatrix~ object.
+- [X] Matrix factors, W and H
+- [X] LSI functions
+- [X] Data
+- [X] Pipeline value
+** TODO Core functionalities [85%] [6/7]
+*** DONE Getters [100%] [4/4]
+*** DONE Setters [100%] [4/4]
+*** DONE Make document-term matrix [100%] [3/3]
+- The first non-trivial operation to make
+- [X] Stop words
+- [X] Stemming rules
+- [X] Minimum length words
+*** TODO Extract topics [83%] [5/6]
+- [X] SVD
+- [X] NNMF
+- [ ] ICA
+- [X] Min number of documents per term
+- [X] Automatic topic names
+- [X] Max iteration steps
+*** DONE Statistical thesaurus [100%] [2/2] 
+- [X] By Cosine similarity
+  - Using a specially made SMR object.
+- [X] By Euclidean distance
+  - Using ad-hoc matrix calculations
+*** DONE Echo topics [100%] [3/3]
+- [X] As dictionary
+- [X] As long form data frame
+- [X] As wide form data frame
+*** DONE Echo statistical thesaurus [100%] [3/3]
+- [X] As dictionary
+- [X] As long form data frame
+- [X] As wide form data frame
+** DONE Creation functions [66%] [2/3]
+*** TODO Main pipeline creation functions [100%] [3/3]
+- [X] From list of texts
+- [X] From dictionary of texts
+- [X] From document-term matrix
+- [ ] From weighted document-term matrix
+*** DONE Cross tabulation [100%] [3/3]
+- - Using the implementation of SparseMatrixRecommner.
+- Cross tabulation of document-IDs vs document-terms
+** DONE LSI functions 
+- [X] Delegate to the implementation in SparseMatrixRecommner.
+** TODO Representation [66%] [4/6]
+- [X] ~__str__~
+- [X] ~__repr__~
+- [X] To dictionary form
+- [X] From dictionary form
+- [ ] ~to_wl~ stub
+** TODO Second wave functions [50%] [1/2]
+- [X] Represent by terms
+- [-] Represent by topics
+  - [X] Using "recommendations" method
+    - For both SVD and NNMF
+  - [X] Using "algebraic" method for SVD factors
+  - [ ] Using "algebraic" method for NNMF factors
+    - Requires programming of pseudo-inverse finding.
+* TODO Unit tests [40%] [2/5]
+- The unit tests (so far) are made with small matrices in order to make easier visual verification (by humans.)
+** DONE Basic functionalities [100%] [3/3]
+- [X] Creation
+- [X] Document-term matrix
+- [X] Standard pipeline
+** TODO Creation
+** DONE Representation
+*** TODO Magics
+- [ ] Verify ~__str__~
+- [ ] Verify ~__repr__~
+*** DONE To/from dictionary
+- [X] Verify same term representation
+- [X] Verify same topic representation
+* TODO Documentation [%50] [1/3]
+** DONE Usage messages
+- Usage message for each method.
+** TODO First version
+** TODO Advanced use cases
