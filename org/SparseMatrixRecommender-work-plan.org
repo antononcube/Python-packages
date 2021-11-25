@@ -1,0 +1,120 @@
+#+TITLE: SparseMatrixRecommender work plan
+#+AUTHOR: Anton Antonov
+#+TODO: TODO ONGOING MAYBE | DONE CANCELED 
+#+OPTIONS: toc:1 num:0
+
+* Introduction
+- This org-mode file has a work plan list and a unit test list that correspond (and hopefully reflect) the development of the Python package [[https://github.com/antononcube/Python-packages/tree/main/SparseMatrixRecommender][SparseMatrixRecommender]].
+* Work plan [25%] [2/8]
+** DONE Object structure
+- [X] Sparse matrices
+  - A dictionary of ~SSparseMatrix~ objects.
+- [X] Recommender matrix
+- [X] Tag type weights
+- [X] Pipeline value
+** TODO Core functionalities [60%] [3/5]
+*** DONE Getters [100%] [4/4]
+- [X] Sparse matrices
+- [X] Recommender matrix
+- [X] Tag type weights
+- [X] Pipeline value
+*** DONE Setters [100%] [4/4]
+- [X] Sparse matrices
+- [X] Recommender matrix
+- [X] Tag type weights
+- [X] Pipeline value
+*** DONE Check inputs [100%] [2/2]
+- [X] Verify dictionary of tags
+- [X] Verify dictionary of items
+*** TODO Recommend by profile [66%] [2/3]
+- The first non-trivial operation to make
+- [X] List profile
+- [X] Dictionary profile
+- [ ] ~SSparseMatrix~ profile
+*** TODO Recommend by history [%] [/]
+- [X] List history
+- [X] Dictionary history
+- [ ] ~SSparseMatrix~ history
+** DONE Creation functions [100%] [3/3]
+*** DONE Main pipeline creation functions [100%] [3/3]
+- [X] From matrices
+- [X] From data frame in long form
+- [X] From data frame in wide form
+*** DONE Cross tabulation [100%] [3/3]
+- Cross tabulation of data frames into ~SSparseMatrix~ objects.
+- [X] Two columns
+- [X] Three columns
+- [X] Dictionary of ~SSparseMatrix~ objects
+  - For specs that have
+    - index
+    - list of columns (tag types)
+    - values
+*** DONE Categorization of numerical values
+- [X] Specified breaks
+- [X] Quantiles
+** TODO LSI functions [75%] [3/4] 
+*** TODO Global LSI functions [75%] [3/4]
+- [X] IDF
+- [X] GF-IDF
+- [X] Column sum
+- [ ] Entropy
+*** DONE Local LSI functions [100%] [4/4]
+- [X] Binary
+- [X] Log
+- [X] Frequency
+- [X] Row sum
+*** DONE Normalizer LSI functions [100%] [3/3]
+- [X] Cosine
+- [X] Row sum
+- [X] Abs max
+*** DONE LSI functions application
+- [X] Global weights calculation function (separate)
+- [X] Main sequence of steps
+** TODO Representation [66%] [4/6]
+- [X] ~__str__~
+- [X] ~__repr__~
+- [X] To dictionary form
+- [X] From dictionary form
+- [ ] ~to_wl~ stub
+** TODO Second wave functions [0%] [0/5]
+- [ ] Classify by profile
+- [ ] Filter matrix
+- [ ] Retrieve by profile with search engine specs
+  - I.e. having the specs: should, must, must_not
+- [ ] Average row per segment
+- [ ] Top-K statistics facilitation
+** TODO Recommender algebra [0%] [0/5]
+- [ ] Row binding with matrix
+- [ ] Column binding wight matrix
+- [ ] Join across with another recommender
+  - Concatenate horizontal
+  - (Column binding)
+- [ ] Join with another recommender 
+  - Stack vertically
+  - (Row binding)
+- [ ] Remove tag types
+** TODO Composite design pattern application [%] [/]
+*** TODO Composite of recommenders
+- [ ] Composite class
+- [ ] Composite operation
+*** TODO Chain of responsibility recommender
+- [ ] Composite class
+- [ ] Composite operation
+*** TODO Combined SMR and LSA objects
+- [ ] Composite class
+- [ ] Composite operation
+* TODO Unit tests [40%] [2/5]
+- The unit tests (so far) are made with small matrices in order to make easier visual verification (by humans.)
+** DONE Basic functionalities [100%] [3/3]
+- [X] Creation
+- [X] Recommend by profile
+- [X] Recommend by history
+** TODO Creation
+** DONE Representation
+** TODO Second wave
+** TODO Recommender algebra
+* TODO Documentation [%50] [1/3]
+** DONE Usage messages
+- Usage message for each method.
+** TODO First version
+** TODO Advanced use cases
