@@ -814,6 +814,15 @@ class LatentSemanticAnalyzer:
     def __repr__(self):
         """Representation of LatentSemanticAnalyzer object."""
         nTopics = self.take_H().rows_count() if is_s_sparse_matrix(self.take_H()) else 0
-        return "<LatentSemanticAnalyzer object with document-term matrix dimensions %dx%d\n" \
-               "\tand with %d extracted topics>" % \
-               (self.take_doc_term_mat().sparse_matrix().shape + (nTopics,))
+        if is_s_sparse_matrix(self.take_doc_term_mat()):
+            tpls = (self.take_doc_term_mat().sparse_matrix().shape + (nTopics,))
+            return "<LatentSemanticAnalyzer object with document-term matrix dimensions %dx%d\n" \
+                   "\tand with %d extracted topics>" % tpls
+        elif is_s_sparse_matrix(self.take_weighted_doc_term_mat()):
+            tpls = (self.take_weighted_doc_term_mat().sparse_matrix().shape + (nTopics,))
+            return "<LatentSemanticAnalyzer object with weighed document-term matrix dimensions %dx%d\n" \
+                   "\tand with %d extracted topics>" % tpls
+        else:
+            return "LatentSemanticAnalyzer object with no document-term matrix."
+
+
