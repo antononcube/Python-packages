@@ -36,7 +36,7 @@ def _left_normalize_matrix_product(W, H):
 
 
 def _right_normalize_matrix_product(W, H):
-    d = [scipy.sparse.linalg.norm(H[:, i].sparse_matrix()) for i in range(H.rows_count())]
+    d = [scipy.sparse.linalg.norm(H[i, :].sparse_matrix()) for i in range(H.rows_count())]
     S = scipy.sparse.diags(diagonals=[d], offsets=[0])
     SI = scipy.sparse.diags(diagonals=[[1 / x if abs(x) > 0 else 0 for x in d]], offsets=[0])
 
@@ -823,5 +823,3 @@ class LatentSemanticAnalyzer:
                    "\tand with %d extracted topics>" % tpls
         else:
             return "LatentSemanticAnalyzer object with no document-term matrix."
-
-
