@@ -60,7 +60,7 @@
 - [X] To dictionary form
 - [X] From dictionary form
 - [ ] ~to_wl~ stub
-** TODO Second wave functions [50%] [1/2]
+** TODO Second wave functions [66%] [2/3]
 - [X] Represent by terms
 - [-] Represent by topics
   - [X] Using "recommendations" method
@@ -68,6 +68,10 @@
   - [X] Using "algebraic" method for SVD factors
   - [ ] Using "algebraic" method for NNMF factors
     - Requires programming of pseudo-inverse finding.
+- [X] Normalization function(s)
+  - [X] Left
+  - [X] Right
+  - [X] Class method
 * TODO Unit tests [40%] [2/5]
 - The unit tests (so far) are made with small matrices in order to make easier visual verification (by humans.)
 ** DONE Basic functionalities [100%] [3/3]
