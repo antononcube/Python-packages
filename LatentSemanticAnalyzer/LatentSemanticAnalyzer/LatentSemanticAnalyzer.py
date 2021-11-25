@@ -399,7 +399,6 @@ class LatentSemanticAnalyzer:
             # topicSFactors = {k: math.sqrt(v) for (k, v) in topicSFactors.items()}
 
             topicSFactors = _reverse_sort_dict(topicSFactors)
-            print(nres["W"].column_names())
             nres["W"] = nres["W"][:, list(topicSFactors.keys())]
             nres["H"] = nres["H"][list(topicSFactors.keys()), :]
 
