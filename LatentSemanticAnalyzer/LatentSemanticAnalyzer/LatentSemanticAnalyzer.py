@@ -28,21 +28,21 @@ def _is_str_dict(obj):
 def _left_normalize_matrix_product(W, H):
     d = [scipy.sparse.linalg.norm(W[:, i].sparse_matrix()) for i in range(W.columns_count())]
     S = scipy.sparse.diags(diagonals=[d], offsets=[0])
-    SI = scipy.sparse.diags(diagonals=[[1 / x if abs(x) > 0 else 0 for x in d]], offsets=[0])
+    SI = scipy.sparse.diags(diagonals=[[1 / x if abs(x) > 0 else 1 for x in d]], offsets=[0])
 
-    SI = SSparseMatrix(SI, row_names=H.row_names(), column_names=H.row_names())
+    S = SSparseMatrix(S, row_names=H.row_names(), column_names=H.row_names())
 
-    return {"W": W.dot(S).set_column_names(W.column_names()), "H": SI.dot(H)}
+    return {"W": W.dot(SI).set_column_names(W.column_names()), "H": S.dot(H)}
 
 
 def _right_normalize_matrix_product(W, H):
     d = [scipy.sparse.linalg.norm(H[i, :].sparse_matrix()) for i in range(H.rows_count())]
     S = scipy.sparse.diags(diagonals=[d], offsets=[0])
-    SI = scipy.sparse.diags(diagonals=[[1 / x if abs(x) > 0 else 0 for x in d]], offsets=[0])
+    SI = scipy.sparse.diags(diagonals=[[1 / x if abs(x) > 0 else 1 for x in d]], offsets=[0])
 
-    S = SSparseMatrix(S, row_names=H.row_names(), column_names=H.row_names())
+    SI = SSparseMatrix(SI, row_names=H.row_names(), column_names=H.row_names())
 
-    return {"W": W.dot(SI).set_column_names(W.column_names()), "H": S.dot(H)}
+    return {"W": W.dot(S).set_column_names(W.column_names()), "H": SI.dot(H)}
 
 
 def _sort_dict(x):
