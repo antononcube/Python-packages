@@ -12,6 +12,7 @@ import numpy
 import scipy
 import scipy.sparse.linalg
 import nimfa
+import pickle
 
 
 # ======================================================================
@@ -243,6 +244,21 @@ class LatentSemanticAnalyzer:
         """Set pipeline value."""
         self._value = arg
         return self
+
+    # ------------------------------------------------------------------
+    # Copying
+    # ------------------------------------------------------------------
+    def copy(self):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    def __copy__(self):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    def __deepcopy__(self, memodict={}):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
 
     # ------------------------------------------------------------------
     # Make document-term matrix
