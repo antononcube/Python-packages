@@ -474,7 +474,7 @@ class SparseMatrixRecommender:
             return None
 
         # Compute the recommendations
-        recs = self.take_M().dot(vec.dot(self.take_M()).transpose(in_place=True))
+        recs = self.take_M().dot(vec.dot(self.take_M()).transpose(copy=False))
 
         # Take non-zero scores recommendations
         recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
@@ -484,7 +484,7 @@ class SparseMatrixRecommender:
             hist_set = vec.column_sums_dict()
             hist_set = set({key for (key, value) in hist_set.items() if value > 0})
 
-            recs = {key: value for (key, value) in recs.items() if not key in hist_set}
+            recs = {key: value for (key, value) in recs.items() if key not in hist_set}
 
         # Reverse sort
         recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
