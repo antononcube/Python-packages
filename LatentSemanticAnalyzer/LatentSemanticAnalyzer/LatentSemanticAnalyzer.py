@@ -304,7 +304,16 @@ class LatentSemanticAnalyzer:
                                     global_weight_func="IDF",
                                     local_weight_func="None",
                                     normalizer_func="Cosine"):
-        """Apply LSI functions to the entries of the document-term matrix."""
+        """Apply LSI functions to the entries of the document-term matrix.
+
+        :param global_weight_func: Global term weight function.
+        :param local_weight_func: Local term weight function.
+        :param normalizer_func: Normalizer function.
+        :return self:
+        """
+
+        if not is_s_sparse_matrix(self.take_doc_term_mat()):
+            raise AttributeError("There is no document-term matrix")
 
         self._wDocTermMat = apply_term_weight_functions(doc_term_matrix=self.take_doc_term_mat(),
                                                         global_weight_func=global_weight_func,
@@ -335,6 +344,10 @@ class LatentSemanticAnalyzer:
         :param max_steps: Maximum number of steps for the matrix factorization algorith,
         :return self:
         """
+
+        if not is_s_sparse_matrix(self.take_weighted_doc_term_mat()):
+            raise AttributeError("There is no weighted document-term matrix")
+
         # Take terms present in large enough number of documents
         smat01 = self.take_document_term_matrix().unitize()
         cs = smat01.column_sums_dict()
@@ -502,6 +515,9 @@ class LatentSemanticAnalyzer:
         :param method: Method for nearest neighbors finding.
         :return self:
         """
+        if not (is_s_sparse_matrix(self.take_W()) and is_s_sparse_matrix(self.take_H())):
+            raise AttributeError("Cannot find matrix factors.")
+
         if not _is_str_list(terms):
             raise TypeError("The first argument, 'words', is expected to be a list of strings.")
 
@@ -624,10 +640,14 @@ class LatentSemanticAnalyzer:
     def represent_by_terms(self, query, apply_lsi_functions=True):
         """Represent by terms.
 
-        :param query: A vector of strings or a sparse matrix to be represented in the space of monad's document-term matrix.
+        :param query: A vector of strings or a sparse matrix to be represented in the
+        space of monad's (weighted) document-term matrix.
         :param apply_lsi_functions: Should the LSI weight term functions be applied to the result matrix or not?
         :return self:
         """
+        if not (is_s_sparse_matrix(self.take_doc_term_mat()) or
+                is_s_sparse_matrix(self.take_weighted_doc_term_mat())):
+            raise AttributeError("Cannot document-term matrix.")
 
         if isinstance(query, str):
 
@@ -646,17 +666,20 @@ class LatentSemanticAnalyzer:
 
         elif is_s_sparse_matrix(query):
 
-            qmat = query.impose_column_names(self.take_doc_term_mat().column_names())
+            if is_s_sparse_matrix(self.take_doc_term_mat()):
+                qmat = query.impose_column_names(self.take_doc_term_mat().column_names())
+            else:
+                qmat = query.impose_column_names(self.take_weighted_doc_term_mat().column_names())
 
             if qmat.sparse_matrix().sum() == 0:
                 raise ValueError("The obtained query matrix has not entries.")
 
-            if apply_term_weight_functions:
+            if apply_lsi_functions:
 
                 if self.take_global_term_weights() is None or \
                         self.take_local_weight_function() is None or \
                         self.take_normalizer_function() is None:
-                    raise AttributeError("""If the argument 'apply_term_weight_functions' is True
+                    raise AttributeError("""If the argument 'apply_lsi_functions' is True
                     then the monad context is expected to have the elements 
                     '_globalWeights', '_localWeightFunction', '_normalizerFunction'.""")
 
@@ -683,8 +706,10 @@ class LatentSemanticAnalyzer:
         :param method: Method to find the topics representation with; one of 'algebraic' or 'recommendation'.
         :return self:
         """
+        if not (is_s_sparse_matrix(self.take_W()) and is_s_sparse_matrix(self.take_H())):
+            raise AttributeError("Cannot find matrix factors.")
 
-        if not method.lower() in set([x.lower() for x in ["Algebraic", "Recommendation"]]):
+        if method.lower() not in {"algebraic", "recommendation"}:
             raise TypeError("The argument method is expected to be NULL or one of 'algebraic' or 'recommendation'.")
 
         if isinstance(query, str):
