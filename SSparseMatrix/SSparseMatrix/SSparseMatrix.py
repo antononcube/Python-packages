@@ -349,9 +349,9 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Transpose
     # ------------------------------------------------------------------
-    def transpose(self, in_place=False):
+    def transpose(self, copy=True):
         """Transpose."""
-        obj = self if in_place else self.copy()
+        obj = self.copy() if copy else self
         obj._sparseMatrix = obj.sparse_matrix().transpose()
         t = obj._colNames
         obj._colNames = obj._rowNames
@@ -361,26 +361,26 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Conjugate transpose
     # ------------------------------------------------------------------
-    def conjugate(self, in_place=False):
+    def conjugate(self, copy=True):
         """Conjugate elementwise."""
-        obj = self if in_place else self.copy()
+        obj = self.copy() if copy else self
         obj._sparseMatrix = obj.sparse_matrix().conj()
         return obj
 
-    def conjugate_transpose(self, in_place=False):
+    def conjugate_transpose(self, copy=True):
         """Conjugate transpose."""
-        obj = self if in_place else self.copy()
-        obj.conjugate(in_place=True)
-        obj.transpose(in_place=True)
+        obj = self.copy() if copy else self
+        obj.conjugate(copy=False)
+        obj.transpose(copy=False)
         return obj
 
     # ------------------------------------------------------------------
     # Add
     # ------------------------------------------------------------------
-    def add(self, other, in_place=False):
+    def add(self, other, copy=True):
         """Element-wise addition with another SSparseMatrix object,
          or a scipy sparse matrix, or a scalar."""
-        obj = self if in_place else self.copy()
+        obj = self.copy() if copy else self
         if isinstance(other, SSparseMatrix) and \
                 obj.row_names() == other.row_names() and \
                 obj.column_names() == other.column_names():
@@ -395,10 +395,10 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Multiply
     # ------------------------------------------------------------------
-    def multiply(self, other, in_place=False):
+    def multiply(self, other, copy=True):
         """Element-wise multiplication with another SSparseMatrix object,
          or a scipy sparse matrix, or a scalar."""
-        obj = self if in_place else self.copy()
+        obj = self.copy() if copy else self
         if isinstance(other, SSparseMatrix) and \
                 obj.row_names() == other.row_names() and \
                 obj.column_names() == other.column_names():
@@ -421,13 +421,13 @@ class SSparseMatrix:
     # ------------------------------------------------------------------
     # Dot
     # ------------------------------------------------------------------
-    def dot(self, other, in_place=False):
+    def dot(self, other, copy=True):
         """Dot product with another object that is a SSparseMatrix object, or scipy sparse matrix,
         or a list, or a numpy array."""
         # I am not sure should we check that : self.column_names() == other.row_names()
         # It might be too restrictive.
-        # obj = self if in_place else self.copy()
-        obj = self if in_place else SSparseMatrix()
+        # obj = self.copy() if copy else self
+        obj = SSparseMatrix() if copy else self
         if is_s_sparse_matrix(other):
             obj._sparseMatrix = self.sparse_matrix().dot(other.sparse_matrix())
             obj._sparseMatrix.eliminate_zeros()
@@ -549,7 +549,7 @@ class SSparseMatrix:
     def impose_column_names(self, names):
         """Impose column names. (New SSparseMatrix object is created.)"""
         if isinstance(names, list):
-            return self.transpose().impose_row_names(names).transpose(in_place=True)
+            return self.transpose().impose_row_names(names).transpose(copy=False)
         else:
             raise TypeError("The first argument is expected to be a list of strings.")
             return None
