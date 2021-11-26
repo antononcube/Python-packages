@@ -685,7 +685,9 @@ class LatentSemanticAnalyzer:
 
             qmat = self.represent_by_terms(query=query, apply_lsi_functions=apply_lsi_functions).take_value()
 
-            qmat = query.impose_column_names(self.take_H().column_names())
+            qmat = qmat.impose_column_names(self.take_H().column_names())
+
+            self.normalize_matrix_product(normalize_left=False)
 
             if qmat.sparse_matrix().sum() == 0:
                 raise ValueError("The obtained query matrix has not entries.")
