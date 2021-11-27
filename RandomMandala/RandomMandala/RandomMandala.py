@@ -1,13 +1,8 @@
 import random
-
 import bezier
 import matplotlib
-import matplotlib.pyplot
 import numpy
-import seaborn
 import math
-
-from matplotlib.artist import Artist
 
 
 class RandomMandala:
@@ -113,7 +108,7 @@ class RandomMandala:
                         face_color="0.2",
                         edge_color=None,
                         location=111,
-                        ax = None):
+                        ax=None):
         # Make figure and axes
         if ax is None:
             if self._figure is None:
