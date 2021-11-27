@@ -250,8 +250,8 @@ class RandomMandala:
             nodes1con = numpy.array([self._seed_points[-1], self._seed_points[0]]).transpose()
         else:
             nodes1con = numpy.array([self._seed_points[-1],
-                                     self._seed_points[-2],
-                                     self._seed_points[1],
+                                     # self._seed_points[-2],
+                                     # self._seed_points[1],
                                      self._seed_points[0]]).transpose()
 
         # Rotation matrix
