@@ -112,16 +112,21 @@ class RandomMandala:
     def rotate_and_fill(self,
                         face_color="0.2",
                         edge_color=None,
-                        location=111):
+                        location=111,
+                        ax = None):
         # Make figure and axes
-        if self._figure is None:
-            fig, ax = matplotlib.pyplot.subplots()
-        else:
-            fig = self._figure
-            if isinstance(location, tuple):
-                ax = fig.add_subplot(*location)
+        if ax is None:
+            if self._figure is None:
+                fig, local_ax = matplotlib.pyplot.subplots()
             else:
-                ax = fig.add_subplot(location)
+                fig = self._figure
+                if isinstance(location, tuple):
+                    local_ax = fig.add_subplot(*location)
+                else:
+                    local_ax = fig.add_subplot(location)
+        else:
+            local_ax = ax
+            fig = self._figure
 
         # Determine rotation angle and seed nodes
         alpha = self._angle
@@ -138,42 +143,50 @@ class RandomMandala:
 
         # First nodes and plot
         if face_color is None:
-            ax.plot(nodes[0], nodes[1], color=edge_color)
+            local_ax.plot(nodes[0], nodes[1], color=edge_color)
         else:
-            ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
+            local_ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
 
         # Incremental rotation and plotting
         for i in range(1, math.floor(2 * numpy.pi / alpha)):
             nodes = numpy.dot(rotMat, nodes)
             if face_color is None:
-                ax.plot(nodes[0], nodes[1], color=edge_color)
+                local_ax.plot(nodes[0], nodes[1], color=edge_color)
             else:
-                ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
+                local_ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
 
         # Just mandala plot
-        ax.set_aspect('equal')
-        ax.axis('off')
+        local_ax.set_aspect('equal')
+        local_ax.axis('off')
 
         # Set figure, axes, value
         self._figure = fig
-        self._axes = ax
-        self._value = ax
+        self._axes = local_ax
+        self._value = local_ax
 
         return self
 
     # ===========================================================
     # Rotate and bezier
     # ===========================================================
-    def rotate_and_bezier(self, face_color="0.2", edge_color="0.2", location=111):
+    def rotate_and_bezier(self,
+                          face_color="0.2",
+                          edge_color="0.2",
+                          location=111,
+                          ax=None):
         # Make figure and axes
-        if self._figure is None:
-            fig, ax = matplotlib.pyplot.subplots()
-        else:
-            fig = self._figure
-            if isinstance(location, tuple):
-                ax = fig.add_subplot(*location)
+        if ax is None:
+            if self._figure is None:
+                fig, local_ax = matplotlib.pyplot.subplots()
             else:
-                ax = fig.add_subplot(location)
+                fig = self._figure
+                if isinstance(location, tuple):
+                    local_ax = fig.add_subplot(*location)
+                else:
+                    local_ax = fig.add_subplot(location)
+        else:
+            local_ax = ax
+            fig = self._figure
 
         # Determine rotation angle and seed nodes
         alpha = self._angle
@@ -187,32 +200,32 @@ class RandomMandala:
 
         # First nodes and plot
         curve = bezier.Curve.from_nodes(nodes)
-        _ = curve.plot(num_pts=256, color=edge_color, ax=ax)
+        _ = curve.plot(num_pts=256, color=edge_color, ax=local_ax)
 
         # Incremental rotation and plotting
         for i in range(1, math.floor(2 * numpy.pi / alpha)):
             nodes = numpy.dot(rotMat, nodes)
             curve = bezier.Curve.from_nodes(nodes)
-            _ = curve.plot(num_pts=256, ax=ax, color=edge_color)
+            _ = curve.plot(num_pts=256, ax=local_ax, color=edge_color)
 
         # Symmetric case
         if self._symmetric:
             nodes = numpy.array(self._sym_seed_points).transpose()
             curve = bezier.Curve.from_nodes(nodes)
-            _ = curve.plot(num_pts=256, ax=ax, color=edge_color)
+            _ = curve.plot(num_pts=256, ax=local_ax, color=edge_color)
             for i in range(1, math.floor(2 * numpy.pi / alpha)):
                 nodes = numpy.dot(rotMat, nodes)
                 curve = bezier.Curve.from_nodes(nodes)
-                _ = curve.plot(num_pts=256, ax=ax, color=edge_color)
+                _ = curve.plot(num_pts=256, ax=local_ax, color=edge_color)
 
         # Just mandala plot
-        ax.set_aspect('equal')
-        ax.axis('off')
+        local_ax.set_aspect('equal')
+        local_ax.axis('off')
 
         # Set figure, axes, value
         self._figure = fig
-        self._axes = ax
-        self._value = ax
+        self._axes = local_ax
+        self._value = local_ax
 
         return self
 
@@ -292,6 +305,12 @@ class RandomMandala:
         # Just mandala plot
         local_ax.set_aspect('equal')
         local_ax.axis('off')
+
+        # Proper scaling
+        # local_ax.set_xscale("linear")
+        # print(self._radius)
+        # local_ax.set_xlim([-self._radius, self._radius])
+        # local_ax.set_ylim([-self._radius, self._radius])
 
         # Set figure, axes, value
         self._figure = fig
