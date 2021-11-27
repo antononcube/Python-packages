@@ -80,7 +80,9 @@ class RandomMandala:
     # ===========================================================
     # Symmetric seed segment
     # ===========================================================
-    def make_seed_symmetric(self):
+    def make_seed_symmetric(self, arg=None):
+        if isinstance(arg, bool) and not arg:
+            return self
         self._sym_seed_points = [(x[0], -x[1]) for x in self._seed_points]
         self._symmetric = True
         self._value = self._seed_points
@@ -107,7 +109,10 @@ class RandomMandala:
     # ===========================================================
     # Rotate and fill
     # ===========================================================
-    def rotate_and_fill(self, face_color="0.2", edge_color=None, location=111):
+    def rotate_and_fill(self,
+                        face_color="0.2",
+                        edge_color=None,
+                        location=111):
         # Make figure and axes
         if self._figure is None:
             fig, ax = matplotlib.pyplot.subplots()
@@ -132,12 +137,18 @@ class RandomMandala:
         rotMat = [[math.cos(alpha), -math.sin(alpha)], [math.sin(alpha), math.cos(alpha)]]
 
         # First nodes and plot
-        ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
+        if face_color is None:
+            ax.plot(nodes[0], nodes[1], color=edge_color)
+        else:
+            ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
 
         # Incremental rotation and plotting
         for i in range(1, math.floor(2 * numpy.pi / alpha)):
             nodes = numpy.dot(rotMat, nodes)
-            ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
+            if face_color is None:
+                ax.plot(nodes[0], nodes[1], color=edge_color)
+            else:
+                ax.fill(nodes[0], nodes[1], fc=face_color, ec=edge_color)
 
         # Just mandala plot
         ax.set_aspect('equal')
