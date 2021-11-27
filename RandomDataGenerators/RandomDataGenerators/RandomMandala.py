@@ -230,7 +230,10 @@ class RandomMandala:
             local_ax = ax
 
         # Determine rotation angle and seed nodes
-        alpha = 2 * self._angle
+        alpha = self._angle
+        if self._symmetric:
+            alpha = 2 * alpha
+
         nodes1 = numpy.array(self._seed_points).transpose()
         if len(self._seed_points) < 4:
             nodes1con = numpy.array([self._seed_points[-1], self._seed_points[0]]).transpose()
@@ -263,6 +266,7 @@ class RandomMandala:
             self._figure = fig
             self._axes = local_ax
             self._symmetric = False
+            self._angle = 2 * self._angle
             self._sym_seed_points, self._seed_points = self._seed_points, self._sym_seed_points
 
             self.rotate_and_bezier_fill(face_color=face_color,
@@ -272,6 +276,7 @@ class RandomMandala:
 
             self._sym_seed_points, self._seed_points = self._seed_points, self._sym_seed_points
             self._symmetric = True
+            self._angle = self._angle / 2
 
         # Just mandala plot
         local_ax.set_aspect('equal')
