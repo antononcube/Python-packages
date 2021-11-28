@@ -53,7 +53,7 @@ def random_mandala(n_rows=None,
     :param connecting_function: Connecting function, one of "line", "fill", "bezier", "bezier_fill", "random", or None.
     If 'random' or None a random choice of the rest of values is made.
 
-    :type number_of_elements: int
+    :type number_of_elements: int|str|None
     :param number_of_elements: Controls how may graphics elements are in the seed segment.
 
     :type symmetric_seed: bool|str|None
@@ -96,22 +96,40 @@ def random_mandala(n_rows=None,
         raise TypeError("The argument 'radius' is expected to be a positive number or a list of positive numbers.")
 
     # Check number_of_elements
-    if not isinstance(number_of_elements, int) and number_of_elements > 0:
-        raise TypeError("The argument 'number_of_elements' is expected to be a positive integer.")
+    if not (isinstance(number_of_elements, str) and number_of_elements.lower() == "automatic" or
+            isinstance(number_of_elements, int) and number_of_elements > 0 or
+            number_of_elements is None or
+            isinstance(number_of_elements, list)):
+        raise TypeError("""The argument 'number_of_elements' is expected to be
+             a positive integer, 'automatic', or None.""")
+
+    local_number_of_elements = "automatic" if number_of_elements is None else number_of_elements
+
+    # Check n_rows
+    if not (isinstance(n_rows, int) and n_rows > 0 or n_rows is None):
+        raise TypeError("The argument 'n_rows' is expected to be a positive integer or None.")
+
+    # Check n_columns
+    if not (isinstance(n_columns, int) and n_columns > 0 or n_columns is None):
+        raise TypeError("The argument 'n_columns' is expected to be a positive integer or None.")
+
+    local_n_rows = 1 if n_rows is None else n_rows
+    local_n_columns = 1 if n_columns is None else n_columns
 
     # Delegate
-    if isinstance(n_rows, int) and n_rows > 0 and isinstance(n_columns, int) and n_columns > 0:
-        return _random_mandalas_figure(n_rows=n_rows,
-                                       n_columns=n_columns,
+    if local_n_columns > 1 or local_n_columns > 1:
+        return _random_mandalas_figure(n_rows=local_n_rows,
+                                       n_columns=local_n_columns,
                                        radius=radius,
                                        rotational_symmetry_order=rotational_symmetry_order,
                                        connecting_function=local_connecting_function,
-                                       number_of_elements=number_of_elements,
+                                       number_of_elements=local_number_of_elements,
                                        symmetric_seed=symmetric_seed,
                                        face_color=face_color,
                                        edge_color=edge_color,
                                        **kwargs)
     else:
+        # I am not sure is this special case is needed. (The general one above should suffice.)
         if (isinstance(radius, float) or isinstance(radius, int)) and radius > 0:
             return _random_mandala_single(figure=None,
                                           axes=None,
@@ -119,7 +137,7 @@ def random_mandala(n_rows=None,
                                           radius=radius,
                                           rotational_symmetry_order=rotational_symmetry_order,
                                           connecting_function=local_connecting_function,
-                                          number_of_elements=number_of_elements,
+                                          number_of_elements=local_number_of_elements,
                                           symmetric_seed=symmetric_seed,
                                           face_color=face_color,
                                           edge_color=edge_color,
@@ -130,7 +148,7 @@ def random_mandala(n_rows=None,
                                          radius=radius,
                                          rotational_symmetry_order=rotational_symmetry_order,
                                          connecting_function=local_connecting_function,
-                                         number_of_elements=number_of_elements,
+                                         number_of_elements=local_number_of_elements,
                                          symmetric_seed=symmetric_seed,
                                          face_color=face_color,
                                          edge_color=edge_color,
@@ -145,7 +163,7 @@ def _random_mandalas_figure(n_rows=None,
                             radius=1,
                             rotational_symmetry_order: Union[int, list, str, None] = 6,
                             connecting_function: Optional[str] = "fill",
-                            number_of_elements: int = 6,
+                            number_of_elements: Union[int, str, None] = 6,
                             symmetric_seed: Union[bool, str, None] = True,
                             face_color="0.2",
                             edge_color="0.2",
@@ -183,10 +201,10 @@ def _random_mandalas_figure(n_rows=None,
 def _random_mandala_multi(figure=None,
                           axes=None,
                           location=None,
-                          radius=[6, 4, 2],
+                          radius: list = [6, 4, 2],
                           rotational_symmetry_order: Union[int, list, str, None] = 6,
                           connecting_function: Optional[str] = "fill",
-                          number_of_elements: int = 6,
+                          number_of_elements: Union[int, str] = 6,
                           symmetric_seed: Union[bool, str, None] = True,
                           face_color="0.2",
                           edge_color="0.2",
@@ -222,6 +240,7 @@ def _random_mandala_multi(figure=None,
                                rotational_symmetry_order=rso,
                                connecting_function=connecting_function,
                                number_of_elements=number_of_elements,
+                               bezier_radius_factor=0.,
                                symmetric_seed=symmetric_seed,
                                face_color=fc,
                                edge_color=ec)
@@ -238,7 +257,8 @@ def _random_mandala_single(figure=None,
                            radius=1,
                            rotational_symmetry_order: Union[int, list, str, None] = 6,
                            connecting_function: Optional[str] = "fill",
-                           number_of_elements: int = 6,
+                           number_of_elements: Union[int, str] = 6,
+                           bezier_radius_factor: float = 0.5,
                            symmetric_seed: Union[bool, str, None] = True,
                            face_color="0.2",
                            edge_color="0.2",
@@ -266,24 +286,30 @@ def _random_mandala_single(figure=None,
     else:
         rso = rotational_symmetry_order
 
+    rso = rso[0] if isinstance(rso, list) else rso
+
     # Symmetric seed
     if isinstance(symmetric_seed, str) and symmetric_seed.lower() == "random" or symmetric_seed is None:
         ssb = random.random() > 0.3
     else:
         ssb = symmetric_seed
 
+    # Number of elements
+    local_number_of_elements = 6 if isinstance(number_of_elements, str) else number_of_elements
+
     # Generate seed
     rMandala = (RandomMandala(figure=fig, axes=ax)
                 .make_seed_segment(radius=radius,
                                    angle=numpy.pi / rso,
-                                   number_of_elements=number_of_elements)
+                                   number_of_elements=local_number_of_elements)
                 .make_seed_symmetric(ssb))
 
-    # Connect, rotate, place
+    # Connection function
     conFunc = connecting_function.lower()
     if conFunc == 'random':
         conFunc = random.sample(['line', 'bezier', 'fill', 'bezier_fill'], 1)[0]
 
+    # Rotate, place
     if conFunc in {"fill", "polygon"}:
 
         rMandala.rotate_and_fill(face_color=face_color,
@@ -297,6 +323,29 @@ def _random_mandala_single(figure=None,
                                  edge_color=edge_color,
                                  location=locationSpec,
                                  ax=ax)
+
+    elif conFunc in {"bezier", "bezier_fill", "bezier fill", "bezierfill"} and \
+            isinstance(bezier_radius_factor, (int, float)) and bezier_radius_factor > 0:
+
+        rot_and_place_func = "rotate_and_bezier" if conFunc == "bezier" else "rotate_and_bezier_fill"
+
+        getattr(rMandala, rot_and_place_func)(face_color=face_color,
+                                              edge_color=edge_color,
+                                              location=locationSpec,
+                                              ax=ax)
+
+        local_ax = rMandala.take_axes()
+
+        (rMandala
+         .make_seed_segment(radius=radius * bezier_radius_factor,
+                            angle=numpy.pi / rso,
+                            number_of_elements=local_number_of_elements)
+         .make_seed_symmetric(symmetric_seed))
+
+        getattr(rMandala, rot_and_place_func)(face_color=face_color,
+                                              edge_color=edge_color,
+                                              location=locationSpec,
+                                              ax=local_ax)
 
     elif conFunc == "bezier":
 
