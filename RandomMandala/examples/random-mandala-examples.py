@@ -49,7 +49,7 @@ for i in range(100):
 # for im in mandala_images:
 #     im.show()
 
-mandala_images2 = [ImageOps.invert(img.convert('RGB')) for img in mandala_images]
+mandala_images2 = [ImageOps.invert(img) for img in mandala_images]
 
 fig3 = plt.figure(figsize=(12., 12.))
 grid = ImageGrid(fig3, 111,
