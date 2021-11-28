@@ -81,11 +81,11 @@ def random_mandala(n_rows=1,
 
     # Check rotational_symmetry_order
     if not (isinstance(rotational_symmetry_order, str) and rotational_symmetry_order.lower() == "random" or
-            isinstance(rotational_symmetry_order, int) and rotational_symmetry_order > 0 or
+            isinstance(rotational_symmetry_order, (int, float)) and rotational_symmetry_order >= 1.0 or
             rotational_symmetry_order is None or
             isinstance(rotational_symmetry_order, list)):
         raise TypeError("""The argument 'rotational_symmetry_order' is expected to be
-             a positive integer, 'random', or None.""")
+             a number greater than 1, 'random', or None.""")
 
     local_connecting_function = connecting_function
     if connecting_function is None:
