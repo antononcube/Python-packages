@@ -48,7 +48,7 @@ def random_mandala(n_rows=1,
     :type radius: int|list
     :param radius: Radius for the mandalas, a flot or a list of floats. If a list of floats the mandalas are overlain.
 
-    :type rotational_symmetry_order: int|str|list|None
+    :type rotational_symmetry_order: float|int|str|list|None
     :param rotational_symmetry_order: Number of copies of the seed segment that comprise the mandala.
 
     :type connecting_function: str|None
