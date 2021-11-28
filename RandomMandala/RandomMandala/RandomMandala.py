@@ -21,6 +21,7 @@ def figure_to_image(figure):
     canvas.draw()
     rgba = numpy.asarray(canvas.buffer_rgba())
     res = PIL.Image.fromarray(rgba)
+    res = res.convert('RGB')
 
     return res
 
