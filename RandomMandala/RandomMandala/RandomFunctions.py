@@ -116,43 +116,27 @@ def random_mandala(n_rows=None,
     local_n_rows = 1 if n_rows is None else n_rows
     local_n_columns = 1 if n_columns is None else n_columns
 
+    # Check face color
+    local_face_color = face_color
+    if isinstance(face_color, list) and _is_radius_number(radius):
+        local_face_color = face_color[0]
+
+    # Check edge color
+    local_edge_color = edge_color
+    if isinstance(edge_color, list) and _is_radius_number(radius):
+        local_edge_color = edge_color[0]
+
     # Delegate
-    if local_n_columns > 1 or local_n_columns > 1:
-        return _random_mandalas_figure(n_rows=local_n_rows,
-                                       n_columns=local_n_columns,
-                                       radius=radius,
-                                       rotational_symmetry_order=rotational_symmetry_order,
-                                       connecting_function=local_connecting_function,
-                                       number_of_elements=local_number_of_elements,
-                                       symmetric_seed=symmetric_seed,
-                                       face_color=face_color,
-                                       edge_color=edge_color,
-                                       **kwargs)
-    else:
-        # I am not sure is this special case is needed. (The general one above should suffice.)
-        if (isinstance(radius, float) or isinstance(radius, int)) and radius > 0:
-            return _random_mandala_single(figure=None,
-                                          axes=None,
-                                          location=None,
-                                          radius=radius,
-                                          rotational_symmetry_order=rotational_symmetry_order,
-                                          connecting_function=local_connecting_function,
-                                          number_of_elements=local_number_of_elements,
-                                          symmetric_seed=symmetric_seed,
-                                          face_color=face_color,
-                                          edge_color=edge_color,
-                                          **kwargs)
-        else:
-            return _random_mandala_multi(figure=None,
-                                         location=None,
-                                         radius=radius,
-                                         rotational_symmetry_order=rotational_symmetry_order,
-                                         connecting_function=local_connecting_function,
-                                         number_of_elements=local_number_of_elements,
-                                         symmetric_seed=symmetric_seed,
-                                         face_color=face_color,
-                                         edge_color=edge_color,
-                                         **kwargs)
+    return _random_mandalas_figure(n_rows=local_n_rows,
+                                   n_columns=local_n_columns,
+                                   radius=radius,
+                                   rotational_symmetry_order=rotational_symmetry_order,
+                                   connecting_function=local_connecting_function,
+                                   number_of_elements=local_number_of_elements,
+                                   symmetric_seed=symmetric_seed,
+                                   face_color=local_face_color,
+                                   edge_color=local_edge_color,
+                                   **kwargs)
 
 
 # ===========================================================
