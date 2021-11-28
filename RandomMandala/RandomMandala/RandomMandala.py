@@ -25,8 +25,14 @@ class RandomMandala:
         if len(args) > 0:
             self._figure = args[0]
 
+        if len(args) > 1:
+            self._axes = args[1]
+
         if len(kwargs) > 0 and "figure" in kwargs:
             self._figure = kwargs["figure"]
+
+        if len(kwargs) > 0 and "axes" in kwargs:
+            self._axes = kwargs["axes"]
 
     # ===========================================================
     # Setters
