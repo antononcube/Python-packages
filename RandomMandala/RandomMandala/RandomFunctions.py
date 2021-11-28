@@ -29,6 +29,8 @@ def random_mandala(n_rows=1,
                    symmetric_seed=True,
                    face_color="0.2",
                    edge_color="0.2",
+                   figure: Optional[matplotlib.pyplot.Figure] = None,
+                   location=None,
                    **kwargs):
     """Generates random mandalas.
 
@@ -65,6 +67,12 @@ def random_mandala(n_rows=1,
 
     :type edge_color: str|list
     :param edge_color: Edge (line) color.
+
+    :type figure: matplotlib.pyplot.Figure|None
+    :param figure: Figure to add the random mandala to.
+
+    :type location: tuple|None
+    :param location: Location spec to add the random mandala to.
 
     :type kwargs: **dict
     :param kwargs: Arguments for matplotlib.pyplot.figure .
@@ -127,16 +135,41 @@ def random_mandala(n_rows=1,
         local_edge_color = edge_color[0]
 
     # Delegate
-    return _random_mandalas_figure(n_rows=local_n_rows,
-                                   n_columns=local_n_columns,
-                                   radius=radius,
-                                   rotational_symmetry_order=rotational_symmetry_order,
-                                   connecting_function=local_connecting_function,
-                                   number_of_elements=local_number_of_elements,
-                                   symmetric_seed=symmetric_seed,
-                                   face_color=local_face_color,
-                                   edge_color=local_edge_color,
-                                   **kwargs)
+    if figure is not None and location is not None:
+
+        ax = figure.add_subplot(*location)
+
+        if isinstance(radius, list):
+            rm_func = _random_mandala_multi
+        else:
+            rm_func = _random_mandala_single
+
+        return rm_func(figure=figure,
+                       axes=ax,
+                       location=location,
+                       n_rows=local_n_rows,
+                       n_columns=local_n_columns,
+                       radius=radius,
+                       rotational_symmetry_order=rotational_symmetry_order,
+                       connecting_function=local_connecting_function,
+                       number_of_elements=local_number_of_elements,
+                       symmetric_seed=symmetric_seed,
+                       face_color=local_face_color,
+                       edge_color=local_edge_color,
+                       **kwargs)
+
+    else:
+
+        return _random_mandalas_figure(n_rows=local_n_rows,
+                                       n_columns=local_n_columns,
+                                       radius=radius,
+                                       rotational_symmetry_order=rotational_symmetry_order,
+                                       connecting_function=local_connecting_function,
+                                       number_of_elements=local_number_of_elements,
+                                       symmetric_seed=symmetric_seed,
+                                       face_color=local_face_color,
+                                       edge_color=local_edge_color,
+                                       **kwargs)
 
 
 # ===========================================================
@@ -261,7 +294,7 @@ def _random_mandala_single(figure=None,
     # Location spec
     locationSpec = location
     if location is None:
-        locationSpec = 111
+        locationSpec = (1, 1, 1)
 
     # Rotational symmetry order
     if isinstance(rotational_symmetry_order, str) and rotational_symmetry_order.lower() == "random" or \
