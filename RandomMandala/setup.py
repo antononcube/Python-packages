@@ -11,7 +11,7 @@ setuptools.setup(
     description="Generator of random mandalas.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/antononcube/Python-packages",
+    url="https://github.com/antononcube/Python-packages/tree/main/RandomMandala",
     packages=setuptools.find_packages(),
     install_requires=['numpy', 'matplotlib', 'bezier', 'pillow'],
     classifiers=[
