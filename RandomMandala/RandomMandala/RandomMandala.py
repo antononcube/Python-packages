@@ -9,12 +9,13 @@ import math
 # ===========================================================
 # Figure to data
 # ===========================================================
-# Following documentation here
+# Following documentation here:
 #    https://matplotlib.org/stable/gallery/user_interfaces/canvasagg.html
 def figure_to_image(figure):
-    """
-    @brief Convert a Matplotlib figure to a PIL Image
-    @return a Python Imaging Library (PIL) image
+    """Convert a Matplotlib figure into a PIL image.
+
+    :param figure: A figure (object of the class matplotlib.figure.Figure .)
+    :return res: A Python Imaging Library (PIL) image.
     """
     canvas = matplotlib.backends.backend_agg.FigureCanvasAgg(figure)
 
