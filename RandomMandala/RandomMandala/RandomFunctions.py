@@ -1,6 +1,7 @@
 import numpy
 import random
 import matplotlib
+import matplotlib.figure
 import PIL
 from RandomMandala.RandomMandala import RandomMandala
 
@@ -8,8 +9,7 @@ from RandomMandala.RandomMandala import RandomMandala
 # ===========================================================
 # Random mandala
 # ===========================================================
-def random_mandala(size=1,
-                   n_rows=None,
+def random_mandala(n_rows=None,
                    n_columns=None,
                    radius=1,
                    rotational_symmetry_order=6,
@@ -22,7 +22,6 @@ def random_mandala(size=1,
                    **kwargs):
     """Generates random mandalas.
 
-    :param size: Number of mandalas to generate.
     :param n_rows: Number of rows in the result figure.
     :param n_columns: Number of columns in the result figure.
     :param radius: Radius for the mandalas, a flot or a list of floats. If a list of floats the mandalas are overlain.
@@ -64,7 +63,7 @@ def random_mandala(size=1,
                                        face_color=face_color,
                                        edge_color=edge_color,
                                        **kwargs)
-    elif isinstance(size, int) and size == 1:
+    else:
         if (isinstance(radius, float) or isinstance(radius, int)) and radius > 0:
             return _random_mandala_single(figure=None,
                                           axes=None,
@@ -149,7 +148,8 @@ def _random_mandala_multi(figure=None,
     # Figure
     fig = figure
     if figure is None:
-        fig = matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
+        # fig: matplotlib.pyplot.Figure = matplotlib.figure.Figure(**kwargs)
+        fig: matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
 
     # Location spec
     locationSpec = location
@@ -200,7 +200,8 @@ def _random_mandala_single(figure=None,
     # Figure
     fig = figure
     if figure is None:
-        fig = matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
+        # fig: matplotlib.pyplot.Figure = matplotlib.figure.Figure(**kwargs)
+        fig: matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
 
     # Axes
     ax = axes
