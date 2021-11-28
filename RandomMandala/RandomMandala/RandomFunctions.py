@@ -20,8 +20,8 @@ def _is_radius_list(obj):
 # ===========================================================
 # Random mandala
 # ===========================================================
-def random_mandala(n_rows=None,
-                   n_columns=None,
+def random_mandala(n_rows=1,
+                   n_columns=1,
                    radius=1,
                    rotational_symmetry_order=6,
                    connecting_function="random",
