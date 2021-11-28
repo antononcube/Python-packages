@@ -126,11 +126,12 @@ class RandomMandala:
         b = [(radius * r, 0) for r in numpy.arange(0, 1, 1 / number_of_elements)]
 
         t = list(zip(t1, t2)) + b
-
         self._radius = radius
         self._angle = angle
         self._keep_grid_points = keep_grid_points
         self._seed_points = random.sample(t, len(t))
+        self._sym_seed_points = None
+        self._symmetric = False
         self._value = self._seed_points
 
         return self
@@ -143,7 +144,7 @@ class RandomMandala:
             return self
         self._sym_seed_points = [(x[0], -x[1]) for x in self._seed_points]
         self._symmetric = True
-        self._value = self._seed_points
+        self._value = self._sym_seed_points
         return self
 
     # ===========================================================
