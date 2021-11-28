@@ -29,7 +29,7 @@ def random_mandala(n_rows=1,
                    symmetric_seed=True,
                    face_color="0.2",
                    edge_color="0.2",
-                   figure: Optional[matplotlib.pyplot.Figure] = None,
+                   figure: Optional[matplotlib.figure.Figure] = None,
                    location=None,
                    **kwargs):
     """Generates random mandalas.
@@ -314,10 +314,15 @@ def _random_mandala_single(figure=None,
     # Number of elements
     local_number_of_elements = 6 if isinstance(number_of_elements, str) else number_of_elements
 
+    # Determine angle
+    angle = 2 * numpy.pi / rso
+    if ssb:
+        angle = angle / 2
+
     # Generate seed
     rMandala = (RandomMandala(figure=fig, axes=ax)
                 .make_seed_segment(radius=radius,
-                                   angle=numpy.pi / rso,
+                                   angle=angle,
                                    number_of_elements=local_number_of_elements)
                 .make_seed_symmetric(ssb))
 
