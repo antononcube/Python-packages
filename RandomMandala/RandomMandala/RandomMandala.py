@@ -1,8 +1,28 @@
 import random
 import bezier
 import matplotlib
+import PIL
 import numpy
 import math
+
+
+# ===========================================================
+# Figure to data
+# ===========================================================
+# Following documentation here
+#    https://matplotlib.org/stable/gallery/user_interfaces/canvasagg.html
+def figure_to_image(figure):
+    """
+    @brief Convert a Matplotlib figure to a PIL Image
+    @return a Python Imaging Library (PIL) image
+    """
+    canvas = matplotlib.backends.backend_agg.FigureCanvasAgg(figure)
+
+    canvas.draw()
+    rgba = numpy.asarray(canvas.buffer_rgba())
+    res = PIL.Image.fromarray(rgba)
+
+    return res
 
 
 class RandomMandala:
@@ -356,7 +376,10 @@ class RandomMandala:
         return self
 
     # ===========================================================
-    # Plot
+    # To image
     # ===========================================================
-    def plot(self):
-        matplotlib.pyplot.plot()
+    def to_image(self):
+        if not isinstance(self._figure, matplotlib.pyplot.Figure):
+            raise AttributeError("No figure in the RandomMandala object")
+
+        return figure_to_image(self._figure)
