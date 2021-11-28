@@ -2,8 +2,19 @@ import numpy
 import random
 import matplotlib
 import matplotlib.figure
-import PIL
 from RandomMandala.RandomMandala import RandomMandala
+from typing import Optional, Union
+
+
+# ===========================================================
+# Utilities
+# ===========================================================
+def _is_radius_number(obj):
+    return isinstance(obj, float) or isinstance(obj, int) and obj > 0
+
+
+def _is_radius_list(obj):
+    return isinstance(obj, list) and all([_is_radius_number(x) for x in obj])
 
 
 # ===========================================================
@@ -18,29 +29,57 @@ def random_mandala(n_rows=None,
                    symmetric_seed=True,
                    face_color="0.2",
                    edge_color="0.2",
-                   return_type="figure",
                    **kwargs):
     """Generates random mandalas.
 
+    If 'n_rows' and 'n_columns' are None a figure object with one axes object is returned.
+
+    If the argument 'radius' is a list of positive floats, then a "multi-mandala" is created
+    with the mandalas corresponding to each number in the radius list being overlain.
+
+    :type n_rows: int|None
     :param n_rows: Number of rows in the result figure.
+
+    :type n_columns: int|None
     :param n_columns: Number of columns in the result figure.
+
+    :type radius: int|list
     :param radius: Radius for the mandalas, a flot or a list of floats. If a list of floats the mandalas are overlain.
+
+    :type rotational_symmetry_order: int|str|list|None
     :param rotational_symmetry_order: Number of copies of the seed segment that comprise the mandala.
+
+    :type connecting_function: str|None
     :param connecting_function: Connecting function, one of "line", "fill", "bezier", "bezier_fill", "random", or None.
+    If 'random' or None a random choice of the rest of values is made.
+
+    :type number_of_elements: int
     :param number_of_elements: Controls how may graphics elements are in the seed segment.
+
+    :type symmetric_seed: bool|str|None
     :param symmetric_seed: Specifies should the seed segment be symmetric or not.
-    :param face_color: Face color (string or tuple.)
-    :param edge_color: Edge color (string or tuple.)
+    If 'random' of None random choice between True and False is made.
+
+    :type face_color: str|list
+    :param face_color: Face (fill) color.
+
+    :type edge_color: str|list
+    :param edge_color: Edge (line) color.
+
+    :type kwargs: **dict
     :param kwargs: Arguments for matplotlib.pyplot.figure .
-    :param return_type: Specifies the return type, one of: "figure", "image", "axes", or None.
-    :return res:
+
+    :rtype fig: matplotlib.figure.Figure
+    :return fig: A figure (object of the class matplotlib.figure.Figure .)
     """
 
+    # Check symmetric_seed
     if not (isinstance(symmetric_seed, str) and symmetric_seed.lower() == "random" or
             isinstance(symmetric_seed, bool) or symmetric_seed is None):
         raise TypeError("""The argument 'symmetric_seed' is expected to be
              a Boolean, 'random', or None.""")
 
+    # Check rotational_symmetry_order
     if not (isinstance(rotational_symmetry_order, str) and rotational_symmetry_order.lower() == "random" or
             isinstance(rotational_symmetry_order, int) and rotational_symmetry_order > 0 or
             rotational_symmetry_order is None or
@@ -52,6 +91,15 @@ def random_mandala(n_rows=None,
     if connecting_function is None:
         local_connecting_function = "fill"
 
+    # Check radius
+    if not (_is_radius_number(radius) or _is_radius_list(radius)):
+        raise TypeError("The argument 'radius' is expected to be a positive number or a list of positive numbers.")
+
+    # Check number_of_elements
+    if not isinstance(number_of_elements, int) and number_of_elements > 0:
+        raise TypeError("The argument 'number_of_elements' is expected to be a positive integer.")
+
+    # Delegate
     if isinstance(n_rows, int) and n_rows > 0 and isinstance(n_columns, int) and n_columns > 0:
         return _random_mandalas_figure(n_rows=n_rows,
                                        n_columns=n_columns,
@@ -95,10 +143,10 @@ def random_mandala(n_rows=None,
 def _random_mandalas_figure(n_rows=None,
                             n_columns=None,
                             radius=1,
-                            rotational_symmetry_order=6,
-                            connecting_function: str = "fill",
-                            number_of_elements=6,
-                            symmetric_seed=True,
+                            rotational_symmetry_order: Union[int, list, str, None] = 6,
+                            connecting_function: Optional[str] = "fill",
+                            number_of_elements: int = 6,
+                            symmetric_seed: Union[bool, str, None] = True,
                             face_color="0.2",
                             edge_color="0.2",
                             **kwargs):
@@ -136,10 +184,10 @@ def _random_mandala_multi(figure=None,
                           axes=None,
                           location=None,
                           radius=[6, 4, 2],
-                          rotational_symmetry_order=6,
-                          connecting_function: str = "fill",
-                          number_of_elements=6,
-                          symmetric_seed=True,
+                          rotational_symmetry_order: Union[int, list, str, None] = 6,
+                          connecting_function: Optional[str] = "fill",
+                          number_of_elements: int = 6,
+                          symmetric_seed: Union[bool, str, None] = True,
                           face_color="0.2",
                           edge_color="0.2",
                           **kwargs):
@@ -188,10 +236,10 @@ def _random_mandala_single(figure=None,
                            axes=None,
                            location=None,
                            radius=1,
-                           rotational_symmetry_order=6,
-                           connecting_function: str = "fill",
-                           number_of_elements=6,
-                           symmetric_seed=True,
+                           rotational_symmetry_order: Union[int, list, str, None] = 6,
+                           connecting_function: Optional[str] = "fill",
+                           number_of_elements: int = 6,
+                           symmetric_seed: Union[bool, str, None] = True,
                            face_color="0.2",
                            edge_color="0.2",
                            **kwargs):
@@ -228,7 +276,7 @@ def _random_mandala_single(figure=None,
     rMandala = (RandomMandala(figure=fig, axes=ax)
                 .make_seed_segment(radius=radius,
                                    angle=numpy.pi / rso,
-                                   number_of_elements=6)
+                                   number_of_elements=number_of_elements)
                 .make_seed_symmetric(ssb))
 
     # Connect, rotate, place
