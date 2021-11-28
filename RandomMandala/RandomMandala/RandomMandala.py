@@ -29,6 +29,37 @@ class RandomMandala:
             self._figure = kwargs["figure"]
 
     # ===========================================================
+    # Setters
+    # ===========================================================
+    def set_figure(self, arg):
+        self._figure = arg
+        return self
+
+    def set_axes(self, arg):
+        self._axes = arg
+        return self
+
+    def set_seed_points(self, arg):
+        self._seed_points = arg
+        return self
+
+    def set_points(self, arg):
+        self._points = arg
+        return self
+
+    def set_angle(self, arg):
+        self._angle = arg
+        return self
+
+    def set_symmetric(self, arg):
+        self._symmetric = arg
+        return self
+
+    def set_value(self, arg):
+        self._value = arg
+        return self
+
+    # ===========================================================
     # Takers
     # ===========================================================
     def take_figure(self):
@@ -58,18 +89,22 @@ class RandomMandala:
     def make_seed_segment(self,
                           radius: float = 10.,
                           angle=numpy.pi / 6,
-                          n: int = 10,
+                          number_of_elements: int = 10,
                           keep_grid_points=False):
-        t1 = [radius * r * math.cos(angle) for r in numpy.arange(0, 1, 1 / n)]
-        t2 = [radius * r * math.sin(angle) for r in numpy.arange(0, 1, 1 / n)]
-        b = [(radius * r, 0) for r in numpy.arange(0, 1, 1 / n)]
-        # t = list(zip(list(zip(t1, t2)), b))
+
+        t1 = [radius * r * math.cos(angle) for r in numpy.arange(0, 1, 1 / number_of_elements)]
+        t2 = [radius * r * math.sin(angle) for r in numpy.arange(0, 1, 1 / number_of_elements)]
+
+        b = [(radius * r, 0) for r in numpy.arange(0, 1, 1 / number_of_elements)]
+
         t = list(zip(t1, t2)) + b
+
         self._radius = radius
         self._angle = angle
         self._keep_grid_points = keep_grid_points
         self._seed_points = random.sample(t, len(t))
         self._value = self._seed_points
+
         return self
 
     # ===========================================================
