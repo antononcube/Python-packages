@@ -384,7 +384,7 @@ plt.close(fig)
 
 ### Packages
 
-[DHp1] Danny Hermes,
+[DHp1] Daniel Hermes,
 [`bezier` Python package](https://pypi.org/project/bezier/),
 (2016),
 [PyPi.org](https://pypi.org).
