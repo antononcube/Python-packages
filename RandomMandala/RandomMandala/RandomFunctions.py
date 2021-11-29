@@ -241,8 +241,12 @@ def _random_mandala_multi(figure=None,
     if location is None:
         locationSpec = (1, 1, 1)
 
-    ax = fig.add_subplot(*locationSpec)
+    # Axes spec
+    ax = axes
+    if axes is None:
+        ax = fig.add_subplot(*locationSpec)
 
+    # Same as radius sizes for the rest of the specs
     faceColors = numpy.resize(face_color, len(radius))
     edgeColors = numpy.resize(edge_color, len(radius))
     rotSymOrders = numpy.resize(rotational_symmetry_order, len(radius))
