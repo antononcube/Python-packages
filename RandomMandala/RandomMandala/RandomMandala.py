@@ -1,6 +1,7 @@
 import random
 import bezier
 import matplotlib
+import matplotlib.backends.backend_agg
 import PIL
 import numpy
 import math
@@ -148,7 +149,7 @@ class RandomMandala:
         return self
 
     # ===========================================================
-    # To Bezier curve
+    # To nodes (for Bezier curve)
     # ===========================================================
     def to_nodes(self, points):
         nodes = numpy.array(points).transpose()
@@ -383,6 +384,6 @@ class RandomMandala:
     # ===========================================================
     def to_image(self):
         if not isinstance(self._figure, matplotlib.pyplot.Figure):
-            raise AttributeError("No figure in the RandomMandala object")
+            raise AttributeError("No figure in the RandomMandala object.")
 
         return figure_to_image(self._figure)
