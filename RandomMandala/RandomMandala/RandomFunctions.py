@@ -2,6 +2,7 @@ import numpy
 import random
 import matplotlib
 import matplotlib.figure
+import matplotlib.pyplot
 from RandomMandala.RandomMandala import RandomMandala
 from typing import Optional, Union
 
