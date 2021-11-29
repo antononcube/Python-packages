@@ -15,12 +15,10 @@ The design, implementation *strategy*, and unit tests closely resemble the Wolfr
 (Another, very similar function at WFR is
 [`RandomScribble`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomScribble), [AAf2].)
 
-The Bezier mandala seeds are created using the Python package
-[`bezier`](https://pypi.org/project/bezier/),
-[DHp1].
+The mandalas made by `random_mandala` are generated through rotational symmetry of a “seed segment”. The Bezier mandala seeds are created using the Python package
+[`bezier`](https://pypi.org/project/bezier/), [DHp1].
 
-For detailed descriptions of Machine Learning studies that use collections of random mandalas see the articles
-[AA1, AA2].
+For detailed descriptions of Machine Learning studies that use collections of random mandalas see the articles [AA1, AA2].
 
 ------
 
@@ -32,11 +30,6 @@ To install from GitHub use the shell command:
 python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomMandala\&subdirectory=RandomMandala
 ```
 
-
-### PyPi
-
-*TBD...*
-
 ------
 
 ## Details and arguments
@@ -47,11 +40,13 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
 - The function `random_mandala` can be given arguments of the creation function `matplotlib.pyplot.figure`.
 
-- If `n_rows` and `n_columns` are `None` a `matplotlib` figure object with one axes object is returned.
+- The `matplotlib` figures produced by `random_mandala` can be converted to `PIL` images with the package function `figure_to_image`.
+
+- If `n_rows` and `n_columns` are both `None` then a `matplotlib` figure object with one axes object is returned.
 
 - There are two modes of making random mandalas: (i) single-mandala mode and (ii) multi-mandala mode. The multi-mandala mode is activated by giving the `radius` argument a list of positive numbers.
 
-- If the argument `radius` is a list of positive reals, then a "multi-mandala" is created
+- If the argument `radius` is a list of positive numbers, then a "multi-mandala" is created
   with the mandalas corresponding to each number in the radius list being overlain.  
 
 - Here are brief descriptions of the arguments:
@@ -60,7 +55,7 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
   - `n_columns`: Number of columns in the result figure.
 
-  - `radius`: Radius for the mandalas, a flot or a list of floats. If a list of floats the   mandalas are overlain.
+  - `radius`: Radius for the mandalas, a number or a list of numbers. If a list of numbers then the mandalas are overlain.
 
   - `rotational_symmetry_order`: Number of copies of the seed segment that comprise the mandala.
 
@@ -77,7 +72,7 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
 -----
 
-## Examples
+## Setup
 
 Load the package `RandomMandala`, `matplotlib`, and `PIL`:
 
@@ -90,6 +85,10 @@ from PIL import Image, ImageOps
 from mpl_toolkits.axes_grid1 import ImageGrid
 import random
 ```
+
+------
+
+## Examples
 
 Here we generate a random mandala:
 
@@ -125,7 +124,7 @@ plt.show()
 
 ### n_rows, n_columns
 
-With the argument `n_rows` and `n_columns` are specified the number of rows and columns respectively in the figure object; `n_rows * n_columns` mandalas are generated:
+The arguments `n_rows` and `n_columns` specify the number of rows and columns respectively in the result figure object; `n_rows * n_columns` mandalas are generated:
 
 
 ```python
@@ -184,7 +183,7 @@ fig3=random_mandala(radius=[8,5,3],
     
 
 
-**Remark:** The code above used different colors for the different radii.
+**Remark:** The code above uses different colors for the different radii.
 
 ### rotational_symmetry_order
 
@@ -252,7 +251,7 @@ In certain Machine Learning (ML) studies it can be useful to be able to generate
 In the code block below we: 
 - Generate 64 random mandala *plots*
 - Convert them into `PIL` images using the package function `figure_to_image`
-- Invert and binarize images
+- Invert and binarize the images
 - Plot the images in an image grid
 
 
@@ -306,6 +305,8 @@ plt.show()
 ![png](./img/output_21_0.png)
     
 
+
+-----
 
 ## Neat examples
     
@@ -386,5 +387,5 @@ plt.close(fig)
 [DHp1] Danny Hermes,
 [`bezier` Python package](https://pypi.org/project/bezier/),
 (2016),
-[PyPy.org](https://pypi.org).
+[PyPi.org](https://pypi.org).
 

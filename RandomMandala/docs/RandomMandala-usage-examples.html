@@ -17780,16 +17780,13 @@ a.anchor-link {
 [AAf1].</p>
 <p>(Another, very similar function at WFR is
 <a href="https://resources.wolframcloud.com/FunctionRepository/resources/RandomScribble"><code>RandomScribble</code></a>, [AAf2].)</p>
-<p>The Bezier mandala seeds are created using the Python package
-<a href="https://pypi.org/project/bezier/"><code>bezier</code></a>,
-[DHp1].</p>
-<p>For detailed descriptions of Machine Learning studies that use collections of random mandalas see the articles
-[AA1, AA2].</p>
+<p>The mandalas made by <code>random_mandala</code> are generated through rotational symmetry of a “seed segment”. The Bezier mandala seeds are created using the Python package
+<a href="https://pypi.org/project/bezier/"><code>bezier</code></a>, [DHp1].</p>
+<p>For detailed descriptions of Machine Learning studies that use collections of random mandalas see the articles [AA1, AA2].</p>
 <hr>
 <h2 id="Installation">Installation<a class="anchor-link" href="#Installation">&#182;</a></h2><p>To install from GitHub use the shell command:</p>
 <div class="highlight"><pre><span></span>python -m pip install git+https://github.com/antononcube/Python-packages.git#egg<span class="o">=</span>RandomMandala<span class="se">\&amp;</span><span class="nv">subdirectory</span><span class="o">=</span>RandomMandala
 </pre></div>
-<h3 id="PyPi">PyPi<a class="anchor-link" href="#PyPi">&#182;</a></h3><p><em>TBD...</em></p>
 
 </div>
 </div>
@@ -17803,11 +17800,13 @@ a.anchor-link {
 </li>
 <li><p>The function <code>random_mandala</code> can be given arguments of the creation function <code>matplotlib.pyplot.figure</code>.</p>
 </li>
-<li><p>If <code>n_rows</code> and <code>n_columns</code> are <code>None</code> a <code>matplotlib</code> figure object with one axes object is returned.</p>
+<li><p>The <code>matplotlib</code> figures produced by <code>random_mandala</code> can be converted to <code>PIL</code> images with the package function <code>figure_to_image</code>.</p>
+</li>
+<li><p>If <code>n_rows</code> and <code>n_columns</code> are both <code>None</code> then a <code>matplotlib</code> figure object with one axes object is returned.</p>
 </li>
 <li><p>There are two modes of making random mandalas: (i) single-mandala mode and (ii) multi-mandala mode. The multi-mandala mode is activated by giving the <code>radius</code> argument a list of positive numbers.</p>
 </li>
-<li><p>If the argument <code>radius</code> is a list of positive reals, then a "multi-mandala" is created
+<li><p>If the argument <code>radius</code> is a list of positive numbers, then a "multi-mandala" is created
 with the mandalas corresponding to each number in the radius list being overlain.</p>
 </li>
 <li><p>Here are brief descriptions of the arguments:</p>
@@ -17816,7 +17815,7 @@ with the mandalas corresponding to each number in the radius list being overlain
 </li>
 <li><p><code>n_columns</code>: Number of columns in the result figure.</p>
 </li>
-<li><p><code>radius</code>: Radius for the mandalas, a flot or a list of floats. If a list of floats the   mandalas are overlain.</p>
+<li><p><code>radius</code>: Radius for the mandalas, a number or a list of numbers. If a list of numbers then the mandalas are overlain.</p>
 </li>
 <li><p><code>rotational_symmetry_order</code>: Number of copies of the seed segment that comprise the mandala.</p>
 </li>
@@ -17840,7 +17839,7 @@ If 'random' of None random choice between <code>True</code> and <code>False</cod
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <hr>
-<h2 id="Examples">Examples<a class="anchor-link" href="#Examples">&#182;</a></h2><p>Load the package <code>RandomMandala</code>, <code>matplotlib</code>, and <code>PIL</code>:</p>
+<h2 id="Setup">Setup<a class="anchor-link" href="#Setup">&#182;</a></h2><p>Load the package <code>RandomMandala</code>, <code>matplotlib</code>, and <code>PIL</code>:</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -17865,7 +17864,8 @@ If 'random' of None random choice between <code>True</code> and <code>False</cod
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Here we generate a random mandala:</p>
+<hr>
+<h2 id="Examples">Examples<a class="anchor-link" href="#Examples">&#182;</a></h2><p>Here we generate a random mandala:</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -17954,7 +17954,7 @@ If 'random' of None random choice between <code>True</code> and <code>False</cod
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <hr>
-<h2 id="Arguments-details">Arguments details<a class="anchor-link" href="#Arguments-details">&#182;</a></h2><h3 id="n_rows,-n_columns">n_rows, n_columns<a class="anchor-link" href="#n_rows,-n_columns">&#182;</a></h3><p>With the argument <code>n_rows</code> and <code>n_columns</code> are specified the number of rows and columns respectively in the figure object; <code>n_rows * n_columns</code> mandalas are generated:</p>
+<h2 id="Arguments-details">Arguments details<a class="anchor-link" href="#Arguments-details">&#182;</a></h2><h3 id="n_rows,-n_columns">n_rows, n_columns<a class="anchor-link" href="#n_rows,-n_columns">&#182;</a></h3><p>The arguments <code>n_rows</code> and <code>n_columns</code> specify the number of rows and columns respectively in the result figure object; <code>n_rows * n_columns</code> mandalas are generated:</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -18107,7 +18107,7 @@ If <code>radius=[r[0],...,r[k]]</code>, then for each <code>r[i]</code> is made 
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p><strong>Remark:</strong> The code above used different colors for the different radii.</p>
+<p><strong>Remark:</strong> The code above uses different colors for the different radii.</p>
 
 </div>
 </div>
@@ -18239,7 +18239,7 @@ If <code>radius=[r[0],...,r[k]]</code>, then for each <code>r[i]</code> is made 
 <ul>
 <li>Generate 64 random mandala <em>plots</em></li>
 <li>Convert them into <code>PIL</code> images using the package function <code>figure_to_image</code></li>
-<li>Invert and binarize images</li>
+<li>Invert and binarize the images</li>
 <li>Plot the images in an image grid</li>
 </ul>
 
@@ -18327,6 +18327,7 @@ If <code>radius=[r[0],...,r[k]]</code>, then for each <code>r[i]</code> is made 
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<hr>
 <h2 id="Neat-examples">Neat examples<a class="anchor-link" href="#Neat-examples">&#182;</a></h2><h3 id="A-table-of-random-mandalas">A table of random mandalas<a class="anchor-link" href="#A-table-of-random-mandalas">&#182;</a></h3>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -18453,7 +18454,7 @@ If <code>radius=[r[0],...,r[k]]</code>, then for each <code>r[i]</code> is made 
 <h3 id="Packages">Packages<a class="anchor-link" href="#Packages">&#182;</a></h3><p>[DHp1] Danny Hermes,
 <a href="https://pypi.org/project/bezier/"><code>bezier</code> Python package</a>,
 (2016),
-<a href="https://pypi.org">PyPy.org</a>.</p>
+<a href="https://pypi.org">PyPi.org</a>.</p>
 
 </div>
 </div>
