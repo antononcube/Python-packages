@@ -15,10 +15,12 @@ The design, implementation *strategy*, and unit tests closely resemble the Wolfr
 (Another, very similar function at WFR is
 [`RandomScribble`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomScribble), [AAf2].)
 
-The mandalas made by `random_mandala` are generated through rotational symmetry of a “seed segment”. The Bezier mandala seeds are created using the Python package
-[`bezier`](https://pypi.org/project/bezier/), [DHp1].
+The Bezier mandala seeds are created using the Python package
+[`bezier`](https://pypi.org/project/bezier/),
+[DHp1].
 
-For detailed descriptions of Machine Learning studies that use collections of random mandalas see the articles [AA1, AA2].
+For detailed descriptions of Machine Learning studies that use collections of random mandalas see the articles
+[AA1, AA2].
 
 ------
 
@@ -30,6 +32,11 @@ To install from GitHub use the shell command:
 python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomMandala\&subdirectory=RandomMandala
 ```
 
+
+### PyPi
+
+*TBD...*
+
 ------
 
 ## Details and arguments
@@ -40,13 +47,11 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
 - The function `random_mandala` can be given arguments of the creation function `matplotlib.pyplot.figure`.
 
-- The `matplotlib` figures produced by `random_mandala` can be converted to `PIL` images with the package function `figure_to_image`.
-
-- If `n_rows` and `n_columns` are both `None` then a `matplotlib` figure object with one axes object is returned.
+- If `n_rows` and `n_columns` are `None` a `matplotlib` figure object with one axes object is returned.
 
 - There are two modes of making random mandalas: (i) single-mandala mode and (ii) multi-mandala mode. The multi-mandala mode is activated by giving the `radius` argument a list of positive numbers.
 
-- If the argument `radius` is a list of positive numbers, then a "multi-mandala" is created
+- If the argument `radius` is a list of positive reals, then a "multi-mandala" is created
   with the mandalas corresponding to each number in the radius list being overlain.  
 
 - Here are brief descriptions of the arguments:
@@ -55,7 +60,7 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
   - `n_columns`: Number of columns in the result figure.
 
-  - `radius`: Radius for the mandalas, a number or a list of numbers. If a list of numbers then the mandalas are overlain.
+  - `radius`: Radius for the mandalas, a flot or a list of floats. If a list of floats the   mandalas are overlain.
 
   - `rotational_symmetry_order`: Number of copies of the seed segment that comprise the mandala.
 
@@ -72,7 +77,7 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
 -----
 
-## Setup
+## Examples
 
 Load the package `RandomMandala`, `matplotlib`, and `PIL`:
 
@@ -85,10 +90,6 @@ from PIL import Image, ImageOps
 from mpl_toolkits.axes_grid1 import ImageGrid
 import random
 ```
-
-------
-
-## Examples
 
 Here we generate a random mandala:
 
@@ -124,7 +125,7 @@ plt.show()
 
 ### n_rows, n_columns
 
-The arguments `n_rows` and `n_columns` specify the number of rows and columns respectively in the result figure object; `n_rows * n_columns` mandalas are generated:
+With the argument `n_rows` and `n_columns` are specified the number of rows and columns respectively in the figure object; `n_rows * n_columns` mandalas are generated:
 
 
 ```python
@@ -137,6 +138,35 @@ fig=random_mandala(n_rows=1, n_columns=3)
 ![png](./img/output_9_0.png)
     
 
+
+### connecting_function
+
+The argument `connecting_function` specifies which graphics primitives to be used over the seed segment points:
+
+
+```python
+fig = matplotlib.pyplot.figure(figsize=(6, 6), dpi=120)
+
+k = 1
+for cf in ['line', 'fill', 'bezier', 'bezier_fill', 'random', None]:
+    random.seed(667)
+    fig = random_mandala(connecting_function=cf,
+                         figure=fig,
+                         location=(2, 3, k))
+    ax = fig.axes[-1]
+    ax.set_title(str(cf))
+    k = k + 1
+plt.show()
+plt.close(fig)
+```
+
+
+    
+![png](./img/output_11_0.png)
+    
+
+
+With values `None` or `"random"` a random choice is made from `['line', 'fill', 'bezier', 'bezier_fill']`.
 
 ### radius
 
@@ -162,7 +192,7 @@ plt.close(fig)
 
 
     
-![png](./img/output_11_0.png)
+![png](./img/output_14_0.png)
     
 
 
@@ -179,11 +209,11 @@ fig3=random_mandala(radius=[8,5,3],
 
 
     
-![png](./img/output_13_0.png)
+![png](./img/output_16_0.png)
     
 
 
-**Remark:** The code above uses different colors for the different radii.
+**Remark:** The code above used different colors for the different radii.
 
 ### rotational_symmetry_order
 
@@ -191,7 +221,7 @@ The argument `rotational_symmetry_order` specifies how many copies of the seed s
 
 
 ```python
-fig = matplotlib.pyplot.figure(num=2322, figsize=(6, 12), dpi=120)
+fig = matplotlib.pyplot.figure(figsize=(6, 12), dpi=120)
 k = 1
 for rso in [2, 3, 4, 6]:
     random.seed(122)
@@ -205,11 +235,67 @@ for rso in [2, 3, 4, 6]:
     k = k + 1
 plt.show()
 plt.close(fig)
+
 ```
 
 
     
-![png](./img/output_17_0.png)
+![png](./img/output_20_0.png)
+    
+
+
+### number_of_elements
+
+The argument `number_of_elements` controls how may graphics elements are in the seed segment:
+
+
+```python
+fig = matplotlib.pyplot.figure(figsize=(6, 6), dpi=120)
+k = 1
+for ne in [2, 3, 4, 5, 6, 12]:
+    random.seed(2)
+    fig = random_mandala(connecting_function="line",
+                         symmetric_seed=True,
+                         rotationa_symmetry_order=6,
+                         number_of_elements=ne,
+                         figure = fig,
+                         location = (2, 3, k))
+    ax = fig.axes[-1]
+    ax.set_title("n:" + str(ne))
+    k = k + 1
+plt.show()
+plt.close(fig)
+```
+
+
+    
+![png](./img/output_22_0.png)
+    
+
+
+
+```python
+fig = matplotlib.pyplot.figure(figsize=(4, 4), dpi=120)
+k = 1
+for ne in [5, 10, 15, 20]:
+    random.seed(26)
+    fig = random_mandala(connecting_function="bezier",
+                         radius=[1],
+                         symmetric_seed=True,
+                         rotationa_symmetry_order=6,
+                         number_of_elements=ne,
+                         figure = fig,
+                         location = (2, 2, k))
+    ax = fig.axes[-1]
+    ax.set_title("n:" + str(ne))
+    k = k + 1
+plt.show()
+plt.close(fig)
+```
+
+
+    
+![png](./img/output_23_0.png)
     
 
 
@@ -219,7 +305,7 @@ The argument `symmetric_seed` specifies should the seed segment be symmetric or 
 
 
 ```python
-fig = matplotlib.pyplot.figure(num=2322, figsize=(4, 4), dpi=120)
+fig = matplotlib.pyplot.figure(figsize=(4, 4), dpi=120)
 k = 1
 for ssd in [True, False]:
     random.seed(2)
@@ -236,7 +322,37 @@ plt.close(fig)
 
 
     
-![png](./img/output_19_0.png)
+![png](./img/output_25_0.png)
+    
+
+
+### face_color and edge_color
+
+The arguments `face_color` and `edge_color` take as values strings or list of strings that specify the coloring of the filled-in polygons and lines respectively:
+
+
+```python
+fig = matplotlib.pyplot.figure(figsize=(6,3), dpi=120)
+k = 1
+for fc in [["0.8", "0.6", "0.2"], ["olive", "gold", "red"]]:
+    random.seed(11)
+    fig = random_mandala(radius=[10,6,4],
+     					 connecting_function="bezier_fill", 
+                         symmetric_seed=True,
+                         face_color=fc,
+                         figure = fig,
+                         location = (1, 2, k))
+    ax = fig.axes[-1]
+    ax.set_title(str(fc))
+    k = k + 1
+    
+plt.show()
+plt.close(fig)
+```
+
+
+    
+![png](./img/output_27_0.png)
     
 
 
@@ -251,7 +367,7 @@ In certain Machine Learning (ML) studies it can be useful to be able to generate
 In the code block below we: 
 - Generate 64 random mandala *plots*
 - Convert them into `PIL` images using the package function `figure_to_image`
-- Invert and binarize the images
+- Invert and binarize images
 - Plot the images in an image grid
 
 
@@ -260,7 +376,7 @@ In the code block below we:
 mandala_images = []
 
 # Generation loop
-random.seed(765)
+random.seed(443)
 for i in range(64):
     
     # Generate one random mandala figure
@@ -269,9 +385,8 @@ for i in range(64):
                           radius=[8, 6, 3],
                           rotational_symmetry_order=6,
                           symmetric_seed=True,
-                          number_of_elements=4,
                           connecting_function='random',
-                          face_color='0.2')
+                          face_color="0.")
     fig2.tight_layout()
     
     # Convert the figure into an image and add it to the list
@@ -302,11 +417,9 @@ plt.show()
 
 
     
-![png](./img/output_21_0.png)
+![png](./img/output_29_0.png)
     
 
-
------
 
 ## Neat examples
     
@@ -320,7 +433,41 @@ fig=random_mandala(n_rows=6, n_columns=6, figsize=(10,10), dpi=240)
 
 
     
-![png](./img/output_23_0.png)
+![png](./img/output_31_0.png)
+    
+
+
+## A table of colorzied mandals
+
+
+```python
+fig = matplotlib.pyplot.figure(figsize=(10, 10), dpi=120)
+k = 1
+random.seed(56)
+for i in range(36):
+    rs=list(range(1,random.choice([3,4,5,6])+1))
+    rs.sort()
+    rs.reverse()
+
+    fig = random_mandala(connecting_function="bezier_fill",
+                         face_color=random.sample(["coral", "goldenrod", "darkblue", "olive"],4),
+   						 symmetric_seed=True,
+                         radius=rs,
+                         rotational_symmetry_order=random.choice([3,4,5,6,7]),
+                         number_of_elements=random.choice([2,3,4]),
+                         figure=fig,
+                         location=(6, 6, k))
+    ax = fig.axes[-1]
+    ax.set_axis_off()
+    k = k + 1
+    
+plt.show()
+plt.close(fig)
+```
+
+
+    
+![png](./img/output_33_0.png)
     
 
 
@@ -350,7 +497,7 @@ plt.close(fig)
 
 
     
-![png](./img/output_25_0.png)
+![png](./img/output_35_0.png)
     
 
 
@@ -365,8 +512,8 @@ plt.close(fig)
 (2017),
 [MathematicaForPrediction at WordPress](https://mathematicaforprediction.wordpress.com).
 
-[AA2] Anton Antonov,
-["Generation of Random Bethlehem Stars"](https://mathematicaforprediction.wordpress.com/2020/12/21/generation-of-random-bethlehem-stars/),
+[AA1] Anton Antonov,
+["Generation of Random Bethlehem Stars](https://mathematicaforprediction.wordpress.com/2020/12/21/generation-of-random-bethlehem-stars/),
 (2020),
 [MathematicaForPrediction at WordPress](https://mathematicaforprediction.wordpress.com).
 
@@ -387,5 +534,5 @@ plt.close(fig)
 [DHp1] Daniel Hermes,
 [`bezier` Python package](https://pypi.org/project/bezier/),
 (2016),
-[PyPi.org](https://pypi.org).
+[PyPy.org](https://pypi.org).
 
