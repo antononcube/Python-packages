@@ -15,6 +15,15 @@ The design, implementation *strategy*, and unit tests closely resemble the Wolfr
 (Another, very similar function at WFR is
 [`RandomScribble`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomScribble), [AAf2].)
 
+The Bezier mandala seeds are created using the Python package
+[`bezier`](https://pypi.org/project/bezier/),
+[DHp1].
+
+For detailed descriptions of Machine Learning studies that use collections of random mandalas see the articles
+[AA1, AA2].
+
+------
+
 ## Installation
 
 To install from GitHub use the shell command:
@@ -27,6 +36,8 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 ### PyPi
 
 *TBD...*
+
+------
 
 ## Details and arguments
 
@@ -64,7 +75,9 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
   - `edge_color`: Edge (line) color.
 
-## Usage examples
+-----
+
+## Examples
 
 Load the package `RandomMandala`, `matplotlib`, and `PIL`:
 
@@ -95,10 +108,7 @@ Here we generate a figure with 12 (3x4) random mandalas:
 
 ```python
 random.seed(33)
-fig2 = random_mandala(n_rows=3, n_columns=4, 
-                      rotational_symmetry_order = 'random', 
-                      connecting_function = 'random', 
-                      figsize=(6,6))
+fig2 = random_mandala(n_rows=3, n_columns=4, figsize=(6,6))
 fig2.tight_layout()
 plt.show()
 ```
@@ -108,6 +118,8 @@ plt.show()
 ![png](./docs/img/output_7_0.png)
     
 
+
+------
 
 ## Arguments details
 
@@ -229,9 +241,11 @@ plt.close(fig)
     
 
 
+------
+
 ## Applications
 
-### Generate a collection images
+### Generate a collection of images
 
 In certain Machine Learning (ML) studies it can be useful to be able to generate large enough collections of (random) images. 
 
@@ -247,6 +261,7 @@ In the code block below we:
 mandala_images = []
 
 # Generation loop
+random.seed(765)
 for i in range(64):
     
     # Generate one random mandala figure
@@ -255,9 +270,9 @@ for i in range(64):
                           radius=[8, 6, 3],
                           rotational_symmetry_order=6,
                           symmetric_seed=True,
-                          number_of_elements="automatic",
-                          connecting_function="random",
-                          face_color="0.")
+                          number_of_elements=4,
+                          connecting_function='random',
+                          face_color='0.2')
     fig2.tight_layout()
     
     # Convert the figure into an image and add it to the list
@@ -273,7 +288,7 @@ mandala_images2 = [ImageOps.invert(img) for img in mandala_images]
 mandala_images3 = [im.convert('1') for im in mandala_images2]
 
 # Make a grid of images and display it
-fig3 = plt.figure(figsize=(12., 12.))
+fig3 = plt.figure(figsize=(14., 14.))
 grid = ImageGrid(fig3, 111,
                  nrows_ncols=(8, 8),
                  axes_pad=0.02,
@@ -342,6 +357,20 @@ plt.close(fig)
 
 ## References
 
+### Articles
+
+[AA1] Anton Antonov,
+["Comparison of dimension reduction algorithms over mandala images generation"](https://mathematicaforprediction.wordpress.com/2017/02/10/comparison-of-dimension-reduction-algorithms-over-mandala-images-generation/),
+(2017),
+[MathematicaForPrediction at WordPress](https://mathematicaforprediction.wordpress.com).
+
+[AA2] Anton Antonov,
+["Generation of Random Bethlehem Stars"](https://mathematicaforprediction.wordpress.com/2020/12/21/generation-of-random-bethlehem-stars/),
+(2020),
+[MathematicaForPrediction at WordPress](https://mathematicaforprediction.wordpress.com).
+
+### Functions
+
 [AAf1] Anton Antonov,
 [`RandomMandala`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomMandala),
 (2019),
@@ -351,3 +380,11 @@ plt.close(fig)
 [`RandomScribble`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomScribble),
 (2020),
 [Wolfram Function Repository](https://resources.wolframcloud.com/FunctionRepository).
+
+### Packages
+
+[DHp1] Danny Hermes,
+[`bezier` Python package](https://pypi.org/project/bezier/),
+(2016),
+[PyPy.org](https://pypi.org).
+
