@@ -72,7 +72,6 @@ class RandomMandalas(unittest.TestCase):
         for rso in [2, 3, 4, 6]:
             random.seed(122)
             fig = random_mandala(connecting_function="fill",
-                                 symmetric_seed=True,
                                  rotational_symmetry_order=rso,
                                  figure=fig,
                                  location=(1, 4, k))
@@ -81,6 +80,21 @@ class RandomMandalas(unittest.TestCase):
             k = k + 1
 
         self.assertTrue(_is_figure(fig) and len(fig.axes) == 4)
+
+    def test_random_mandalas_collection_2(self):
+        fig = matplotlib.pyplot.figure(figsize=(6, 6), dpi=120)
+
+        k = 1
+        for cf in ['fill', 'line', 'bezier', 'bezier_fill', 'random', None]:
+            random.seed(122)
+            fig = random_mandala(connecting_function=cf,
+                                 figure=fig,
+                                 location=(1, 6, k))
+            ax = fig.axes[-1]
+            ax.set_title("connecting with:" + str(cf))
+            k = k + 1
+
+        self.assertTrue(_is_figure(fig) and len(fig.axes) == 6)
 
 
 if __name__ == '__main__':
