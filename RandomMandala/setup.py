@@ -16,7 +16,7 @@ setuptools.setup(
     install_requires=['numpy', 'matplotlib', 'bezier', 'pillow'],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: BSD-3",
+        "License :: OSI Approved :: Artistic License",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
