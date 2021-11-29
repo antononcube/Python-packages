@@ -41,24 +41,25 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
 - Here are brief descriptions of the arguments:
 
- - `n_rows`: Number of rows in the result figure.
+  - `n_rows`: Number of rows in the result figure.
 
- - `n_columns`: Number of columns in the result figure.
+  - `n_columns`: Number of columns in the result figure.
 
- - `radius`: Radius for the mandalas, a flot or a list of floats. If a list of floats the   mandalas are overlain.
+  - `radius`: Radius for the mandalas, a flot or a list of floats. If a list of floats the   mandalas are overlain.
 
- - `rotational_symmetry_order`: Number of copies of the seed segment that comprise the mandala.
+  - `rotational_symmetry_order`: Number of copies of the seed segment that comprise the mandala. 
 
- - `connecting_function`: Connecting function, one of "line", "fill", "bezier", "bezier_fill", "random", or None. If 'random' or None a random choice of the rest of values is made.
+  - `connecting_function`: Connecting function, one of "line", "fill", "bezier", "bezier_fill", "random", or `None`. 
+     If 'random' or None a random choice of the rest of values is made.
 
- - `number_of_elements`: Controls how may graphics elements are in the seed segment.
+  - `number_of_elements`: Controls how may graphics elements are in the seed segment.
 
- - `symmetric_seed`: Specifies should the seed segment be symmetric or not.
-    If 'random' of None random choice between True and False is made.
+  - `symmetric_seed`: Specifies should the seed segment be symmetric or not.
+    If 'random' of `None` random choice between `True` and `False` is made.
 
- - `face_color`: Face (fill) color.
+  - `face_color`: Face (fill) color.
 
- - `edge_color`: Edge (line) color.
+  - `edge_color`: Edge (line) color.
 
 ## Usage examples
 
