@@ -27,7 +27,13 @@ For detailed descriptions of Machine Learning studies that use collections of ra
 To install from GitHub use the shell command:
 
 ```shell
-python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomMandala\&subdirectory=RandomMandala
+python3 -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomMandala\&subdirectory=RandomMandala
+```
+
+To install from [pypi.org](https://pypi.org):
+
+```shell
+python3 -m pip install RandomMandala
 ```
 
 ------
