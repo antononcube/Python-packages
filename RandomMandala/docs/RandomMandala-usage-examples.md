@@ -1,14 +1,18 @@
 # Random Mandala Python package
 
+***Anton Antonov***    
+[Python-packages at GitHub/antononcube](https://github.com/antononcube/Python-packages)   
+***November 2021***   
+
 ## Introduction
 
 This Python package implements the function `random_mandala` that generates plots (and images) of random mandalas.
 
-The design, implementation *strategy*, and unit tests closely resemble the Wolfram Repository Function (WFR)  
+The design, implementation *strategy*, and unit tests closely resemble the Wolfram Repository Function (WFR)
 [`RandomMandala`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomMandala),
 [AAf1].
 
-(Another, very similar function at WFR is 
+(Another, very similar function at WFR is
 [`RandomScribble`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomScribble), [AAf2].)
 
 ## Installation
@@ -47,15 +51,14 @@ python -m pip install git+https://github.com/antononcube/Python-packages.git#egg
 
   - `radius`: Radius for the mandalas, a flot or a list of floats. If a list of floats the   mandalas are overlain.
 
-  - `rotational_symmetry_order`: Number of copies of the seed segment that comprise the mandala. 
+  - `rotational_symmetry_order`: Number of copies of the seed segment that comprise the mandala.
 
-  - `connecting_function`: Connecting function, one of "line", "fill", "bezier", "bezier_fill", "random", or `None`. 
-     If 'random' or None a random choice of the rest of values is made.
+  - `connecting_function`: Connecting function, one of "line", "fill", "bezier", "bezier_fill", "random", or `None`. If 'random' or `None` a random choice of the rest of values is made.
 
   - `number_of_elements`: Controls how may graphics elements are in the seed segment.
 
   - `symmetric_seed`: Specifies should the seed segment be symmetric or not.
-    If 'random' of `None` random choice between `True` and `False` is made.
+    If 'random' of None random choice between `True` and `False` is made.
 
   - `face_color`: Face (fill) color.
 
@@ -121,6 +124,7 @@ fig=random_mandala(n_rows=1, n_columns=3)
 
     
 ![png](./img/output_9_0.png)
+    
 
 
 ### radius
@@ -129,15 +133,14 @@ In single-mandala mode the argument `radius` specifies the radius of the seed se
 
 
 ```python
-fig = matplotlib.pyplot.figure(num=2322, figsize=(4, 4), dpi=120)
+fig = matplotlib.pyplot.figure(figsize=(8, 4), dpi=120)
 k = 1
 for r in [5, 10, 15, 20]:
     random.seed(2)
     fig = random_mandala(connecting_function="line", 
                          radius=r,
-                         rotational_symmetry_order=rso,
                          figure = fig,
-                         location = (2, 2, k))
+                         location = (1, 4, k))
     ax = fig.axes[-1]
     ax.set_title("radius:" + str(r))
     ax.axis("on")
