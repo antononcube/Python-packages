@@ -16,7 +16,7 @@ def _is_str_keys_dict(obj):
 
 def _is_func_list(obj):
     return isinstance(obj, list) and \
-           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in obj])
+           all([isinstance(x, type(random_word, numpy.random.poisson)) for x in obj])
 
 
 def _is_func_dict(obj):

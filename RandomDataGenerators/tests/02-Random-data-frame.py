@@ -9,7 +9,7 @@ from RandomDataGenerators.RandomDataFrameGenerator import *
 
 
 def _is_num_list(obj):
-    return isinstance(obj, list) and all([isinstance(x, int) or isinstance(x, float) for x in obj])
+    return isinstance(obj, list) and all([isinstance(x, (int, float)) for x in obj])
 
 
 def _is_str_list(obj):
