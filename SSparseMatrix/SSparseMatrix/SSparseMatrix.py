@@ -151,7 +151,7 @@ class SSparseMatrix:
         """Number of rows."""
         return self.sparse_matrix().shape[0]
 
-    def nrows(self):
+    def nrow(self):
         """Number of rows."""
         return self.sparse_matrix().shape[0]
 
@@ -159,7 +159,7 @@ class SSparseMatrix:
         """Number of columns."""
         return self.sparse_matrix().shape[1]
 
-    def ncols(self):
+    def ncol(self):
         """Number of columns."""
         return self.sparse_matrix().shape[1]
 
