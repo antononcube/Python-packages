@@ -330,7 +330,13 @@ class SSparseMatrix:
     # Predicates
     # ------------------------------------------------------------------
     def eq(self, other):
-        """Equivalence with another SSparseMatrix object."""
+        """Equivalence with another SSparseMatrix object.
+
+        :type other: SSparseMatrix
+        :param other: Another object
+        :rtype: bool
+        :return res: Equivalent or not?
+        """
         if is_s_sparse_matrix(other):
 
             res = self.sparse_matrix() != other.sparse_matrix()
