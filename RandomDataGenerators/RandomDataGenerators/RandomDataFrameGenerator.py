@@ -151,17 +151,30 @@ def random_data_frame(n_rows=None,
     dfPairs = []
     # This is probably a "premature optimization" implementation,
     # but it has to be considered for large n_rows * n_cols values.
-    while len(dfPairs) < mmin_number_of_values:
+    k = 0
+    while len(dfPairs) < mmin_number_of_values and k < 4:
+
         dfPairs2 = numpy.random.randint(low=0,
                                         high=mn_rows * mn_cols,
                                         size=numpy.random.randint(low=mmin_number_of_values,
                                                                   high=mmax_number_of_values + 1))
         dfPairs2 = list(dfPairs2)
 
+        old_len = len(dfPairs)
+
         if len(dfPairs) == 0:
             dfPairs = list(dict.fromkeys(sorted(dfPairs2)))
         else:
             dfPairs = list(dict.fromkeys(sorted(dfPairs + dfPairs2)))
+
+        new_len = len(dfPairs)
+
+        # This if-else and the loop condition k < 4
+        # will break the loop if there is no data increment for "too many" iterations.
+        if old_len == new_len:
+            k = k + 1
+        else:
+            k = 0
 
     dfPairs = [(x // mn_rows, x % mn_rows) for x in dfPairs]
     dfPairs.sort(key=lambda x: x[0])
