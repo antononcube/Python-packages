@@ -16,8 +16,11 @@ def random_sparse_matrix(n_rows=None,
                          max_number_of_values=None):
     """Generates random sparse matrices."""
 
+    mgenerators = generators
     if isinstance(generators, type(None)):
         mgenerators = [lambda size: numpy.random.normal(loc=10, scale=2, size=size)]
+    elif callable(generators):
+        mgenerators = [generators, ]
 
     mn_rows, mn_cols, column_names = RandomDataGenerators.RandomDataFrameGenerator._process_row_and_column_specs(
         n_rows=n_rows,
