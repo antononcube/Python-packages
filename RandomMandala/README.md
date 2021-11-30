@@ -97,7 +97,7 @@ fig = random_mandala()
 
 
     
-![png](./docs/img/output_5_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_5_0.png)
     
 
 Here we generate a figure with 12 (3x4) random mandalas:
@@ -111,7 +111,7 @@ plt.show()
 
 
     
-![png](./docs/img/output_7_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_7_0.png)
     
 
 
@@ -131,7 +131,7 @@ fig=random_mandala(n_rows=1, n_columns=3)
 
 
     
-![png](./docs/img/output_9_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_9_0.png)
     
 
 
@@ -158,7 +158,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_11_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_11_0.png)
     
 
 
@@ -188,7 +188,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_14_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_14_0.png)
     
 
 
@@ -205,7 +205,7 @@ fig3=random_mandala(radius=[8,5,3],
 
 
     
-![png](./docs/img/output_16_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_16_0.png)
     
 
 
@@ -236,7 +236,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_20_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_20_0.png)
     
 
 
@@ -265,7 +265,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_22_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_22_0.png)
     
 
 
@@ -291,7 +291,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_23_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_23_0.png)
     
 
 
@@ -318,7 +318,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_25_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_25_0.png)
     
 
 
@@ -348,7 +348,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_27_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_27_0.png)
     
 
 
@@ -413,7 +413,7 @@ plt.show()
 
 
     
-![png](./docs/img/output_29_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_29_0.png)
     
 
 
@@ -429,7 +429,7 @@ fig=random_mandala(n_rows=6, n_columns=6, figsize=(10,10), dpi=240)
 
 
     
-![png](./docs/img/output_31_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_31_0.png)
     
 
 
@@ -463,7 +463,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_33_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_33_0.png)
     
 
 
@@ -493,7 +493,7 @@ plt.close(fig)
 
 
     
-![png](./docs/img/output_35_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_35_0.png)
     
 
 
