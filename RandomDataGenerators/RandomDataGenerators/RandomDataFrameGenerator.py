@@ -16,15 +16,11 @@ def _is_str_keys_dict(obj):
 
 
 def _is_func_list(obj):
-    return isinstance(obj, list) and \
-           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in obj])
+    return isinstance(obj, list) and all([callable(x) for x in obj])
 
 
 def _is_func_dict(obj):
-    return isinstance(obj, dict) and \
-           _is_str_list(list(obj.keys())) and \
-           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in
-                list(obj.values())])
+    return isinstance(obj, dict) and _is_str_list(list(obj.keys())) and all([callable(x) for x in list(obj.values())])
 
 
 def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
@@ -114,6 +110,10 @@ def random_data_frame(n_rows=None,
 
         common_keys = set(aDefaultGenerators) & set(generators)
         aGenerators = aDefaultGenerators | {x: generators[x] for x in common_keys}
+
+    elif callable(generators):
+
+        aGenerators = dict(zip(column_names, numpy.resize(generators, len(column_names))))
 
     else:
         raise TypeError("Unknown type of generators specification.")
