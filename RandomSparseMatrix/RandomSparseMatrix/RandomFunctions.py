@@ -41,6 +41,9 @@ def random_sparse_matrix(n_rows=None,
     if isinstance(min_number_of_values, type(None)):
         mmin_number_of_values = 2
 
+    if isinstance(min_number_of_values, int) and max_number_of_values is None:
+        mmax_number_of_values = max(1, min_number_of_values + math.floor(0.1 * mn_rows * mn_cols))
+
     dfRandLong = random_data_frame(n_rows=mn_rows,
                                    columns_spec=column_names,
                                    generators=mgenerators,
@@ -60,7 +63,12 @@ def random_sparse_matrix(n_rows=None,
         add_names = random_word(mn_rows - rmat.rows_count())
         add_names = [add_names, ] if isinstance(add_names, str) else add_names
         rmat = rmat.impose_row_names(random.sample(rmat.row_names() + add_names, k=mn_rows))
-        rmat = rmat.set_row_names(row_names)
+
+        row_names2 = row_names
+        if len(row_names2) < mn_rows:
+            row_names2 = [x + str(y) for (x, y) in zip(numpy.resize(row_names2, mn_rows), range(mn_rows))]
+
+        rmat = rmat.set_row_names(row_names2)
 
     if rmat.columns_count() < mn_cols:
         rmat = rmat.impose_column_names(column_names)
