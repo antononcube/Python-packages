@@ -44,7 +44,7 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
         mn_cols = int(numpy.random.poisson(lam=7, size=1)[0])
         mn_cols = 1 if mn_cols == 0 else mn_cols
     elif _is_str_list(columns_spec):
-        column_names = columns_spec
+        column_names = list(set(columns_spec))
         mn_cols = len(column_names)
     elif isinstance(columns_spec, int) and columns_spec > 0:
         mn_cols = columns_spec
