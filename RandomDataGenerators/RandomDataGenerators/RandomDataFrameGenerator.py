@@ -67,6 +67,9 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
                 str(type(numpy.random.poisson)) + ".")
             return None
 
+        # Unique column names
+        column_names = list(set(column_names))
+
     return [mn_rows, mn_cols, column_names]
 
 
