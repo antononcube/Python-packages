@@ -6,7 +6,7 @@ import unittest
 import pandas.core.frame
 from RandomDataGenerators.RandomFunctions import *
 from RandomDataGenerators.RandomDataFrameGenerator import *
-
+import random
 
 def _is_num_list(obj):
     return isinstance(obj, list) and all([isinstance(x, (int, float)) for x in obj])
@@ -21,15 +21,11 @@ def _is_str_keys_dict(obj):
 
 
 def _is_func_list(obj):
-    return isinstance(obj, list) and \
-           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in obj])
+    return isinstance(obj, list) and all([callable(x) for x in obj])
 
 
 def _is_func_dict(obj):
-    return isinstance(obj, dict) and \
-           _is_str_list(list(obj.keys())) and \
-           all([isinstance(x, type(random_word)) or isinstance(x, type(numpy.random.poisson)) for x in
-                list(obj.values())])
+    return isinstance(obj, dict) and _is_str_list(list(obj.keys())) and all([callable(x) for x in list(obj.values())])
 
 
 class BasicFunctionalities(unittest.TestCase):
@@ -77,6 +73,10 @@ class BasicFunctionalities(unittest.TestCase):
             and _is_num_list(list(res.kotka))
             and _is_num_list(list(res.krem))
             and _is_str_list(list(res.sasa)))
+
+    def test_random_data_frame_9(self):
+        res = random_data_frame(12, None, generators=lambda size: [random.random() for i in range(size)])
+        self.assertTrue(isinstance(res, pandas.core.frame.DataFrame) and _is_str_list(list(res.columns)))
 
 
 if __name__ == '__main__':
