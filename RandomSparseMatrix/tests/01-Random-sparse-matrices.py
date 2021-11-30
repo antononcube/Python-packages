@@ -30,7 +30,7 @@ class BasicFunctionalities(unittest.TestCase):
                                     max_number_of_values=None)
         self.assertTrue(isinstance(smat, SSparseMatrix))
 
-    def test_simple_4(self):
+    def test_n_vals_2(self):
         random.seed(332)
         my_min = 30
         smats = [random_sparse_matrix(n_rows=12,
@@ -41,6 +41,12 @@ class BasicFunctionalities(unittest.TestCase):
         nnzs = [x.nnz >= my_min for x in smats]
 
         self.assertTrue(all(nnzs))
+
+    def test_generator_1(self):
+        smat = random_sparse_matrix(n_rows=12,
+                                    columns_spec=15,
+                                    generators=lambda size: [random.random() for i in range(size)])
+        self.assertTrue(isinstance(smat, SSparseMatrix))
 
 
 if __name__ == '__main__':
