@@ -35,7 +35,7 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator, 
     # Process columns spec
     mn_cols = None
     column_names = None
-    if isinstance(columns_spec, type(None)):
+    if columns_spec is None:
         mn_cols = int(numpy.random.poisson(lam=7, size=1)[0])
         mn_cols = 1 if mn_cols == 0 else mn_cols
     elif _is_str_list(columns_spec):
