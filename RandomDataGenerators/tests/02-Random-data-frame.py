@@ -8,6 +8,7 @@ from RandomDataGenerators.RandomFunctions import *
 from RandomDataGenerators.RandomDataFrameGenerator import *
 import random
 
+
 def _is_num_list(obj):
     return isinstance(obj, list) and all([isinstance(x, (int, float)) for x in obj])
 
@@ -77,6 +78,18 @@ class BasicFunctionalities(unittest.TestCase):
     def test_random_data_frame_9(self):
         res = random_data_frame(12, None, generators=lambda size: [random.random() for i in range(size)])
         self.assertTrue(isinstance(res, pandas.core.frame.DataFrame) and _is_str_list(list(res.columns)))
+
+    def test_random_data_frame_10(self):
+        my_col_names = ["alpha", "beta", "gamma", "zetta", "omega"]
+
+        res = random_data_frame(10,
+                                my_col_names,
+                                generators={"alpha": random_word,
+                                            "beta": numpy.random.normal,
+                                            "gamma": lambda size: numpy.random.poisson(lam=5, size=size)})
+
+        self.assertTrue(isinstance(res, pandas.core.frame.DataFrame) and \
+                        _is_str_list(list(res.columns)) and list(res.columns) == my_col_names)
 
 
 if __name__ == '__main__':
