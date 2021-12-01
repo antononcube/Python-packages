@@ -77,7 +77,8 @@ def random_sparse_matrix(n_rows=None,
         row_names2 = row_names
         if len(row_names2) < mn_rows:
             warnings.warn(
-                "The specified number of rows is larger than the obtained row names. Adding ordinal suffixes.")
+                "The specified number of rows is larger than the obtained row names. Adding ordinal suffixes.",
+                UserWarning)
             row_names2 = [x + "_" + str(y) for (x, y) in zip(numpy.resize(row_names2, mn_rows), range(mn_rows))]
 
         rmat = rmat.set_row_names(row_names2)
