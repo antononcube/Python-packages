@@ -48,7 +48,7 @@ def load_pet_names_data_frame():
 # Random words
 # ===========================================================
 
-def random_string(size=1, chars=5):
+def random_string(size=1, chars=5, pattern: str = '[\l\d]'):
     """Generates random strings with specified size and number of characters."""
 
     if isinstance(chars, type(None)):
@@ -61,9 +61,9 @@ def random_string(size=1, chars=5):
         return None
 
     if isinstance(size, int) and size == 1:
-        return StringGenerator("[\l\d]{" + str(nchars) + "}").render()
+        return StringGenerator(pattern + "{" + str(nchars) + "}").render()
     elif isinstance(size, int) and size > 1:
-        return StringGenerator("[\l\d]{" + str(nchars) + "}").render_list(size, unique=True)
+        return StringGenerator(pattern + "{" + str(nchars) + "}").render_list(size, unique=True)
     elif isinstance(size, type(None)):
         return random_string(1)
     else:
