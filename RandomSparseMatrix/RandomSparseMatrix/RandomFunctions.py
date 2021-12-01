@@ -67,11 +67,23 @@ def random_sparse_matrix(n_rows=None,
     smat = rmat.sparse_matrix()
     smat.eliminate_zeros()
     rmat.set_sparse_matrix(smat)
-    rmat.set_row_names(random_word(rmat.rows_count()))
+    rmat.set_row_names("RowID.")
 
-    if rmat.rows_count() < mn_rows:
-        add_names = random_word(mn_rows - rmat.rows_count())
+    if rmat.rows_count() == mn_rows:
+
+        rmat.set_row_names(row_names)
+
+    elif rmat.rows_count() < mn_rows:
+        # Since we are using long form to generate the sparse matrix entries
+        # it can happen that some rows are not present. Hence, we have to
+        # complete the obtained matrix into a matrix with the required number of rows.
+
+        # Generate and annex additional row names.
+        add_names = ["RowIDNew." + str(i) for i in range(mn_rows - rmat.rows_count())]
         add_names = [add_names, ] if isinstance(add_names, str) else add_names
+
+        # Note that we make random sampling of the completed row names.
+        # (The function random_data_frame does not act upon specified row names.)
         rmat = rmat.impose_row_names(random.sample(rmat.row_names() + add_names, k=mn_rows))
 
         row_names2 = row_names
