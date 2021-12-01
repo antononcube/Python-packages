@@ -23,7 +23,7 @@ def _is_func_dict(obj):
     return isinstance(obj, dict) and _is_str_list(list(obj.keys())) and all([callable(x) for x in list(obj.values())])
 
 
-def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
+def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator, warn=True):
     # Process number of rows
     mn_rows = n_rows
     if isinstance(mn_rows, type(None)):
@@ -31,7 +31,6 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
         mn_rows = 1 if mn_rows == 0 else mn_rows
     elif not isinstance(mn_rows, int) and mn_rows > 0:
         raise ValueError("The first argument 'n_rows' is expected to be a positive integer or None.")
-        return None
 
     # Process columns spec
     mn_cols = None
@@ -47,7 +46,6 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
     else:
         raise TypeError("""The second, columns specification argument is expected to be a positive integer,
         a list of strings, or None.""")
-        return None
 
     # Column names generator
     if isinstance(columns_spec, type(None)) or isinstance(columns_spec, int):
@@ -61,10 +59,18 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
             raise TypeError(
                 "The column names generator is expected to be None, a function, or an object of type " +
                 str(type(numpy.random.poisson)) + ".")
-            return None
 
         # Unique column names
         column_names = list(dict.fromkeys(column_names))
+
+    # Handling the case when the generated column names are too few
+    if isinstance(columns_spec, int) and len(column_names) < columns_spec:
+
+        if warn:
+            warnings.warn("The obtained column names are too few. Adding ordinal suffixes.",
+                          UserWarning)
+
+        column_names = [x + "_" + str(i) for (x, i) in zip(numpy.resize(column_names, mn_cols), range(mn_cols))]
 
     return [mn_rows, mn_cols, column_names]
 
@@ -117,7 +123,6 @@ def random_data_frame(n_rows=None,
 
     else:
         raise TypeError("Unknown type of generators specification.")
-        return None
 
     # Max Number Of Values
     if isinstance(max_number_of_values, type(None)):
@@ -126,7 +131,6 @@ def random_data_frame(n_rows=None,
         mmax_number_of_values = max_number_of_values
     else:
         raise TypeError("The argument max_number_of_values is expected to be a non-negative integer or None.")
-        return None
 
     # Min Number Of Values
     if isinstance(min_number_of_values, type(None)):
@@ -137,7 +141,6 @@ def random_data_frame(n_rows=None,
             mmin_number_of_values = mmax_number_of_values
     else:
         raise TypeError("The argument min_number_of_values is expected to be a non-negative integer or None.")
-        return None
 
     # Form
     if isinstance(form, type(None)):
@@ -145,7 +148,7 @@ def random_data_frame(n_rows=None,
 
     if not (isinstance(form, str) and form.lower() in {"long", "wide"}):
         warnings.warn(
-            "The argument form is expected to be None or one of \"Long\" or \"Wide\". Continuing using \"Wide\".",
+            "The argument form is expected to be None or one of 'Long' or 'Wide'. Continuing using 'Wide'.",
             UserWarning)
         mform = "wide"
     else:
