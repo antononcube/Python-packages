@@ -64,13 +64,20 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator, 
         column_names = list(dict.fromkeys(column_names))
 
     # Handling the case when the generated column names are too few
-    if isinstance(columns_spec, int) and len(column_names) < columns_spec:
+    if len(column_names) < mn_cols:
 
-        if warn:
-            warnings.warn("The obtained column names are too few. Adding ordinal suffixes.",
-                          UserWarning)
+        if columns_spec is None:
 
-        column_names = [x + "_" + str(i) for (x, i) in zip(numpy.resize(column_names, mn_cols), range(mn_cols))]
+            mn_cols = len(column_names)
+
+        else:
+            # E.g. isinstance(columns_spec, int) and len(column_names) < columns_spec:
+
+            if warn:
+                warnings.warn("The obtained column names are too few. Adding ordinal suffixes.",
+                              UserWarning)
+
+            column_names = [x + "_" + str(i) for (x, i) in zip(numpy.resize(column_names, mn_cols), range(mn_cols))]
 
     return [mn_rows, mn_cols, column_names]
 
