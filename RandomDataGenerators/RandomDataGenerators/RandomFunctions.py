@@ -213,35 +213,43 @@ def random_pretentious_job_title(size: int = 1, number_of_words=3, language: str
     """Generates pretentious job titles with specified number of words and language."""
     mnumber_of_words = number_of_words
     if not (isinstance(number_of_words, type(None)) or isinstance(number_of_words, int) and 0 < number_of_words < 4):
-        raise TypeError("""The argument 'number-of-words' is expected to be one of 1, 2, 3, or None. 
-            Continue using 3.""")
+        raise TypeError("The argument 'number-of-words' is expected to be one of 1, 2, 3, or None. Continue using 3.")
         mnumber_of_words = 3
         return None
 
-    mlanguage = language.lower()
-    if mlanguage not in set(pretentiousJobTitleWords.keys()):
-        warnings.warn("""The argument 'language' is expected to be one of { %pretentiousJobTitleWords.keys()} or None. 
-            Continuing with 'English'.""")
+    mlanguage = language
+    if not ( mlanguage in set(pretentiousJobTitleWords.keys()) or mlanguage is None):
+        warnings.warn(
+            "The argument 'language' is expected to be one of 'Bulgarian', 'English', or None. Continuing with 'English'.",
+            UserWarning)
         mlanguage = 'English'
 
+    if isinstance(mlanguage, str):
+        mlanguage = mlanguage.lower()
+
     if not size > 0:
-        warnings.warn("The argument 'size' is expected to be non-negative integer.")
+        warnings.warn("The argument 'size' is expected to be non-negative integer.", UserWarning)
         return None
 
     phrases = []
 
     for i in range(size):
+
         n = mnumber_of_words
-        if isinstance(mnumber_of_words, type(None)):
+        if mnumber_of_words is None:
             n = random.choice([1, 2, 3])
 
-        r_title = [random.choice(pretentiousJobTitleWords[mlanguage]['uno']),
-                   random.choice(pretentiousJobTitleWords[mlanguage]['zwei']),
-                   random.choice(pretentiousJobTitleWords[mlanguage]['trois'])]
+        lang = mlanguage
+        if lang is None:
+            lang = random.choice(list(pretentiousJobTitleWords.keys()))
 
-        if mlanguage == "bulgarian":
+        r_title = [random.choice(pretentiousJobTitleWords[lang]['uno']),
+                   random.choice(pretentiousJobTitleWords[lang]['zwei']),
+                   random.choice(pretentiousJobTitleWords[lang]['trois'])]
 
-            conj = random.choice(pretentiousJobTitleWords[mlanguage]["conjunction"])
+        if lang == "bulgarian":
+
+            conj = random.choice(pretentiousJobTitleWords[lang]["conjunction"])
 
             if n == 2:
                 r_title = [r_title[2], conj, r_title[1]]
