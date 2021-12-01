@@ -218,14 +218,16 @@ def random_pretentious_job_title(size: int = 1, number_of_words=3, language: str
         return None
 
     mlanguage = language
-    if not ( mlanguage in set(pretentiousJobTitleWords.keys()) or mlanguage is None):
+    if isinstance(mlanguage, str):
+        mlanguage = mlanguage.lower()
+
+    if not (mlanguage in set(pretentiousJobTitleWords.keys()) or mlanguage is None):
         warnings.warn(
             "The argument 'language' is expected to be one of 'Bulgarian', 'English', or None. Continuing with 'English'.",
             UserWarning)
-        mlanguage = 'English'
+        mlanguage = 'English'.lower()
 
-    if isinstance(mlanguage, str):
-        mlanguage = mlanguage.lower()
+
 
     if not size > 0:
         warnings.warn("The argument 'size' is expected to be non-negative integer.", UserWarning)
