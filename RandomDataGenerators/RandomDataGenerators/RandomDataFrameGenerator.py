@@ -40,7 +40,7 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
         mn_cols = int(numpy.random.poisson(lam=7, size=1)[0])
         mn_cols = 1 if mn_cols == 0 else mn_cols
     elif _is_str_list(columns_spec):
-        column_names = list(set(columns_spec))
+        column_names = list(dict.fromkeys(columns_spec))
         mn_cols = len(column_names)
     elif isinstance(columns_spec, int) and columns_spec > 0:
         mn_cols = columns_spec
@@ -64,7 +64,7 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator):
             return None
 
         # Unique column names
-        column_names = list(set(column_names))
+        column_names = list(dict.fromkeys(column_names))
 
     return [mn_rows, mn_cols, column_names]
 
@@ -145,7 +145,8 @@ def random_data_frame(n_rows=None,
 
     if not (isinstance(form, str) and form.lower() in {"long", "wide"}):
         warnings.warn(
-            "The argument form is expected to be None or one of \"Long\" or \"Wide\". Continuing using \"Wide\".")
+            "The argument form is expected to be None or one of \"Long\" or \"Wide\". Continuing using \"Wide\".",
+            UserWarning)
         mform = "wide"
     else:
         mform = form.lower()
@@ -187,6 +188,7 @@ def random_data_frame(n_rows=None,
     dfRand = {column_names[k]: dict(zip(rowInds, aGenerators[column_names[k]](size=mn_rows)))
               for (k, rowInds) in colGroups}
     dfRand = pandas.DataFrame(dfRand)
+    dfRand = dfRand.reindex(columns=column_names)
 
     if row_names:
         dfRand.index = ["id." + str(x) for x in range(dfRand.shape[0])]
