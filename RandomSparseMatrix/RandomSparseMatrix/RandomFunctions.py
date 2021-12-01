@@ -69,14 +69,15 @@ def random_sparse_matrix(n_rows=None,
     rmat.set_sparse_matrix(smat)
     rmat.set_row_names("RowID.")
 
-    if rmat.rows_count() == mn_rows:
-
+    if rmat.rows_count() == mn_rows and len(row_names) == mn_rows:
         rmat.set_row_names(row_names)
 
-    elif rmat.rows_count() < mn_rows:
+    elif rmat.rows_count() < mn_rows or len(row_names) < mn_rows:
         # Since we are using long form to generate the sparse matrix entries
         # it can happen that some rows are not present. Hence, we have to
         # complete the obtained matrix into a matrix with the required number of rows.
+        # Similar case arises if the specified row names generator produces fewer
+        # unique row names than the specified number of rows.
 
         # Generate and annex additional row names.
         add_names = ["RowIDNew." + str(i) for i in range(mn_rows - rmat.rows_count())]
