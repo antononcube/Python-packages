@@ -56,11 +56,14 @@ class BasicFunctionalities(unittest.TestCase):
         my_row_names = list("ABCD")
         m = 12
 
-        smat = random_sparse_matrix(n_rows=m,
-                                    columns_spec=15,
-                                    row_names_generator=lambda size: [random.choice(my_row_names) for i in range(size)])
+        with self.assertWarnsRegex(UserWarning,
+                                   r"The specified number of rows is larger than the obtained row names.*"):
+            smat = random_sparse_matrix(n_rows=m,
+                                        columns_spec=15,
+                                        row_names_generator=lambda size: [random.choice(my_row_names) for i in
+                                                                          range(size)])
 
-        self.assertTrue(isinstance(smat, SSparseMatrix) and smat.rows_count() == m) and self.assertWarns(UserWarning)
+        self.assertTrue(isinstance(smat, SSparseMatrix) and smat.rows_count() == m)
 
     def test_row_names_generator_2(self):
         # If the row names generator produced number of row names that is smaller
@@ -70,7 +73,8 @@ class BasicFunctionalities(unittest.TestCase):
 
         smat = random_sparse_matrix(n_rows=None,
                                     columns_spec=15,
-                                    row_names_generator=lambda size: [random.choice(my_row_names) for i in range(size)])
+                                    row_names_generator=lambda size: [random.choice(my_row_names) for i in
+                                                                      range(size)])
 
         self.assertTrue(isinstance(smat, SSparseMatrix) and smat.rows_count() <= len(my_row_names))
 
