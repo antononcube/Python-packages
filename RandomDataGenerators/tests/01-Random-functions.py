@@ -88,6 +88,18 @@ class BasicFunctionalities(unittest.TestCase):
         res = random_pretentious_job_title(size=12, language="Bulgarian")
         self.assertTrue(_is_str_list(res))
 
+    def test_random_pretentious_job_title_5(self):
+        res = random_pretentious_job_title(size=12, language=None)
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_pretentious_job_title_6(self):
+
+        with self.assertWarnsRegex(UserWarning,
+                                   r"The argument 'language' is expected to be one of.*"):
+            res = random_pretentious_job_title(size=12, language="Any")
+
+        self.assertTrue(_is_str_list(res))
+
 
 if __name__ == '__main__':
     unittest.main()
