@@ -1,3 +1,4 @@
+import random
 import unittest
 
 from RandomDataGenerators.RandomFunctions import *
@@ -47,6 +48,31 @@ class BasicFunctionalities(unittest.TestCase):
                                     columns_spec=15,
                                     generators=lambda size: [random.random() for i in range(size)])
         self.assertTrue(isinstance(smat, SSparseMatrix))
+
+    def test_row_names_generator_1(self):
+        # If the row names generator produced number of row names that is smaller
+        # than the specified number of rows, then ordinal suffixes are added to the row names.
+
+        my_row_names = list("ABCD")
+        m = 12
+
+        smat = random_sparse_matrix(n_rows=m,
+                                    columns_spec=15,
+                                    row_names_generator=lambda size: [random.choice(my_row_names) for i in range(size)])
+
+        self.assertTrue(isinstance(smat, SSparseMatrix) and smat.rows_count() == m) and self.assertWarns(UserWarning)
+
+    def test_row_names_generator_2(self):
+        # If the row names generator produced number of row names that is smaller
+        # than the automatically derived number of rows, then correct the number of rows.
+
+        my_row_names = list("ABCD")
+
+        smat = random_sparse_matrix(n_rows=None,
+                                    columns_spec=15,
+                                    row_names_generator=lambda size: [random.choice(my_row_names) for i in range(size)])
+
+        self.assertTrue(isinstance(smat, SSparseMatrix) and smat.rows_count() <= len(my_row_names))
 
 
 if __name__ == '__main__':
