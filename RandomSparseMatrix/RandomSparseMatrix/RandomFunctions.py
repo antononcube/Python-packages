@@ -38,6 +38,11 @@ def random_sparse_matrix(n_rows=None,
         columns_spec=mn_rows,
         column_names_generator=mrow_names_generator)
 
+    # If the row names generator produced number of row names that is smaller
+    # than the automatically derived number of rows, then correct the number of rows.
+    if n_rows is None and len(row_names) != n_rows:
+        mn_rows = len(row_names)
+
     mmax_number_of_values = max_number_of_values
     if isinstance(max_number_of_values, type(None)):
         mmax_number_of_values = max(1, math.floor(0.1 * mn_rows * mn_cols))
@@ -71,8 +76,8 @@ def random_sparse_matrix(n_rows=None,
 
         row_names2 = row_names
         if len(row_names2) < mn_rows:
-            warnings.warn("""The specified number of rows is larger than the obtained row names. 
-            Adding ordinal suffixes.""")
+            warnings.warn(
+                "The specified number of rows is larger than the obtained row names. Adding ordinal suffixes.")
             row_names2 = [x + "_" + str(y) for (x, y) in zip(numpy.resize(row_names2, mn_rows), range(mn_rows))]
 
         rmat = rmat.set_row_names(row_names2)
