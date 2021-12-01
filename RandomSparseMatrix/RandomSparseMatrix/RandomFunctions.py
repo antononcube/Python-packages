@@ -36,7 +36,8 @@ def random_sparse_matrix(n_rows=None,
     _, _, row_names = RandomDataGenerators.RandomDataFrameGenerator._process_row_and_column_specs(
         n_rows=mn_rows,
         columns_spec=mn_rows,
-        column_names_generator=mrow_names_generator)
+        column_names_generator=mrow_names_generator,
+        warn=False)
 
     # If the row names generator produced number of row names that is smaller
     # than the automatically derived number of rows, then correct the number of rows.
