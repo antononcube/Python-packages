@@ -190,6 +190,9 @@ def random_data_frame(n_rows=None,
         else:
             k = 0
 
+    if len(dfPairs) > mmax_number_of_values:
+        dfPairs = numpy.resize(dfPairs, mmax_number_of_values)
+
     dfPairs = [(x // mn_rows, x % mn_rows) for x in dfPairs]
     dfPairs.sort(key=lambda x: x[0])
     colGroups = [(key, [x for (_, x) in value]) for key, value in itertools.groupby(dfPairs, lambda x: x[0])]
