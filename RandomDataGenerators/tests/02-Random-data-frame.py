@@ -91,6 +91,17 @@ class BasicFunctionalities(unittest.TestCase):
         self.assertTrue(isinstance(res, pandas.core.frame.DataFrame) and \
                         _is_str_list(list(res.columns)) and list(res.columns) == my_col_names)
 
+    def test_random_data_frame_11(self):
+        k = 100
+        res = [random_data_frame(
+            n_rows=4,
+            columns_spec=4,
+            max_number_of_values=15,
+            min_number_of_values=15
+        ).isna().sum().sum() for i in range(k)]
+
+        self.assertTrue(sum(res) == k)
+
 
 if __name__ == '__main__':
     unittest.main()
