@@ -11,7 +11,7 @@ setuptools.setup(
     description="Sparse Matrix Recommender package based on SSparseMatrix objects.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/antononcube/Python-packages",
+    url="https://github.com/antononcube/Python-packages/tree/main/SparseMatrixRecommender",
     install_requires=['numpy', 'scipy', 'SSparseMatrix', 'pandas'],
     packages=setuptools.find_packages(),
     classifiers=[
@@ -19,6 +19,9 @@ setuptools.setup(
         "License :: OSI Approved :: GPL-3",
         "Operating System :: OS Independent",
     ],
+    keywords=["sparse", "matrix", "recommender", "sparse matrix recommender",
+              "linear algebra", "linear", "algebra",
+              "recommendations"],
     package_data={'': ['resources/*.csv', 'resources/*.csv.gz']},
     python_requires='>=3.7',
 )
