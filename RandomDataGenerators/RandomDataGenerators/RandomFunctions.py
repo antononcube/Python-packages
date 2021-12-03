@@ -21,7 +21,9 @@ def load_words_data_frame():
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
     stream = pkg_resources.resource_stream(__name__, 'resources/dfEnglishWords.csv')
-    return pandas.read_csv(stream, encoding='latin-1')
+    dfRes = pandas.read_csv(stream, encoding='latin-1')
+    stream.close()
+    return dfRes
 
 
 # ===========================================================
@@ -41,6 +43,7 @@ def load_pet_names_data_frame():
     dfData = pandas.read_csv(stream, encoding='latin-1')
     wsum = sum(dfData.Count)
     dfData["Weight"] = [x / wsum for x in dfData.Count]
+    stream.close()
     return dfData
 
 
