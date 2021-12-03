@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="RandomDataGenerators",
-    version="0.2.6",
+    version="0.2.7",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Generator of random data frames.",
@@ -23,6 +23,9 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
     ],
+    keywords=["random", "random data frame", "random dataset", "dataset", "data", "frame",
+              "random pet name", "pet name", "random word", "word",
+              "random data generator", "data generators", "random job title", "job title"],
     include_package_data=True,
     package_data={'': ['resources/*.csv']},
     python_requires='>=3.7',
