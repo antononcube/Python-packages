@@ -1,6 +1,6 @@
 # Sparse Matrix Recommender (SMR) Python package
 
-## In brief
+## Introduction
 
 This Python package, `SparseMatrixRecommender`, has different functions for computations of recommendations
 based on (user) profile or history using Sparse Linear Algebra (SLA). The package mirrors
@@ -84,10 +84,10 @@ smrObj = (SparseMatrixRecommender()
                                  columns=None, 
                                  add_tag_types_to_column_names=True, 
                                  tag_value_separator=":")
-           .apply_term_weight_functions("IDF", "None", "Cosine")
-           .recommend_by_profile(profile=["male", "1st"], nrecs=12)
-           .join_across(data=dfTitanic, on="id")
-           .echo_value())
+          .apply_term_weight_functions("IDF", "None", "Cosine")
+          .recommend_by_profile(profile=["male", "1st"], nrecs=12)
+          .join_across(data=dfTitanic, on="id")
+          .echo_value())
 ```
 
 ### R 
