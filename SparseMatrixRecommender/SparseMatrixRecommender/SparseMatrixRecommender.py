@@ -38,6 +38,10 @@ def _get_non_zero_rows(ssmat):
     return dict(zip(rns2, smat.data))
 
 
+def _reverse_sort_dict(x):
+    return dict([(k, v) for k, v in sorted(x.items(), key=lambda item: -item[1])])
+
+
 # ======================================================================
 # Class definition
 # ======================================================================
@@ -127,7 +131,7 @@ class SparseMatrixRecommender:
             self._M = arg
         else:
             raise TypeError("The first argument is expected to be a SSparseMatrix object.")
-            return None
+
         return self
 
     def set_matrices(self, arg):
@@ -136,7 +140,7 @@ class SparseMatrixRecommender:
             self._matrices = arg
         else:
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
-            return None
+
         return self
 
     def set_tag_type_weights(self, arg):
@@ -173,7 +177,6 @@ class SparseMatrixRecommender:
         """
         if not is_smat_dict(matrices):
             raise TypeError("The first argument is expected to be a dictionary of SSparseMatrix objects.")
-            return None
 
         if add_tag_types_to_column_names:
             self._matrices = {k: v.set_column_names([k + tag_value_separator + y for y in v.column_names()]) for (k, v)
@@ -206,7 +209,6 @@ class SparseMatrixRecommender:
         """
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("The first argument is expected to be data frame.")
-            return None
 
         # Make a set of column names
         dataColNames = set(data.keys())
@@ -214,7 +216,6 @@ class SparseMatrixRecommender:
         # Check if the specified item column name is known
         if item_column_name not in dataColNames:
             raise TypeError("Unknown item column name: " + repr(item_column_name) + ".")
-            return None
 
         # Get automatic columns
         if isinstance(columns, type(None)):
@@ -222,13 +223,11 @@ class SparseMatrixRecommender:
 
         if not is_str_list(columns):
             raise TypeError("""The second argument is expected to be a list of strings.""")
-            return None
 
         # Create a dictionary of matrices
         for cn in columns:
             if cn not in dataColNames:
                 raise TypeError("Unknown column name: " + repr(cn) + ".")
-                return None
 
         # Cross tabulate across all specified columns
         aSMats = cross_tabulate(data=data, index=item_column_name, columns=columns)
@@ -266,7 +265,6 @@ class SparseMatrixRecommender:
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("""The first argument is expected to be data frame with columns that correspond
             to items, tag type, tag values, and tag weights.""")
-            return None
 
         # We make a dictionary of matrices and hand it over to create_from_matrices.
 
@@ -320,6 +318,7 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     def _to_smr_vector(self, arg, things_dict, thing_name, ref_name):
         """To SMR vector
+
         :type arg: str|dict
         :param arg: A list of items or tags, or a dictionary of scored items or tags.
 
@@ -333,7 +332,6 @@ class SparseMatrixRecommender:
         """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
-            return None
 
         if is_str_list(arg):
             dvec = dict.fromkeys(arg, 1)
@@ -342,7 +340,6 @@ class SparseMatrixRecommender:
             known_keys = {key: value for (key, value) in arg.items() if key in things_dict}
             if len(known_keys) == 0:
                 raise LookupError("None of the tags is a valid recommendation matrix " + thing_name + " name.")
-                return None
             elif len(known_keys) < len(arg):
                 raise LookupError("Not all tags are valid recommendation matrix " + thing_name + " names.")
 
@@ -359,7 +356,6 @@ class SparseMatrixRecommender:
             raise TypeError(
                 "The first argument is expected to be a list of " + ref_name + ", a dictionary of scored "
                 + ref_name + "," + " or SSparseMatrix object.")
-            return None
 
     # ------------------------------------------------------------------
     # To profile vector
@@ -375,7 +371,6 @@ class SparseMatrixRecommender:
         """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
-            return None
 
         return self._to_smr_vector(arg, things_dict=self._M.column_names_dict(), thing_name="column", ref_name="tags")
 
@@ -393,20 +388,23 @@ class SparseMatrixRecommender:
         """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
-            return None
 
         return self._to_smr_vector(arg, things_dict=self._M.row_names_dict(), thing_name="row", ref_name="items")
 
     # ------------------------------------------------------------------
     # Recommend by profile
     # ------------------------------------------------------------------
-    def recommend_by_profile(self, profile, nrecs=10):
+    def recommend_by_profile(self, profile, nrecs=10, vector_result: bool = False):
         """Recommend by profile.
+
         :type profile: str|list|dict
         :param profile: A tag, a list of tags, a dictionary of scored tags.
 
         :type nrecs: int|None
         :param nrecs: A positive integer or None. If it is None, then all items with non-zero scores are returned.
+
+        :type vector_result: bool
+        :param vector_result: Should the result be a (SSparseMatrix) vector or a dictionary.
 
         :rtype SparseMatrixRecommender
         :return self: The object itself or None. The result is stored in self._value.
@@ -420,23 +418,22 @@ class SparseMatrixRecommender:
             vec = profile
         else:
             raise TypeError("The first argument is expected to be a list of tags or a dictionary of scored tags.")
-            return None
 
         # Compute the recommendations
         recs = self.take_M().dot(vec)
 
-        # Take non-zero score recommendations
-        recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
+        if not vector_result:
+            # Take non-zero score recommendations
+            recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
 
-        # Reverse sort
-        recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
+            # Reverse sort
+            recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
 
-        # Give top-n recs
-        if isinstance(nrecs, int) and nrecs < len(recs):
-            recs = dict(list(recs.items())[0:nrecs])
-        elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
-            raise TypeError("The second argument, nrecs, is expected to be a positive integer or None.")
-            return None
+            # Give top-n recs
+            if isinstance(nrecs, int) and nrecs < len(recs):
+                recs = dict(list(recs.items())[0:nrecs])
+            elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
+                raise TypeError("The second argument, 'nrecs', is expected to be a positive integer or None.")
 
         # Assign obtained recommendations to the pipeline value
         self.set_value(recs)
@@ -471,7 +468,6 @@ class SparseMatrixRecommender:
         else:
             raise TypeError("The first argument is expected to be a list of items, a dictionary of scored items" +
                             " or a SSparseMatrix object with " + self._M.rows_count() + " columns.")
-            return None
 
         # Compute the recommendations
         recs = self.take_M().dot(vec.dot(self.take_M()).transpose(copy=False))
@@ -487,14 +483,13 @@ class SparseMatrixRecommender:
             recs = {key: value for (key, value) in recs.items() if key not in hist_set}
 
         # Reverse sort
-        recs = dict(sorted(recs.items(), key=lambda item: -item[1]))
+        recs = _reverse_sort_dict(recs)
 
         # Give top-n recs
         if isinstance(nrecs, int) and nrecs < len(recs):
             recs = dict(list(recs.items())[0:nrecs])
         elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
             raise TypeError("The second argument, nrecs, is expected to be a positive integer or None.")
-            return None
 
         # Assign obtained recommendations to the pipeline value
         self.set_value(recs)
@@ -523,7 +518,6 @@ class SparseMatrixRecommender:
         else:
             raise TypeError("The first argument is expected to be a list of items, a dictionary of scored items" +
                             " or a SSparseMatrix object with " + self._M.rows_count() + " columns.")
-            return None
 
         # Compute the profile
         prof = vec.dot(self.take_M())
@@ -532,7 +526,7 @@ class SparseMatrixRecommender:
         prof = {key: value for (key, value) in prof.column_sums_dict().items() if value > 0}
 
         # Reverse sort
-        prof = dict(sorted(prof.items(), key=lambda item: -item[1]))
+        prof = _reverse_sort_dict(prof)
 
         # Assign obtained prof to the pipeline value
         self.set_value(prof)
@@ -556,15 +550,12 @@ class SparseMatrixRecommender:
         """
         if not isinstance(self.take_value(), dict):
             raise TypeError("The pipeline value is expected to be a dictionary of scored items.")
-            return None
 
         if not isinstance(data, pandas.core.frame.DataFrame):
             raise TypeError("The first argument is expected to be a data frame.")
-            return None
 
         if not (isinstance(on, str) or isinstance(on, type(None))):
             raise TypeError("The second argument expected to be a string.")
-            return None
 
         # Automatic on values
         mon = on
@@ -582,6 +573,91 @@ class SparseMatrixRecommender:
         # Using .join does not work because .join uses indexes.
         # Hence using merge.
         self.set_value(dfRecs.merge(data, on=mon, how="left"))
+
+        return self
+
+    # ------------------------------------------------------------------
+    # Classify by profile
+    # ------------------------------------------------------------------
+    def classify_by_profile(self, tag_type, profile,
+                            n_top_nearest_neighbors=100,
+                            voting=False,
+                            drop_zero_scored_labels=True,
+                            max_number_of_labels=None,
+                            normalize: bool = True):
+        """Clasify by profile vector.
+
+        :type tag_type: str
+        :param tag_type: Tag type to classify to.
+
+        :type profile: str|list|dict
+        :param profile: A tag, a list of tags, a dictionary of scored tags.
+
+        :type n_top_nearest_neighbors: int
+        :param n_top_nearest_neighbors: Number of top nearest neighbors to use.
+
+        :type voting: bool
+        :param voting: Should simple voting be used or a weighted sum?
+
+        :param max_number_of_labels: The maximum number of labels to be returned; if None all found labels are returned.
+
+        :type drop_zero_scored_labels: bool
+        :param drop_zero_scored_labels: Should the labels with zero scores be dropped or not?
+
+        :type normalize: bool
+        :param normalize: Should the scores be normalized?
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None. The result is stored in self._value.
+        """
+        # Verify tag_type
+        if tag_type not in self.take_matrices():
+            raise ValueError("The value of the first argument, 'tag_type' is not a known tag type.")
+
+        # Compute the recommendations
+        recs = self.recommend_by_profile(profile=profile,
+                                         nrecs=n_top_nearest_neighbors,
+                                         vector_result=True).take_value()
+        # "Nothing" result
+        if recs.column_sums()[0] == 0:
+            self.set_value({None: 1})
+            return self
+
+        # Get the tag type matrix
+        matTagType = self.take_matrices()[tag_type]
+
+        # Transpose in place
+        recs.transpose(copy=False)
+
+        # Respect voting
+        if voting:
+            recs.unitize()
+
+        # Get scores
+        clRes = recs.dot(matTagType)
+
+        # Convert to dictionary
+        clRes = clRes.column_sums_dict()
+
+        # Drop zero scored labels
+        if drop_zero_scored_labels:
+            clRes = {k: v for (k, v) in clRes.items() if v > 0}
+
+        # Normalize
+        if normalize:
+            cl_max = max(list(clRes.values()))
+            if cl_max > 0:
+                clRes = {k: v / cl_max for (k, v) in clRes.items()}
+
+        # Reverse sort
+        clRes = _reverse_sort_dict(clRes)
+
+        # Pick max-top labels
+        if max_number_of_labels and max_number_of_labels > len(clRes):
+            clRes = dict(list(recs.items())[0:max_number_of_labels])
+
+        # Result
+        self.set_value(clRes)
 
         return self
 
