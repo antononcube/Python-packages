@@ -23,6 +23,22 @@ def _is_func_dict(obj):
     return isinstance(obj, dict) and _is_str_list(list(obj.keys())) and all([callable(x) for x in list(obj.values())])
 
 
+def _is_func_or_list_list(obj):
+    return isinstance(obj, list) and all([callable(x) or isinstance(x, list) for x in obj])
+
+
+def _is_func_or_list_dict(obj):
+    return isinstance(obj, dict) and _is_str_list(list(obj.keys())) and all(
+        [callable(x) or isinstance(x, list) for x in list(obj.values())])
+
+
+def _make_selector_func(x: list):
+    def my_selector(size: int):
+        return random.choices(population=x, k=size)
+
+    return my_selector
+
+
 def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator, warn=True):
     # Process number of rows
     mn_rows = n_rows
@@ -112,17 +128,20 @@ def random_data_frame(n_rows=None,
 
         aGenerators = aDefaultGenerators
 
-    elif _is_func_list(generators):
+    elif _is_func_or_list_list(generators):
 
         aGenerators = generators
+        aGenerators = [x if callable(x) else _make_selector_func(x) for x in aGenerators]
         while len(aGenerators) < mn_cols:
             aGenerators = aGenerators + aGenerators
         aGenerators = dict(zip(column_names, aGenerators[0:mn_cols]))
 
-    elif _is_func_dict(generators):
+    elif _is_func_or_list_dict(generators):
 
         common_keys = set(aDefaultGenerators) & set(generators)
-        aGenerators = aDefaultGenerators | {x: generators[x] for x in common_keys}
+        aGenerators = aDefaultGenerators | {
+            x: generators[x] if callable(generators[x]) else _make_selector_func(generators[x])
+            for x in common_keys}
 
     elif callable(generators):
 
