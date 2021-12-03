@@ -1,18 +1,15 @@
 import pandas
-import ssl
-from SparseMatrixRecommender.SparseMatrixRecommender import *
+import random
+from SparseMatrixRecommender import *
+from SparseMatrixRecommender.DataLoaders import *
 
-ssl._create_default_https_context = ssl._create_unverified_context
-
-dfData0 = pandas.read_csv(
-    "https://raw.githubusercontent.com/antononcube/MathematicaVsR/master/Data/MathematicaVsR-Data-Mushroom.csv")
-dfData0["id"] = ["id." + str(x) for x in dfData0["id"]]
+dfData0 = load_mushroom_data_frame()
 
 print(dfData0.shape)
 print(dfData0.head().to_string())
 
 print(160 * "=")
-print("Recommend by profile")
+print("Create recommender")
 print(160 * "-")
 
 smrObj = (SparseMatrixRecommender()
@@ -23,7 +20,16 @@ smrObj = (SparseMatrixRecommender()
                                  tag_value_separator=":")
           .apply_term_weight_functions("IDF", "None", "Cosine"))
 
-smrObj.take_M()[1:100:10, :].print_matrix()
+print("The obtained recommender object:")
+print(repr(smrObj))
+
+print("Recommender matrix sample:")
+sample_rows = random.sample(smrObj.take_M().row_names(), 10)
+smrObj.take_M()[sample_rows, :].print_matrix()
+
+print(160 * "=")
+print("Recommend by profile")
+print(160 * "-")
 
 recs = (smrObj
         .recommend_by_profile({"cap-Shape:convex": 1.2, "edibility:poisonous": 1.4}, nrecs=12)
