@@ -71,6 +71,9 @@ def _process_row_and_column_specs(n_rows, columns_spec, column_names_generator, 
             column_names = column_names_generator(mn_cols)
         elif isinstance(column_names_generator, type(numpy.random.poisson)):
             column_names = column_names_generator(size=mn_cols)
+        elif isinstance(column_names_generator, list):
+            my_selector = _make_selector_func(column_names_generator)
+            column_names = my_selector(size=mn_cols)
         else:
             raise TypeError(
                 "The column names generator is expected to be None, a function, or an object of type " +
