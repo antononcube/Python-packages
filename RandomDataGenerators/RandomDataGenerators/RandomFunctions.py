@@ -48,7 +48,7 @@ def load_pet_names_data_frame():
 # Random words
 # ===========================================================
 
-def random_string(size=1, chars=5, pattern: str = '[\l\d]'):
+def random_string(size=1, chars=5, pattern: str = r'[\l\d]'):
     """Generates random strings with specified size and number of characters."""
 
     if isinstance(chars, type(None)):
@@ -58,7 +58,6 @@ def random_string(size=1, chars=5, pattern: str = '[\l\d]'):
         nchars = chars
     else:
         raise TypeError("The second argument is expected to be positive integer of None.")
-        return None
 
     if isinstance(size, int) and size == 1:
         return StringGenerator(pattern + "{" + str(nchars) + "}").render()
@@ -68,7 +67,6 @@ def random_string(size=1, chars=5, pattern: str = '[\l\d]'):
         return random_string(1)
     else:
         raise TypeError("The first argument is expected to be positive integer of None.")
-        return None
 
 
 # ===========================================================
@@ -84,20 +82,19 @@ def random_word(size=1, kind=None, language="English"):
 
     if not isinstance(size, int) and size > 0:
         raise TypeError("The first argument is expected to be positive integer.")
-        return None
 
     if not isinstance(language, str) and language.lower() == 'english':
-        raise """The argument language is expected to be one of 'English' or Whatever. 
-        (Only English words are supported at this time.)"""
-        return None
+        raise TypeError("""The argument language is expected to be one of 'English' or None. 
+        (Only English words are supported at this time.)""")
 
     if isinstance(kind, type(None)):
         mkind = "any"
     elif isinstance(kind, str):
         mkind = kind
     else:
-        raise TypeError("The argument 'kind' is expected to be string or None.")
-        return None
+        warnings.warn("The argument 'kind' is expected to be string or None. Continuing with 'Any'.",
+                      UserWarning)
+        mkind = "any"
 
     if mkind.lower() == "any":
         res = random.sample(list(dfWords["Word"]), k=size)
@@ -108,8 +105,9 @@ def random_word(size=1, kind=None, language="English"):
     elif mkind.lower() in {"stop", "stopword"}:
         res = random.sample(list(dfWords[dfWords.StopWordQ]["Word"]), k=size)
     else:
-        raise TypeError("The argument 'kind' is expected to be one of 'any', 'known', 'common', 'stopword', or None.")
-        return None
+        warnings.warn("The argument 'kind' is expected to be one of 'Any', 'Known', 'Common', 'Stopword', or None.",
+                      UserWarning)
+        return random_word(size=size, kind="Any", language=language)
 
     if size == 1:
         return res[0]
@@ -131,7 +129,8 @@ def random_pet_name(size=1, species=None, weighted=True):
     allSpecies = set(["Any", "Cat", "Dog", "Goat", "Pig"])
 
     if not (isinstance(species, type(None)) or isinstance(species, str) and species.capitalize() in allSpecies):
-        raise ValueError("The argument 'species' is expected to be one of %, or None. Continuing with Any.")
+        warnings.warn("The argument 'species' is expected to be one of %, or None. Continuing with Any.",
+                      UserWarning)
         species = "Any"
 
     if weighted:
@@ -226,8 +225,6 @@ def random_pretentious_job_title(size: int = 1, number_of_words=3, language: str
             "The argument 'language' is expected to be one of 'Bulgarian', 'English', or None. Continuing with 'English'.",
             UserWarning)
         mlanguage = 'English'.lower()
-
-
 
     if not size > 0:
         warnings.warn("The argument 'size' is expected to be non-negative integer.", UserWarning)
