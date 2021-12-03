@@ -3,25 +3,26 @@
 ## In brief
 
 This Python package, `SparseMatrixRecommender`, has different functions for computations of recommendations
-based (user) profile or history using Sparse matrix Linear Algebra. The package mirrors
+based on (user) profile or history using Sparse Linear Algebra (SLA). The package mirrors
 the Mathematica implementation [AAp1]. 
 (There is also a corresponding implementation in R; see [AAp2]). 
 
 The package is based on a certain "standard" Information retrieval paradigm -- it utilizes 
-Latent Semantic Indexing (LSI) functions like IDF, TF-IDF, etc. Hence the package also has 
+Latent Semantic Indexing (LSI) functions like IDF, TF-IDF, etc. Hence, the package also has 
 document-term matrix creation functions and LSI application functions. I included them in the 
 package since I wanted to minimize the external package dependencies.
-
-See the notebook 
-[SMR-creation-and-usage-example.ipynd](./notebooks/SMR-creation-and-usage-example.ipynd) 
-or the corresponding
-[Markdown notebook version](
-for examples.
 
 The package includes two data-sets `dfTitanic` and `dfMushroom` in order to make easier the
 writing of introductory examples and unit tests.
 
-For more theoretical description see the article [AA1].
+For more theoretical description see the article 
+["Mapping Sparse Matrix Recommender to Streams Blending Recommender"](https://github.com/antononcube/MathematicaForPrediction/blob/master/Documentation/MappingSMRtoSBR/Mapping-Sparse-Matrix-Recommender-to-Streams-Blending-Recommender.pdf)
+, [AA1].
+
+For detailed examples see the files
+["SMR-experiments-large-data.py"](https://github.com/antononcube/Python-packages/blob/main/SparseMatrixRecommender/examples/SMR-experiments-large-data.py)
+and
+["SMR-creation-from-long-form.py"](https://github.com/antononcube/Python-packages/blob/main/SparseMatrixRecommender/examples/SMR-creation-from-long-form.py).
 
 ------
 
@@ -33,14 +34,23 @@ To install from GitHub use the shell command:
 python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=SparseMatrixRecommender\&subdirectory=SparseMatrixRecommender
 ```
 
+To install from [PyPI](https://pypi.org/project/SparseMatrixRecommender/):
+
+```shell
+python -m pip install SparseMatrixRecommender
+``` 
+
 ------
 
 ## Related Python packages
 
 This package is based on the Python package 
-[`SSparseMatrix`](../SSparseMatrix/README.md), [AAp5]
+[`SSparseMatrix`](https://github.com/antononcube/Python-packages/tree/main/SSparseMatrix), 
+[AAp5].
 
-*TBF...*
+The package 
+[LatentSemanticAnalyzer](https://github.com/antononcube/Python-packages/tree/main/LatentSemanticAnalyzer), 
+[AAp6], uses the cross tabulation and LSI functions of this package.
 
 ------
 
@@ -48,7 +58,37 @@ This package is based on the Python package
 
 ### Mathematica
 
-*TBD...*
+The software monad Mathematica package 
+["MonadicSparseMatrixRecommender.m"](https://github.com/antononcube/MathematicaForPrediction/blob/master/MonadicProgramming/MonadicSparseMatrixRecommender.m)
+[AAp1], provides recommendation pipelines similar to the pipelines create with this package.
+
+For example this here is Mathematica monadic pipeline for creation of a recommender
+over Titanic data and recommendations for the profile "male" and "1st':
+
+```mathematica
+smrObj = 
+   SMRMonUnit[]⟹
+   SMRMonCreate[dfTitanic]⟹
+   SMRMonApplyTermWeightFunctions["IDF", "None", "Cosine"]⟹
+   SMRMonRecommendByProfile[{"male", "1st"}, 12]⟹
+   SMRMonJoinAcross[dfTitanic]⟹
+   SMRMonEchoValue[]
+```
+
+Here is the corresponding Python pipeline:
+
+```python
+smrObj = (SparseMatrixRecommender()
+          .create_from_wide_form(data = dfTitanic, 
+                                 item_column_name="id", 
+                                 columns=None, 
+                                 add_tag_types_to_column_names=True, 
+                                 tag_value_separator=":")
+           .apply_term_weight_functions("IDF", "None", "Cosine")
+           .recommend_by_profile(profile=["male", "1st"], nrecs=12)
+           .join_across(data=dfTitanic, on="id")
+           .echo_value())
+```
 
 ### R 
 
@@ -74,7 +114,7 @@ The package
 ### Articles
 
 [AA1] Anton Antonov,
-[Mapping Sparse Matrix Recommender to Streams Blending Recommender](https://github.com/antononcube/MathematicaForPrediction/blob/master/Documentation/MappingSMRtoSBR/Mapping-Sparse-Matrix-Recommender-to-Streams-Blending-Recommender.pdf)
+["Mapping Sparse Matrix Recommender to Streams Blending Recommender"](https://github.com/antononcube/MathematicaForPrediction/blob/master/Documentation/MappingSMRtoSBR/Mapping-Sparse-Matrix-Recommender-to-Streams-Blending-Recommender.pdf)
 (2017),
 [MathematicaForPrediction at GitHub](https://github.com/antononcube/MathematicaForPrediction).
 
@@ -103,6 +143,11 @@ The package
 ### Python packages
 
 [AAp5] Anton Antonov,
-[SSparseMatrix object in Python](https://github.com/antononcube/Python-packages/tree/master/SSparseMatrix)
+[SSparseMatrix package in Python](https://github.com/antononcube/Python-packages/tree/master/SSparseMatrix)
+(2021),
+[Python-packages at GitHub/antononcube](https://github.com/antononcube/Python-packages).
+
+[AAp6] Anton Antonov,
+[LatentSemanticAnalyzer package in Python](https://github.com/antononcube/Python-packages/tree/main/LatentSemanticAnalyzer)
 (2021),
 [Python-packages at GitHub/antononcube](https://github.com/antononcube/Python-packages).
