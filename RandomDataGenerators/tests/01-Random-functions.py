@@ -37,7 +37,15 @@ class BasicFunctionalities(unittest.TestCase):
         self.assertTrue(_is_str_list(res))
 
     def test_random_string_3(self):
+        res = random_string(size=None)
+        self.assertTrue(isinstance(res, str))
+
+    def test_random_string_4(self):
         res = random_string(size=12)
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_string_5(self):
+        res = [random_string(pattern=x) for x in [r"[\l]", r"[\d]", r"[\l\d]", "[\l]", "[\l\d]"]]
         self.assertTrue(_is_str_list(res))
 
     def test_random_word_1(self):
@@ -56,6 +64,24 @@ class BasicFunctionalities(unittest.TestCase):
         res = random_word(size=12, kind="Known")
         self.assertTrue(_is_str_list(res))
 
+    def test_random_word_5(self):
+        res = random_word(size=12, kind="Any")
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_word_6(self):
+        with self.assertWarnsRegex(UserWarning,
+                                   r"The argument 'kind' is expected.*"):
+            res = random_word(size=12, kind=12)
+
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_word_7(self):
+        with self.assertWarnsRegex(UserWarning,
+                                   r"The argument 'kind' is expected.*"):
+            res = random_word(size=12, kind="BlahBlah")
+
+        self.assertTrue(_is_str_list(res))
+
     def test_random_pet_name_1(self):
         res = random_pet_name()
         self.assertTrue(isinstance(res, str))
@@ -70,6 +96,13 @@ class BasicFunctionalities(unittest.TestCase):
 
     def test_random_pet_name_4(self):
         res = random_pet_name(size=12, species="Cat")
+        self.assertTrue(_is_str_list(res))
+
+    def test_random_pet_name_5(self):
+        with self.assertWarnsRegex(UserWarning,
+                                   r"The argument 'species' is expected.*"):
+            res = random_pet_name(size=12, species="BlahBlah")
+
         self.assertTrue(_is_str_list(res))
 
     def test_random_pretentious_job_title_1(self):
@@ -93,7 +126,6 @@ class BasicFunctionalities(unittest.TestCase):
         self.assertTrue(_is_str_list(res))
 
     def test_random_pretentious_job_title_6(self):
-
         with self.assertWarnsRegex(UserWarning,
                                    r"The argument 'language' is expected to be one of.*"):
             res = random_pretentious_job_title(size=12, language="Any")
