@@ -15,6 +15,7 @@ my_indexes = list(range(1, 30)) + [None, ]
 
 my_gen_funcs = [random_pet_name,
                 random_word,
+                [list("abcdefgh"), random_word(3)],
                 lambda size: random_string(size),
                 [random_pet_name, random_word, random_string, numpy.random.normal],
                 None]
