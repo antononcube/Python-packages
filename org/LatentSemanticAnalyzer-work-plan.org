@@ -73,7 +73,7 @@
   - [X] Right
   - [X] Class method
 * TODO Unit tests [40%] [2/5]
-- The unit tests (so far) are made with small matrices in order to make easier visual verification (by humans.)
+- The unit tests (so far) are made with small text collections in order to make easier visual verification (by humans.)
 ** DONE Basic functionalities [100%] [3/3]
 - [X] Creation
 - [X] Document-term matrix
