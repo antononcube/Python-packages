@@ -102,6 +102,18 @@ class BasicFunctionalities(unittest.TestCase):
 
         self.assertTrue(sum(res) == k)
 
+    def test_random_data_frame_12(self):
+        res = random_data_frame(12, None, generators=[list("abcdefgh"), random_word(3)])
+        self.assertTrue(isinstance(res, pandas.core.frame.DataFrame) and _is_str_list(list(res.columns)))
+
+    def test_random_data_frame_13(self):
+        res = random_data_frame(12, list("abcde"), generators={"a": list("abcdefgh"), "b": random_word(3)})
+        self.assertTrue(isinstance(res, pandas.core.frame.DataFrame) and _is_str_list(list(res.columns)))
+
+    def test_random_data_frame_14(self):
+        res = random_data_frame(12, None, column_names_generator=random_word(3, kind="Common"))
+        self.assertTrue(isinstance(res, pandas.core.frame.DataFrame) and _is_str_list(list(res.columns)))
+
 
 if __name__ == '__main__':
     unittest.main()
