@@ -1,0 +1,72 @@
+#+TITLE: Random data generators work plan
+#+AUTHOR: Anton Antonov
+#+TODO: TODO ONGOING MAYBE | DONE CANCELED 
+#+OPTIONS: toc:1 num:0
+
+* Introduction
+- This org-mode file has a work plan list and a unit test list that correspond (and hopefully reflect) the development of the Python package [[https://github.com/antononcube/Python-packages/tree/main/RandomDataGenerators][RandomDataGenerators]].
+* Work plan [100%] [5/5]
+** DONE Random strings generation
+** DONE Random words generation
+- [X] Using "data loader"
+- [X] Having word type / kind filter
+- [X] Handling failed expectations
+** DONE Random pet names generation
+- [X] Using "data loader"
+- [X] Having species filter
+- [X] Having weighted sampling
+- [X] Handling failed expectations
+** DONE Random pretentious job title
+- [X] English
+- [X] Bulgarian
+- [X] Number of words
+- [X] Handling failed expectations
+- [X] Random generation with different number of words and languages
+  in one signature spec
+** DONE Random data frame [77%] [7/9]
+- [X] Number of rows and columns
+- [X] Using named columns
+- [X] Column names generator spec utilization
+- [X] Tie up the generator specs and the column names
+- [X] Row names / keys
+- [ ] Both long and wide format
+- [ ] Make sure the ability to generate data frames with:
+  - Large number of rows and columns
+  - Few non-NA elements
+- [X] Experiment with "thousands of random data frames" generations
+- [X] Experiment with utilization for random sparse matrix generation
+  - ~SSparseMatrix~ objects
+* TODO Unit tests [50%] [1/2]
+** DONE Random functions [100%] [4/4]
+- [X] ~random_string~
+  - [X] Basic usages
+  - [X] Usages with regex specs
+- [X] ~random_word~
+  - [X] Basic usages
+  - [X] Kind/type spec failure
+- [X] ~random_pet_name~
+  - [X] Basic usages
+  - [X] Species spec failure
+- [X] ~random_pretentious_job_title~
+  - [X] Basic usages
+  - [X] Random language
+  - [X] Random number of words
+  - [X] Language spec failure
+** TODO Random data frame aspects [75%] [3/4]
+- [X] Simple usages
+- [X] Large number of columns and "insufficient" column names
+- [X] Thousands of data frames tests
+  - The script [[https://github.com/antononcube/Python-packages/blob/main/RandomDataGenerators/examples/thousands-of-random-data-frames.py][thousands-of-random-data-frames.py]] generates thousands
+    of tests.
+- [ ] Find a way incorporate the "thousands of data frame tests" into
+  one or more unit tests.
+* TODO Documentation [%50] [1/6]
+- It is considered helpful to have:
+  - Overall document with examples of all package functions
+  - Wolfram Function Repository (WFR) style document for each function
+** DONE Overall document with all functions
+** TODO ~random_string~ WFR style
+** TODO ~random_word~ WFR style
+** TODO ~random_pet_name~ WFR style
+** TODO ~random_pretentious_job_title~ WFR style
+** TODO ~random_data_frame~ WFR style
