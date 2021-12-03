@@ -32,9 +32,9 @@ def load_titanic_data_frame():
     """
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
-    stream = pkg_resources.resource_stream(__name__, 'resources/dfTitanic.csv')
-    dfData = pandas.read_csv(stream, encoding='latin-1')
-    dfData["id"] = ["id." + str(x) for x in dfData["id"]]
+    with pkg_resources.resource_stream(__name__, 'resources/dfTitanic.csv') as stream:
+        dfData = pandas.read_csv(stream, encoding='latin-1')
+        dfData["id"] = ["id." + str(x) for x in dfData["id"]]
     return dfData
 
 
@@ -55,8 +55,8 @@ def load_mushroom_data_frame():
     """
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
-    stream = pkg_resources.resource_stream(__name__, 'resources/dfMushroom.csv.gz')
-    dfData = pandas.read_csv(stream, compression='gzip')
-    dfData["id"] = ["id." + str(x) for x in dfData["id"]]
+    with pkg_resources.resource_stream(__name__, 'resources/dfMushroom.csv.gz') as stream:
+        dfData = pandas.read_csv(stream, compression='gzip')
+        dfData["id"] = ["id." + str(x) for x in dfData["id"]]
     return dfData
 
