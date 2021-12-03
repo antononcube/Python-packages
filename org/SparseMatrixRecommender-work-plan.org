@@ -76,8 +76,8 @@
 - [X] To dictionary form
 - [X] From dictionary form
 - [ ] ~to_wl~ stub
-** TODO Second wave functions [0%] [0/5]
-- [ ] Classify by profile
+** TODO Second wave functions [20%] [1/5]
+- [X] Classify by profile
 - [ ] Filter matrix
 - [ ] Retrieve by profile with search engine specs
   - I.e. having the specs: should, must, must_not
