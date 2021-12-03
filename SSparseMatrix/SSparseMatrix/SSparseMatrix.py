@@ -167,6 +167,10 @@ class SSparseMatrix:
         """Shape."""
         return self.sparse_matrix().shape
 
+    def dim(self):
+        """Dimensions. (Synonym of shape.)"""
+        return self.sparse_matrix().shape
+
     # ------------------------------------------------------------------
     # Copying
     # ------------------------------------------------------------------
@@ -651,6 +655,10 @@ class SSparseMatrix:
             rowGroups = dict([(k, _reverse_sort_dict(v)) for (k, v) in rowGroups.items()])
         return rowGroups
 
+    def rows_dict(self, sort=False):
+        """Row dictionaries. (Synonym of row_dictionaries.)"""
+        return self.row_dictionaries(sort=sort)
+
     # ------------------------------------------------------------------
     # Column dictionaries
     # ------------------------------------------------------------------
@@ -658,6 +666,10 @@ class SSparseMatrix:
         """Column dictionaries."""
         # Could be done directly if some performance issues come up...
         return self.transpose().row_dictionaries(sort=sort)
+
+    def cols_dict(self, sort=False):
+        """Column dictionaries. (Synonym of column_dictionaries.)"""
+        return self.column_dictionaries(sort=sort)
 
     # ------------------------------------------------------------------
     # Representation
