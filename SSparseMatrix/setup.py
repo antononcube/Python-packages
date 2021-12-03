@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="SSparseMatrix",
-    version="0.3.0",
+    version="0.3.1",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="SSparseMatrix package based on SciPy sparse matrices.",
@@ -23,5 +23,7 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
     ],
+    keywords=["sparse", "matrix", "r", "s", "s-plus", "linear algebra", "linear", "algebra",
+              "row names", "column names", "named rows", "named columns"],
     python_requires='>=3.7',
 )
