@@ -5,6 +5,12 @@
 This Python package has functions for generating random strings, words,
 pet names, and (tabular) data frames.
 
+The full list of features and development status can be found in the 
+[org-mode](https://orgmode.org)
+file
+[Random-data-generators-work-plan.org](https://github.com/antononcube/Python-packages/blob/main/org/Random-data-generators-work-plan.org).
+
+
 ### Motivation
 
 The primary motivation for this package is to have simple, intuitively
