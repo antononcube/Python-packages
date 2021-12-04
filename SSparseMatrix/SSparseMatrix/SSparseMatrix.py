@@ -581,7 +581,8 @@ class SSparseMatrix:
             res.set_column_names(self.column_names())
 
             # Special handling of duplication of row names in the result.
-            rn_dict = self.row_names_dict() | other.row_names_dict()
+            # rn_dict = self.row_names_dict() | other.row_names_dict() # this is Version 3.9+ only
+            rn_dict = {**self.row_names_dict(), **other.row_names_dict()}
             if len(rn_dict) == (self.rows_count() + other.rows_count()):
                 res.set_row_names(self.row_names() + other.row_names())
             else:
@@ -614,7 +615,8 @@ class SSparseMatrix:
             res.set_row_names(self.row_names())
 
             # Special handling of duplication of row names in the result.
-            cn_dict = self.column_names_dict() | other.column_names_dict()
+            # cn_dict = self.column_names_dict() | other.column_names_dict() # this is version 3.9+ only
+            cn_dict = {**self.column_names_dict(), **other.column_names_dict()}
             if len(cn_dict) == (self.columns_count() + other.columns_count()):
                 res.set_column_names(self.column_names() + other.column_names())
             else:
@@ -716,7 +718,9 @@ class SSparseMatrix:
         """
         res = scipy.sparse.find(self.sparse_matrix())
         res = dict(zip(['rowIndexes', 'columnIndexes', 'values'], res))
-        res = res | {"shape": self.shape(), "rowNames": self.row_names(), "columnNames": self.column_names()}
+        # This is version 3.9+ only:
+        # res = res | {"shape": self.shape(), "rowNames": self.row_names(), "columnNames": self.column_names()}
+        res = {**res, "shape": self.shape(), "rowNames": self.row_names(), "columnNames": self.column_names()}
         return res
 
     # ------------------------------------------------------------------
