@@ -4,8 +4,8 @@
 import unittest
 
 import pandas.core.frame
-from SparseMatrixRecommender.SparseMatrixRecommender import *
 from SparseMatrixRecommender.DataLoaders import *
+from SparseMatrixRecommender.SparseMatrixRecommender import *
 
 
 def is_scored_tags_dict(obj):
@@ -29,7 +29,7 @@ class SMRRecommendations(unittest.TestCase):
     def test_expected_SMR_object(self):
         self.assertTrue(isinstance(self.smr, SparseMatrixRecommender)) and \
         self.assertTrue(isinstance(self.smr.take_M(), SSparseMatrix)) and \
-        self.assertTrue(self.smr.take_M().nrows() > 8000) and \
+        self.assertTrue(self.smr.take_M().nrow() > 8000) and \
         self.assertTrue(self.smr.take_M().ncol() > 110)
 
     def test_expected_profile_object_1(self):
