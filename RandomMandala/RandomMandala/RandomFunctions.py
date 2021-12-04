@@ -1,10 +1,11 @@
-import numpy
 import random
+from typing import Optional, Union
+
 import matplotlib
 import matplotlib.figure
 import matplotlib.pyplot
+import numpy
 from RandomMandala.RandomMandala import RandomMandala
-from typing import Optional, Union
 
 
 # ===========================================================
@@ -15,7 +16,7 @@ def _is_radius_number(obj):
 
 
 def _is_radius_list(obj):
-    return isinstance(obj, list) and all([_is_radius_number(x) for x in obj])
+    return isinstance(obj, (list, tuple)) and all([_is_radius_number(x) for x in obj])
 
 
 # ===========================================================
@@ -28,8 +29,8 @@ def random_mandala(n_rows=1,
                    connecting_function="random",
                    number_of_elements=6,
                    symmetric_seed=True,
-                   face_color="0.2",
-                   edge_color="0.2",
+                   face_color=("0.2", "0.6", "0.8"),
+                   edge_color=("0.2", "0.6", "0.8"),
                    figure: Optional[matplotlib.figure.Figure] = None,
                    location=None,
                    **kwargs):
@@ -46,11 +47,11 @@ def random_mandala(n_rows=1,
     :type n_columns: int|None
     :param n_columns: Number of columns in the result figure.
 
-    :type radius: int|list
+    :type radius: int|list|tuple
     :param radius: Radius for the mandalas, a number or a list of numbers.
     If a list of numbers then the mandalas are overlain.
 
-    :type rotational_symmetry_order: float|int|str|list|None
+    :type rotational_symmetry_order: float|int|str|list|tuple|None
     :param rotational_symmetry_order: Number of copies of the seed segment that comprise the mandala.
 
     :type connecting_function: str|None
@@ -64,10 +65,10 @@ def random_mandala(n_rows=1,
     :param symmetric_seed: Specifies should the seed segment be symmetric or not.
     If 'random' of None random choice between True and False is made.
 
-    :type face_color: str|list
+    :type face_color: str|list|tuple
     :param face_color: Face (fill) color.
 
-    :type edge_color: str|list
+    :type edge_color: str|list|tuple
     :param edge_color: Edge (line) color.
 
     :type figure: matplotlib.pyplot.Figure|None
@@ -84,6 +85,8 @@ def random_mandala(n_rows=1,
     """
 
     # Check symmetric_seed
+    if face_color is None:
+        face_color = ["0.2", "0.6", "0.8"]
     if not (isinstance(symmetric_seed, str) and symmetric_seed.lower() == "random" or
             isinstance(symmetric_seed, bool) or symmetric_seed is None):
         raise TypeError("""The argument 'symmetric_seed' is expected to be
@@ -93,7 +96,7 @@ def random_mandala(n_rows=1,
     if not (isinstance(rotational_symmetry_order, str) and rotational_symmetry_order.lower() == "random" or
             isinstance(rotational_symmetry_order, (int, float)) and rotational_symmetry_order >= 1.0 or
             rotational_symmetry_order is None or
-            isinstance(rotational_symmetry_order, list)):
+            isinstance(rotational_symmetry_order, (list, tuple))):
         raise TypeError("""The argument 'rotational_symmetry_order' is expected to be
              a number greater than 1, 'random', or None.""")
 
@@ -128,12 +131,12 @@ def random_mandala(n_rows=1,
 
     # Check face color
     local_face_color = face_color
-    if isinstance(face_color, list) and _is_radius_number(radius):
+    if isinstance(face_color, (list, tuple)) and _is_radius_number(radius):
         local_face_color = face_color[0]
 
     # Check edge color
     local_edge_color = edge_color
-    if isinstance(edge_color, list) and _is_radius_number(radius):
+    if isinstance(edge_color, (list, tuple)) and _is_radius_number(radius):
         local_edge_color = edge_color[0]
 
     # Delegate
@@ -141,7 +144,7 @@ def random_mandala(n_rows=1,
 
         ax = figure.add_subplot(*location)
 
-        if isinstance(radius, list):
+        if isinstance(radius, (list, tuple)):
             rm_func = _random_mandala_multi
         else:
             rm_func = _random_mandala_single
@@ -180,7 +183,7 @@ def random_mandala(n_rows=1,
 def _random_mandalas_figure(n_rows=None,
                             n_columns=None,
                             radius=1,
-                            rotational_symmetry_order: Union[int, list, str, None] = 6,
+                            rotational_symmetry_order: Union[int, list, tuple, str, None] = 6,
                             connecting_function: Optional[str] = "fill",
                             number_of_elements: Union[int, str, None] = 6,
                             symmetric_seed: Union[bool, str, None] = True,
@@ -195,7 +198,7 @@ def _random_mandalas_figure(n_rows=None,
         for j in range(n_columns):
             locationSpec = (n_rows, n_columns, i * n_columns + j + 1)
 
-            if isinstance(radius, list):
+            if isinstance(radius, (list, tuple)):
                 rm_func = _random_mandala_multi
             else:
                 rm_func = _random_mandala_single
@@ -220,8 +223,8 @@ def _random_mandalas_figure(n_rows=None,
 def _random_mandala_multi(figure=None,
                           axes=None,
                           location=None,
-                          radius: list = [6, 4, 2],
-                          rotational_symmetry_order: Union[int, list, str, None] = 6,
+                          radius=None,
+                          rotational_symmetry_order: Union[int, list, tuple, str, None] = 6,
                           connecting_function: Optional[str] = "fill",
                           number_of_elements: Union[int, str] = 6,
                           symmetric_seed: Union[bool, str, None] = True,
@@ -231,6 +234,8 @@ def _random_mandala_multi(figure=None,
     """Makes a random multi-mandala."""
 
     # Figure
+    if radius is None:
+        radius = [6, 4, 2]
     fig = figure
     if figure is None:
         # fig: matplotlib.pyplot.Figure = matplotlib.figure.Figure(**kwargs)
