@@ -1,9 +1,9 @@
 import itertools
+import pickle
 
 import numpy
 import scipy
 from scipy import sparse
-import pickle
 
 
 # ======================================================================
@@ -70,7 +70,6 @@ def column_bind(matrices):
         return res
     else:
         raise TypeError("The first argument is expected to be a list or dictionary of SSparseMatrix objects.")
-        return None
 
 
 # ======================================================================
@@ -203,7 +202,7 @@ class SSparseMatrix:
                 self._sparseMatrix = smat2
         else:
             raise TypeError("The first argument is expected to a matrix is or can be coerced to csr sparse matrix.")
-            return None
+
         return self
 
     def set_row_names(self, *args):
@@ -220,7 +219,7 @@ class SSparseMatrix:
             raise TypeError(
                 "The first argument is expected to be a string-to-index dictionary or a list of strings of length %s." %
                 self.rows_count())
-            return None
+
         return self
 
     def set_column_names(self, *args):
@@ -237,7 +236,7 @@ class SSparseMatrix:
             raise TypeError(
                 "The first argument is expected to be a string-to-index dictionary or a list of strings of length %s." %
                 self.columns_count())
-            return None
+
         return self
 
     def set_dimension_names(self, *args):
@@ -251,7 +250,7 @@ class SSparseMatrix:
         else:
             raise TypeError(
                 "The first argument is expected to be a string-to-index dictionary or a list of strings of length 2.")
-            return None
+
         return self
 
     # ------------------------------------------------------------------
@@ -399,7 +398,7 @@ class SSparseMatrix:
             obj._sparseMatrix = obj.sparse_matrix() + other
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
-            return None
+
         return obj
 
     # ------------------------------------------------------------------
@@ -417,7 +416,7 @@ class SSparseMatrix:
             obj._sparseMatrix = obj.sparse_matrix().multiply(other)
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
-            return None
+
         return obj
 
     # ------------------------------------------------------------------
@@ -466,7 +465,7 @@ class SSparseMatrix:
             obj = self.dot(vec)
         else:
             raise TypeError("The first argument is expected to be SSparseMatrix object or sparse.csr_matrix object.")
-            return None
+
         return obj
 
     # ------------------------------------------------------------------
@@ -535,7 +534,6 @@ class SSparseMatrix:
 
         if not isinstance(names, list):
             raise TypeError("The first argument is expected to be a list of strings.")
-            return None
 
         missingRows = list(set(names) - set(obj.row_names()))
         nMissingRows = len(missingRows)
@@ -562,7 +560,6 @@ class SSparseMatrix:
             return self.transpose().impose_row_names(names).transpose(copy=False)
         else:
             raise TypeError("The first argument is expected to be a list of strings.")
-            return None
 
     # ------------------------------------------------------------------
     # Row binding
@@ -573,7 +570,6 @@ class SSparseMatrix:
 
             if not (sorted(self.column_names()) == sorted(other.column_names())):
                 raise TypeError("The column names of the two SSparseMatrix objects are expected to be the same.")
-                return None
 
             if self.column_names() == other.column_names():
                 res = SSparseMatrix(scipy.sparse.vstack([self.sparse_matrix(), other.sparse_matrix()]))
@@ -595,7 +591,6 @@ class SSparseMatrix:
 
         else:
             raise TypeError("The first argument is expected to be a SSparseMatrix object.")
-            return None
 
     # ------------------------------------------------------------------
     # Column binding
@@ -608,7 +603,6 @@ class SSparseMatrix:
 
             if not (sorted(self.row_names()) == sorted(other.row_names())):
                 raise TypeError("The row names of the two SSparseMatrix objects are expected to be the same.")
-                return None
 
             if self.row_names() == other.row_names():
                 res = SSparseMatrix(scipy.sparse.hstack([self.sparse_matrix(), other.sparse_matrix()]))
@@ -630,7 +624,6 @@ class SSparseMatrix:
 
         else:
             raise TypeError("The first argument is expected to be a SSparseMatrix object.")
-            return None
 
     # ------------------------------------------------------------------
     # Triplets
@@ -809,7 +802,6 @@ class SSparseMatrix:
 
         if not isinstance(n_digits, int):
             raise TypeError("The argument n_digits is expected to be an integer.")
-            return None
 
         if n_digits < 1:
             # Not good enough for automatic determination
