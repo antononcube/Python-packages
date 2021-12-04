@@ -1,10 +1,11 @@
+import math
 import random
+
+import PIL
 import bezier
 import matplotlib
 import matplotlib.backends.backend_agg
-import PIL
 import numpy
-import math
 
 
 # ===========================================================
@@ -32,7 +33,7 @@ class RandomMandala:
     _figure = None
     _axes = None
     _radius: float = 10
-    _angle: float = numpy.pi / 6,
+    _angle: float = numpy.pi / 6
     _keep_grid_points: bool = False
     _seed_points = None
     _sym_seed_points = None
