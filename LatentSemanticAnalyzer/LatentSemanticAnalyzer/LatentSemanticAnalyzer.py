@@ -1,6 +1,6 @@
 import math
 import pickle
-from typing import Union
+from typing import Union, Optional
 
 import nimfa
 import numpy
@@ -59,14 +59,14 @@ def _reverse_sort_dict(x):
 # Class definition
 # ======================================================================
 class LatentSemanticAnalyzer:
-    _documents = None
-    _docTermMat = None
-    _wDocTermMat = None
+    _documents: Optional[dict] = None
+    _docTermMat: Optional[SSparseMatrix] = None
+    _wDocTermMat: Optional[SSparseMatrix] = None
     _terms = None,
     _stopWords = None,
     _stemmingRules = None,
-    _W = None
-    _H = None
+    _W: Optional[SSparseMatrix] = None
+    _H: Optional[SSparseMatrix] = None
     _globalWeights = None
     _localWeightFunction = None
     _normalizerFunction = None
@@ -315,9 +315,9 @@ class LatentSemanticAnalyzer:
     # Apply LSI functions
     # ------------------------------------------------------------------
     def apply_term_weight_functions(self,
-                                    global_weight_func="IDF",
-                                    local_weight_func="None",
-                                    normalizer_func="Cosine"):
+                                    global_weight_func: str = "IDF",
+                                    local_weight_func: str = "None",
+                                    normalizer_func: str = "Cosine"):
         """Apply LSI functions to the entries of the document-term matrix.
 
         :param global_weight_func: Global term weight function.
