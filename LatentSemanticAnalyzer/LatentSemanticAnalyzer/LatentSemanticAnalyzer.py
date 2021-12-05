@@ -1,18 +1,19 @@
-from SparseMatrixRecommender import SparseMatrixRecommender
-from SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
-from SparseMatrixRecommender.DocumentTermWeightFunctions import global_term_function_weights
+import math
+import pickle
+from typing import Union
+
+import nimfa
+import numpy
+import pandas
+import scipy
+import scipy.sparse.linalg
+import stop_words as stop_words_package
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import document_term_matrix
 from SSparseMatrix import SSparseMatrix
 from SSparseMatrix import is_s_sparse_matrix
-import stop_words as stop_words_package
-import math
-import warnings
-import pandas
-import numpy
-import scipy
-import scipy.sparse.linalg
-import nimfa
-import pickle
+from SparseMatrixRecommender import SparseMatrixRecommender
+from SparseMatrixRecommender.DocumentTermWeightFunctions import apply_term_weight_functions
+from SparseMatrixRecommender.DocumentTermWeightFunctions import global_term_function_weights
 
 
 # ======================================================================
@@ -172,7 +173,6 @@ class LatentSemanticAnalyzer:
             self._terms = arg.column_names()
         else:
             raise TypeError("The first argument is expected to be a SSparseMatrix object.")
-            return None
         return self
 
     def set_weighted_document_term_matrix(self, arg):
@@ -182,7 +182,6 @@ class LatentSemanticAnalyzer:
             self._terms = arg.column_names()
         else:
             raise TypeError("The first argument is expected to be a SSparseMatrix object.")
-            return None
         return self
 
     def set_global_term_weights(self, arg):
@@ -264,11 +263,31 @@ class LatentSemanticAnalyzer:
     # Make document-term matrix
     # ------------------------------------------------------------------
     def make_document_term_matrix(self,
-                                  docs,
-                                  stop_words: list = [],
-                                  stemming_rules=None,
-                                  words_pattern="[\w']+|[.,!?;]",
+                                  docs: Union[dict, list],
+                                  stop_words: Union[bool, list, tuple, None] = [],
+                                  stemming_rules: Union[bool, dict, None] = None,
+                                  words_pattern: str = r"[\w']+|[.,!?;]",
                                   min_length: int = 2):
+        """Make document-term matrix.
+
+        :type docs: dict|list|tuple
+        :param docs: A collection of documents
+
+        :type stop_words: bool|list|tuple|None
+        :param stop_words: Stop words to remove from the documents.
+
+        :type stemming_rules: bool|dict|None
+        :param stemming_rules: A dictionary of stemming rules. Or a Boolean value should stemming be applied or not.
+
+        :type words_pattern: str
+        :param words_pattern: Regex pattern to extract words with.
+
+        :type min_length: int
+        :param min_length: Minimal string length of extracted words (that are used in the computations.)
+
+        :rtype: LatentSemanticAnalyzer
+        :return self:
+        """
 
         if _is_str_list(docs):
             aTexts = dict(zip(['id' + str(i) for i in range(len(docs))], docs))
@@ -378,8 +397,8 @@ class LatentSemanticAnalyzer:
             self.set_method("NNMF")
 
         else:
-            raise ValueError("The argument 'method' is expected to 'SVD'.")
-            return None
+            raise ValueError("""The argument 'method' is expected to be one of 'SVD', 'SingularValueDecomposition', 
+            'NonNegativeMatrixFactorization', or 'NNMF'.""")
 
         # Automatic topic names
         nd = math.ceil(math.log10(number_of_topics)) + 1
