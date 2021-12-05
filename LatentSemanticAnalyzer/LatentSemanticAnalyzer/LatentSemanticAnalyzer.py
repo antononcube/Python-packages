@@ -224,11 +224,6 @@ class LatentSemanticAnalyzer:
         self._stopWords = arg
         return self
 
-    def set_stop_words(self, arg):
-        """Set stop words value."""
-        self._stopWords = arg
-        return self
-
     def set_stemming_rules(self, arg):
         """Set stemming rules."""
         self._stemmingRules = arg
@@ -422,7 +417,9 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     # Normalized matrix product components
     # ------------------------------------------------------------------
-    def normalize_matrix_product(self, normalize_left=True, order_by_significance=True):
+    def normalize_matrix_product(self,
+                                 normalize_left: bool = True,
+                                 order_by_significance: bool = True):
         """Normalized matrix product components.
 
         :param normalize_left: Should the left component be normalized or not?
@@ -496,7 +493,10 @@ class LatentSemanticAnalyzer:
         self.set_value(dfRes)
 
         if echo:
-            echo_function(dfRes)
+            if callable(echo_function):
+                echo_function(dfRes)
+            else:
+                raise TypeError("The specified echo function is not a callable object.")
 
         return self
 
@@ -505,8 +505,8 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     def echo_topics_interpretation(self,
                                    number_of_terms: int = 12,
-                                   as_data_frame=True,
-                                   wide_form=False,
+                                   as_data_frame: bool = True,
+                                   wide_form: bool = False,
                                    echo_function=lambda x: print(x.to_string())):
         """Echo topics table.
 
@@ -526,7 +526,10 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     # Extract statistical thesaurus
     # ------------------------------------------------------------------
-    def extract_statistical_thesaurus(self, terms: list, n: int = 12, method: str = "euclidian"):
+    def extract_statistical_thesaurus(self,
+                                      terms: list,
+                                      n: int = 12,
+                                      method: str = "euclidean"):
         """Extract statistical thesaurus.
 
         :param terms: Words to find statistical thesaurus entries for.
@@ -582,11 +585,11 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     def get_statistical_thesaurus(self,
                                   terms=None,
-                                  number_of_nearest_neighbors=12,
-                                  method="cosine",
-                                  as_data_frame=True,
-                                  wide_form=False,
-                                  echo=True,
+                                  number_of_nearest_neighbors: int = 12,
+                                  method: str = "cosine",
+                                  as_data_frame: bool = True,
+                                  wide_form: bool = False,
+                                  echo: bool = True,
                                   echo_function=print):
         """Get statistical thesaurus table.
 
@@ -620,7 +623,10 @@ class LatentSemanticAnalyzer:
         self.set_value(dfRes)
 
         if echo:
-            echo_function(dfRes)
+            if callable(echo_function):
+                echo_function(dfRes)
+            else:
+                raise TypeError("The specified echo function is not a callable object.")
 
         return self
 
@@ -629,10 +635,10 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     def echo_statistical_thesaurus(self,
                                    terms=None,
-                                   number_of_nearest_neighbors=12,
-                                   method="cosine",
-                                   as_data_frame=True,
-                                   wide_form=False,
+                                   number_of_nearest_neighbors: int = 12,
+                                   method: str = "cosine",
+                                   as_data_frame: bool = True,
+                                   wide_form: bool = False,
                                    echo_function=lambda x: print(x.to_string())):
         """Echo statistical thesaurus.
 
@@ -656,7 +662,9 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     # Represent by terms
     # ------------------------------------------------------------------
-    def represent_by_terms(self, query, apply_lsi_functions=True):
+    def represent_by_terms(self,
+                           query,
+                           apply_lsi_functions: bool = True):
         """Represent by terms.
 
         :param query: A vector of strings or a sparse matrix to be represented in the
@@ -717,7 +725,10 @@ class LatentSemanticAnalyzer:
     # ------------------------------------------------------------------
     # Represent by topics
     # ------------------------------------------------------------------
-    def represent_by_topics(self, query, apply_lsi_functions=True, method: str = "algebraic"):
+    def represent_by_topics(self,
+                            query,
+                            apply_lsi_functions: bool = True,
+                            method: str = "algebraic"):
         """Represent by topics.
 
         :param query: A vector of strings or a sparse matrix to be represented in the space of monad's document-term matrix.
