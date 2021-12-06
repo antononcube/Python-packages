@@ -1,0 +1,164 @@
+---
+title: "ChernoffFace Python package"
+author: "Anton Antonov"
+date: '2021-12-06'
+output:
+  html_document
+---
+
+## Introduction
+
+This Python package implements the function `chernoff_face` that generates 
+[Chernoff diagrams](https://en.wikipedia.org/wiki/Chernoff_face).
+
+The design, implementation *strategy*, and unit tests closely resemble the Wolfram Repository Function (WFR)
+[`ChernoffFace`](https://resources.wolframcloud.com/FunctionRepository/resources/ChernoffFace),
+[AAf1], and the original Mathematica package
+["ChernoffFaces.m"](https://github.com/antononcube/MathematicaForPrediction/blob/master/ChernoffFaces.m),
+[AAp1].
+
+
+------
+
+## Installation
+
+To install from GitHub use the shell command:
+
+```shell
+python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=ChernoffFace\&subdirectory=ChernoffFace
+```
+
+To install from PyPI:
+
+```shell
+python -m pip install ChernoffFace
+```
+
+------
+
+# Usage examples
+
+## Setup
+
+```{python setup}
+from ChernoffFace import *
+import numpy
+import matplotlib.cm
+```
+
+## Random data
+
+```{python random-data}
+# Generate data
+numpy.random.seed(32)
+data = numpy.random.rand(16, 12)
+
+# Make Chernoff faces
+fig = chernoff_face(data=data, 
+                    titles=[str(x) for x in list(range(len(data)))], 
+                    color_mapper=matplotlib.cm.Pastel1)
+
+# Display
+fig.tight_layout()
+matplotlib.pyplot.show()
+```
+
+
+## Employee attitude data
+
+Get Employee attitude data
+
+```{python get-employee-data}
+dfData=load_employee_attitude_data_frame()
+dfData.head()
+```
+Get the numerical data of the data frame into an array:
+
+```{python employee-data-to-array}
+data = dfData.to_numpy()
+```
+
+Rescale the variables:
+
+```{python employee-data-array-rescale}
+data2 = variables_rescale(data)
+```
+
+Make the corresponding Chernoff faces using USA state names as titles:
+
+```{python employee-data-to-chernoff-faces-figure}
+fig = chernoff_face(data=data2,
+                    n_columns=5,
+                    long_faces=False,
+                    color_mapper=matplotlib.cm.tab20b,
+                    figsize=(8, 8), dpi=200)
+```
+
+Display:
+
+```{python employee-chernoff-faces-figure}
+fig.tight_layout()
+matplotlib.pyplot.show()
+```
+
+## USA arrests data
+
+Get USA arrests data:
+
+```{python get-usa-arrests-data}
+dfData=load_usa_arrests_data_frame()
+dfData.head()
+```
+Get the numerical data of the data frame into an array:
+
+```{python}
+data = dfData.to_numpy()
+data = data[:, 1:5]
+```
+
+Rescale the variables:
+
+```{python}
+data2 = variables_rescale(data)
+```
+
+Make the corresponding Chernoff faces using USA state names as titles:
+ 
+```{python usa-arrests-data-to-chernoff-faces}
+fig = chernoff_face(data=data2,
+                    n_columns=5,
+                    long_faces=False,
+                    color_mapper=matplotlib.cm.jet,
+                    titles=dfData.StateName.tolist(),
+                    figsize=(12, 12), dpi=200)
+```
+
+Display:
+
+```{python usa-arrests-data-to-chernoff-faces-figure}
+fig.tight_layout()
+matplotlib.pyplot.show()
+```
+
+------
+
+## References
+
+### Articles
+
+[AA1] Anton Antonov,
+["Making Chernoff faces for data visualization"](https://mathematicaforprediction.wordpress.com/2016/06/03/making-chernoff-faces-for-data-visualization),
+(2016),
+[MathematicaForPrediction at WordPress](https://mathematicaforprediction.wordpress.com).
+
+### Functions and packages
+
+[AAf1] Anton Antonov,
+[`ChernoffFace`](https://resources.wolframcloud.com/FunctionRepository/resources/ChernoffFace),
+(2019),
+[Wolfram Function Repository](https://resources.wolframcloud.com/FunctionRepository).
+
+[AAp1] Anton Antonov,
+[Chernoff faces implementation in Mathematica](https://github.com/antononcube/MathematicaForPrediction/blob/master/ChernoffFaces.m),
+(2016),
+[MathematicaForPrediction at GitHub](https://github.com/antononcube/MathematicaForPrediction).
