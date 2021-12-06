@@ -49,6 +49,7 @@ To install from PyPI:
     matplotlib.pyplot.show()
 
 <img src="https://github.com/antononcube/Python-packages/raw/main/ChernoffFace/docs/img/random-data-1.png" width="672" />
+
 ## Employee attitude data
 
 Get Employee attitude data
