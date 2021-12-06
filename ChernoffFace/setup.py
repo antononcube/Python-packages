@@ -19,5 +19,6 @@ setuptools.setup(
         "License :: OSI Approved :: Artistic License",
         "Operating System :: OS Independent",
     ],
+    package_data={'': ['resources/*.csv']},
     python_requires='>=3.7',
 )
