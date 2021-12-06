@@ -40,7 +40,8 @@ def chernoff_face(data,
                   n_rows: Optional[int] = None,
                   n_columns: Optional[int] = None,
                   make_symmetric: bool = True,
-                  color_mapper: Optional[matplotlib.colors.LinearSegmentedColormap]=None,
+                  color_mapper: Optional[matplotlib.colors.LinearSegmentedColormap] = None,
+                  long_faces: bool = True,
                   **kwargs):
     """Makes Chernoff face diagrams.
 
@@ -59,6 +60,8 @@ def chernoff_face(data,
     :type color_mapper: matplotlib.colors.LinearSegmentedColormap|None
     :param color_mapper: Color mapping object.
 
+    :param long_faces: Should the face be longer of wider.
+
     :type kwargs: **dict
     :param kwargs: Arguments for matplotlib.pyplot.figure .
 
@@ -73,6 +76,7 @@ def chernoff_face(data,
                              n_columns=n_columns,
                              make_symmetric=make_symmetric,
                              color_mapper=color_mapper,
+                             long_faces = long_faces,
                              **kwargs)
 
     # Check make_symmetric
@@ -104,6 +108,7 @@ def chernoff_face(data,
                                             n_columns=myNCols,
                                             make_symmetric=make_symmetric,
                                             color_mapper=color_mapper,
+                                            long_faces = long_faces,
                                             **kwargs)
 
         else:
@@ -114,6 +119,7 @@ def chernoff_face(data,
         resFig = single_chernoff_face(data=data,
                                       make_symmetric=make_symmetric,
                                       color_mapper=color_mapper,
+                                      long_faces = long_faces,
                                       figure=None, axes=None, location=None,
                                       **kwargs)
 
@@ -131,6 +137,7 @@ def _chernoff_faces_figure(data,
                            n_columns=None,
                            make_symmetric: bool = True,
                            color_mapper=None,
+                           long_faces=True,
                            **kwargs):
     """Makes a figure with random mandalas."""
 
@@ -149,6 +156,7 @@ def _chernoff_faces_figure(data,
                 rescale_values=False,
                 make_symmetric=make_symmetric,
                 color_mapper=color_mapper,
+                long_faces = long_faces,
                 figure=fig,
                 axes=None,
                 location=locationSpec

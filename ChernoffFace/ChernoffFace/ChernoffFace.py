@@ -234,8 +234,8 @@ def forehead_patch(points, axes=None, resolution=50, **kwargs):
 def bottom_face_patch(center, height, width, theta1, theta2, axes=None, resolution=50, **kwargs):
     # Generate the points of the bottom of the face
     theta = numpy.linspace(numpy.radians(theta1), numpy.radians(theta2), resolution)
-    points = numpy.vstack((height * numpy.cos(theta) + center[0],
-                           width * numpy.sin(theta) + center[1]))
+    points = numpy.vstack((width * numpy.cos(theta) + center[0],
+                           height * numpy.sin(theta) + center[1]))
 
     # Build the polygon and add it to the axes
     kwargs2 = {k: v for (k, v) in kwargs.items() if k != "edgecolor"}
@@ -254,6 +254,7 @@ def single_chernoff_face(data: dict,
                          rescale_values: bool = True,
                          make_symmetric: bool = True,
                          color_mapper: Optional[matplotlib.colors.LinearSegmentedColormap] = None,
+                         long_faces=True,
                          figure=None,
                          axes=None,
                          location=None,
@@ -275,6 +276,7 @@ def single_chernoff_face(data: dict,
         return single_chernoff_face(pars,
                                     rescale_values=False,
                                     color_mapper=color_mapper,
+                                    long_faces=long_faces,
                                     figure=figure, axes=axes, location=location)
 
     # Figure
@@ -354,16 +356,28 @@ def single_chernoff_face(data: dict,
             noseColor = 0 if noseColor < 0 else noseColor
             noseColor = str(noseColor)
 
-    xCoords = rescale(list(range(0, 21)), 0, 20, -1, 1)
-    foreheadPts = [[x, (1 - x ** foreheadTh) * faceLength * eyesVerticalPos] for x in xCoords]
+    # Bottom face part
+    if long_faces:
+        face_width = 1
+        face_height = faceLength * (1 - eyesVerticalPos)
+    else:
+        face_width = faceLength * (1 - eyesVerticalPos)
+        face_height = 1
 
-    forehead_patch(numpy.asarray(foreheadPts), axes=ax, color=faceColor, edgecolor="0.3")
-
-    bottom_face_patch((0., 0), 1, faceLength * (1 - eyesVerticalPos),
+    bottom_face_patch(center=(0., 0),
+                      width=face_width,
+                      height=face_height,
                       theta1=180, theta2=360,
                       axes=ax, fill=True,
                       color=faceColor, edgecolor='0.3')
 
+    # Forehead
+    xCoords = rescale(list(range(0, 21)), 0, 20, -1, 1)
+    foreheadPts = [[x*face_width, (1 - x ** foreheadTh) * faceLength * eyesVerticalPos] for x in xCoords]
+
+    forehead_patch(numpy.asarray(foreheadPts), axes=ax, color=faceColor, edgecolor="0.3")
+
+    # Eyes
     left_eye(eyeSize=eyeSize, eyeBallsColor=eyeBallsColor,
              irisColor=irisColor, leftIrisOffset=leftIrisOffset,
              angle=eyesSlant / (2 * numpy.pi) * 360,
@@ -374,6 +388,7 @@ def single_chernoff_face(data: dict,
               angle=-eyesSlant / (2 * numpy.pi) * 360,
               edgecolor="0.3", axes=ax)
 
+    # Eyebrows
     left_eyebrow(eyebrLeftTrim=eyebrLeftTrim,
                  eyebrRaiseLeft=eyebrRaiseLeft,
                  eyebrSlantLeft=eyebrSlantLeft,
@@ -384,18 +399,22 @@ def single_chernoff_face(data: dict,
                   eyebrSlantRight=eyebrSlantRight,
                   edgecolor="0.3", axes=ax)
 
+    # Nose
     nose_patch(noseLength=noseLength, noseColor=noseColor, faceColor=faceColor,
                edgecolor="0.3", axes=ax)
 
+    # Mouth
     mouth_curve(mouthWidth=mouthWidth, mouthColor=mouthColor, faceColor=faceColor,
                 a=a, b=b, c=c,
                 axes=ax)
 
-    ax.set_xlim(-1.1, 1.1)
-    # ax.set_ylim(-3, 2)
+    # Axes tuning
+    ax.set_xlim(-2.1, 2.1)
+    # ax.set_ylim(-3, 3)
     ax.set_aspect(aspect=1, adjustable="datalim", anchor="C")
     ax.axis('off')
 
+    # Result
     return fig
 
 
