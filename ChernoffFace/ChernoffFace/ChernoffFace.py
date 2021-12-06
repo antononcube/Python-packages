@@ -60,6 +60,13 @@ def rescale(arr, xmin=None, xmax=None, vmin: float = 0, vmax: float = 1):
     return res
 
 
+def variables_rescale(arr):
+    arr2 = arr.transpose()
+    arr2 = [rescale(x) for x in arr2]
+    arr2 = numpy.asarray(arr2).transpose()
+    return arr2
+
+
 # ===========================================================
 # Default parameters
 # ===========================================================
@@ -385,7 +392,7 @@ def single_chernoff_face(data: dict,
                 axes=ax)
 
     ax.set_xlim(-1.1, 1.1)
-    ax.set_ylim(-3, 2)
+    # ax.set_ylim(-3, 2)
     ax.set_aspect(aspect=1, adjustable="datalim", anchor="C")
     ax.axis('off')
 
