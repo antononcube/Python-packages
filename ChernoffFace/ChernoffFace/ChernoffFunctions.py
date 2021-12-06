@@ -109,7 +109,7 @@ def chernoff_face(data,
         else:
             raise TypeError("The arguments n_rows and n_columns are expected to be positive integers or None.")
 
-    elif _is_face_part_dict(data):
+    elif _is_face_part_dict(data) or _is_face_part_list(data):
 
         resFig = single_chernoff_face(data=data,
                                       make_symmetric=make_symmetric,
