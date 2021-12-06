@@ -7,6 +7,7 @@ import matplotlib.cm
 import matplotlib.figure
 import matplotlib.pyplot
 import numpy
+import pandas.core.frame
 from ChernoffFace.ChernoffFace import single_chernoff_face
 
 
@@ -33,6 +34,10 @@ def _is_face_part_list_list(obj):
     return isinstance(obj, list) and all([_is_face_part_list(x) for x in obj])
 
 
+def _is_title_list(obj, expected_len: int):
+    return isinstance(obj, (list, tuple)) and len(obj) == expected_len and all([isinstance(x, str) for x in obj])
+
+
 # ===========================================================
 # Chernoff face
 # ===========================================================
@@ -41,7 +46,10 @@ def chernoff_face(data,
                   n_columns: Optional[int] = None,
                   make_symmetric: bool = True,
                   color_mapper: Optional[matplotlib.colors.LinearSegmentedColormap] = None,
-                  long_faces: bool = True,
+                  long_faces: bool = False,
+                  titles=None,
+                  figure: Optional[matplotlib.figure.Figure] = None,
+                  location=None,
                   **kwargs):
     """Makes Chernoff face diagrams.
 
@@ -60,13 +68,23 @@ def chernoff_face(data,
     :type color_mapper: matplotlib.colors.LinearSegmentedColormap|None
     :param color_mapper: Color mapping object.
 
+    :type long_faces: bool
     :param long_faces: Should the face be longer of wider.
+
+    :type titles: list|tuple
+    :param titles: Titles for the each of the face in face collection.
+
+    :type figure: matplotlib.figure.Figure|None
+    :param figure: Figure to draw the Chernoff faces diagrams into.
+
+    :type location: tuple|None
+    :param location: Location spec to add the Chernoff face to.
 
     :type kwargs: **dict
     :param kwargs: Arguments for matplotlib.pyplot.figure .
 
-    :rtype fig: matplotlib.figure.Figure
-    :return fig: A figure (object of the class matplotlib.figure.Figure .)
+    :rtype resFig: matplotlib.figure.Figure
+    :return resFig: A figure (object of the class matplotlib.figure.Figure .)
     """
 
     # If numpy array
@@ -76,7 +94,9 @@ def chernoff_face(data,
                              n_columns=n_columns,
                              make_symmetric=make_symmetric,
                              color_mapper=color_mapper,
-                             long_faces = long_faces,
+                             long_faces=long_faces,
+                             titles=titles,
+                             figure=figure,
                              **kwargs)
 
     # Check make_symmetric
@@ -108,7 +128,9 @@ def chernoff_face(data,
                                             n_columns=myNCols,
                                             make_symmetric=make_symmetric,
                                             color_mapper=color_mapper,
-                                            long_faces = long_faces,
+                                            long_faces=long_faces,
+                                            titles=titles,
+                                            figure=figure,
                                             **kwargs)
 
         else:
@@ -119,8 +141,10 @@ def chernoff_face(data,
         resFig = single_chernoff_face(data=data,
                                       make_symmetric=make_symmetric,
                                       color_mapper=color_mapper,
-                                      long_faces = long_faces,
-                                      figure=None, axes=None, location=None,
+                                      long_faces=long_faces,
+                                      figure=figure,
+                                      axes=None,
+                                      location=location,
                                       **kwargs)
 
     else:
@@ -138,10 +162,27 @@ def _chernoff_faces_figure(data,
                            make_symmetric: bool = True,
                            color_mapper=None,
                            long_faces=True,
+                           titles=None,
+                           figure=None,
                            **kwargs):
-    """Makes a figure with random mandalas."""
+    """Makes a figure with Chernoff faces."""
 
-    fig: matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
+    # Titles argument processing
+    myTitles = titles
+    if myTitles is not None:
+        expected_len = None
+        if _is_face_part_list_list(data) or _is_face_part_dict_list(data):
+            expected_len = len(data)
+        if isinstance(myTitles, pandas.core.frame.DataFrame):
+            myTitles = myTitles.to_list()
+
+        if myTitles is not None and not _is_title_list(myTitles, expected_len):
+            raise TypeError(
+                "The argument 'titles' is expected to be list of strings with length " + str(expected_len) + ".")
+
+    fig = figure
+    if fig is None:
+        fig: matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
 
     k = 0
     for i in range(n_rows):
@@ -156,11 +197,16 @@ def _chernoff_faces_figure(data,
                 rescale_values=False,
                 make_symmetric=make_symmetric,
                 color_mapper=color_mapper,
-                long_faces = long_faces,
+                long_faces=long_faces,
                 figure=fig,
                 axes=None,
                 location=locationSpec
             )
+
+            if myTitles is not None:
+                ax = fig.gca()
+                ax.set_title(myTitles[k])
+
             k += 1
 
     return fig

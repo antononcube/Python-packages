@@ -71,7 +71,7 @@ def variables_rescale(arr):
 # Default parameters
 # ===========================================================
 def default_chernoff_face_parameters():
-    return {"FaceLength": 0.5,
+    return {"FaceSize": 0.5,
             "ForeheadShape": 0.5, "EyesVerticalPosition": 0.5,
             "EyeSize": 0.5, "EyeSlant": 0.5, "LeftEyebrowSlant": 0.5,
             "LeftIris": 0.5, "NoseLength": 0.5, "MouthSmile": 0.5,
@@ -275,6 +275,7 @@ def single_chernoff_face(data: dict,
 
         return single_chernoff_face(pars,
                                     rescale_values=False,
+                                    make_symmetric=make_symmetric,
                                     color_mapper=color_mapper,
                                     long_faces=long_faces,
                                     figure=figure, axes=axes, location=location)
@@ -323,7 +324,9 @@ def single_chernoff_face(data: dict,
         pars = chernoff_face_auto_colors(data=pars, color_mapper=color_mapper)
 
     foreheadTh = 2 * round(rescale(pars["ForeheadShape"], 0, 1, 2, 15))
-    faceLength = rescale(pars["FaceLength"], 0, 1, 2, 3)
+    # For "historical" purpose 'faceLength' is used.
+    # It refers to the original interpretation of "FaceSize" -- that parameter was named "FaceLength".
+    faceLength = rescale(pars["FaceSize"], 0, 1, 2, 3)
     eyesVerticalPos = rescale(pars["EyesVerticalPosition"], 0, 1, 0.2, 0.6)
 
     eyebrLeftTrim = rescale(pars["LeftEyebrowTrim"], 0, 1, 0, 1)
@@ -433,7 +436,7 @@ def chernoff_face_auto_colors(data: Union[dict, list],
     :return:
     """
     if isinstance(data, dict):
-        priorityKeys = ["FaceLength", "ForeheadShape", "EyesVerticalPosition",
+        priorityKeys = ["FaceSize", "ForeheadShape", "EyesVerticalPosition",
                         "EyeSize", "EyeSlant", "LeftEyebrowSlant", "LeftIris"]
         vec = [data[k] for k in priorityKeys]
         res = chernoff_face_auto_colors(vec, color_mapper=color_mapper)
