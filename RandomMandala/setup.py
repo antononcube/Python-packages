@@ -15,9 +15,12 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=['numpy', 'matplotlib', 'bezier', 'pillow'],
     classifiers=[
+        "Intended Audience :: Science/Research",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Artistic License",
+        "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
     ],
+    keywords=["random", "mandala", "random mandala", "mandala diagram", "image generation", "generative art"],
     python_requires='>=3.7',
 )
