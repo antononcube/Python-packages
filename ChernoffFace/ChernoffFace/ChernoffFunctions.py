@@ -3,6 +3,7 @@ from typing import Optional
 
 import PIL
 import matplotlib
+import matplotlib.cm
 import matplotlib.figure
 import matplotlib.pyplot
 import numpy
@@ -39,6 +40,7 @@ def chernoff_face(data,
                   n_rows: Optional[int] = None,
                   n_columns: Optional[int] = None,
                   make_symmetric: bool = True,
+                  color_mapper: Optional[matplotlib.colors.LinearSegmentedColormap]=None,
                   **kwargs):
     """Makes Chernoff face diagrams.
 
@@ -54,6 +56,9 @@ def chernoff_face(data,
     :type make_symmetric: bool
     :param make_symmetric: The faces can be made symmetric for shorter faces.
 
+    :type color_mapper: matplotlib.colors.LinearSegmentedColormap|None
+    :param color_mapper: Color mapping object.
+
     :type kwargs: **dict
     :param kwargs: Arguments for matplotlib.pyplot.figure .
 
@@ -63,7 +68,12 @@ def chernoff_face(data,
 
     # If numpy array
     if isinstance(data, numpy.ndarray) and data.ndim == 2:
-        return chernoff_face(data.tolist(), n_rows=n_rows, n_columns=n_columns, make_symmetric=make_symmetric, **kwargs)
+        return chernoff_face(data.tolist(),
+                             n_rows=n_rows,
+                             n_columns=n_columns,
+                             make_symmetric=make_symmetric,
+                             color_mapper=color_mapper,
+                             **kwargs)
 
     # Check make_symmetric
     if not isinstance(make_symmetric, bool):
@@ -89,14 +99,23 @@ def chernoff_face(data,
 
         if isinstance(myNRows, int) and myNRows > 0 and isinstance(myNCols, int) and myNCols > 0:
 
-            resFig = _chernoff_faces_figure(data=data, n_rows=myNRows, n_columns=myNCols, **kwargs)
+            resFig = _chernoff_faces_figure(data=data,
+                                            n_rows=myNRows,
+                                            n_columns=myNCols,
+                                            make_symmetric=make_symmetric,
+                                            color_mapper=color_mapper,
+                                            **kwargs)
 
         else:
             raise TypeError("The arguments n_rows and n_columns are expected to be positive integers or None.")
 
     elif _is_face_part_dict(data):
 
-        resFig = single_chernoff_face(data=data, figure=None, axes=None, location=None, **kwargs)
+        resFig = single_chernoff_face(data=data,
+                                      make_symmetric=make_symmetric,
+                                      color_mapper=color_mapper,
+                                      figure=None, axes=None, location=None,
+                                      **kwargs)
 
     else:
         raise TypeError("Unknown type for first argument, 'data'.")
@@ -110,6 +129,8 @@ def chernoff_face(data,
 def _chernoff_faces_figure(data,
                            n_rows=None,
                            n_columns=None,
+                           make_symmetric: bool = True,
+                           color_mapper=None,
                            **kwargs):
     """Makes a figure with random mandalas."""
 
@@ -126,6 +147,8 @@ def _chernoff_faces_figure(data,
             single_chernoff_face(
                 data=data[k],
                 rescale_values=False,
+                make_symmetric=make_symmetric,
+                color_mapper=color_mapper,
                 figure=fig,
                 axes=None,
                 location=locationSpec
