@@ -233,9 +233,10 @@ def _random_mandala_multi(figure=None,
                           **kwargs):
     """Makes a random multi-mandala."""
 
-    # Figure
     if radius is None:
         radius = [6, 4, 2]
+
+    # Figure
     fig = figure
     if figure is None:
         # fig: matplotlib.pyplot.Figure = matplotlib.figure.Figure(**kwargs)
