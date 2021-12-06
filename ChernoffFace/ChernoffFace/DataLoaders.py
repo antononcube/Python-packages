@@ -3,7 +3,7 @@ import pkg_resources
 
 
 # ===========================================================
-# Load abstracts data
+# Load USA arrests data
 # ===========================================================
 def load_usa_arrests_data_frame():
     """Return a data frame with USA arrests data.
@@ -26,3 +26,29 @@ def load_usa_arrests_data_frame():
         dfData = pandas.read_csv(stream, encoding='latin-1')
     return dfData
 
+
+# ===========================================================
+# Load employee attitude data
+# ===========================================================
+def load_employee_attitude_data_frame():
+    """Return a data frame with Chatterjee-Price attitude data.
+
+    Description
+    ----------------
+    Chatterjee-Price attitude data.
+
+    Each row represents one employee.
+
+    :format: A data frame with 30 rows and 7 columns.
+    :field Rating: Percentage of favorable responses to overall rating.
+    :field Complaints: Percentage of favorable responses to employee complaints.
+    :field Privileges: Percentage of favorable responses to not allow special privileges.
+    :field Learning: Percentage of favorable responses to opportunity to learn.
+    :field Raises: Percentage of favorable responses to raises based on performance.
+    :field Critical: Percentage of favorable responses to too critical.
+    :field Advancement: Percentage of favorable responses to advancement opportunities.
+    """
+    # This is a stream-like object. If you want the actual info, call
+    with pkg_resources.resource_stream(__name__, 'resources/dfEmployeeAttitude.csv') as stream:
+        dfData = pandas.read_csv(stream, encoding='latin-1')
+    return dfData
