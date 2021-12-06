@@ -1,31 +1,33 @@
 import re
 
-import PIL
 import matplotlib
 import matplotlib.backends.backend_agg
 import matplotlib.patches as mpatches
+import matplotlib.pyplot
 import numpy
 
 
 # ===========================================================
-# Figure to data
+# Utilities
 # ===========================================================
-# Following documentation here:
-#    https://matplotlib.org/stable/gallery/user_interfaces/canvasagg.html
-def figure_to_image(figure):
-    """Convert a Matplotlib figure into a PIL image.
+def _is_face_part_number(obj):
+    return isinstance(obj, (float, int))
 
-    :param figure: A figure (object of the class matplotlib.figure.Figure .)
-    :return res: A Python Imaging Library (PIL) image.
-    """
-    canvas = matplotlib.backends.backend_agg.FigureCanvasAgg(figure)
 
-    canvas.draw()
-    rgba = numpy.asarray(canvas.buffer_rgba())
-    res = PIL.Image.fromarray(rgba)
-    res = res.convert('RGB')
+def _is_face_part_list(obj):
+    return isinstance(obj, (list, tuple)) and all([_is_face_part_number(x) for x in obj])
 
-    return res
+
+def _is_face_part_dict(obj):
+    return isinstance(obj, dict) and all([_is_face_part_number(x) for x in list(obj.values())])
+
+
+def _is_face_part_dict_list(obj):
+    return isinstance(obj, list) and all([_is_face_part_dict(x) for x in obj])
+
+
+def _is_face_part_list_list(obj):
+    return isinstance(obj, list) and all([_is_face_part_list(x) for x in obj])
 
 
 # ===========================================================
@@ -172,14 +174,52 @@ def bottom_face_patch(center, height, width, theta1, theta2, axes=None, resoluti
 # ===========================================================
 # Chernoff face
 # ===========================================================
-def chernoff_face_for_axes(data: dict, axes):
+def single_chernoff_face(data: dict,
+                         rescale_values: bool = True,
+                         figure=None,
+                         axes=None,
+                         location=None,
+                         **kwargs):
+    """Make a single Chernoff face diagram."""
+
+    # Make vectors dictionaries and delegate
+    if _is_face_part_list(data):
+        pars = data
+
+        if len(pars) > len(chernoff_face_parts_parameters()):
+            pars = pars[0:len(chernoff_face_parts_parameters())]
+
+        if min(pars) < 0 or max(pars) > 0:
+            pars = rescale(pars)
+
+        pars = dict(zip(list(chernoff_face_parts_parameters().keys())[0:len(pars)], pars))
+
+        return single_chernoff_face(pars, rescale_values=False, figure=figure, axes=axes, location=location)
+
+    # Figure
+    fig = figure
+    if figure is None:
+        fig: matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
+
+    # Location spec
+    locationSpec = location
+    if location is None:
+        locationSpec = (1, 1, 1)
+
+    # Axes spec
+    ax = axes
+    if axes is None:
+        ax = fig.add_subplot(*locationSpec)
+
+    # Process parameters
     pars = data
     pars = default_chernoff_face_parameters() | pars
     scaledPars = {k: v for (k, v) in pars.items() if k in chernoff_face_parts_parameters()}
-    scaledPars = dict(zip(scaledPars.keys(), rescale(list(scaledPars.values()))))
+    if rescale_values:
+        scaledPars = dict(zip(scaledPars.keys(), rescale(list(scaledPars.values()))))
     pars = pars | scaledPars
 
-    forheadTh = 2 * round(rescale(pars["ForeheadShape"], 0, 1, 2, 15))
+    foreheadTh = 2 * round(rescale(pars["ForeheadShape"], 0, 1, 2, 15))
     faceLength = rescale(pars["FaceLength"], 0, 1, 2, 3)
     eyesVerticalPos = rescale(pars["EyesVerticalPosition"], 0, 1, 0.2, 0.6)
 
@@ -206,27 +246,35 @@ def chernoff_face_for_axes(data: dict, axes):
     mouthColor = "red"
 
     xCoords = rescale(list(range(0, 21)), 0, 20, -1, 1)
-    foreheadPts = [[x, (1 - x ** forheadTh) * faceLength * eyesVerticalPos] for x in xCoords]
+    foreheadPts = [[x, (1 - x ** foreheadTh) * faceLength * eyesVerticalPos] for x in xCoords]
 
-    forehead_patch(numpy.asarray(foreheadPts), axes=axes, color=faceColor, edgecolor="0.3")
+    forehead_patch(numpy.asarray(foreheadPts), axes=ax, color=faceColor, edgecolor="0.3")
 
     bottom_face_patch((0., 0), 1, faceLength * (1 - eyesVerticalPos),
                       theta1=180, theta2=360,
-                      axes=axes, fill=True,
+                      axes=ax, fill=True,
                       color=faceColor, edgecolor='0.3')
 
     left_eye(eyeSize=eyeSize, eyeBallsColor=eyeBallsColor,
              irisColor=irisColor, leftIrisOffset=leftIrisOffset,
              angle=eyesSlant / (2 * numpy.pi) * 360,
-             edgecolor="0.3", axes=axes)
+             edgecolor="0.3", axes=ax)
 
     right_eye(eyeSize=eyeSize, eyeBallsColor=eyeBallsColor,
               irisColor=irisColor, rightIrisOffset=rightIrisOffset,
               angle=-eyesSlant / (2 * numpy.pi) * 360,
-              edgecolor="0.3", axes=axes)
+              edgecolor="0.3", axes=ax)
 
     nose_patch(noseLength=noseLength, noseColor=noseColor, faceColor=faceColor,
-               edgecolor="0.3", axes=axes)
+               edgecolor="0.3", axes=ax)
 
-    mouth_curve(mouthWidth=mouthWidth, mouthColor=mouthColor, faceColor=faceColor, a=a, b=b, c=c, axes=axes)
-    return pars
+    mouth_curve(mouthWidth=mouthWidth, mouthColor=mouthColor, faceColor=faceColor,
+                a=a, b=b, c=c,
+                axes=ax)
+
+    ax.set_xlim(-1.1, 1.1)
+    ax.set_ylim(-3, 2)
+    ax.set_aspect(aspect=1, adjustable="datalim", anchor="C")
+    ax.axis('off')
+
+    return fig
