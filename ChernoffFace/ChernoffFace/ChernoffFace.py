@@ -102,11 +102,11 @@ def make_symmetric_chernoff_face_parameters(params: dict, defaultParams: dict):
     res = {}
     for (p1, p2, f) in symPairs:
         if p1 in params and p2 not in params:
-            res = res | {p2: f(params[p1])}
+            res = {**res, p2: f(params[p1])}
         elif p1 not in params and p2 in params:
-            res = res | {p1: f(params[p2])}
+            res = {**res, p1: f(params[p2])}
 
-    res = defaultParams | params | res
+    res = {**defaultParams, **params, **res}
 
     return res
 
@@ -303,23 +303,23 @@ def single_chernoff_face(data: dict,
         pars = make_symmetric_chernoff_face_parameters(pars, chernoff_face_parts_parameters())
 
     # Merge with all parameters
-    pars = default_chernoff_face_parameters() | pars
+    pars = {**default_chernoff_face_parameters(), **pars}
 
     # Rescaling
     if rescale_values:
         scaledPars = {k: v for (k, v) in pars.items() if k in chernoff_face_parts_parameters()}
         scaledPars = dict(zip(scaledPars.keys(), rescale(list(scaledPars.values()))))
-        pars = pars | scaledPars
+        pars = {**pars, **scaledPars}
 
     # Colors
     colorParts = {k: v for (k, v) in pars.items()
                   if k in {"FaceColor", "IrisColor", "NoseColor", "MouthColor", "EyeBallColor"} and v is not None}
 
     if color_mapper is None:
-        pars = pars | {"FaceColor": "white", "IrisColor": "0.85",
-                       "NoseColor": None, "MouthColor": "black",
-                       "EyeBallColor": "white"}
-        pars = pars | colorParts
+        pars = {**pars, "FaceColor": "white", "IrisColor": "0.85",
+                "NoseColor": None, "MouthColor": "black",
+                "EyeBallColor": "white"}
+        pars = {**pars, **colorParts}
     else:
         pars = chernoff_face_auto_colors(data=pars, color_mapper=color_mapper)
 
@@ -376,7 +376,7 @@ def single_chernoff_face(data: dict,
 
     # Forehead
     xCoords = rescale(list(range(0, 21)), 0, 20, -1, 1)
-    foreheadPts = [[x*face_width, (1 - x ** foreheadTh) * faceLength * eyesVerticalPos] for x in xCoords]
+    foreheadPts = [[x * face_width, (1 - x ** foreheadTh) * faceLength * eyesVerticalPos] for x in xCoords]
 
     forehead_patch(numpy.asarray(foreheadPts), axes=ax, color=faceColor, edgecolor="0.3")
 
@@ -440,7 +440,7 @@ def chernoff_face_auto_colors(data: Union[dict, list],
                         "EyeSize", "EyeSlant", "LeftEyebrowSlant", "LeftIris"]
         vec = [data[k] for k in priorityKeys]
         res = chernoff_face_auto_colors(vec, color_mapper=color_mapper)
-        return data | res
+        return {**data, **res}
 
     if len(data) == 1:
         asc = {"FaceColor": color_mapper(data[0])}
@@ -456,5 +456,5 @@ def chernoff_face_auto_colors(data: Union[dict, list],
                "IrisColor": color_mapper(numpy.mean(data[3:6])),
                "NoseColor": color_mapper(numpy.mean(data[6:len(data)]))}
 
-    asc = asc | {"EyeBallColor": (1, 1, 1, 1)}
+    asc = { **asc, "EyeBallColor": (1, 1, 1, 1)}
     return asc
