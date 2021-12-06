@@ -61,9 +61,21 @@ def rescale(arr, xmin=None, xmax=None, vmin: float = 0, vmax: float = 1):
 
 
 def variables_rescale(arr):
+    """Variables rescaling.
+
+    :type arr: numpy.ndarray|list
+    :param arr: A two dimensional array the columns of which are rescaled.
+    """
+    if isinstance(arr, list):
+        return variables_rescale(numpy.asarray(arr))
+
+    if not isinstance(arr, numpy.ndarray) or arr.ndim != 2:
+        raise TypeError("The first argument is expected to be a two dimensional array.")
+
     arr2 = arr.transpose()
     arr2 = [rescale(x) for x in arr2]
     arr2 = numpy.asarray(arr2).transpose()
+
     return arr2
 
 
