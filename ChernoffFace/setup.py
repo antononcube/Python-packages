@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages/tree/main/ChernoffFace",
     packages=setuptools.find_packages(),
-    install_requires=['numpy', 'matplotlib', 'bezier', 'pillow'],
+    install_requires=['numpy', 'matplotlib', 'pillow'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Artistic License",
