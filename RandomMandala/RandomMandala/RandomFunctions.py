@@ -46,7 +46,7 @@ def random_mandala(n_rows=1,
                    symmetric_seed=True,
                    face_color=("0.2", "0.6", "0.8"),
                    edge_color=("0.2", "0.6", "0.8"),
-                   color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
+                   color_mapper: matplotlib.colors.Colormap = None,
                    figure: Optional[matplotlib.figure.Figure] = None,
                    location=None,
                    **kwargs):
@@ -87,7 +87,7 @@ def random_mandala(n_rows=1,
     :type edge_color: str|list|tuple
     :param edge_color: Edge (line) color.
 
-    :type color_mapper: matplotlib.colors.LinearSegmentedColormap|None
+    :type color_mapper: matplotlib.colors.Colormap|None
     :param color_mapper: Color mapper object.
 
     :type figure: matplotlib.pyplot.Figure|None
@@ -210,7 +210,7 @@ def _random_mandalas_figure(n_rows=None,
                             symmetric_seed: Union[bool, str, None] = True,
                             face_color="0.2",
                             edge_color="0.2",
-                            color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
+                            color_mapper: matplotlib.colors.Colormap = None,
                             **kwargs):
     """Makes a figure with random mandalas."""
 
@@ -253,7 +253,7 @@ def _random_mandala_multi(figure=None,
                           symmetric_seed: Union[bool, str, None] = True,
                           face_color="0.2",
                           edge_color="0.2",
-                          color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
+                          color_mapper: matplotlib.colors.Colormap = None,
                           **kwargs):
     """Makes a random multi-mandala."""
 
@@ -321,7 +321,7 @@ def _random_mandala_single(figure=None,
                            symmetric_seed: Union[bool, str, None] = True,
                            face_color="0.2",
                            edge_color="0.2",
-                           color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
+                           color_mapper: matplotlib.colors.Colormap = None,
                            **kwargs):
     """Makes a random mandala."""
 
