@@ -8,7 +8,10 @@ import matplotlib
 import matplotlib.cm
 import numpy.random
 from ChernoffFace.ChernoffFace import chernoff_face_parts_parameters
+from ChernoffFace.ChernoffFace import variables_rescale
 from ChernoffFace.ChernoffFunctions import chernoff_face
+from ChernoffFace.DataLoaders import load_employee_attitude_data_frame
+from ChernoffFace.DataLoaders import load_usa_arrests_data_frame
 from matplotlib import figure
 
 
@@ -40,7 +43,6 @@ class ChernoffFaces(unittest.TestCase):
         vec = [random.random() for i in range(12)]
         myKeys = list(chernoff_face_parts_parameters())[0:len(vec)]
         myDict = dict(zip(myKeys, vec))
-        print(myDict)
         res = chernoff_face(myDict)
         self.assertTrue(_is_figure(res))
 
@@ -73,11 +75,27 @@ class ChernoffFaces(unittest.TestCase):
             fig = chernoff_face(data=data[i, :].tolist(),
                                 color_mapper=matplotlib.cm.Greys,
                                 figure=fig,
-                                location=(1, 4, i+1))
+                                location=(1, 4, i + 1))
             ax = fig.axes[-1]
             ax.set_title("index:" + str(i))
 
         self.assertTrue(_is_figure(fig) and len(fig.axes) == 4)
+
+    def test_chernoff_faces_collection_2(self):
+        dfData = load_employee_attitude_data_frame()
+        fig = chernoff_face(dfData)
+
+        self.assertTrue(_is_figure(fig) and len(fig.axes) == dfData.shape[0])
+
+    def test_chernoff_faces_collection_3(self):
+        dfData = load_usa_arrests_data_frame()
+        dfData2 = variables_rescale(dfData)
+
+        self.assertTrue(dfData2.shape == dfData2.shape)
+
+        fig = chernoff_face(dfData)
+
+        self.assertTrue(_is_figure(fig) and len(fig.axes) == dfData.shape[0])
 
 
 if __name__ == '__main__':
