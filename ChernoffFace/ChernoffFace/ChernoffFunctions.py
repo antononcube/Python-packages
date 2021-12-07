@@ -99,6 +99,31 @@ def chernoff_face(data,
                              figure=figure,
                              **kwargs)
 
+    # If a data frame
+    if isinstance(data, pandas.core.frame.DataFrame):
+        num_cols = list(data.select_dtypes('number'))
+
+        data2 = data[[*num_cols]].to_numpy()
+        # data2 = variables_rescale(data2)
+
+        titles2 = titles
+        if titles2 is None:
+            cat_cols = list(data.select_dtypes(exclude=["number"]))
+            if len(cat_cols) > 0:
+                titles2 = data[cat_cols[0]].to_list()
+                if not all([isinstance(x, str) for x in titles2]):
+                    titles2 = None
+
+        return chernoff_face(data2,
+                             n_rows=n_rows,
+                             n_columns=n_columns,
+                             make_symmetric=make_symmetric,
+                             color_mapper=color_mapper,
+                             long_face=long_face,
+                             titles=titles2,
+                             figure=figure,
+                             **kwargs)
+
     # Check make_symmetric
     if not isinstance(make_symmetric, bool):
         raise TypeError("""The argument 'make_symmetric' is expected to be a Boolean""")

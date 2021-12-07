@@ -7,11 +7,12 @@ import matplotlib.colors
 import matplotlib.patches as mpatches
 import matplotlib.pyplot
 import numpy
-
-
 # ===========================================================
 # Utilities
 # ===========================================================
+import pandas.core.frame
+
+
 def _is_face_part_number(obj):
     return isinstance(obj, (float, int))
 
@@ -53,6 +54,10 @@ def rescale(arr, xmin=None, xmax=None, vmin: float = 0, vmax: float = 1):
         else:
             raise TypeError(
                 """If the second and third arguments are None the first argument is expected to be a list or array""")
+
+    if mxmax - mxmin == 0:
+        return arr
+
     if isinstance(arr, (list, tuple, numpy.ndarray)):
         res = [(x - mxmin) / (mxmax - mxmin) * (vmax - vmin) + vmin for x in arr]
     else:
@@ -60,23 +65,38 @@ def rescale(arr, xmin=None, xmax=None, vmin: float = 0, vmax: float = 1):
     return res
 
 
-def variables_rescale(arr):
+def variables_rescale(data):
     """Variables rescaling.
 
-    :type arr: numpy.ndarray|list
-    :param arr: A two dimensional array the columns of which are rescaled.
+    :type data: list|numpy.ndarray|pandas.core.frame.DataFrame
+    :param data: Data that can be coerced into a two dimensional array the columns of which are rescaled.
     """
-    if isinstance(arr, list):
-        return variables_rescale(numpy.asarray(arr))
+    if isinstance(data, list):
 
-    if not isinstance(arr, numpy.ndarray) or arr.ndim != 2:
-        raise TypeError("The first argument is expected to be a two dimensional array.")
+        return variables_rescale(numpy.asarray(data))
 
-    arr2 = arr.transpose()
-    arr2 = [rescale(x) for x in arr2]
-    arr2 = numpy.asarray(arr2).transpose()
+    elif isinstance(data, pandas.core.frame.DataFrame):
 
-    return arr2
+        numCols = data.select_dtypes("number")
+        data2 = data[[*numCols]].apply(lambda x: rescale(list(x)), axis=0)
+
+        catCols = data.select_dtypes(exclude="number")
+
+        if len(catCols) == 0:
+            return data2
+        else:
+            return pandas.concat([data[[*catCols]].reset_index(drop=True), data2], axis=1)
+
+    elif isinstance(data, numpy.ndarray) or data.ndim != 2:
+
+        arr2 = data.transpose()
+        arr2 = [rescale(x) for x in arr2]
+        arr2 = numpy.asarray(arr2).transpose()
+
+        return arr2
+
+    else:
+        raise TypeError("The first argument is expected to be coercible into a two dimensional array.")
 
 
 # ===========================================================
@@ -468,5 +488,5 @@ def chernoff_face_auto_colors(data: Union[dict, list],
                "IrisColor": color_mapper(numpy.mean(data[3:6])),
                "NoseColor": color_mapper(numpy.mean(data[6:len(data)]))}
 
-    asc = { **asc, "EyeBallColor": (1, 1, 1, 1)}
+    asc = {**asc, "EyeBallColor": (1, 1, 1, 1)}
     return asc
