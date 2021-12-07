@@ -23,7 +23,7 @@ def load_abstracts_data_frame():
     """
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
-    stream = pkg_resources.resource_stream(__name__, 'resources/dfAbstracts.csv.gz')
-    dfData = pandas.read_csv(stream, compression="gzip", encoding='latin-1')
+    with pkg_resources.resource_stream(__name__, 'resources/dfAbstracts.csv.gz') as stream:
+        dfData = pandas.read_csv(stream, compression="gzip", encoding='latin-1')
     return dfData
 
