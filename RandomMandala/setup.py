@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="RandomMandala",
-    version="0.5.4",
+    version="0.5.5",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Generator of random mandalas.",
