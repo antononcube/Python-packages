@@ -2,6 +2,8 @@ import random
 from typing import Optional, Union
 
 import matplotlib
+import matplotlib.cm
+import matplotlib.colors
 import matplotlib.figure
 import matplotlib.pyplot
 import numpy
@@ -19,6 +21,19 @@ def _is_radius_list(obj):
     return isinstance(obj, (list, tuple)) and all([_is_radius_number(x) for x in obj])
 
 
+def _is_list_of_tuples(obj):
+    return isinstance(obj, list) and all([isinstance(x, tuple) for x in obj])
+
+
+def _resize(obj, new_shape):
+    if _is_list_of_tuples(obj):
+        res = numpy.resize(list(range(len(obj))), new_shape)
+        res = [obj[i] for i in res]
+    else:
+        res = numpy.resize(obj, new_shape)
+    return res
+
+
 # ===========================================================
 # Random mandala
 # ===========================================================
@@ -31,6 +46,7 @@ def random_mandala(n_rows=1,
                    symmetric_seed=True,
                    face_color=("0.2", "0.6", "0.8"),
                    edge_color=("0.2", "0.6", "0.8"),
+                   color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
                    figure: Optional[matplotlib.figure.Figure] = None,
                    location=None,
                    **kwargs):
@@ -70,6 +86,9 @@ def random_mandala(n_rows=1,
 
     :type edge_color: str|list|tuple
     :param edge_color: Edge (line) color.
+
+    :type color_mapper: matplotlib.colors.LinearSegmentedColormap|None
+    :param color_mapper: Color mapper object.
 
     :type figure: matplotlib.pyplot.Figure|None
     :param figure: Figure to add the random mandala to.
@@ -161,6 +180,7 @@ def random_mandala(n_rows=1,
                        symmetric_seed=symmetric_seed,
                        face_color=local_face_color,
                        edge_color=local_edge_color,
+                       color_mapper=color_mapper,
                        **kwargs)
 
     else:
@@ -174,6 +194,7 @@ def random_mandala(n_rows=1,
                                        symmetric_seed=symmetric_seed,
                                        face_color=local_face_color,
                                        edge_color=local_edge_color,
+                                       color_mapper=color_mapper,
                                        **kwargs)
 
 
@@ -189,6 +210,7 @@ def _random_mandalas_figure(n_rows=None,
                             symmetric_seed: Union[bool, str, None] = True,
                             face_color="0.2",
                             edge_color="0.2",
+                            color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
                             **kwargs):
     """Makes a figure with random mandalas."""
 
@@ -212,7 +234,8 @@ def _random_mandalas_figure(n_rows=None,
                     number_of_elements=number_of_elements,
                     symmetric_seed=symmetric_seed,
                     face_color=face_color,
-                    edge_color=edge_color)
+                    edge_color=edge_color,
+                    color_mapper=color_mapper)
 
     return fig
 
@@ -230,6 +253,7 @@ def _random_mandala_multi(figure=None,
                           symmetric_seed: Union[bool, str, None] = True,
                           face_color="0.2",
                           edge_color="0.2",
+                          color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
                           **kwargs):
     """Makes a random multi-mandala."""
 
@@ -252,10 +276,15 @@ def _random_mandala_multi(figure=None,
     if axes is None:
         ax = fig.add_subplot(*locationSpec)
 
-    # Same as radius sizes for the rest of the specs
-    faceColors = numpy.resize(face_color, len(radius))
-    edgeColors = numpy.resize(edge_color, len(radius))
+    # Same length as radius sizes for the rest of the specs
     rotSymOrders = numpy.resize(rotational_symmetry_order, len(radius))
+
+    if color_mapper is None:
+        faceColors = _resize(face_color, len(radius))
+        edgeColors = _resize(edge_color, len(radius))
+    else:
+        faceColors = [color_mapper(random.random()) for i in range(len(radius))]
+        edgeColors = [color_mapper(random.random()) for i in range(len(radius))]
 
     for i in range(len(radius)):
         r = radius[i]
@@ -272,7 +301,8 @@ def _random_mandala_multi(figure=None,
                                bezier_radius_factor=0.,
                                symmetric_seed=symmetric_seed,
                                face_color=fc,
-                               edge_color=ec)
+                               edge_color=ec,
+                               color_mapper=None)
 
     return fig
 
@@ -291,13 +321,13 @@ def _random_mandala_single(figure=None,
                            symmetric_seed: Union[bool, str, None] = True,
                            face_color="0.2",
                            edge_color="0.2",
+                           color_mapper: matplotlib.colors.LinearSegmentedColormap = None,
                            **kwargs):
     """Makes a random mandala."""
 
     # Figure
     fig = figure
     if figure is None:
-        # fig: matplotlib.pyplot.Figure = matplotlib.figure.Figure(**kwargs)
         fig: matplotlib.pyplot.Figure = matplotlib.pyplot.figure(**kwargs)
 
     # Axes
@@ -343,6 +373,13 @@ def _random_mandala_single(figure=None,
     if conFunc == 'random':
         conFunc = random.sample(['line', 'bezier', 'fill', 'bezier_fill'], 1)[0]
 
+    # Colors
+    local_edge_color = edge_color
+    local_face_color = face_color
+    if color_mapper is not None:
+        local_edge_color = color_mapper(random.random())
+        local_face_color = color_mapper(random.random())
+
     # Rotate, place
     if conFunc in {"fill", "polygon"}:
 
@@ -358,7 +395,7 @@ def _random_mandala_single(figure=None,
                                  location=locationSpec,
                                  ax=ax)
 
-    elif conFunc in {"bezier", "bezier_fill", "bezier fill", "bezierfill"} and \
+    elif conFunc in {"bezier", "bezier_fill", "bezier-fill", "bezier fill", "bezierfill"} and \
             isinstance(bezier_radius_factor, (int, float)) and bezier_radius_factor > 0:
 
         rot_and_place_func = "rotate_and_bezier" if conFunc == "bezier" else "rotate_and_bezier_fill"
@@ -388,7 +425,7 @@ def _random_mandala_single(figure=None,
                                    location=locationSpec,
                                    ax=ax)
 
-    elif conFunc in {"bezier_fill", "bezier fill", "bezierfill"}:
+    elif conFunc in {"bezier_fill", "bezier-fill", "bezier fill", "bezierfill"}:
 
         rMandala.rotate_and_bezier_fill(face_color=face_color,
                                         edge_color=edge_color,
