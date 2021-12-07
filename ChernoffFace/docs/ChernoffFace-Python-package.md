@@ -75,7 +75,7 @@ Make the corresponding Chernoff faces using USA state names as titles:
 
     fig = chernoff_face(data=data2,
                         n_columns=5,
-                        long_faces=False,
+                        long_face=False,
                         color_mapper=matplotlib.cm.tab20b,
                         figsize=(8, 8), dpi=200)
 
@@ -113,7 +113,7 @@ Make the corresponding Chernoff faces using USA state names as titles:
 
     fig = chernoff_face(data=data2,
                         n_columns=5,
-                        long_faces=False,
+                        long_face=False,
                         color_mapper=matplotlib.cm.jet,
                         titles=dfData.StateName.tolist(),
                         figsize=(12, 12), dpi=200)

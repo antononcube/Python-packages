@@ -61,7 +61,7 @@ class ChernoffFaces(unittest.TestCase):
 
     def test_many_chernoff_faces_4(self):
         data = numpy.random.rand(16, 12)
-        res = chernoff_face(data, long_faces=True)
+        res = chernoff_face(data, long_face=True)
         self.assertTrue(_is_figure(res) and len(res.axes) == 16)
 
     def test_chernoff_faces_collection_1(self):

@@ -266,7 +266,7 @@ def single_chernoff_face(data: dict,
                          rescale_values: bool = True,
                          make_symmetric: bool = True,
                          color_mapper: Optional[matplotlib.colors.LinearSegmentedColormap] = None,
-                         long_faces=True,
+                         long_face=True,
                          figure=None,
                          axes=None,
                          location=None,
@@ -289,7 +289,7 @@ def single_chernoff_face(data: dict,
                                     rescale_values=False,
                                     make_symmetric=make_symmetric,
                                     color_mapper=color_mapper,
-                                    long_faces=long_faces,
+                                    long_face=long_face,
                                     figure=figure, axes=axes, location=location)
 
     # Figure
@@ -372,7 +372,7 @@ def single_chernoff_face(data: dict,
             noseColor = str(noseColor)
 
     # Bottom face part
-    if long_faces:
+    if long_face:
         face_width = 1
         face_height = faceLength * (1 - eyesVerticalPos)
     else:

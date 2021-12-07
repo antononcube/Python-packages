@@ -46,7 +46,7 @@ def chernoff_face(data,
                   n_columns: Optional[int] = None,
                   make_symmetric: bool = True,
                   color_mapper: Optional[matplotlib.colors.LinearSegmentedColormap] = None,
-                  long_faces: bool = False,
+                  long_face: bool = False,
                   titles=None,
                   figure: Optional[matplotlib.figure.Figure] = None,
                   location=None,
@@ -68,8 +68,8 @@ def chernoff_face(data,
     :type color_mapper: matplotlib.colors.LinearSegmentedColormap|None
     :param color_mapper: Color mapping object.
 
-    :type long_faces: bool
-    :param long_faces: Should the face be longer of wider.
+    :type long_face: bool
+    :param long_face: Should the face be longer of wider.
 
     :type titles: list|tuple
     :param titles: Titles for the each of the face in face collection.
@@ -94,7 +94,7 @@ def chernoff_face(data,
                              n_columns=n_columns,
                              make_symmetric=make_symmetric,
                              color_mapper=color_mapper,
-                             long_faces=long_faces,
+                             long_face=long_face,
                              titles=titles,
                              figure=figure,
                              **kwargs)
@@ -128,7 +128,7 @@ def chernoff_face(data,
                                             n_columns=myNCols,
                                             make_symmetric=make_symmetric,
                                             color_mapper=color_mapper,
-                                            long_faces=long_faces,
+                                            long_face=long_face,
                                             titles=titles,
                                             figure=figure,
                                             **kwargs)
@@ -141,7 +141,7 @@ def chernoff_face(data,
         resFig = single_chernoff_face(data=data,
                                       make_symmetric=make_symmetric,
                                       color_mapper=color_mapper,
-                                      long_faces=long_faces,
+                                      long_face=long_face,
                                       figure=figure,
                                       axes=None,
                                       location=location,
@@ -161,7 +161,7 @@ def _chernoff_faces_figure(data,
                            n_columns=None,
                            make_symmetric: bool = True,
                            color_mapper=None,
-                           long_faces=True,
+                           long_face=True,
                            titles=None,
                            figure=None,
                            **kwargs):
@@ -197,7 +197,7 @@ def _chernoff_faces_figure(data,
                 rescale_values=False,
                 make_symmetric=make_symmetric,
                 color_mapper=color_mapper,
-                long_faces=long_faces,
+                long_face=long_face,
                 figure=fig,
                 axes=None,
                 location=locationSpec
