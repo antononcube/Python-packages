@@ -1,5 +1,9 @@
 # Random Mandala Python package
 
+***Anton Antonov***    
+[Python-packages at GitHub/antononcube](https://github.com/antononcube/Python-packages)   
+***November 2021***   
+
 ## Introduction
 
 This Python package implements the function `random_mandala` that generates plots (and images) of random mandalas.
@@ -28,10 +32,11 @@ To install from GitHub use the shell command:
 python -m pip install git+https://github.com/antononcube/Python-packages.git#egg=RandomMandala\&subdirectory=RandomMandala
 ```
 
+To install from PyPI:
 
-### PyPi
-
-*TBD...*
+```shell
+python -m pip install RandomMandala
+```
 
 ------
 
@@ -82,6 +87,7 @@ Load the package `RandomMandala`, `matplotlib`, and `PIL`:
 from RandomMandala import random_mandala, figure_to_image
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.cm
 from PIL import Image, ImageOps
 from mpl_toolkits.axes_grid1 import ImageGrid
 import random
@@ -352,6 +358,39 @@ plt.close(fig)
     
 
 
+### color_mapper
+
+The argument `color_mapper` takes as values `None` and `matplotlib.colors.Colormap` objects. 
+See the color mappers in the reference page ["color example code: colormaps_reference.py"](https://matplotlib.org/2.0.2/examples/color/colormaps_reference.html).
+If `color_mapper` is specified then the arguments `face_color` and `edge_color` are ignored.
+Here is an example using two color mappers:
+
+
+```python
+fig = matplotlib.pyplot.figure(figsize=(6,3), dpi=120)
+cMappers=[matplotlib.cm.rainbow_r, matplotlib.cm.Accent_r]
+cMappersNames=["rainbow_r", "Accent_r"]
+for k in range(2): 
+    random.seed(15)
+    fig = random_mandala(radius=[10,6,4],
+     					 connecting_function="bezier_fill", 
+                         symmetric_seed=True,
+                         color_mapper=cMappers[k],
+                         figure = fig,
+                         location = (1, 2, k+1))
+    ax = fig.axes[-1]
+    ax.set_title(cMappersNames[k])
+    
+plt.show()
+plt.close(fig)
+```
+
+
+    
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_29_0.png)
+    
+
+
 ------
 
 ## Applications
@@ -413,7 +452,7 @@ plt.show()
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_29_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_31_0.png)
     
 
 
@@ -429,11 +468,11 @@ fig=random_mandala(n_rows=6, n_columns=6, figsize=(10,10), dpi=240)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_31_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_33_0.png)
     
 
 
-## A table of colorzied mandals
+## A table of colorized mandalas
 
 
 ```python
@@ -446,7 +485,7 @@ for i in range(36):
     rs.reverse()
 
     fig = random_mandala(connecting_function="bezier_fill",
-                         face_color=random.sample(["coral", "goldenrod", "darkblue", "olive"],4),
+                         color_mapper=matplotlib.cm.gist_earth,
    						 symmetric_seed=True,
                          radius=rs,
                          rotational_symmetry_order=random.choice([3,4,5,6,7]),
@@ -456,14 +495,15 @@ for i in range(36):
     ax = fig.axes[-1]
     ax.set_axis_off()
     k = k + 1
-    
+
+fig.tight_layout()
 plt.show()
 plt.close(fig)
 ```
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_33_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_35_0.png)
     
 
 
@@ -493,7 +533,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_35_0.png)
+![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_37_0.png)
     
 
 
