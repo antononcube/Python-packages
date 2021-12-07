@@ -48,7 +48,8 @@ To install from PyPI:
     fig.tight_layout()
     matplotlib.pyplot.show()
 
-<img src="ChernoffFace-Python-package_files/figure-markdown_strict/random-data-1.png" width="672" />
+<img src="https://github.com/antononcube/Python-packages/raw/main/ChernoffFace/docs/img/random-data-1.png" width="672" />
+
 ## Employee attitude data
 
 Get Employee attitude data
@@ -63,17 +64,21 @@ Get Employee attitude data
     ## 3      61          63          45        47      54        84           35
     ## 4      81          78          56        66      71        83           47
 
-Get the numerical data of the data frame into an array:
-
-    data = dfData.to_numpy()
-
 Rescale the variables:
 
-    data2 = variables_rescale(data)
+    dfData2 = variables_rescale(dfData)
+    dfData2.head()
+
+    ##      Rating  Complaints  Privileges  Learning    Raises  Critical  Advancement
+    ## 0  0.066667    0.264151    0.000000  0.121951  0.400000  1.000000     0.425532
+    ## 1  0.511111    0.509434    0.396226  0.487805  0.444444  0.558140     0.468085
+    ## 2  0.688889    0.622642    0.716981  0.853659  0.733333  0.860465     0.489362
+    ## 3  0.466667    0.490566    0.283019  0.317073  0.244444  0.813953     0.212766
+    ## 4  0.911111    0.773585    0.490566  0.780488  0.622222  0.790698     0.468085
 
 Make the corresponding Chernoff faces using USA state names as titles:
 
-    fig = chernoff_face(data=data2,
+    fig = chernoff_face(data=dfData2,
                         n_columns=5,
                         long_face=False,
                         color_mapper=matplotlib.cm.tab20b,
@@ -84,7 +89,7 @@ Display:
     fig.tight_layout()
     matplotlib.pyplot.show()
 
-<img src="ChernoffFace-Python-package_files/figure-markdown_strict/employee-chernoff-faces-figure-3.png" width="768" />
+<img src="https://github.com/antononcube/Python-packages/raw/main/ChernoffFace/docs/img/employee-chernoff-faces-figure-3.png" width="768" />
 
 ## USA arrests data
 
@@ -100,22 +105,24 @@ Get USA arrests data:
     ## 3    Arkansas     8.8      190               50  19.5
     ## 4  California     9.0      276               91  40.6
 
-Get the numerical data of the data frame into an array:
-
-    data = dfData.to_numpy()
-    data = data[:, 1:5]
-
 Rescale the variables:
 
-    data2 = variables_rescale(data)
+    dfData2 = variables_rescale(dfData)
+    dfData2.head()
+
+    ##     StateName    Murder   Assault  UrbanPopulation      Rape
+    ## 0     Alabama  0.746988  0.654110         0.440678  0.359173
+    ## 1      Alaska  0.554217  0.746575         0.271186  0.961240
+    ## 2     Arizona  0.439759  0.852740         0.813559  0.612403
+    ## 3    Arkansas  0.481928  0.496575         0.305085  0.315245
+    ## 4  California  0.493976  0.791096         1.000000  0.860465
 
 Make the corresponding Chernoff faces using USA state names as titles:
 
-    fig = chernoff_face(data=data2,
+    fig = chernoff_face(data=dfData2,
                         n_columns=5,
                         long_face=False,
-                        color_mapper=matplotlib.cm.jet,
-                        titles=dfData.StateName.tolist(),
+                        color_mapper=matplotlib.cm.tab20c_r,
                         figsize=(12, 12), dpi=200)
 
 Display:
@@ -123,7 +130,7 @@ Display:
     fig.tight_layout()
     matplotlib.pyplot.show()
 
-<img src="ChernoffFace-Python-package_files/figure-markdown_strict/usa-arrests-data-to-chernoff-faces-figure-5.png" width="1152" />
+<img src="https://github.com/antononcube/Python-packages/raw/main/ChernoffFace/docs/img/usa-arrests-data-to-chernoff-faces-figure-5.png" width="1152" />
 
 ------------------------------------------------------------------------
 

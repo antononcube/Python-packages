@@ -3,7 +3,7 @@ title: "ChernoffFace Python package"
 author: "Anton Antonov"
 date: '2021-12-06'
 output:
-  html_document
+  md_document
 ---
 
 ## Introduction
@@ -72,22 +72,18 @@ Get Employee attitude data
 dfData=load_employee_attitude_data_frame()
 dfData.head()
 ```
-Get the numerical data of the data frame into an array:
-
-```{python employee-data-to-array}
-data = dfData.to_numpy()
-```
 
 Rescale the variables:
 
 ```{python employee-data-array-rescale}
-data2 = variables_rescale(data)
+dfData2 = variables_rescale(dfData)
+dfData2.head()
 ```
 
 Make the corresponding Chernoff faces using USA state names as titles:
 
 ```{python employee-data-to-chernoff-faces-figure}
-fig = chernoff_face(data=data2,
+fig = chernoff_face(data=dfData2,
                     n_columns=5,
                     long_face=False,
                     color_mapper=matplotlib.cm.tab20b,
@@ -109,27 +105,21 @@ Get USA arrests data:
 dfData=load_usa_arrests_data_frame()
 dfData.head()
 ```
-Get the numerical data of the data frame into an array:
-
-```{python}
-data = dfData.to_numpy()
-data = data[:, 1:5]
-```
 
 Rescale the variables:
 
-```{python}
-data2 = variables_rescale(data)
+```{python usa-arrests-rescale}
+dfData2 = variables_rescale(dfData)
+dfData2.head()
 ```
 
 Make the corresponding Chernoff faces using USA state names as titles:
  
 ```{python usa-arrests-data-to-chernoff-faces}
-fig = chernoff_face(data=data2,
+fig = chernoff_face(data=dfData2,
                     n_columns=5,
                     long_face=False,
-                    color_mapper=matplotlib.cm.jet,
-                    titles=dfData.StateName.tolist(),
+                    color_mapper=matplotlib.cm.tab20c_r,
                     figsize=(12, 12), dpi=200)
 ```
 
