@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ChernoffFace",
-    version="0.1.3",
+    version="0.1.4",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Makes of Chernoff face diagrams.",
