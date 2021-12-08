@@ -1,8 +1,9 @@
+# ChernoffFace Python package
+
 ## Introduction
 
 This Python package implements the function `chernoff_face` that
-generates [Chernoff
-diagrams](https://en.wikipedia.org/wiki/Chernoff_face).
+generates [Chernoff face diagrams](https://en.wikipedia.org/wiki/Chernoff_face).
 
 The design, implementation *strategy*, and unit tests closely resemble
 the Wolfram Repository Function (WFR)
@@ -35,6 +36,9 @@ To install from PyPI:
 
 ## Random data
 
+Here is an example of generating a table (`matplotlib` `figure` object) of Chernoff faces over 
+the rows of a two-dimensional array of real numbers:
+
     # Generate data
     numpy.random.seed(32)
     data = numpy.random.rand(16, 12)
@@ -50,6 +54,8 @@ To install from PyPI:
 
 <img src="https://github.com/antononcube/Python-packages/raw/main/ChernoffFace/docs/img/random-data-1.png" width="672" />
 
+(To be clear, each face represents a row of the given array.)
+
 ## Employee attitude data
 
 Get Employee attitude data
@@ -64,7 +70,7 @@ Get Employee attitude data
     ## 3      61          63          45        47      54        84           35
     ## 4      81          78          56        66      71        83           47
 
-Rescale the variables:
+Rescale the variables (columns):
 
     dfData2 = variables_rescale(dfData)
     dfData2.head()
@@ -76,7 +82,7 @@ Rescale the variables:
     ## 3  0.466667    0.490566    0.283019  0.317073  0.244444  0.813953     0.212766
     ## 4  0.911111    0.773585    0.490566  0.780488  0.622222  0.790698     0.468085
 
-Make the corresponding Chernoff faces using USA state names as titles:
+Make the corresponding Chernoff faces:
 
     fig = chernoff_face(data=dfData2,
                         n_columns=5,
@@ -132,6 +138,21 @@ Display:
 
 <img src="https://github.com/antononcube/Python-packages/raw/main/ChernoffFace/docs/img/usa-arrests-data-to-chernoff-faces-figure-5.png" width="1152" />
 
+------------------------------------------------------------------------
+
+# Additional comments
+
+- In order to have "prettier" and "tighter" looking diagrams (Chernoff faces) by default 
+`chernoff_face` makes wide faces. 
+   - The argument `long_face` controls the shape of the faces.
+   - `ChernoffFace` in [AAf1] makes long faces.
+- Additional functions *have to be* implemented that *summarize* datasets using Chernoff faces.
+   - Such summary diagrams are given in [AA1, AAf1].
+- For a given dataset certain color palettes (color mappers) would provide more insightful views.
+  - For example: 
+    - Florida is a clear outlier in the USA arrests plot above
+    - Certain clustering of the states is also hinted by faces with similar colors.
+  
 ------------------------------------------------------------------------
 
 ## References
