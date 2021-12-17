@@ -1,6 +1,4 @@
-# ExampleDatasets Python package
-
-Python package for (obtaining) example datasets.
+Raku package for (obtaining) example datasets.
 
 Currently, this repository contains only [datasets
 metadata](./resources/dfRdatasets.csv). The datasets are downloaded from
@@ -16,11 +14,14 @@ with the same name; see \[AAr1\].
 
 ### Setup
 
-Here we load the Python packages `time`, `pandas`, and this package:
+Here we load the Raku modules
+[`Data::Generators`](https://modules.raku.org/dist/Data::Generators:cpan:ANTONOV),
+[`Data::Summarizers`](https://github.com/antononcube/Raku-Data-Summarizers),
+and this module,
+[`Data::ExampleDatasets`](https://github.com/antononcube/Raku-Data-ExampleDatasets):
 
-    import time
-    import pandas
     from ExampleDatasets import *
+    import pandas
 
 ### Get a dataset by using an identifier
 
@@ -81,6 +82,7 @@ Here we can find URLs of datasets that have titles adhering to a regex:
 Here we get a dataset through [`pandas`](https://pandas.pydata.org) by
 using an URL and display the head of the obtained dataset:
 
+    import pandas
     url = 'https://raw.githubusercontent.com/antononcube/Raku-Data-Reshapers/main/resources/dfTitanic.csv'
     tbl2 = pandas.read_csv(url)
     tbl2.head()
@@ -116,24 +118,26 @@ have only datasets with 13 rows 3. Keep only the columns “Item”,
 By default the data is obtained over the web from
 [Rdatasets](https://github.com/vincentarelbundock/Rdatasets/), but
 `example_dataset` has an option to keep the data “locally.” (The data is
-saved in `XDG_DATA_HOME`, see [[SS1](https://pypi.org/project/xdg/)].)
+saved in `XDG_DATA_HOME`, see [SS1](https://pypi.org/project/xdg/).)
 
 This can be demonstrated with the following timings of a dataset with
 ~1300 rows:
 
+    import time
     startTime = time.time()
     data = example_dataset(itemSpec = 'titanic', packageSpec = 'COUNT', keep = True)
     endTime = time.time()
     print("Geting the data first time took " + str( endTime - startTime ) + " seconds")
 
-    ## Geting the data first time took 0.33232 seconds
+    ## Geting the data first time took 0.013968706130981445 seconds
 
+    import time
     startTime = time.time()
     data = example_dataset(itemSpec = 'titanic', packageSpec = 'COUNT', keep = True)
     endTime = time.time()
     print("Geting the data second time took " + str( endTime - startTime ) + " seconds")
 
-    ## Geting the data second time took 0.01386 seconds
+    ## Geting the data second time took 0.013860702514648438 seconds
 
 ------------------------------------------------------------------------
 
