@@ -78,21 +78,24 @@ def example_dataset(itemSpec: Optional[str] = None,
         print(obj)
         return None
 
-    url = obj["CSV"].values[0]
-    res = pandas.read_csv(url)
+    persDirPath = Path(xdg.xdg_data_home()) / 'Python' / 'ExampleDatasets'
+    idName = obj["Package"].values[0] + "::" + obj["Item"].values[0] + ".csv"
 
-    if keep:
+    persFilePath = persDirPath / idName
+
+    if persFilePath.exists():
+        res = pandas.read_csv(persFilePath)
+    else:
+        url = obj["CSV"].values[0]
+        res = pandas.read_csv(url)
+
+    if keep and not persFilePath.exists():
         # 1. Make directory if it does not exist
-        print(xdg.xdg_data_home())
-        persPath = Path(xdg.xdg_data_home()) / 'Python' / 'ExampleDatasets'
-
-        if not persPath.exists():
-            persPath.mkdir(parents=True, exist_ok=True)
+        if not persDirPath.exists():
+            persDirPath.mkdir(parents=True, exist_ok=True)
 
         # 2. Put the dataset file there
-        keepPath = persPath / (obj["Package"].values[0] + "::" + obj["Item"].values[0])
+        keepPath = persDirPath / idName
         res.to_csv(keepPath)
-
-        print("Keeping data is not implemented yet.")
 
     return res
