@@ -1,3 +1,4 @@
+import random
 from typing import Optional
 
 import pandas
@@ -39,13 +40,25 @@ def load_datasets_metadata():
 dfRdatasets = load_datasets_metadata()
 
 
-def example_dataset(itemSpec: str, packageSpec: Optional[str] = None):
-    # DSL TARGET Python-pandas; use dfRdatasets; filter by Item equals “titanic”; show counts.
-    obj = dfRdatasets.copy()
-    if packageSpec is None:
-        obj = obj[(obj["Item"] == itemSpec)]
+def example_dataset(itemSpec: Optional[str] = None, packageSpec: Optional[str] = None):
+    """Get a data frame of an example dataset.
+
+    :type itemSpec: str|None
+    :param itemSpec: Item in a package; can be a regex.
+
+    :type packageSpec: str|None
+    :param packageSpec: Package name; can be a regex.
+
+    :return res: Dataset data frame if exactly on dataset matched the specs; otherwise None.
+
+    """
+
+    if itemSpec is None and packageSpec is None:
+        obj = dfRdatasets.iloc[[random.randint(0, dfRdatasets.shape[0])], :]
+    elif packageSpec is None:
+        obj = dfRdatasets[(dfRdatasets["Item"] == itemSpec)]
     else:
-        obj = obj[((obj["Item"] == itemSpec) & (obj["Package"] == packageSpec))]
+        obj = dfRdatasets[((dfRdatasets["Item"] == itemSpec) & (dfRdatasets["Package"] == packageSpec))]
 
     if obj.shape[0] == 0:
 
@@ -59,6 +72,6 @@ def example_dataset(itemSpec: str, packageSpec: Optional[str] = None):
         return None
 
     url = obj["CSV"].values[0]
-    dfData = pandas.read_csv(url)
-    return dfData
+    res = pandas.read_csv(url)
 
+    return res
