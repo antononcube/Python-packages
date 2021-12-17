@@ -1,8 +1,10 @@
 import random
+from pathlib import Path
 from typing import Optional
 
 import pandas
 import pkg_resources
+import xdg
 
 
 # ===========================================================
@@ -40,7 +42,9 @@ def load_datasets_metadata():
 dfRdatasets = load_datasets_metadata()
 
 
-def example_dataset(itemSpec: Optional[str] = None, packageSpec: Optional[str] = None):
+def example_dataset(itemSpec: Optional[str] = None,
+                    packageSpec: Optional[str] = None,
+                    keep: bool = False):
     """Get a data frame of an example dataset.
 
     :type itemSpec: str|None
@@ -48,6 +52,9 @@ def example_dataset(itemSpec: Optional[str] = None, packageSpec: Optional[str] =
 
     :type packageSpec: str|None
     :param packageSpec: Package name; can be a regex.
+
+    :type keep: bool
+    :param keep: Should the dataset be kept locally or not?
 
     :return res: Dataset data frame if exactly on dataset matched the specs; otherwise None.
 
@@ -73,5 +80,19 @@ def example_dataset(itemSpec: Optional[str] = None, packageSpec: Optional[str] =
 
     url = obj["CSV"].values[0]
     res = pandas.read_csv(url)
+
+    if keep:
+        # 1. Make directory if it does not exist
+        print(xdg.xdg_data_home())
+        persPath = Path(xdg.xdg_data_home()) / 'Python' / 'ExampleDatasets'
+
+        if not persPath.exists():
+            persPath.mkdir(parents=True, exist_ok=True)
+
+        # 2. Put the dataset file there
+        keepPath = persPath / (obj["Package"].values[0] + "::" + obj["Item"].values[0])
+        res.to_csv(keepPath)
+
+        print("Keeping data is not implemented yet.")
 
     return res
