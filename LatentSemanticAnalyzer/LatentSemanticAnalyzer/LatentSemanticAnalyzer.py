@@ -83,8 +83,8 @@ class LatentSemanticAnalyzer:
 
         The first (optional) argument is expected to be a data frame or SSparseMatrix object.
         """
-        if len(args) == 1 and isinstance(args[0], pandas.core.frame.DataFrame):
-            self.set_data(args[0])
+        if len(args) == 1 and (_is_str_dict(args[0]) or _is_str_list(args[0])):
+            self.set_documents(args[0])
         elif len(args) == 1 and is_s_sparse_matrix(args[0]):
             self.set_document_term_matrix(args[0])
 
@@ -258,15 +258,15 @@ class LatentSemanticAnalyzer:
     # Make document-term matrix
     # ------------------------------------------------------------------
     def make_document_term_matrix(self,
-                                  docs: Union[dict, list],
+                                  docs: Union[dict, list, None] = None,
                                   stop_words: Union[bool, list, tuple, None] = [],
                                   stemming_rules: Union[bool, dict, None] = None,
                                   words_pattern: str = r"[\w']+|[.,!?;]",
                                   min_length: int = 2):
         """Make document-term matrix.
 
-        :type docs: dict|list|tuple
-        :param docs: A collection of documents
+        :type docs: dict|list|None
+        :param docs: A collection of documents. If None then self.take_documents() is used.
 
         :type stop_words: bool|list|tuple|None
         :param stop_words: Stop words to remove from the documents.
@@ -284,12 +284,21 @@ class LatentSemanticAnalyzer:
         :return self:
         """
 
-        if _is_str_list(docs):
+        # Note that self.set_documents(docs) checks the type of the argument docs.
+        # Hence, we do not need a separate check and TypeError that test and clarifies
+        # that self._documents is right or wrong.
+
+        if docs is None:
+            aTexts = self.take_documents()
+            if aTexts is None:
+                raise TypeError("Cannot find documents.")
+        elif _is_str_list(docs):
             aTexts = dict(zip(['id' + str(i) for i in range(len(docs))], docs))
         elif _is_str_dict(docs):
             aTexts = docs
         else:
-            raise TypeError("The argument 'docs' is expected to be a list of strings, or a dictionary of string.")
+            raise TypeError(
+                "The argument 'docs' is expected to be a list of strings, a dictionary of strings, or None.")
 
         mstop_words = stop_words
         if isinstance(stop_words, bool) and stop_words:
