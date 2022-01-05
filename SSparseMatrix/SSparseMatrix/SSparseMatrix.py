@@ -81,6 +81,12 @@ class SSparseMatrix:
     _colNames = None
     _dimNames = None
 
+    # The following two fields are conceptually redundant
+    # Introduced for optimization purposes -- for example .row_names was too slow
+    # just using the dictionary _row_names.
+    _rowNamesList = None
+    _colNamesList = None
+
     def __init__(self, *args, **kwargs):
         """Creation of a SSparseMatrix object.
            The first argument is expected to be scipy sparse object.
@@ -93,6 +99,9 @@ class SSparseMatrix:
         self._rowNames = None
         self._colNames = None
         self._dimNames = None
+
+        self._rowNamesList = None
+        self._colNamesList = None
 
         if len(args) == 1:
             self.set_sparse_matrix(args[0])
@@ -126,10 +135,14 @@ class SSparseMatrix:
 
     def row_names(self):
         """Row names."""
-        if isinstance(self._rowNames, dict):
-            return list(self._rowNames.keys())
+        if isinstance(self._rowNamesList, list):
+            return self._rowNamesList
+        elif isinstance(self._rowNames, dict):
+            self._rowNamesList = list(self._rowNames.keys())
+            return self._rowNamesList
         else:
-            return self._rowNames
+            self._rowNamesList = self._rowNames
+            return self._rowNamesList
 
     def column_names_dict(self):
         """Column names to indices dictionary."""
@@ -137,9 +150,13 @@ class SSparseMatrix:
 
     def column_names(self):
         """Column names."""
-        if isinstance(self._colNames, dict):
-            return list(self._colNames.keys())
+        if isinstance(self._colNamesList, list):
+            return self._colNamesList
+        elif isinstance(self._colNames, dict):
+            self._colNamesList = list(self._colNames.keys())
+            return self._colNamesList
         else:
+            self._colNamesList = self._colNames
             return self._colNames
 
     def dimension_names(self):
@@ -207,6 +224,7 @@ class SSparseMatrix:
 
     def set_row_names(self, *args):
         """Set row names. (In place operation.)"""
+        self._rowNamesList = None
         if len(args) == 0:
             return self.set_row_names([str(x) for x in range(0, self.rows_count())])
         elif isinstance(args[0], str):
@@ -217,13 +235,15 @@ class SSparseMatrix:
             self._rowNames = dict(zip(args[0], range(0, len(args[0]))))
         else:
             raise TypeError(
-                "The first argument is expected to be a string-to-index dictionary or a list of strings of length %s." %
-                self.rows_count())
+                """The first argument is expected to be a string-to-index dictionary of length %s, 
+                a list of strings of length %s, or a string.""" %
+                (self.rows_count(), self.rows_count()))
 
         return self
 
     def set_column_names(self, *args):
         """Set column names. (In place operation.)"""
+        self._colNamesList = None
         if len(args) == 0:
             return self.set_column_names([str(x) for x in range(0, self.columns_count())])
         elif isinstance(args[0], str):
@@ -234,8 +254,9 @@ class SSparseMatrix:
             self._colNames = dict(zip(args[0], range(0, len(args[0]))))
         else:
             raise TypeError(
-                "The first argument is expected to be a string-to-index dictionary or a list of strings of length %s." %
-                self.columns_count())
+                """The first argument is expected to be a string-to-index dictionary of length %s,
+                a list of strings of length %s, or a string.""" %
+                (self.columns_count(), self.columns_count()))
 
         return self
 
@@ -362,9 +383,9 @@ class SSparseMatrix:
         """Transpose."""
         obj = self.copy() if copy else self
         obj._sparseMatrix = obj.sparse_matrix().transpose()
-        t = obj._colNames
-        obj._colNames = obj._rowNames
-        obj._rowNames = t
+        t = obj.column_names()
+        obj.set_column_names(obj.row_names())
+        obj.set_row_names(t)
         return obj
 
     # ------------------------------------------------------------------
