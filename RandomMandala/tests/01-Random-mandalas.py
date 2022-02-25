@@ -65,6 +65,14 @@ class RandomMandalas(unittest.TestCase):
         res = random_mandala(radius=[3, 2, 1], connecting_function="line", face_color=["blue", "red"])
         self.assertTrue(_is_figure(res) and len(res.axes) == 1)
 
+    def test_random_multi_mandala_5(self):
+        res = random_mandala(radius=[3, 2, 1], connecting_function="line", face_color=["blue", "red"], alpha=1)
+        self.assertTrue(_is_figure(res) and len(res.axes) == 1)
+
+    def test_random_multi_mandala_6(self):
+        res = random_mandala(radius=[3, 2, 1], connecting_function="line", color_mapper=matplotlib.cm.rainbow, alpha=0.5)
+        self.assertTrue(_is_figure(res) and len(res.axes) == 1)
+
     def test_random_mandalas_collection_1(self):
         fig = matplotlib.pyplot.figure(figsize=(6, 6), dpi=120)
 
