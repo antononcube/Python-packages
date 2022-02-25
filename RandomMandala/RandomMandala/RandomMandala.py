@@ -5,6 +5,8 @@ import PIL
 import bezier
 import matplotlib
 import matplotlib.backends.backend_agg
+from matplotlib.lines import Line2D
+from matplotlib.patches import PathPatch
 import numpy
 
 
@@ -39,6 +41,7 @@ class RandomMandala:
     _sym_seed_points = None
     _symmetric = False
     _points = None
+    _alpha = None
     _value = None
 
     # ===========================================================
@@ -85,6 +88,10 @@ class RandomMandala:
         self._symmetric = arg
         return self
 
+    def set_alpha(self, arg):
+        self._alpha = arg
+        return self
+
     def set_value(self, arg):
         self._value = arg
         return self
@@ -109,6 +116,9 @@ class RandomMandala:
 
     def take_symmetric(self):
         return self._symmetric
+
+    def take_alpha(self):
+        return self._alpha
 
     def take_value(self):
         return self._value
@@ -233,6 +243,7 @@ class RandomMandala:
     def rotate_and_bezier(self,
                           face_color="0.2",
                           edge_color="0.2",
+                          alpha=None,
                           location=111,
                           ax=None):
         # Make figure and axes
@@ -283,6 +294,13 @@ class RandomMandala:
         local_ax.set_aspect('equal')
         local_ax.axis('off')
 
+        if alpha is not None:
+            for item in local_ax.get_children():
+                if isinstance(item, Line2D):
+                    item.set_alpha(alpha)
+                if isinstance(item, PathPatch):
+                    item.set_alpha(alpha)
+
         # Set figure, axes, value
         self._figure = fig
         self._axes = local_ax
@@ -297,6 +315,7 @@ class RandomMandala:
                                face_color=(0.01, 0.01, 0.01),
                                edge_color=(0.01, 0.01, 0.01),
                                pts_per_edge=24,
+                               alpha=None,
                                location=111,
                                ax=None):
 
@@ -315,9 +334,9 @@ class RandomMandala:
             local_ax = ax
 
         # Determine rotation angle and seed nodes
-        alpha = self._angle
+        my_angle = self._angle
         if self._symmetric:
-            alpha = 2 * alpha
+            my_angle = 2 * my_angle
 
         nodes1 = numpy.array(self._seed_points).transpose()
         if len(self._seed_points) < 4:
@@ -329,7 +348,7 @@ class RandomMandala:
                                      self._seed_points[0]]).transpose()
 
         # Rotation matrix
-        rotMat = [[math.cos(alpha), -math.sin(alpha)], [math.sin(alpha), math.cos(alpha)]]
+        rotMat = [[math.cos(my_angle), -math.sin(my_angle)], [math.sin(my_angle), math.cos(my_angle)]]
 
         # First nodes and plot
         curve1 = bezier.Curve.from_nodes(nodes1)
@@ -339,7 +358,7 @@ class RandomMandala:
         _ = curved_poly.plot(pts_per_edge=pts_per_edge, ax=local_ax, color=face_color)
 
         # Incremental rotation and plotting
-        for i in range(1, math.floor(2 * numpy.pi / alpha)):
+        for i in range(1, math.floor(2 * numpy.pi / my_angle)):
             nodes1 = numpy.dot(rotMat, nodes1)
             nodes1con = numpy.dot(rotMat, nodes1con)
             curve1 = bezier.Curve.from_nodes(nodes1)
@@ -366,6 +385,13 @@ class RandomMandala:
         # Just mandala plot
         local_ax.set_aspect('equal')
         local_ax.axis('off')
+
+        if alpha is not None:
+            for item in local_ax.get_children():
+                if isinstance(item, Line2D):
+                    item.set_alpha(alpha)
+                if isinstance(item, PathPatch):
+                    item.set_alpha(alpha)
 
         # Proper scaling
         # local_ax.set_xscale("linear")

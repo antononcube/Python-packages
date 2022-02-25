@@ -46,6 +46,7 @@ def random_mandala(n_rows=1,
                    symmetric_seed=True,
                    face_color=("0.2", "0.6", "0.8"),
                    edge_color=("0.2", "0.6", "0.8"),
+                   alpha = None,
                    color_mapper: matplotlib.colors.Colormap = None,
                    figure: Optional[matplotlib.figure.Figure] = None,
                    location=None,
@@ -86,6 +87,9 @@ def random_mandala(n_rows=1,
 
     :type edge_color: str|list|tuple
     :param edge_color: Edge (line) color.
+
+    :type alpha: float|None
+    :param alpha: Opacity (alpha) float between 0 and 1.
 
     :type color_mapper: matplotlib.colors.Colormap|None
     :param color_mapper: Color mapper object.
@@ -158,6 +162,11 @@ def random_mandala(n_rows=1,
     if isinstance(edge_color, (list, tuple)) and _is_radius_number(radius):
         local_edge_color = edge_color[0]
 
+    # Check alpha
+    local_alpha = alpha
+    if not (isinstance(alpha, (int, float)) and 0 <= alpha <= 1 or alpha is None):
+        raise TypeError("The argument 'alpha' is expected to be a number between 0 and 1 or None.")
+
     # Delegate
     if figure is not None and location is not None:
 
@@ -180,6 +189,7 @@ def random_mandala(n_rows=1,
                        symmetric_seed=symmetric_seed,
                        face_color=local_face_color,
                        edge_color=local_edge_color,
+                       alpha=local_alpha,
                        color_mapper=color_mapper,
                        **kwargs)
 
@@ -194,6 +204,7 @@ def random_mandala(n_rows=1,
                                        symmetric_seed=symmetric_seed,
                                        face_color=local_face_color,
                                        edge_color=local_edge_color,
+                                       alpha=local_alpha,
                                        color_mapper=color_mapper,
                                        **kwargs)
 
@@ -210,6 +221,7 @@ def _random_mandalas_figure(n_rows=None,
                             symmetric_seed: Union[bool, str, None] = True,
                             face_color="0.2",
                             edge_color="0.2",
+                            alpha=None,
                             color_mapper: matplotlib.colors.Colormap = None,
                             **kwargs):
     """Makes a figure with random mandalas."""
@@ -235,6 +247,7 @@ def _random_mandalas_figure(n_rows=None,
                     symmetric_seed=symmetric_seed,
                     face_color=face_color,
                     edge_color=edge_color,
+                    alpha=alpha,
                     color_mapper=color_mapper)
 
     return fig
@@ -253,6 +266,7 @@ def _random_mandala_multi(figure=None,
                           symmetric_seed: Union[bool, str, None] = True,
                           face_color="0.2",
                           edge_color="0.2",
+                          alpha=None,
                           color_mapper: matplotlib.colors.Colormap = None,
                           **kwargs):
     """Makes a random multi-mandala."""
@@ -302,6 +316,7 @@ def _random_mandala_multi(figure=None,
                                symmetric_seed=symmetric_seed,
                                face_color=fc,
                                edge_color=ec,
+                               alpha=alpha,
                                color_mapper=None)
 
     return fig
@@ -321,6 +336,7 @@ def _random_mandala_single(figure=None,
                            symmetric_seed: Union[bool, str, None] = True,
                            face_color="0.2",
                            edge_color="0.2",
+                           alpha=None,
                            color_mapper: matplotlib.colors.Colormap = None,
                            **kwargs):
     """Makes a random mandala."""
@@ -416,6 +432,7 @@ def _random_mandala_single(figure=None,
         getattr(rMandala, rot_and_place_func)(face_color=face_color,
                                               edge_color=edge_color,
                                               location=locationSpec,
+                                              alpha=alpha,
                                               ax=local_ax)
 
     elif conFunc == "bezier":
@@ -423,6 +440,7 @@ def _random_mandala_single(figure=None,
         rMandala.rotate_and_bezier(face_color=face_color,
                                    edge_color=edge_color,
                                    location=locationSpec,
+                                   alpha=alpha,
                                    ax=ax)
 
     elif conFunc in {"bezier_fill", "bezier-fill", "bezier fill", "bezierfill"}:
@@ -430,6 +448,7 @@ def _random_mandala_single(figure=None,
         rMandala.rotate_and_bezier_fill(face_color=face_color,
                                         edge_color=edge_color,
                                         location=locationSpec,
+                                        alpha=alpha,
                                         ax=ax)
 
     else:
