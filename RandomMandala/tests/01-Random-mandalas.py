@@ -49,6 +49,11 @@ class RandomMandalas(unittest.TestCase):
         res = random_mandala(n_rows=3, n_columns=3, figsize=(12, 12), dpi=120)
         self.assertTrue(_is_figure(res))
 
+    def test_random_mandala_7(self):
+        random.seed(22)
+        res = random_mandala(n_rows=1, n_columns=3)
+        self.assertTrue(_is_figure(res))
+
     def test_random_multi_mandala_1(self):
         res = random_mandala(radius=[3, 2])
         self.assertTrue(_is_figure(res))
