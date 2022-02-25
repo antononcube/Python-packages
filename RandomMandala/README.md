@@ -2,7 +2,8 @@
 
 ***Anton Antonov***    
 [Python-packages at GitHub/antononcube](https://github.com/antononcube/Python-packages)   
-***November 2021***   
+***November 2021***    
+***February 2022*** 
 
 ## Introduction
 
@@ -103,7 +104,7 @@ fig = random_mandala()
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_5_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_5_0.png)
     
 
 Here we generate a figure with 12 (3x4) random mandalas:
@@ -117,7 +118,7 @@ plt.show()
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_7_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_7_0.png)
     
 
 
@@ -137,7 +138,7 @@ fig=random_mandala(n_rows=1, n_columns=3)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_9_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_9_0.png)
     
 
 
@@ -164,7 +165,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_11_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_11_0.png)
     
 
 
@@ -194,7 +195,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_14_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_14_0.png)
     
 
 
@@ -211,7 +212,7 @@ fig3=random_mandala(radius=[8,5,3],
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_16_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_16_0.png)
     
 
 
@@ -242,7 +243,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_20_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_20_0.png)
     
 
 
@@ -271,7 +272,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_22_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_22_0.png)
     
 
 
@@ -297,7 +298,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_23_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_23_0.png)
     
 
 
@@ -324,7 +325,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_25_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_25_0.png)
     
 
 
@@ -354,13 +355,44 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_27_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_27_0.png)
+    
+
+
+### alpha
+
+The argument `alpha` controls the opacity of the plots; it takes as values `None` and floats between 0 and 1.
+
+
+```python
+fig = matplotlib.pyplot.figure(figsize=(6,3), dpi=120)
+k = 1
+for al in [None, 0.2, 1.0]:
+    random.seed(23)
+    fig = random_mandala(radius=[10,6,4],
+     					 connecting_function="bezier_fill",
+                         symmetric_seed=True,
+                         alpha=al,
+                         color_mapper=matplotlib.cm.rainbow_r,
+                         figure = fig,
+                         location = (1, 3, k))
+    ax = fig.axes[-1]
+    ax.set_title(str(al))
+    k = k + 1
+
+plt.show()
+plt.close(fig)
+```
+
+
+    
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_29_0.png)
     
 
 
 ### color_mapper
 
-The argument `color_mapper` takes as values `None` and `matplotlib.colors.Colormap` objects. 
+The argument `color_mapper` takes as values `None` and `matplotlib.colors.Colormap` objects.
 See the color mappers in the reference page ["color example code: colormaps_reference.py"](https://matplotlib.org/2.0.2/examples/color/colormaps_reference.html).
 If `color_mapper` is specified then the arguments `face_color` and `edge_color` are ignored.
 Here is an example using two color mappers:
@@ -373,7 +405,7 @@ cMappersNames=["rainbow_r", "Accent_r"]
 for k in range(2): 
     random.seed(15)
     fig = random_mandala(radius=[10,6,4],
-     					 connecting_function="bezier_fill", 
+                         connecting_function="bezier_fill",
                          symmetric_seed=True,
                          color_mapper=cMappers[k],
                          figure = fig,
@@ -387,7 +419,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_29_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_31_0.png)
     
 
 
@@ -452,7 +484,7 @@ plt.show()
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_31_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_33_0.png)
     
 
 
@@ -468,7 +500,7 @@ fig=random_mandala(n_rows=6, n_columns=6, figsize=(10,10), dpi=240)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_33_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_35_0.png)
     
 
 
@@ -503,7 +535,7 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_35_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_37_0.png)
     
 
 
@@ -533,8 +565,18 @@ plt.close(fig)
 
 
     
-![png](https://raw.githubusercontent.com/antononcube/Python-packages/main/RandomMandala/docs/img/output_37_0.png)
+![png](https://github.com/antononcube/Python-packages/raw/main/RandomMandala/docs/img/output_39_0.png)
     
+
+
+------
+
+## Acknowledgements
+
+- [Johannes Huessy](https://github.com/jhuessy) for discussing different design elements.
+
+- [Mr.T](https://stackoverflow.com/users/8881141/mr-t) for 
+  [figuring out and explaining the opacity argument implementation](https://stackoverflow.com/a/71267997/14163984).
 
 
 ------
@@ -546,29 +588,4 @@ plt.close(fig)
 [AA1] Anton Antonov,
 ["Comparison of dimension reduction algorithms over mandala images generation"](https://mathematicaforprediction.wordpress.com/2017/02/10/comparison-of-dimension-reduction-algorithms-over-mandala-images-generation/),
 (2017),
-[MathematicaForPrediction at WordPress](https://mathematicaforprediction.wordpress.com).
-
-[AA1] Anton Antonov,
-["Generation of Random Bethlehem Stars](https://mathematicaforprediction.wordpress.com/2020/12/21/generation-of-random-bethlehem-stars/),
-(2020),
-[MathematicaForPrediction at WordPress](https://mathematicaforprediction.wordpress.com).
-
-### Functions
-
-[AAf1] Anton Antonov,
-[`RandomMandala`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomMandala),
-(2019),
-[Wolfram Function Repository](https://resources.wolframcloud.com/FunctionRepository).
-
-[AAf2] Anton Antonov,
-[`RandomScribble`](https://resources.wolframcloud.com/FunctionRepository/resources/RandomScribble),
-(2020),
-[Wolfram Function Repository](https://resources.wolframcloud.com/FunctionRepository).
-
-### Packages
-
-[DHp1] Daniel Hermes,
-[`bezier` Python package](https://pypi.org/project/bezier/),
-(2016),
-[PyPy.org](https://pypi.org).
-
+[MathematicaForPrediction
