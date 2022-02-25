@@ -261,21 +261,21 @@ class RandomMandala:
             fig = self._figure
 
         # Determine rotation angle and seed nodes
-        alpha = self._angle
+        my_angle = self._angle
         nodes = numpy.array(self._seed_points).transpose()
 
         if self._symmetric:
-            alpha = 2 * alpha
+            my_angle = 2 * my_angle
 
         # Rotation matrix
-        rotMat = [[math.cos(alpha), -math.sin(alpha)], [math.sin(alpha), math.cos(alpha)]]
+        rotMat = [[math.cos(my_angle), -math.sin(my_angle)], [math.sin(my_angle), math.cos(my_angle)]]
 
         # First nodes and plot
         curve = bezier.Curve.from_nodes(nodes)
         _ = curve.plot(num_pts=256, color=edge_color, ax=local_ax)
 
         # Incremental rotation and plotting
-        for i in range(1, math.floor(2 * numpy.pi / alpha)):
+        for i in range(1, math.floor(2 * numpy.pi / my_angle)):
             nodes = numpy.dot(rotMat, nodes)
             curve = bezier.Curve.from_nodes(nodes)
             _ = curve.plot(num_pts=256, ax=local_ax, color=edge_color)
@@ -285,7 +285,7 @@ class RandomMandala:
             nodes = numpy.array(self._sym_seed_points).transpose()
             curve = bezier.Curve.from_nodes(nodes)
             _ = curve.plot(num_pts=256, ax=local_ax, color=edge_color)
-            for i in range(1, math.floor(2 * numpy.pi / alpha)):
+            for i in range(1, math.floor(2 * numpy.pi / my_angle)):
                 nodes = numpy.dot(rotMat, nodes)
                 curve = bezier.Curve.from_nodes(nodes)
                 _ = curve.plot(num_pts=256, ax=local_ax, color=edge_color)
