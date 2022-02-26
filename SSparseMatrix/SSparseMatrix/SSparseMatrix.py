@@ -449,6 +449,22 @@ class SSparseMatrix:
         return self
 
     # ------------------------------------------------------------------
+    # Clip
+    # ------------------------------------------------------------------
+    def clip(self, v_min, v_max, copy=True):
+        """Clip the values in a SSparseMatrix object."""
+        smat = self.sparse_matrix()
+
+        smat.data *= smat.data >= v_min
+        smat.data *= smat.data <= v_max
+        smat.eliminate_zeros()
+
+        if copy:
+            return SSparseMatrix(smat, row_names=self.row_names(), column_names=self.column_names())
+        else:
+            return self.set_sparse_matrix(smat)
+
+    # ------------------------------------------------------------------
     # Dot
     # ------------------------------------------------------------------
     def dot(self, other, copy=True):
