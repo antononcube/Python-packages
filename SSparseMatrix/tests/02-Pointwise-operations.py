@@ -38,6 +38,16 @@ class PointwiseOperations(unittest.TestCase):
         rmat2.set_row_names(rmat.row_names())
         self.assertTrue(rmat.multiply(3.0).eq(rmat2))
 
+    def test_unitize(self):
+        rmat2 = rmat.unitize()
+        self.assertTrue(min(rmat2.sparse_matrix().data) == 1 and max(rmat2.sparse_matrix().data) == 1)
+
+    def test_clip(self):
+        rmat2 = rmat.clip(v_min=2, v_max=3)
+        self.assertTrue(min(rmat2.sparse_matrix().data) == 2.0 and
+                        max(rmat2.sparse_matrix().data) == 3.0 and
+                        rmat2.row_names() == rmat.row_names() and
+                        rmat2.column_names() == rmat.column_names())
 
 if __name__ == '__main__':
     unittest.main()
