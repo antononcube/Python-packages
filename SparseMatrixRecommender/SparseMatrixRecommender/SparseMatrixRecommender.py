@@ -394,7 +394,7 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Recommend by profile
     # ------------------------------------------------------------------
-    def recommend_by_profile(self, profile, nrecs=10, vector_result: bool = False):
+    def recommend_by_profile(self, profile, nrecs=10, normalize = True, vector_result: bool = False):
         """Recommend by profile.
 
         :type profile: str|list|dict
@@ -402,6 +402,9 @@ class SparseMatrixRecommender:
 
         :type nrecs: int|None
         :param nrecs: A positive integer or None. If it is None, then all items with non-zero scores are returned.
+
+        :type normalize: bool
+        :param normalize: Should the result be normalized or not.
 
         :type vector_result: bool
         :param vector_result: Should the result be a (SSparseMatrix) vector or a dictionary.
@@ -422,7 +425,27 @@ class SparseMatrixRecommender:
         # Compute the recommendations
         recs = self.take_M().dot(vec)
 
-        if not vector_result:
+        # Normalize
+        recs_max = max(map(abs, recs.row_sums()))
+        if normalize and recs_max > 0:
+            recs = recs.multiply(1/recs_max)
+
+        if vector_result:
+            # Vector result
+
+            if isinstance(nrecs, int) and nrecs < recs.rows_count():
+                # Change the matrix to have n_top_nearest_neighbors columns
+                # according to scores
+                recs2 = recs.row_sums_dict()
+                recs2 = _reverse_sort_dict(recs2)
+
+                recs2 = dict(list(recs2.items())[0:nrecs])
+                rowNames = recs.row_names()
+                recs = recs[list(recs2.keys()), :]
+                recs = recs.impose_row_names(rowNames)
+
+        else:
+            # Dictionary result
             # Take non-zero score recommendations
             recs = {key: value for (key, value) in recs.row_sums_dict().items() if value > 0}
 
@@ -443,7 +466,7 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Recommend by history
     # ------------------------------------------------------------------
-    def recommend(self, history, nrecs=10, remove_history=True):
+    def recommend(self, history, nrecs=10, normalize=True, remove_history=True):
         """Recommend by history.
 
         :type history: str|list|dict
@@ -451,6 +474,9 @@ class SparseMatrixRecommender:
 
         :type nrecs: int|None
         :param nrecs: A positive integer or None. If it is None, then all items with non-zero scores are returned.
+
+        :type normalize: bool
+        :param normalize: Should the result be normalized or not.
 
         :type remove_history: bool
         :param remove_history: Should the the history be removed from the result recommendations or not?
@@ -488,6 +514,12 @@ class SparseMatrixRecommender:
         # Give top-n recs
         if isinstance(nrecs, int) and nrecs < len(recs):
             recs = dict(list(recs.items())[0:nrecs])
+
+            # Normalize
+            recs_max = max(map(abs, recs.values()))
+            if normalize and recs_max > 0:
+                recs = {k: v/recs_max for (k, v) in recs.items()}
+
         elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
             raise TypeError("The second argument, nrecs, is expected to be a positive integer or None.")
 
@@ -623,17 +655,6 @@ class SparseMatrixRecommender:
         if recs.column_sums()[0] == 0:
             self.set_value({None: 1})
             return self
-
-        # Change the matrix to have n_top_nearest_neighbors columns
-        # according to scores
-        recs2 = recs.row_sums_dict()
-        recs2 = _reverse_sort_dict(recs2)
-
-        if isinstance(n_top_nearest_neighbors, int) and n_top_nearest_neighbors < len(recs2):
-            recs2 = dict(list(recs2.items())[0:n_top_nearest_neighbors])
-            rowNames = recs.row_names()
-            recs = recs[list(recs2.keys()), :]
-            recs = recs.impose_row_names(rowNames)
 
         # Get the tag type matrix
         matTagType = self.take_matrices()[tag_type]
