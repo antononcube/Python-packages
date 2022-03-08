@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="SparseMatrixRecommender",
-    version="0.1.1",
+    version="0.1.2",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Sparse Matrix Recommender package based on SSparseMatrix objects.",
