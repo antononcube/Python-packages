@@ -585,7 +585,7 @@ class SparseMatrixRecommender:
                             drop_zero_scored_labels=True,
                             max_number_of_labels=None,
                             normalize: bool = True):
-        """Clasify by profile vector.
+        """Classify by profile vector.
 
         :type tag_type: str
         :param tag_type: Tag type to classify to.
@@ -618,10 +618,22 @@ class SparseMatrixRecommender:
         recs = self.recommend_by_profile(profile=profile,
                                          nrecs=n_top_nearest_neighbors,
                                          vector_result=True).take_value()
+
         # "Nothing" result
         if recs.column_sums()[0] == 0:
             self.set_value({None: 1})
             return self
+
+        # Change the matrix to have n_top_nearest_neighbors columns
+        # according to scores
+        recs2 = recs.row_sums_dict()
+        recs2 = _reverse_sort_dict(recs2)
+
+        if isinstance(n_top_nearest_neighbors, int) and n_top_nearest_neighbors < len(recs2):
+            recs2 = dict(list(recs2.items())[0:n_top_nearest_neighbors])
+            rowNames = recs.row_names()
+            recs = recs[list(recs2.keys()), :]
+            recs = recs.impose_row_names(rowNames)
 
         # Get the tag type matrix
         matTagType = self.take_matrices()[tag_type]
