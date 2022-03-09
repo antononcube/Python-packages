@@ -433,9 +433,9 @@ class SparseMatrixRecommender:
         if vector_result:
             # Vector result
 
+            # Change the matrix to have nrecs columns
+            # according to scores
             if isinstance(nrecs, int) and nrecs < recs.rows_count():
-                # Change the matrix to have n_top_nearest_neighbors columns
-                # according to scores
                 recs2 = recs.row_sums_dict()
                 recs2 = _reverse_sort_dict(recs2)
 
