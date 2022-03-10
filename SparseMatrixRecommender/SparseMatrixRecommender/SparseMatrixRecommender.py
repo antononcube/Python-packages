@@ -5,6 +5,7 @@ from .CrossTabulate import cross_tabulate
 from .DocumentTermWeightFunctions import apply_term_weight_functions
 import pandas
 import scipy
+import warnings
 
 
 # ======================================================================
@@ -93,6 +94,16 @@ class SparseMatrixRecommender:
     def take_value(self):
         """Take the pipeline value."""
         return self._value
+
+    def sub_matrix(self, tag_type):
+        """Take sub-matrix corresponding to tag_type."""
+        if not isinstance(tag_type, str):
+            raise ValueError("The first argument, tag_type, is expected to be a string.")
+
+        if not tag_type in self.take_matrices():
+            raise ValueError("The tag type " + str(tag_type) + " is not known in the recommender.")
+
+        return self.take_matrices()[tag_type]
 
     # ------------------------------------------------------------------
     # Echoers
@@ -394,7 +405,7 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Recommend by profile
     # ------------------------------------------------------------------
-    def recommend_by_profile(self, profile, nrecs=10, normalize = True, vector_result: bool = False):
+    def recommend_by_profile(self, profile, nrecs=10, normalize=True, vector_result: bool = False):
         """Recommend by profile.
 
         :type profile: str|list|dict
@@ -428,7 +439,7 @@ class SparseMatrixRecommender:
         # Normalize
         recs_max = max(map(abs, recs.row_sums()))
         if normalize and recs_max > 0:
-            recs = recs.multiply(1/recs_max)
+            recs = recs.multiply(1 / recs_max)
 
         if vector_result:
             # Vector result
@@ -518,7 +529,7 @@ class SparseMatrixRecommender:
             # Normalize
             recs_max = max(map(abs, recs.values()))
             if normalize and recs_max > 0:
-                recs = {k: v/recs_max for (k, v) in recs.items()}
+                recs = {k: v / recs_max for (k, v) in recs.items()}
 
         elif not (isinstance(None, type(None)) or isinstance(nrecs, int) and nrecs > 0):
             raise TypeError("The second argument, nrecs, is expected to be a positive integer or None.")
@@ -693,6 +704,102 @@ class SparseMatrixRecommender:
         self.set_value(clRes)
 
         return self
+
+    # ------------------------------------------------------------------
+    # To metadata recommender
+    # ------------------------------------------------------------------
+    def to_metadata_recommender(self, tag_type_to, tag_types=None, tag_type_matrix=None, normalizer_func=None):
+        """Convert to a metadata recommender
+
+         Converts the recommender object into a recommender for a
+         specified tag type using replacements in the long form representation of the recommender matrix.
+
+         The following steps are taken:
+
+           - If `tag_type_matrix` is None then tag_type_matrix = self.sub_matrix(tag_type_to)
+
+           - Normalize the columns of `tag_type_matrix` using `normalizer_func`
+
+           - Each recommender sub-matrix `m` is multiplied by `tag_type_matrix`, i.e. `tag_type_matrix.transpose().dot(m)`
+
+           - A new recommender is created with items that are the tags of `tag_type_to`
+
+         :type tag_type_to: Str
+         :param tag_type_to: Tag type to make a recommender for.
+
+         :type tag_types: List
+         :param tag_types: A vector tag types (strings) to make the data frame with. If None then all tag types are used.
+
+         :type tag_type_matrix: SSparseMatrix|None
+         :param tag_type_matrix: A sparse matrix of item IDs vs tags of tag_type_to.
+         If None then self.sub_matrix(tag_type_to) is used.
+
+         :type normalizer_func:
+         :param normalizer_func: An LSI normalizer function. One of None, "None", "Cosine", "Sum", or "Max".
+         If None then it is same as "None". See self.apply_term_weight_functions.
+
+         :rtype: SparseMatrixRecommender
+         :return A sparse matrix recommender
+         """
+
+        # Process tag_type_to
+        if not isinstance(tag_type_to, str):
+            raise ValueError("The argument tag_type_to is expected to be a string.")
+
+        # Verify tag_type_to
+        if tag_type_to not in self.take_matrices():
+            raise ValueError("The value of the first argument, 'tag_type_to' is not a known tag type.")
+
+        my_tag_type_to = tag_type_to
+
+        # Process tag_types
+        allTagTypes = set(self.take_matrices().keys())
+        my_tag_types = tag_types
+        if tag_types is None:
+            my_tag_types = allTagTypes.difference({my_tag_type_to})
+
+        if my_tag_type_to in set(my_tag_types):
+            warnings.warn("Removing the value of tag_type_to from value of tag_types.")
+            my_tag_types = my_tag_types.difference({my_tag_type_to})
+
+        if len(allTagTypes.intersection(my_tag_types)) == 0:
+            raise ValueError("The argument tag_types has no known tag type of the recommender object.")
+
+        # Process tag_type_matrix
+        my_tag_type_matrix = tag_type_matrix
+        if not (tag_type_matrix is None or isinstance(tag_type_matrix, SSparseMatrix)):
+            raise ValueError("The argument tag_type_matrix is expected to be None or a sparse matrix.")
+
+        if tag_type_matrix is None:
+            my_tag_type_matrix = self.sub_matrix(tag_type_to)
+
+        if not my_tag_type_matrix.row_names() == self.take_M().row_names():
+            raise ValueError(
+                "The argument tag_type_matrix has row names that are different than the row names of recommender matrix.")
+
+        # Process normalizer_func
+        my_normalizer_func = normalizer_func
+        if not (normalizer_func is None or isinstance(normalizer_func, str)):
+            raise ValueError("The argument normalizerFunc is expected to be None or a string.")
+
+        # Obtain tag_type_matrix
+        my_tag_type_matrix = my_tag_type_matrix.transpose()
+
+        # Normalize the columns of tagTypeMatrix
+        if not (normalizer_func is None or normalizer_func == "None"):
+            my_tag_type_matrix = apply_term_weight_functions(doc_term_matrix=my_tag_type_matrix,
+                                                             global_weight_func="None",
+                                                             local_weight_func="None",
+                                                             normalizer_func=my_normalizer_func)
+
+        # Get the recommender contingency matrices
+        smats = {k: m for (k, m) in self.take_matrices().items() if k in my_tag_types}
+
+        # Multiply sub-matrices
+        smats = {k: my_tag_type_matrix.dot(m) for (k, m) in smats.items()}
+
+        # Create recommender
+        return SparseMatrixRecommender().create_from_matrices(matrices=smats)
 
     # ------------------------------------------------------------------
     # To dictionary form
