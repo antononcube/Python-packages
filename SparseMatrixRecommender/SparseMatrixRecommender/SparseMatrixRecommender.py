@@ -327,16 +327,21 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # To smr vector
     # ------------------------------------------------------------------
-    def _to_smr_vector(self, arg, things_dict, thing_name, ref_name):
+    def _to_smr_vector(self, arg, things_dict, thing_name, ref_name, ignore_unknown=False):
         """To SMR vector
 
         :type arg: str|dict
         :param arg: A list of items or tags, or a dictionary of scored items or tags.
 
         :param things_dict: Set items or tags.
+
         :param thing_name: Which matrix axis, one of "column" or "row"
 
+        :type ref_name: bool
         :param ref_name: Reference name, one of "item" or "tag"
+
+        :type ignore_unknown: bool
+        :param ignore_unknown: Should unknown items or tags be ignored or not?
 
         :rtype SparseMatrixRecommender
         :return self: The object itself or None. The result is stored in self._value.
@@ -346,12 +351,12 @@ class SparseMatrixRecommender:
 
         if is_str_list(arg):
             dvec = dict.fromkeys(arg, 1)
-            return self._to_smr_vector(dvec, things_dict, thing_name, ref_name)
+            return self._to_smr_vector(dvec, things_dict, thing_name, ref_name, ignore_unknown=ignore_unknown)
         elif is_scored_tags_dict(arg):
             known_keys = {key: value for (key, value) in arg.items() if key in things_dict}
             if len(known_keys) == 0:
                 raise LookupError("None of the tags is a valid recommendation matrix " + thing_name + " name.")
-            elif len(known_keys) < len(arg):
+            elif len(known_keys) < len(arg) and not ignore_unknown:
                 raise LookupError("Not all tags are valid recommendation matrix " + thing_name + " names.")
 
             res_row_inds = [things_dict[k] for (k, v) in known_keys.items()]
@@ -371,41 +376,55 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # To profile vector
     # ------------------------------------------------------------------
-    def to_profile_vector(self, arg):
+    def to_profile_vector(self, arg, ignore_unknown=False):
         """Convert a list or a dictionary into a profile SSparseMatrix (with one column.)
 
         :type arg: str|list|dict
         :param arg: A tag, a list of tags, or dictionary of scored tags.
 
+        :type ignore_unknown: bool
+        :param ignore_unknown: Should unknown tags be ignored or not?
+
         :rtype SparseMatrixRecommender
         :return self: The object itself or None. The result is stored in self._value.
         """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
 
-        return self._to_smr_vector(arg, things_dict=self._M.column_names_dict(), thing_name="column", ref_name="tags")
+        return self._to_smr_vector(arg,
+                                   things_dict=self._M.column_names_dict(),
+                                   thing_name="column",
+                                   ref_name="tags",
+                                   ignore_unknown=ignore_unknown)
 
     # ------------------------------------------------------------------
     # To history vector
     # ------------------------------------------------------------------
-    def to_history_vector(self, arg):
+    def to_history_vector(self, arg, ignore_unknown=False):
         """Convert a list or a dictionary into a profile SSparseMatrix (with one column.)
 
         :type arg: str|list|dict
         :param arg: A item, a list of item, or dictionary of scored items.
 
+        :type ignore_unknown: bool
+        :param ignore_unknown: Should unknown items be ignored or not?
+
         :rtype SparseMatrixRecommender
         :return self: The object itself or None. The result is stored in self._value.
         """
         if not isinstance(self._M, SSparseMatrix):
             raise TypeError("Cannot find recommendation matrix.")
 
-        return self._to_smr_vector(arg, things_dict=self._M.row_names_dict(), thing_name="row", ref_name="items")
+        return self._to_smr_vector(arg,
+                                   things_dict=self._M.row_names_dict(),
+                                   thing_name="row",
+                                   ref_name="items",
+                                   ignore_unknown=ignore_unknown)
 
     # ------------------------------------------------------------------
     # Recommend by profile
     # ------------------------------------------------------------------
-    def recommend_by_profile(self, profile, nrecs=10, normalize=True, vector_result: bool = False):
+    def recommend_by_profile(self, profile, nrecs=10, normalize=True, ignore_unknown=False, vector_result: bool = False):
         """Recommend by profile.
 
         :type profile: str|list|dict
@@ -417,6 +436,9 @@ class SparseMatrixRecommender:
         :type normalize: bool
         :param normalize: Should the result be normalized or not.
 
+        :type ignore_unknown: bool
+        :param ignore_unknown: Should the unknown tags be ignored or not?
+
         :type vector_result: bool
         :param vector_result: Should the result be a (SSparseMatrix) vector or a dictionary.
 
@@ -425,14 +447,15 @@ class SparseMatrixRecommender:
         """
         # Make scored tags vector
         if isinstance(profile, str):
-            vec = self.to_profile_vector([profile]).take_value()
+            vec = self.to_profile_vector([profile], ignore_unknown=ignore_unknown).take_value()
         elif isinstance(profile, dict) or isinstance(profile, list):
-            vec = self.to_profile_vector(profile).take_value()
+            vec = self.to_profile_vector(profile, ignore_unknown=ignore_unknown).take_value()
         elif is_s_sparse_matrix(profile):
             vec = profile
         else:
             raise TypeError("The first argument is expected to be a list of tags or a dictionary of scored tags.")
 
+        # Ignore unknown tags
         # Compute the recommendations
         recs = self.take_M().dot(vec)
 
@@ -627,7 +650,8 @@ class SparseMatrixRecommender:
                             voting=False,
                             drop_zero_scored_labels=True,
                             max_number_of_labels=None,
-                            normalize: bool = True):
+                            normalize: bool = True,
+                            ignore_unknown: bool = False):
         """Classify by profile vector.
 
         :type tag_type: str
@@ -650,6 +674,9 @@ class SparseMatrixRecommender:
         :type normalize: bool
         :param normalize: Should the scores be normalized?
 
+        :type ignore_unknown: bool
+        :param ignore_unknown: Should the unknown tags be ignored or not?
+
         :rtype SparseMatrixRecommender
         :return self: The object itself or None. The result is stored in self._value.
         """
@@ -660,7 +687,8 @@ class SparseMatrixRecommender:
         # Compute the recommendations
         recs = self.recommend_by_profile(profile=profile,
                                          nrecs=n_top_nearest_neighbors,
-                                         vector_result=True).take_value()
+                                         vector_result=True,
+                                         ignore_unknown=ignore_unknown).take_value()
 
         # "Nothing" result
         if recs.column_sums()[0] == 0:
