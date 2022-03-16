@@ -52,6 +52,20 @@ class SMRRepresentation(unittest.TestCase):
 
         self.assertTrue(res2 == {"survived": 115, "died": 5})
 
+    def test_classification_3(self):
+        # Verify Titanic classification with unknown tags
+        profile2 = ["female", "1st", "BlahBlah"]
+
+        res2 = (self.smr
+                .classify_by_profile(tag_type="passengerSurvival",
+                                     profile=profile2,
+                                     n_top_nearest_neighbors=120,
+                                     normalize=False,
+                                     ignore_unknown=True)
+                .take_value())
+
+        self.assertTrue(res2 == {"survived": 115, "died": 5})
+
 
 if __name__ == '__main__':
     unittest.main()
