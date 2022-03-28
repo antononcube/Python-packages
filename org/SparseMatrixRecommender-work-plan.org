@@ -96,15 +96,15 @@
   - [C] Using queries over the long form representation of the
     recommender matrix
 ** TODO Recommender algebra [0%] [0/5]
-- [ ] Row binding with matrix
-- [ ] Column binding wight matrix
+- [ ] Remove tag types
+- [ ] Row binding with a matrix
+- [ ] Column binding with a matrix
 - [ ] Join across with another recommender
-  - Concatenate horizontal
+  - Concatenate horizontally
   - (Column binding)
 - [ ] Join with another recommender 
   - Stack vertically
   - (Row binding)
-- [ ] Remove tag types
 ** TODO Composite design pattern application [%] [/]
 *** TODO Composite of recommenders
 - [ ] Composite class

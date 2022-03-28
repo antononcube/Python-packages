@@ -105,10 +105,9 @@ smrObj = (SparseMatrixRecommender()
 
 The software monad Mathematica package 
 ["MonadicSparseMatrixRecommender.m"](https://github.com/antononcube/MathematicaForPrediction/blob/master/MonadicProgramming/MonadicSparseMatrixRecommender.m)
-[AAp1], provides recommendation pipelines similar to the pipelines create with this package.
+[AAp1], provides recommendation pipelines similar to the pipelines created with this package.
 
-here is a Mathematica monadic pipeline for creation of a recommender
-over Titanic data and recommendations for the profile "male" and "1st':
+Here is a Mathematica monadic pipeline that corresponds to the Python pipeline above:
 
 ```mathematica
 smrObj =
