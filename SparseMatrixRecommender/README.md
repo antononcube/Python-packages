@@ -73,7 +73,7 @@ The package
 ## Usage example
 
 Here is an example of an SMR pipeline for creation of a recommender
-over Titanic data and recommendations for the profile "male" and "1st':
+over Titanic data and recommendations for the profile "passengerSex:male" and "passengerClass:1st":
 
 ```python
 from SparseMatrixRecommender.SparseMatrixRecommender import *
@@ -96,7 +96,8 @@ smrObj = (SparseMatrixRecommender()
           .echo_value())
 ```
 
-**Remark:** More examples can be found in the 
+**Remark:** More examples can be found the directory 
+["./examples"](https://github.com/antononcube/Python-packages/tree/main/SparseMatrixRecommender/examples).
 
 ------
 
@@ -121,9 +122,6 @@ smrObj =
    SMRMonEchoValue[];   
 ```
 
-Here is the corresponding Python pipeline:
-
-
 *(Compare the pipeline diagram above with the 
 [corresponding diagram using Mathematica notation](https://github.com/antononcube/SimplifiedMachineLearningWorkflows-book/raw/master/Part-2-Monadic-Workflows/Diagrams/A-monad-for-Recommender-workflows/SMRMon-pipeline.jpeg)
 .)*
@@ -145,7 +143,7 @@ interfaces for the recommenders made with `SparseMatrixRecommender` and/or `SMRM
 
 The package 
 [`LSAMon-R`](https://github.com/antononcube/R-packages/tree/master/LSAMon-R),
-[AAp4], can be used to make matrices for `SparseMatrixRecommender`.
+[AAp4], can be used to make matrices for `SparseMatrixRecommender` and/or `SMRMon-R`.
 
 Here is the `SMRMon-R` pipeline that corresponds to the Python pipeline above:
 
