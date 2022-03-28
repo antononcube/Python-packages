@@ -5,14 +5,14 @@
 
 * Introduction
 - This org-mode file has a work plan list and a unit test list that correspond (and hopefully reflect) the development of the Python package [[https://github.com/antononcube/Python-packages/tree/main/SparseMatrixRecommender][SparseMatrixRecommender]].
-* Work plan [25%] [2/8]
+* Work plan [33%] [3/9]
 ** DONE Object structure
 - [X] Sparse matrices
   - A dictionary of ~SSparseMatrix~ objects.
 - [X] Recommender matrix
 - [X] Tag type weights
 - [X] Pipeline value
-** TODO Core functionalities [60%] [3/5]
+** TODO Core functionalities [66%] [4/6]
 *** DONE Getters [100%] [4/4]
 - [X] Sparse matrices
 - [X] Recommender matrix
@@ -26,15 +26,20 @@
 *** DONE Check inputs [100%] [2/2]
 - [X] Verify dictionary of tags
 - [X] Verify dictionary of items
-*** TODO Recommend by profile [66%] [2/3]
+*** DONE Sub-matrix retrieval
+- [X] By accessing object's dictionary of matrices
+- [C] By taking (main-)matrix columns
+*** TODO Recommend by profile [75%] [3/4]
 - The first non-trivial operation to make
 - [X] List profile
 - [X] Dictionary profile
 - [ ] ~SSparseMatrix~ profile
-*** TODO Recommend by history [%] [/]
+- [X] Normalization of results
+*** TODO Recommend by history [75%] [3/4]
 - [X] List history
 - [X] Dictionary history
 - [ ] ~SSparseMatrix~ history
+- [X] Normalization of results
 ** DONE Creation functions [100%] [3/3]
 *** DONE Main pipeline creation functions [100%] [3/3]
 - [X] From matrices
@@ -78,11 +83,18 @@
 - [ ] ~to_wl~ stub
 ** TODO Second wave functions [20%] [1/5]
 - [X] Classify by profile
+  - [X] Program
+  - [X] Test
 - [ ] Filter matrix
 - [ ] Retrieve by profile with search engine specs
   - I.e. having the specs: should, must, must_not
 - [ ] Average row per segment
 - [ ] Top-K statistics facilitation
+** DONE Third wave functions (extra) [100%] [1/1]
+- [X] Metadata recommender derivation / conversion
+  - [X] Using matrix multiplication
+  - [C] Using queries over the long form representation of the
+    recommender matrix
 ** TODO Recommender algebra [0%] [0/5]
 - [ ] Row binding with matrix
 - [ ] Column binding wight matrix
@@ -103,18 +115,22 @@
 *** TODO Combined SMR and LSA objects
 - [ ] Composite class
 - [ ] Composite operation
-* TODO Unit tests [40%] [2/5]
+* TODO Unit tests [83%] [5/6]
 - The unit tests (so far) are made with small matrices in order to make easier visual verification (by humans.)
 ** DONE Basic functionalities [100%] [3/3]
 - [X] Creation
 - [X] Recommend by profile
 - [X] Recommend by history
-** TODO Creation
+** DONE Creation
 ** DONE Representation
-** TODO Second wave
+** DONE Classification by profile
+** DONE Metadata recommender creation
 ** TODO Recommender algebra
 * TODO Documentation [%50] [1/3]
 ** DONE Usage messages
 - Usage message for each method.
+** DONE Diagrams
+- [X] SMR workflows diagram (reused)
+- [X] SMR pipeline diagram for the Python class.
 ** TODO First version
 ** TODO Advanced use cases
