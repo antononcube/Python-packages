@@ -510,6 +510,14 @@ class LatentSemanticAnalyzer:
         return self
 
     # ------------------------------------------------------------------
+    # Echo topics table
+    # ------------------------------------------------------------------
+    def echo_topics_table(self, *args, **kwargs):
+        """Echo topics table. Synonym of echo_topics_interpretation.
+        """
+        return self.echo_topics_interpretation(*args, **kwargs)
+
+    # ------------------------------------------------------------------
     # Echo topics interpretation
     # ------------------------------------------------------------------
     def echo_topics_interpretation(self,
@@ -797,6 +805,32 @@ class LatentSemanticAnalyzer:
 
         else:
             raise TypeError("Unknown type of the argument 'query'.")
+
+        return self
+
+    # ------------------------------------------------------------------
+    # Echo document term matrix statistics
+    # ------------------------------------------------------------------
+    def echo_document_term_matrix_statistics(self,
+                                             log_base: Union[dict, list, None] = None):
+        print("Document-term matrix:")
+        print(repr(self.take_doc_term_mat()))
+
+        x = self.take_doc_term_mat().unitize().row_sums()
+        print("Number of terms per document:")
+        print("\tmin:    ", numpy.min(x))
+        print("\tmean:   ", numpy.mean(x))
+        print("\tmedian: ", numpy.median(x))
+        print("\tmax:    ", numpy.max(x))
+        print("\tstd:    ", numpy.std(x))
+
+        x = self.take_doc_term_mat().unitize().column_sums()
+        print("Number of documents per term:")
+        print("\tmin:    ", numpy.min(x))
+        print("\tmean:   ", numpy.mean(x))
+        print("\tmedian: ", numpy.median(x))
+        print("\tmax:    ", numpy.max(x))
+        print("\tstd:    ", numpy.std(x))
 
         return self
 
