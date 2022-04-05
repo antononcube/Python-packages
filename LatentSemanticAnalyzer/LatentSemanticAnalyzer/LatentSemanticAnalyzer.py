@@ -812,12 +812,19 @@ class LatentSemanticAnalyzer:
     # Echo document term matrix statistics
     # ------------------------------------------------------------------
     def echo_document_term_matrix_statistics(self,
-                                             log_base: Union[dict, list, None] = None):
+                                             log_base: Union[float, int, None] = None):
         print("Document-term matrix:")
         print(repr(self.take_doc_term_mat()))
 
+        # Number of terms per document
         x = self.take_doc_term_mat().unitize().row_sums()
-        print("Number of terms per document:")
+
+        cor = ""
+        if isinstance(log_base, (int, float)) and log_base > 0:
+            x = [math.log(y, log_base) for y in x]
+            cor = " (log " + str(log_base) + ")"
+
+        print("Number of terms per document" + cor + ":")
         print("\tmin:    ", numpy.min(x))
         print("\tmean:   ", numpy.mean(x))
         print("\tmedian: ", numpy.median(x))
@@ -825,7 +832,11 @@ class LatentSemanticAnalyzer:
         print("\tstd:    ", numpy.std(x))
 
         x = self.take_doc_term_mat().unitize().column_sums()
-        print("Number of documents per term:")
+
+        if isinstance(log_base, (int, float)) and log_base > 0:
+            x = [math.log(y, log_base) for y in x]
+
+        print("Number of documents per term" + cor + ":")
         print("\tmin:    ", numpy.min(x))
         print("\tmean:   ", numpy.mean(x))
         print("\tmedian: ", numpy.median(x))
