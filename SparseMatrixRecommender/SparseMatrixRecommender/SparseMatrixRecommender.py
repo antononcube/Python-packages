@@ -638,7 +638,7 @@ class SparseMatrixRecommender:
 
         # Left join recommendations with the given data frame
         # Using .join does not work because .join uses indexes.
-        # Hence using merge.
+        # Hence, using merge.
         self.set_value(dfRecs.merge(data, on=mon, how="left"))
 
         return self
@@ -875,6 +875,132 @@ class SparseMatrixRecommender:
 
         # Create recommender
         return SparseMatrixRecommender().create_from_matrices(matrices=smats)
+
+    # ------------------------------------------------------------------
+    # SMR join
+    # ------------------------------------------------------------------
+    def join(self, smr2, join_type, **kwargs):
+
+        allRowNames = self.take_M().row_names()
+        if join_type != "same":
+
+            if join_type in set(["outer", "union"]):
+
+                allRowNames = list(set.union(set(self.take_M().row_names()),
+                                             set(smr2.take_M().row_names())))
+
+            elif join_type == "inner":
+
+                allRowNames = list(set.intersection(set(self.take_M().row_names()),
+                                                    set(smr2.take_M().row_names())))
+
+            elif join_type == "left":
+
+                allRowNames = self.take_M().row_names()
+
+            else:
+                ValueError("The second argument is expected to be one of \"same\", \"outer\", \"inner\", \"left\".")
+
+        aSMats1 = self.take_matrices()
+        aSMats2 = smr2.take_matrices()
+
+        commonTags = set.intersection(set(aSMats1.keys()), set(aSMats2.keys()))
+        if len(commonTags) > 0:
+            warnings.warn(
+                "The tag types " + str(commonTags) + " are also in the SMR argument, hence will be dropped.")
+
+        if join_type != "same":
+            aSMats1 = {k: v.impose_row_names(allRowNames) for (k, v) in aSMats1.items()}
+            aSMats2 = {k: v.impose_row_names(allRowNames) for (k, v) in aSMats2.items()}
+
+        # Not using this nice way, since it is "only" for >=3.9
+        # matrices = aSMats1 | aSMats2
+        matrices = {**aSMats1, **aSMats2}
+
+        return SparseMatrixRecommender(matrices)
+
+    # ------------------------------------------------------------------
+    # Annex matrices
+    # ------------------------------------------------------------------
+
+    def annex_sub_matrices(self, mats):
+        """Enhance recommender matrix with nearest neighbors sub-matrix.
+
+        :tupe mats: dict
+        :param mats: A dictionary of matrices to be annexed.
+
+        :rtype: SparseMatrixRecommender
+        :return A sparse matrix recommender
+        """
+
+        if not is_smat_dict(mats):
+            ValueError("The second argument, mats, is expected to be a dictionary of SSparseMatrix.")
+
+        smr2 = SparseMatrixRecommender(mats)
+        return self.join(smr2=smr2)
+
+    # ------------------------------------------------------------------
+    # To metadata recommender
+    # ------------------------------------------------------------------
+    def enhance_with_nearest_neighbors(self,
+                                       tag_types=None,
+                                       number_of_nearest_neighbors=20,
+                                       nearest_neighbors_tag_type="neighbor",
+                                       batch_size=None):
+        """Enhance recommender matrix with nearest neighbors sub-matrix.
+
+        :tupe tag_types: str|list|None
+        :param tag_types: Tag types to use make compute the similarities.
+
+        :type number_of_nearest_neighbors: Int
+        :param number_of_nearest_neighbors: Number of nearest neighbors per item.
+
+        :type nearest_neighbors_tag_type: str
+        :param nearest_neighbors_tag_type: Tag type of the nearest neighbor sub-matrix.
+
+        :type batch_size: int|None
+        :param batch_size: Number of nearest neighbors per item.
+
+        :rtype: SparseMatrixRecommender
+        :return A sparse matrix recommender
+        """
+
+        tagTypes = tag_types
+        # Filter tag types
+        if isinstance(tag_types, str):
+            tagTypes = [tagTypes, ]
+
+        if tag_types is None:
+            tagTypes = list(self.take_matrices().keys())
+
+        if is_str_list(tagTypes):
+            ValueError("The argument tag_types is expected to be a string, a list of string, or None.")
+
+        removeTagTypes = set.difference(set(self.take_matrices().keys()), set(tagTypes))
+
+        if len(removeTagTypes) > 0:
+            smrRes = self.remove_tag_types(tag_types=removeTagTypes)
+        else:
+            smrRes = self
+
+        # Similarities computations
+        for itemID in self.take_M().row_names():
+            dfResNNs = (smrRes
+                        .recommend(history=itemID,
+                                   nrecs=number_of_nearest_neighbors,
+                                   remove_history=False,
+                                   normalize=True)
+                        .take_value())
+
+            dfNNs = dfNNs.concat(dfResNNs)
+
+        # Annex sub-matrix
+        smatNNs = cross_tabulate(dfNNs)
+
+        smrRes = self.annex_sub_matrices(mats={nearest_neighbors_tag_type: smatNNs})
+
+        # Result
+        return smrRes
 
     # ------------------------------------------------------------------
     # To dictionary form
