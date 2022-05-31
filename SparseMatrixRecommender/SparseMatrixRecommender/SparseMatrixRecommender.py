@@ -424,7 +424,8 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Recommend by profile
     # ------------------------------------------------------------------
-    def recommend_by_profile(self, profile, nrecs=10, normalize=True, ignore_unknown=False, vector_result: bool = False):
+    def recommend_by_profile(self, profile, nrecs=10, normalize=True, ignore_unknown=False,
+                             vector_result: bool = False):
         """Recommend by profile.
 
         :type profile: str|list|dict
@@ -641,6 +642,52 @@ class SparseMatrixRecommender:
         self.set_value(dfRecs.merge(data, on=mon, how="left"))
 
         return self
+
+    # ------------------------------------------------------------------
+    # Remove tag types
+    # ------------------------------------------------------------------
+    def remove_tag_types(self,
+                         tag_types,
+                         warn: bool = True):
+        """Remove tag types.
+
+        :type tag_types: str|list
+        :param tag_types: A list of tag types to be removed from the SMR object.
+
+        :type warn: bool
+        :param warn: Should warning messages be issued or not?
+
+        :rtype SparseMatrixRecommender
+        :return self: The object itself or None.
+        """
+
+        # There are several ways to do this:
+        # 1. Work with newSMR$TagTypeRanges, take the indices corresponding to tag types not to be removed.
+        # 2. Construct a metadata matrix by taking sub-matrices of the tag types not to be removed.
+
+        removeTagTypes = tag_types
+
+        # Process tag_types
+        if isinstance(removeTagTypes, str):
+            removeTagTypes = [removeTagTypes, ]
+
+        if not is_str_list(removeTagTypes):
+            raise ValueError("The argument tag_types is expected to be a string or a list of strings.")
+
+        tagTypes = list(self.take_matrices().keys())
+        tagTypesKnown = list(set.intersection(set(tagTypes), set(removeTagTypes)))
+
+        if len(tagTypesKnown) == 0:
+            raise ValueError("None of the specified tag types is a known tag type in the recommender object.")
+
+        if len(tagTypesKnown) < len(tagTypes):
+            warnings.warn("Some tags are not known in the recommender.")
+
+        tagTypes = set.difference(set(tagTypes), set(removeTagTypes))
+
+        res = SparseMatrixRecommender({t: self.take_matrices()[t] for t in tagTypes})
+
+        return res
 
     # ------------------------------------------------------------------
     # Classify by profile
