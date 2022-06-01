@@ -60,3 +60,21 @@ def load_mushroom_data_frame():
         dfData["id"] = ["id." + str(x) for x in dfData["id"]]
     return dfData
 
+
+# ===========================================================
+# Load financial data
+# ===========================================================
+def load_mint_bubbles_transactions_data_frame():
+    """Return a dataframe with mint bubbles transactions.
+
+    Mint bubbles transactions
+    -------------------------
+    This data set consists of some person's banking financial transactions.
+    :format: A data frame with 384 rows and 6 columns.
+    """
+    # This is a stream-like object. If you want the actual info, call
+    # stream.read()
+    with pkg_resources.resource_stream(__name__, 'resources/dfMintBubblesTransactions.csv') as stream:
+        dfData = pandas.read_csv(stream, encoding='latin-1')
+        dfData["id"] = ["id." + str(x) for x in range(0, dfData.shape[0])]
+    return dfData
