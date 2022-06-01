@@ -923,7 +923,6 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # Annex matrices
     # ------------------------------------------------------------------
-
     def annex_sub_matrices(self, mats):
         """Enhance recommender matrix with nearest neighbors sub-matrix.
 
@@ -985,18 +984,25 @@ class SparseMatrixRecommender:
             smrRes = self
 
         # Similarities computations
-        for itemID in self.take_M().row_names():
-            dfResNNs = (smrRes
-                        .recommend(history=itemID,
-                                   nrecs=number_of_nearest_neighbors,
-                                   remove_history=False,
-                                   normalize=True)
-                        .take_value())
+        # This implementation is far from optimal.
+        dfNNs = None
+        for itemID in smrRes.take_M().row_names():
 
-            dfNNs = dfNNs.concat(dfResNNs)
+            aRecs = smrRes.recommend(history=itemID,
+                                     nrecs=number_of_nearest_neighbors,
+                                     remove_history=False,
+                                     normalize=True).take_value()
+
+            dfRecs = pandas.DataFrame(
+                {"SearchID": itemID, "NearestNeighborID": list(aRecs.keys()), "Score": list(aRecs.values())})
+
+            if dfNNs is None:
+                dfNNs = dfRecs
+            else:
+                dfNNs = pandas.concat([dfNNs, dfRecs], ignore_index=True)
 
         # Annex sub-matrix
-        smatNNs = cross_tabulate(dfNNs)
+        smatNNs = cross_tabulate(dfNNs,"SearchID", "NearestNeighborID", "Score")
 
         smrRes = self.annex_sub_matrices(mats={nearest_neighbors_tag_type: smatNNs})
 
