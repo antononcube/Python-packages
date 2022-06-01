@@ -899,7 +899,8 @@ class SparseMatrixRecommender:
                 allRowNames = self.take_M().row_names()
 
             else:
-                ValueError("The second argument is expected to be one of \"same\", \"outer\", \"inner\", \"left\".")
+                raise ValueError(
+                    "The second argument is expected to be one of \"same\", \"outer\", \"inner\", \"left\".")
 
         aSMats1 = self.take_matrices()
         aSMats2 = smr2.take_matrices()
@@ -934,7 +935,7 @@ class SparseMatrixRecommender:
         """
 
         if not is_smat_dict(mats):
-            ValueError("The second argument, mats, is expected to be a dictionary of SSparseMatrix.")
+            raise ValueError("The second argument, mats, is expected to be a dictionary of SSparseMatrix.")
 
         smr2 = SparseMatrixRecommender(mats)
         return self.join(smr2=smr2)
@@ -974,7 +975,7 @@ class SparseMatrixRecommender:
             tagTypes = list(self.take_matrices().keys())
 
         if is_str_list(tagTypes):
-            ValueError("The argument tag_types is expected to be a string, a list of string, or None.")
+            raise ValueError("The argument tag_types is expected to be a string, a list of string, or None.")
 
         removeTagTypes = set.difference(set(self.take_matrices().keys()), set(tagTypes))
 
