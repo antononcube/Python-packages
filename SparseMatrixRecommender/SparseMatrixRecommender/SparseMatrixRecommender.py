@@ -879,7 +879,7 @@ class SparseMatrixRecommender:
     # ------------------------------------------------------------------
     # SMR join
     # ------------------------------------------------------------------
-    def join(self, smr2, join_type, **kwargs):
+    def join(self, smr2, join_type="left", **kwargs):
 
         allRowNames = self.take_M().row_names()
         if join_type != "same":
@@ -973,7 +973,7 @@ class SparseMatrixRecommender:
         if tag_types is None:
             tagTypes = list(self.take_matrices().keys())
 
-        if is_str_list(tagTypes):
+        if not is_str_list(tagTypes):
             raise ValueError("The argument tag_types is expected to be a string, a list of string, or None.")
 
         removeTagTypes = set.difference(set(self.take_matrices().keys()), set(tagTypes))
@@ -1002,7 +1002,7 @@ class SparseMatrixRecommender:
                 dfNNs = pandas.concat([dfNNs, dfRecs], ignore_index=True)
 
         # Annex sub-matrix
-        smatNNs = cross_tabulate(dfNNs,"SearchID", "NearestNeighborID", "Score")
+        smatNNs = cross_tabulate(dfNNs, "SearchID", "NearestNeighborID", "Score")
 
         smrRes = self.annex_sub_matrices(mats={nearest_neighbors_tag_type: smatNNs})
 
