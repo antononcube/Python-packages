@@ -128,11 +128,11 @@ class SMRRepresentation(unittest.TestCase):
                                            set(smrObj4.take_matrices().keys()))) == 1)
 
         # The rows names are the same as the IDs in the ID column of dfMintPart1[["id"]]
-        commonIDs = set(self.dfMintPart1["id"].to_dict().values())
-        self.assertTrue(smrObj4.take_M().rows_count() == len(commonIDs))
+        firstSMRIDs = set(self.dfMintPart1["id"].to_dict().values())
+        self.assertTrue(smrObj4.take_M().rows_count() == len(firstSMRIDs))
         self.assertTrue(len(set.difference(set(smrObj4.take_M().row_names()),
-                                           commonIDs)) == 0)
-        self.assertTrue(len(set.difference(commonIDs,
+                                           firstSMRIDs)) == 0)
+        self.assertTrue(len(set.difference(firstSMRIDs,
                                            set(smrObj4.take_M().row_names()))) == 0)
 
 
