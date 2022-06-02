@@ -940,6 +940,13 @@ class SparseMatrixRecommender:
         return self.join(smr2=smr2)
 
     # ------------------------------------------------------------------
+    # Annex matrix
+    # ------------------------------------------------------------------
+    # I consider the definition of this function to be redundant.
+    # def annex_sub_matrix(self, new_tag_type, new_mat):
+    #    return self.annex_sub_matrices({new_tag_type: new_mat})
+
+    # ------------------------------------------------------------------
     # To metadata recommender
     # ------------------------------------------------------------------
     def enhance_with_nearest_neighbors(self,
