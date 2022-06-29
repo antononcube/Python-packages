@@ -188,5 +188,30 @@ def roc_functions(*args):
 # To ROC hash
 # ------------------------------------------------------------
 
-def to_roc_dict(*args):
-    pass
+def to_roc_dict(true_label: str,
+                false_label: str,
+                actual: list,
+                predicted: list,
+                sep: str = "-"):
+    if not (isinstance(actual, list) and isinstance(predicted, list) and
+            len(actual) == len(predicted)):
+        raise TypeError("The second and third arguments are expected to be lists with the same number of elements.")
+
+    # Empty ROC dict
+    emptyROC = {}
+    for x in [true_label, false_label]:
+        for y in [true_label, false_label]:
+            emptyROC[x + sep + y] = 0
+
+    # Derive TruePositive, FalsePositive, TrueNegative, and FalseNegative
+    res = emptyROC
+    for i in range(len(actual)):
+        res[actual[i] + sep + predicted[i]] += 1
+
+    res = {
+        "TruePositive": res[true_label + sep + true_label],
+        "FalsePositive": res[false_label + sep + true_label],
+        "TrueNegative": res[false_label + sep + false_label],
+        "FalseNegative": res[true_label + sep + false_label]}
+
+    return res
