@@ -77,7 +77,7 @@ def FNR(obj):
 
 def ACC(obj):
     if isinstance(obj, dict):
-        return (obj["TruePositive"]) + (obj["TrueNegative"]) / sum(list(obj.values()))
+        return (obj["TruePositive"] + obj["TrueNegative"]) / sum(list(obj.values()))
     return _roc_map(ACC, obj)
 
 
