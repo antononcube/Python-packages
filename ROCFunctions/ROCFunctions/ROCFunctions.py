@@ -94,7 +94,21 @@ def F1(obj):
 
 
 def AUROC(obj):
-    pass
+    if not is_roc_dict_list(obj):
+        raise TypeError("The first argument is expected to be a list of ROC dictionaries.")
+
+    fprs = FPR(obj)
+    fprs.append(1)
+    fprs.insert(0, 0)
+    tprs = TPR(obj)
+    tprs.append(1)
+    tprs.insert(0, 0)
+
+    my_sum = 0
+    for i in range(len(fprs) - 1):
+        my_sum += (fprs[i + 1] - fprs[i]) * (tprs[i] + (tprs[i + 1] - tprs[i]) / 2)
+
+    return my_sum
 
 
 def MCC(obj):
