@@ -40,7 +40,6 @@ rocs = [{'TruePositive': 61, 'FalsePositive': 14, 'TrueNegative': 108, 'FalseNeg
         {'TruePositive': 190, 'FalsePositive': 110, 'TrueNegative': 12, 'FalseNegative': 2},
         {'TruePositive': 191, 'FalsePositive': 115, 'TrueNegative': 7, 'FalseNegative': 1}]
 
-
 print("-" * 120)
 print("AUROC:")
 print("Using " + str(len(rocs)) + " ROC dictionaries")
@@ -56,3 +55,15 @@ rocRes = [{f: roc_functions(f)(x) for f in funcs} for x in rocs]
 dfROCs = pandas.DataFrame(rocRes)
 
 print(dfROCs)
+
+print("-" * 120)
+print("Make ROC record from lists of actual and predicted labels:")
+
+rocs2 = to_roc_dict(
+    true_label='True',
+    false_label='False',
+    actual=["True", "True", "False"],
+    predicted=["False", "True", "False"],
+    sep='@@')
+
+print(rocs2)
