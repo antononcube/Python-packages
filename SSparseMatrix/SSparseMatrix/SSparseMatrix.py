@@ -206,7 +206,7 @@ class SSparseMatrix:
     # Setters
     # ------------------------------------------------------------------
     def set_sparse_matrix(self, arg, as_is=False):
-        """Set sparse matrix names. (In place operation.)"""
+        """Set sparse matrix object. (In place operation.)"""
         if scipy.sparse.issparse(arg):
             if as_is:
                 self._sparseMatrix = arg
