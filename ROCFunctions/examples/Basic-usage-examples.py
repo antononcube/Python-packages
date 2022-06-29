@@ -40,6 +40,15 @@ rocs = [{'TruePositive': 61, 'FalsePositive': 14, 'TrueNegative': 108, 'FalseNeg
         {'TruePositive': 190, 'FalsePositive': 110, 'TrueNegative': 12, 'FalseNegative': 2},
         {'TruePositive': 191, 'FalsePositive': 115, 'TrueNegative': 7, 'FalseNegative': 1}]
 
+
+print("-" * 120)
+print("AUROC:")
+print("Using " + str(len(rocs)) + " ROC dictionaries")
+print(roc_functions("AUROC")(rocs))
+
+print("-" * 120)
+print("Apply a list of ROC functions:")
+
 funcs = ["PPV", "NPV", "TPR", "ACC", "SPC", "MCC"]
 
 rocRes = [{f: roc_functions(f)(x) for f in funcs} for x in rocs]
