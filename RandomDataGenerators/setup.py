@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="RandomDataGenerators",
-    version="0.2.8",
+    version="0.2.9",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Generator of random data frames.",
