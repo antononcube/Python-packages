@@ -142,9 +142,13 @@ def random_data_frame(n_rows=None,
     elif _is_func_or_list_dict(generators):
 
         common_keys = set(aDefaultGenerators) & set(generators)
-        aGenerators = aDefaultGenerators | {
-            x: generators[x] if callable(generators[x]) else _make_selector_func(generators[x])
-            for x in common_keys}
+        # This is version 3.9+ only:
+        # aGenerators = aDefaultGenerators | {
+        #     x: generators[x] if callable(generators[x]) else _make_selector_func(generators[x])
+        #     for x in common_keys}
+        aGenerators = {**aDefaultGenerators,
+                       **{x: generators[x] if callable(generators[x]) else _make_selector_func(generators[x]) for x in
+                          common_keys}}
 
     elif callable(generators):
 
