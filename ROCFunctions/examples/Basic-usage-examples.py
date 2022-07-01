@@ -5,6 +5,11 @@ print(roc_functions('properties'))
 print(roc_functions('functions'))
 print(roc_functions('FPR'))
 
+print("-" * 120)
+print("Retrieve a list of ROC functions:")
+
+print(roc_functions(["TPR", "FPR", "PPV"]))
+
 # -----------------------------------------------
 rocs = [{'TruePositive': 61, 'FalsePositive': 14, 'TrueNegative': 108, 'FalseNegative': 131},
         {'TruePositive': 77, 'FalsePositive': 22, 'TrueNegative': 100, 'FalseNegative': 115},
