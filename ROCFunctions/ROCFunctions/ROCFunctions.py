@@ -182,6 +182,8 @@ def roc_functions(*args):
             return list(_ROC_Functions.values())
         else:
             raise TypeError("Do not know how to process the argument.")
+    elif isinstance(args[0], list) and all([isinstance(x, str) for x in args[0]]):
+        return [roc_functions(x) for x in args[0]]
     else:
         raise TypeError("Do not know how to process the argument.")
 
