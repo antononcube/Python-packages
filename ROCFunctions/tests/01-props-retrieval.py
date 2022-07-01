@@ -19,6 +19,9 @@ class PropsRetrieval(unittest.TestCase):
     def test_no_args(self):
         self.assertEqual(roc_functions(), roc_functions('Functions'))
 
+    def test_list_arg(self):
+        self.assertTrue(isinstance(roc_functions(["TPR", "FPR", "PPV"]), list))
+
 
 if __name__ == '__main__':
     unittest.main()
