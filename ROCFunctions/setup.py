@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ROCFunctions",
-    version="0.1.0",
+    version="0.1.1",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Receiver Operating Characteristic (ROC) functions package.",
