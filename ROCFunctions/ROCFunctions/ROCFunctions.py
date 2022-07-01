@@ -180,6 +180,8 @@ def roc_functions(*args):
             return _ROC_Functions
         elif args[0].lower() == "Functions".lower():
             return list(_ROC_Functions.values())
+        else:
+            raise TypeError("Do not know how to process the argument.")
     else:
         raise TypeError("Do not know how to process the argument.")
 
