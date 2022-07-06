@@ -28,67 +28,67 @@ def _roc_map(func, obj):
 
 
 def TPR(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["TruePositive"]) / (obj["TruePositive"] + obj["FalseNegative"])
     return _roc_map(TPR, obj)
 
 
 def SPC(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["TrueNegative"]) / (obj["FalsePositive"] + obj["TrueNegative"])
     return _roc_map(SPC, obj)
 
 
 def TNR(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return SPC(obj)
     return _roc_map(SPC, obj)
 
 
 def PPV(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["TruePositive"]) / (obj["TruePositive"] + obj["FalsePositive"])
     return _roc_map(PPV, obj)
 
 
 def NPV(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["TrueNegative"]) / (obj["TrueNegative"] + obj["FalseNegative"])
     return _roc_map(NPV, obj)
 
 
 def FPR(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["FalsePositive"]) / (obj["FalsePositive"] + obj["TrueNegative"])
     return _roc_map(FPR, obj)
 
 
 def FDR(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["FalsePositive"]) / (obj["FalsePositive"] + obj["TruePositive"])
     return _roc_map(FDR, obj)
 
 
 def FNR(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["FalseNegative"]) / (obj["FalseNegative"] + obj["TruePositive"])
     return _roc_map(FNR, obj)
 
 
 def ACC(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return (obj["TruePositive"] + obj["TrueNegative"]) / sum(list(obj.values()))
     return _roc_map(ACC, obj)
 
 
 def FOR(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return 1 - NPV(obj)
     return _roc_map(FOR, obj)
 
 
 def F1(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         return 2 * PPV(obj) * TPR(obj) / (PPV(obj) + TPR(obj))
     return _roc_map(F1, obj)
 
@@ -112,7 +112,7 @@ def AUROC(obj):
 
 
 def MCC(obj):
-    if isinstance(obj, dict):
+    if is_roc_dict(obj):
         tp = TPR(obj)
         tn = TNR(obj)
         fp = FPR(obj)
