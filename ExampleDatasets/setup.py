@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ExampleDatasets",
-    version="0.1.0",
+    version="0.1.1",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Example datasets from statistics packages.",
@@ -24,6 +24,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     keywords=["data frame", "dataset", "example", "example dataset", "Rdatasets"],
-    package_data={'': ['resources/*.csv', 'resources/*.csv.gz']},
+    package_data={'': ['resources/*.csv.gz']},
     python_requires='>=3.7',
 )
