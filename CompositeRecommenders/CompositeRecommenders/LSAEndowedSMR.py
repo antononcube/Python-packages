@@ -38,6 +38,7 @@ class LSAEndowedSMR:
     _smrObj: SparseMatrixRecommender = None
     _lsaObj: LatentSemanticAnalyzer = None
     _profileNormalizer: str = "max-norm"
+    _value = None
 
     # ------------------------------------------------------------------
     # Init
@@ -46,11 +47,12 @@ class LSAEndowedSMR:
         """Creation of a LSAEndowedSMR object.
            Two arguments are expected of arguments are given: SMR object and LSA object.
         """
+        self.set_profileNormalizer("max_norm")
         if len(args) == 2 and \
                 isinstance(args[0], SparseMatrixRecommender) and \
                 isinstance(args[1], LatentSemanticAnalyzer):
-            _smrObj = args[0]
-            _lsaObj = args[1]
+            self.set_SMR(args[0])
+            self.set_LSA(args[1])
 
     # ------------------------------------------------------------------
     # Getters
@@ -63,6 +65,14 @@ class LSAEndowedSMR:
         """Take the LatentSemanticAnalyzer object."""
         return self._lsaObj
 
+    def take_value(self):
+        """Take the pipeline value."""
+        return self._value
+
+    def take_profileNormilizer(self):
+        """Take the pipeline value."""
+        return self._profileNormalizer
+
     # ------------------------------------------------------------------
     # Echoers
     # ------------------------------------------------------------------
@@ -74,6 +84,16 @@ class LSAEndowedSMR:
     def echo_LSA(self):
         """Echo the LatentSemanticAnalyzer object."""
         print(self._LSA)
+        return self
+
+    def echo_value(self):
+        """Echo the pipeline value."""
+        print(self._value)
+        return self
+
+    def echo_profileNormilizer(self):
+        """Echo the profile normalzier."""
+        print(self._profileNormalizer)
         return self
 
     # ------------------------------------------------------------------
@@ -91,16 +111,29 @@ class LSAEndowedSMR:
     def set_LSA(self, arg):
         """Set LatentSemanticAnalyzer object."""
         if isinstance(arg, LatentSemanticAnalyzer):
-            self._smrLSA = arg
+            self._lsaObj = arg
         else:
             raise TypeError("The first argument is expected to be a LatentSemanticAnalyzer object.")
 
         return self
 
+    def set_value(self, arg):
+        """Set pipeline value."""
+        self._value = arg
+        return self
+
+    def set_profileNormalizer(self, arg):
+        """Set profile normalizer."""
+        self._profileNormalizer = arg
+        return self
+
     # ------------------------------------------------------------------
     # Recommend by profile
     # ------------------------------------------------------------------
-    def recommend_by_profile(self, profile, nrecs=10, normalize=True, ignore_unknown=False,
+    def recommend_by_profile(self, profile,
+                             nrecs: int = 10,
+                             normalize: bool = True,
+                             ignore_unknown: bool = False,
                              vector_result: bool = False):
         """Recommend by profile.
 
@@ -137,8 +170,12 @@ class LSAEndowedSMR:
     # ------------------------------------------------------------------
     # Recommend by profile and text
     # ------------------------------------------------------------------
-    def recommend_by_profile_and_text(self, profile, text,
-                                      nrecs=10, normalize=True, ignore_unknown=False,
+    def recommend_by_profile_and_text(self,
+                                      profile,
+                                      text,
+                                      nrecs=10,
+                                      normalize=True,
+                                      ignore_unknown=False,
                                       vector_result: bool = False):
         """Recommend by profile.
 
@@ -173,14 +210,20 @@ class LSAEndowedSMR:
         if not (isinstance(profile, (list, dict)) and len(profile) > 0 or len(text) > 0):
             raise ValueError("Empty profile and text.")
 
+        if isinstance(profile, (list, dict)) and len(profile) == 0:
+            profileLocal = {}
+        else:
+            profileLocal = self.take_SMR().to_profile_vector(profile, ignore_unknown=True)
+
         # Make a profile corresponding to the text.
         textProf = {}
         if len(text) > 0:
             # Represent by terms
-            textWordsProf = self._smrLSA.represent_by_terms(text)
+            print(self._lsaObj.take_doc_term_mat().column_names())
+            textWordsProf = self._lsaObj.represent_by_terms(text).take_value().column_sums_dict()
 
             # Represent by topics
-            textTopicsProf = self._smrLSA.represent_by_topics(text)
+            textTopicsProf = self._lsaObj.represent_by_topics(text).take_value().column_sums_dict()
 
             # Appropriate verifications have to be made for concatenating with 'Word:' and 'Topic:'.
             textWordsProf = {"Word:" + k: v for (k, v) in textWordsProf.items()}
@@ -194,8 +237,10 @@ class LSAEndowedSMR:
             textProf = textTopicsProf | textWordsProf
 
         # Make the combined profile.
-        profCombined = profile | textProf
+        profCombined = profileLocal | textProf
         profCombined = _normalize(profCombined, self._profileNormalizer)
+
+        print("profCombined: " + str(profCombined))
 
         # Get recommendations
         self._smrObj.recommend_by_profile(profile=profCombined,
@@ -203,3 +248,7 @@ class LSAEndowedSMR:
                                           normalize=normalize,
                                           ignore_unknown=ignore_unknown,
                                           vector_result=vector_result)
+
+        self.set_value(self._smrObj.take_value())
+
+        return self
