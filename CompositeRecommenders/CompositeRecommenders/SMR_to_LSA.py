@@ -13,7 +13,7 @@ def SMR_to_LSA(smr: SparseMatrixRecommender,
                min_number_of_documents_per_term: int = 12):
     dfSMat = pandas.DataFrame(columns=["Item", "Tag", "Value"], data=smr.take_M().triplets())
 
-    dfTexts = dfSMat.groupby(["Tag"], as_index=False).agg({"Tag": ' '.join})
+    dfTexts = dfSMat.groupby(["Item"], as_index=False).agg({"Tag": ' '.join})
 
     aDocs = dict(zip(dfTexts["Item"], dfTexts["Tag"]))
 
