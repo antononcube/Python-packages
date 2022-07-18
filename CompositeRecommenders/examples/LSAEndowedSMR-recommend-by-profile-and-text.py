@@ -5,11 +5,11 @@ from CompositeRecommenders.LSAEndowedSMR import LSAEndowedSMR
 from CompositeRecommenders.SMR_to_LSA import SMR_to_LSA
 
 # -----------------------------------------------------------
-# dfMushroom = load_mushroom_data_frame()
-dfTitanic = load_titanic_data_frame()
+dfMushroom = load_mushroom_data_frame()
+#dfTitanic = load_titanic_data_frame()
 
 smrObj = (SparseMatrixRecommender()
-          .create_from_wide_form(data=dfTitanic,
+          .create_from_wide_form(data=dfMushroom,
                                  columns=None,
                                  item_column_name="id",
                                  add_tag_types_to_column_names=True,
@@ -20,8 +20,8 @@ smrObj = (SparseMatrixRecommender()
 
 print(smrObj.take_M().column_names())
 
-# profile1 = ["cap-Color:gray", "odor:foul", "not-in-tag"]
-profile1 = ["passengerSex:female", "passengerClass:1st"]
+profile1 = ["cap-Color:gray", "odor:foul", "not-in-tag"]
+#profile1 = ["passengerSex:female", "passengerClass:1st"]
 
 recs1 = (smrObj
          .recommend_by_profile(profile=profile1, normalize=False, ignore_unknown=True)
@@ -36,6 +36,7 @@ lsaObj = SMR_to_LSA(smr=smrObj, number_of_topics=3)
 print(lsaObj.echo_topics_interpretation(wide_form=True))
 
 # -----------------------------------------------------------
+print("=" * 120)
 
 smatWords = lsaObj.take_doc_term_mat().copy()
 smatWords = smatWords.set_column_names(["Word:" + c for c in smatWords.column_names()], )
@@ -47,9 +48,17 @@ smrObj = smrObj.annex_sub_matrices(mats={"Word": smatWords, "Topic": smatTopics}
 smrObj = smrObj.apply_term_weight_functions("None", "None", "Cosine")
 smrEndowed = LSAEndowedSMR(smrObj, lsaObj)
 
-recs2 = smrEndowed.recommend_by_profile_and_text([], "male 3rd survived", ignore_unknown=True).take_value()
+recs2 = smrEndowed.recommend_by_profile_and_text([], "foul flat broad gray", ignore_unknown=True).take_value()
+#recs2 = smrEndowed.recommend_by_profile_and_text([], "male 3rd survived", ignore_unknown=True).take_value()
 
+print("recommendations:")
 print(recs2)
+
+dfRecs2 = smrEndowed.take_SMR().join_across(dfMushroom).take_value()
+
+print("recommendations data frame:")
+print(dfRecs2.to_string())
+
 
 # -----------------------------------------------------------
 #
