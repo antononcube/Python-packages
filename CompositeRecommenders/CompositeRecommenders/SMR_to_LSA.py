@@ -9,6 +9,9 @@ def SMR_to_LSA(smr: SparseMatrixRecommender,
                stop_words: Union[bool, list, tuple, None] = [],
                stemming_rules: Union[bool, dict, None] = None,
                words_pattern: str = r"[\w']+|[.,!?;]",
+               global_weight_func="IDF",
+               local_weight_func="None",
+               normalizer_func="Cosine",
                number_of_topics: int = 12,
                min_number_of_documents_per_term: int = 12):
     dfSMat = pandas.DataFrame(columns=["Item", "Tag", "Value"], data=smr.take_M().triplets())
@@ -22,9 +25,9 @@ def SMR_to_LSA(smr: SparseMatrixRecommender,
                                          stop_words=stop_words,
                                          stemming_rules=stemming_rules,
                                          words_pattern=words_pattern)
-              .apply_term_weight_functions(global_weight_func="IDF",
-                                           local_weight_func="None",
-                                           normalizer_func="Cosine"))
+              .apply_term_weight_functions(global_weight_func=global_weight_func,
+                                           local_weight_func=local_weight_func,
+                                           normalizer_func=normalizer_func))
 
     if number_of_topics >= 0:
         lsaObj = (lsaObj
