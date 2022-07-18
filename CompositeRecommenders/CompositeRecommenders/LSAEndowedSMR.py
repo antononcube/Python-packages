@@ -219,7 +219,6 @@ class LSAEndowedSMR:
         textProf = {}
         if len(text) > 0:
             # Represent by terms
-            print(self._lsaObj.take_doc_term_mat().column_names())
             textWordsProf = self._lsaObj.represent_by_terms(text).take_value().column_sums_dict()
 
             # Represent by topics
@@ -239,8 +238,6 @@ class LSAEndowedSMR:
         # Make the combined profile.
         profCombined = profileLocal | textProf
         profCombined = _normalize(profCombined, self._profileNormalizer)
-
-        print("profCombined: " + str(profCombined))
 
         # Get recommendations
         self._smrObj.recommend_by_profile(profile=profCombined,
