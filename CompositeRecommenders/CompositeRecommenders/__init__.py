@@ -1,0 +1,4 @@
+"""CompositeRecommenders package"""
+from CompositeRecommenders.CompositeRecommenders import LSAEndowedSMR
+from CompositeRecommenders.CompositeRecommenders import LSAEndowedSMR
+from CompositeRecommenders.CompositeRecommenders import CompositeRecommender
