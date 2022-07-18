@@ -252,3 +252,77 @@ class LSAEndowedSMR:
         self.set_value(self._smrObj.take_value())
 
         return self
+
+    # ------------------------------------------------------------------
+    # To dictionary form
+    # ------------------------------------------------------------------
+    def to_dict(self):
+        """Convert to dictionary form.
+
+        Returns dictionary representation of the LSAEndowedSMR object with keys:
+        ['SMR', 'LSA', 'profileNormalizer']
+
+        (Ideally) this function facilitates rapid conversion and serialization.
+        """
+
+        res = {"SMR": self.take_SMR().to_dict(),
+               "LSA": self.take_LSA().to_dict(),
+               "profileNormalizer": self.take_profileNormilizer()}
+        return res
+
+    # ------------------------------------------------------------------
+    # From dictionary form
+    # ------------------------------------------------------------------
+
+    def from_dict(self, arg):
+        """Convert from dictionary form.
+
+        Creates a LatentSemanticAnalyzer object from a dictionary representation with keys:
+        ['matrices', 'W', 'H', 'stemmingRules', 'stopWords', ...].
+
+        The value of the keys 'matrices' is expected to be a dictionary of dictionaries.
+
+        (Ideally) this function facilitates rapid conversion and serialization.
+        """
+        if not (isinstance(arg, dict) and
+                all([x in arg for x in ["SMR", "LSA", "profileNormalizer"]])):
+            raise TypeError("""The first argument is expected to be a dictionary with keys:
+            'SMR', 'LSA', 'profileNormalizer'.""")
+
+        self.set_SMR(arg["SMR"])
+        self.set_LSA(arg["LSA"])
+        self.set_profileNormalizer(arg["profileNormalizer"])
+        return self
+
+    # ------------------------------------------------------------------
+    # Representation
+    # ------------------------------------------------------------------
+    def __str__(self):
+        """String for LSAEndowedSMR object."""
+        res = ""
+        if isinstance(self.take_SMR(), SparseMatrixRecommender):
+            res = "SMR:\n\t" + str(self.take_SMR())
+        else:
+            res = "SMR: None"
+
+        if isinstance(self.take_LSA(), LatentSemanticAnalyzer):
+            res = res + "\nLSA:\n\t" + str(self.take_LSA())
+        else:
+            res = res + "\nLSA: None"
+
+        return res
+
+    def __repr__(self):
+        """Representation of LSAEndowedSMR object."""
+        res = ""
+        if isinstance(self.take_SMR(), SparseMatrixRecommender):
+            res = "SMR:\n\t" + repr(self.take_SMR())
+        else:
+            res = "SMR: None"
+
+        if isinstance(self.take_LSA(), LatentSemanticAnalyzer):
+            res = res + "\nLSA:\n\t" + repr(self.take_LSA())
+        else:
+            res = res + "\nLSA: None"
+
+        return res
