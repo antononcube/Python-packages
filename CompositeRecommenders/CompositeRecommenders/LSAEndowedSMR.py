@@ -19,7 +19,7 @@ def _normalize(x, norm_spec="max-norm"):
             xRes = {k: v / x_max for (k, v) in xRes.items()}
 
     elif norm_spec == "euclidean":
-        x_norm = pow(sum([y*y for y in list(x.values())]), 0.5)
+        x_norm = pow(sum([y * y for y in list(x.values())]), 0.5)
 
         xRes = x
         if x_norm > 0:
@@ -35,9 +35,9 @@ def _normalize(x, norm_spec="max-norm"):
 # Class definition
 # ======================================================================
 class LSAEndowedSMR:
-    _smrObj = None
-    _lsaObj = None
-    _profileNormalizer = "max-norm"
+    _smrObj: SparseMatrixRecommender = None
+    _lsaObj: LatentSemanticAnalyzer = None
+    _profileNormalizer: str = "max-norm"
 
     # ------------------------------------------------------------------
     # Init
@@ -46,8 +46,9 @@ class LSAEndowedSMR:
         """Creation of a LSAEndowedSMR object.
            Two arguments are expected of arguments are given: SMR object and LSA object.
         """
-        if len(args) == 2 and isinstance(args[0], SparseMatrixRecommender) and isinstance(args[1],
-                                                                                          LatentSemanticAnalyzer):
+        if len(args) == 2 and \
+                isinstance(args[0], SparseMatrixRecommender) and \
+                isinstance(args[1], LatentSemanticAnalyzer):
             _smrObj = args[0]
             _lsaObj = args[1]
 
