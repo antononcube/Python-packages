@@ -601,6 +601,141 @@ class SparseMatrixRecommender:
         return self
 
     # ------------------------------------------------------------------
+    # Filter by profile
+    # ------------------------------------------------------------------
+    def filter_by_profile(self,
+                          profile,
+                          filter_type="intersection",
+                          ignore_unknown=False):
+        """
+        Filter by profile
+        -----------------
+        The result is a vector of scored items that is assigned to \code{smrObj$Value}.
+        If filter_type is "union" each item that has at least one of the tags in profile is in the result.
+        (Essentially, that is the same as taking all non-zero score recommendations by profile.)
+        If filter_type is "intersection" each item in the result has all tags in profile.
+
+        :param profile: A profile specification used to filter with.
+        :param filter_type: The type of filtering one of "union" or "intersection".
+        :param ignore_unknown:
+        :return self: The object itself or None. The result is stored in self._value.
+        """
+
+        # Make scored tags vector
+        if isinstance(profile, str):
+            vec = self.to_profile_vector([profile], ignore_unknown=ignore_unknown).take_value()
+        elif isinstance(profile, dict) or isinstance(profile, list):
+            vec = self.to_profile_vector(profile, ignore_unknown=ignore_unknown).take_value()
+        elif is_s_sparse_matrix(profile):
+            vec = profile
+        else:
+            raise TypeError("The first argument is expected to be a list of tags or a dictionary of scored tags.")
+
+        # Unitize
+        profileVec = vec.unitize()
+
+        # Find the items corresponding to the profile and type spec
+        if isinstance(filter_type, str) and filter_type.lower() == "union":
+
+            sVec = self.recommend_by_profile(profileVec, nrecs=None).take_value()
+            sVec = sVec.keys()
+
+        elif isinstance(filter_type, str) and filter_type.lower() == "intersection":
+
+            sVec = self.take_M().unitize().dot(profileVec).row_sums_dict()
+
+            n = profileVec.column_sums()[0]
+            sVec = [k for (k, v) in sVec.items() if v >= n]
+        else:
+            raise TypeError("The argument filter_type is expected to be one of \"union\" or \"intersection\".")
+
+        # Result
+        self.set_value(sVec)
+        return self
+
+    # ------------------------------------------------------------------
+    # Retrieve by query elements
+    # ------------------------------------------------------------------
+    def retrieve_by_query_elements(self,
+                                   should=[],
+                                   must=[],
+                                   must_not=[],
+                                   must_type="intersection",
+                                   must_not_type="union",
+                                   ignore_unknown=False):
+        """
+        Retrieve by query elements
+        --------------------------
+        Applies a profile filter to the rows of the recommendation matrix.
+ 
+        :param should: A profile specification used to recommend with.
+        :param must: A profile specification used to filter with. The items in the result must have the tags in the given list.
+        :param must_not: A profile specification used to filter with. The items in the result must not have the tags in given list
+        :param must_type: The type of filtering with the must tags; one of "union" or "intersection".
+        :param must_not_type: The type of filtering with the must not tags; one of "union" or "intersection".
+        :param ignore_unknown: Should the unknown tags be ignored or not?
+        :return self:  The object itself or None. The result is stored in self._value.
+        """
+
+        if not is_str_list(should):
+            raise TypeError("The first argument, should, is expected to be a list of tags.")
+
+        if not is_str_list(must):
+            raise TypeError("The second argument, must, is expected to be a list of tags.")
+
+        if not is_str_list(must_not):
+            raise TypeError("The third argument, must_not, is expected to be a list of tags.")
+
+        if len(should) + len(must) + len(must_not) == 0:
+            warnings.warn("All query elements are empty.")
+            return self
+
+        # Should
+        if len(should) > 0 and len(must) > 0:
+            pVecShould = self.to_profile_vector(should).take_value()
+            pVecMust = self.to_profile_vector(must).take_value()
+
+            shouldItems = self.recommend_by_profile(pVecShould.add(pVecMust), nrecs=None).take_value()
+        else:
+            shouldItems = dict.fromkeys(self.take_M().row_names(), 1)
+
+        res = shouldItems
+
+        # Must
+        if len(must) > 0:
+            mustItems = self.filter_by_profile(must,
+                                               filter_type=must_type,
+                                               ignore_unknown=ignore_unknown).take_value()
+
+            if len(mustItems) == 0:
+                warnings.warn("No items were obtained by querying with the must tags.")
+
+        else:
+            mustItems = []
+
+        if len(mustItems) > 0:
+            res = set.intersection(set(res), set(mustItems))
+
+        # Must not
+        if len(must_not) > 0:
+            mustNotItems = self.filter_by_profile(must,
+                                                  filter_type=must_not_type,
+                                                  ignore_unknown=ignore_unknown).take_value()
+
+            if len(mustNotItems) == 0:
+                warnings.warn("No items were obtained by querying with the must not tags.")
+
+        else:
+            mustNotItems = []
+
+        if len(mustNotItems) > 0:
+            res = set.intersection(set(res), set(mustNotItems))
+
+        # Result
+        self.set_value(res)
+        return self
+
+    # ------------------------------------------------------------------
     # Join across
     # ------------------------------------------------------------------
     def join_across(self, data, on=None):
