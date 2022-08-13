@@ -718,7 +718,7 @@ class SparseMatrixRecommender:
 
         # Must not
         if len(must_not) > 0:
-            mustNotItems = self.filter_by_profile(must,
+            mustNotItems = self.filter_by_profile(must_not,
                                                   filter_type=must_not_type,
                                                   ignore_unknown=ignore_unknown).take_value()
 
@@ -729,7 +729,7 @@ class SparseMatrixRecommender:
             mustNotItems = []
 
         if len(mustNotItems) > 0:
-            res = set.intersection(set(res), set(mustNotItems))
+            res = set.difference(set(res), set(mustNotItems))
 
         # Result
         self.set_value(res)
