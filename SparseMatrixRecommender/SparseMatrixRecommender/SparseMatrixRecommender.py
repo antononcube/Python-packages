@@ -692,12 +692,24 @@ class SparseMatrixRecommender:
 
         # Should
         if len(should) > 0 and len(must) > 0:
+            # Both should and must are present
             pVecShould = self.to_profile_vector(should, ignore_unknown=ignore_unknown).take_value()
             pVecMust = self.to_profile_vector(must, ignore_unknown=ignore_unknown).take_value()
 
             shouldItems = self.recommend_by_profile(pVecShould.add(pVecMust),
                                                     nrecs=None,
                                                     ignore_unknown=ignore_unknown).take_value()
+
+        elif len(should) > 0 and len(must) == 0 and len(must_not) == 0:
+            # Only should is not empty
+
+            pVecShould = self.to_profile_vector(should, ignore_unknown=ignore_unknown).take_value()
+            self.recommend_by_profile(pVecShould,
+                                      nrecs=None,
+                                      ignore_unknown=ignore_unknown)
+
+            return self
+
         else:
             shouldItems = dict.fromkeys(self.take_M().row_names(), 1)
 
@@ -734,7 +746,7 @@ class SparseMatrixRecommender:
             res = set.difference(set(res), set(mustNotItems))
 
         # Result
-        self.set_value(dict.fromkeys(res,1))
+        self.set_value(dict.fromkeys(res, 1))
         return self
 
     # ------------------------------------------------------------------
