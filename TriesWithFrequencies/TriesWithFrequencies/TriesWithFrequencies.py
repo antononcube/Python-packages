@@ -21,7 +21,6 @@ def _is_list_of_str_lists(obj):
 # Trie Predicates
 # ===========================================================
 
-
 def is_trie_body(tr):
     """
     Trie body check
@@ -238,11 +237,42 @@ def trie_create_by_split(words, bisection_threshold=15):
 
 
 # ===========================================================
-# Note probabilities
+# Node probabilities
 # ===========================================================
 
 def trie_node_probabilities():
     pass
+
+
+# ===========================================================
+# Node counts
+# ===========================================================
+
+def trie_node_counts(tr):
+    if not is_trie(tr):
+        ValueError("The first argument is expected to be a trie.")
+
+    res = _trie_node_counts_rec(tr, 0)
+
+    return {"total": res["total"], "internal": res["internal"], "leaves": res["total"] - res["internal"]}
+
+
+def _trie_node_counts_rec(tr, level):
+    res = {"internal": 0, "total": 0}
+    for (k, v) in tr.items():
+        if isinstance(v, float | int):
+            res["total"] = res["total"] + 1
+        elif isinstance(v, dict):
+            if len(v) > 1:
+                res["internal"] = res["internal"] + 1
+            for (k1, v1) in v.items():
+                res2 = _trie_node_counts_rec({k1: v1}, level + 1)
+                res["internal"] = res["internal"] + res2["internal"]
+                res["total"] = res["total"] + res2["total"]
+        else:
+            ValueError("Not a trie node at level", level)
+
+    return res
 
 
 # ===========================================================
