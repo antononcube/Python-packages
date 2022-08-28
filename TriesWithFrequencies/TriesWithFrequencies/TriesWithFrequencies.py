@@ -295,22 +295,24 @@ def trie_form(tr):
     if len(tr) == 0:
         print("<empty>")
         return
-
-    def visit(kLocal, body, prefix):
-
-        children = list(body.keys())
-        print(prefix + kLocal, "=>", body[trie_value])
-
-        if len(children) == 1:
-            return
-
-        for i in range(len(children)):
-            c = children[i]
-            if c != trie_value:
-                if i < len(children) - 2:
-                    visit(c, body[c], (" " * len(prefix)) + "├─")
-                else:
-                    visit(c, body[c], (" " * len(prefix)) + "└─")
-
     k = list(tr.keys())[0]
-    visit(k, tr[k], "")
+    _visit(k, tr[k], ["",""])
+
+
+def _visit(k, body, indent, mid=["├─", "│ "], end=["└─", "  "]):
+    children = list(body.keys())
+    print(indent[0] + k, "=>", body[trie_value])
+
+    if len(children) == 1:
+        return
+
+    for i in range(len(children)):
+        c = children[i]
+        if c != trie_value:
+            if i < len(children) - 2:
+                indent2 = [indent[1] + x for x in mid]
+                _visit(c, body[c], indent2)
+            else:
+                indent2 = [indent[1] + x for x in end]
+                _visit(c, body[c], indent2)
+    return
