@@ -249,6 +249,12 @@ def trie_node_probabilities():
 # ===========================================================
 
 def trie_node_counts(tr):
+    """
+    Trie node counts
+    ----------------
+    :param tr: A trie to find the node counts for.
+    :return: Dictionary with counts statistics.
+    """
     if not is_trie(tr):
         ValueError("The first argument is expected to be a trie.")
 
