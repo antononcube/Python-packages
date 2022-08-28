@@ -240,8 +240,45 @@ def trie_create_by_split(words, bisection_threshold=15):
 # Node probabilities
 # ===========================================================
 
-def trie_node_probabilities():
-    pass
+def trie_node_probabilities(tr):
+    """
+    Trie node probabilities
+    -----------------------
+    :param tr: A trie the frequencies of which are converted into probabilities.
+    :return: Trie
+    """
+    if not is_trie(tr):
+        ValueError("The first argument is expected to be a trie.")
+
+    return {list(tr.keys())[0]: _trie_node_probabilities_rec(list(tr.values())[0]) | {trie_value: 1.0}}
+
+
+# -----------------------------------------------------------
+def _trie_node_probabilities_rec(trb):
+    if not is_trie_body(trb):
+        ValueError("The first argument is expected to be a trie body")
+
+    if len(trb) == 1:
+        return trb
+    else:
+        if trb[trie_value] == 0:
+            tSum = _trie_value_total(trb)
+        else:
+            tSum = trb[trie_value]
+
+        res = {k: _trie_node_probabilities_rec(v) for (k, v) in trb.items() if k != trie_value}
+
+        res = {k: (v.copy() | {trie_value: v[trie_value] / tSum}) for (k, v) in res.items() if k != trie_value}
+
+        return res | {trie_value: trb[trie_value]}
+
+
+# -----------------------------------------------------------
+def _trie_value_total(trb):
+    if not is_trie_body(trb):
+        ValueError("The first argument is expected to be a trie body")
+
+    return sum([v[trie_value] for (k, v) in trb.items() if k != trie_value])
 
 
 # ===========================================================
@@ -282,6 +319,16 @@ def _trie_node_counts_rec(tr, level):
 
 
 # ===========================================================
+# Retrieve sub-trie
+# ===========================================================
+
+
+# ===========================================================
+# Retrieve sub-trie
+# ===========================================================
+
+
+# ===========================================================
 # Tree Form
 # ===========================================================
 
@@ -296,7 +343,7 @@ def trie_form(tr):
         print("<empty>")
         return
     k = list(tr.keys())[0]
-    _visit(k, tr[k], ["",""])
+    _visit(k, tr[k], ["", ""])
 
 
 def _visit(k, body, indent, mid=["├─", "│ "], end=["└─", "  "]):
