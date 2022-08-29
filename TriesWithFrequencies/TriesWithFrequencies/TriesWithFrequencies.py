@@ -1,8 +1,10 @@
 import math
 import warnings
 
-trie_root = "TRIEROOT"
-trie_value = "TRIEVALUE"
+# Constant naming directions here:
+# https://peps.python.org/pep-0008/#constants
+TRIE_ROOT = "TRIE_ROOT"
+TRIE_VALUE = "TRIE_VALUE"
 
 
 # ===========================================================
@@ -38,7 +40,7 @@ def is_trie_body(tr):
     :param tr: A trie
     :return: bool
     """
-    return isinstance(tr, dict) and trie_value in tr
+    return isinstance(tr, dict) and TRIE_VALUE in tr
 
 
 def is_trie(tr):
@@ -58,7 +60,7 @@ def is_trie_with_trie_root(tr):
     :param tr: A trie
     :return: bool
     """
-    return is_trie_body(tr) and list(tr.keys())[0] == trie_root
+    return is_trie_body(tr) and list(tr.keys())[0] == TRIE_ROOT
 
 
 def is_trie_leaf(tr):
@@ -92,11 +94,11 @@ def trie_make(chars, value=1.0, bottom_value=1.0, verify_input=True):
     if len(chars) == 0:
         return {}
 
-    init = {chars[len(chars) - 1]: {trie_value: bottom_value}}
+    init = {chars[len(chars) - 1]: {TRIE_VALUE: bottom_value}}
 
     res = init
     for i in range(len(chars) - 2, -1, -1):
-        res = {chars[i]: res | {trie_value: value}}
+        res = {chars[i]: res | {TRIE_VALUE: value}}
     return res
 
 
@@ -161,7 +163,7 @@ def trie_insert(tr, word, value=1.0, bottom_value=1.0, verify_input=True):
 
     res0 = trie_make(word, value=value, bottom_value=bottom_value, verify_input=False)
 
-    res = {trie_root: res0 | {trie_value: list(res0.items())[0][1][trie_value]}}
+    res = {TRIE_ROOT: res0 | {TRIE_VALUE: list(res0.items())[0][1][TRIE_VALUE]}}
 
     return trie_merge(tr, res)
 
@@ -190,7 +192,7 @@ def trie_create1(words, verify_input=True):
 
     res0 = trie_make(words[0], verify_input=verify_input)
 
-    res = {trie_root: res0 | {trie_value: list(res0.items())[0][1][trie_value]}}
+    res = {TRIE_ROOT: res0 | {TRIE_VALUE: list(res0.items())[0][1][TRIE_VALUE]}}
 
     for w in words[1:]:
         res = trie_insert(res, w, verify_input=verify_input)
@@ -260,7 +262,7 @@ def trie_node_probabilities(tr):
     if not is_trie(tr):
         ValueError("The first argument is expected to be a trie.")
 
-    return {list(tr.keys())[0]: _trie_node_probabilities_rec(list(tr.values())[0]) | {trie_value: 1.0}}
+    return {list(tr.keys())[0]: _trie_node_probabilities_rec(list(tr.values())[0]) | {TRIE_VALUE: 1.0}}
 
 
 # -----------------------------------------------------------
@@ -271,16 +273,16 @@ def _trie_node_probabilities_rec(trb):
     if len(trb) == 1:
         return trb
     else:
-        if trb[trie_value] == 0:
+        if trb[TRIE_VALUE] == 0:
             tSum = _trie_value_total(trb)
         else:
-            tSum = trb[trie_value]
+            tSum = trb[TRIE_VALUE]
 
-        res = {k: _trie_node_probabilities_rec(v) for (k, v) in trb.items() if k != trie_value}
+        res = {k: _trie_node_probabilities_rec(v) for (k, v) in trb.items() if k != TRIE_VALUE}
 
-        res = {k: (v | {trie_value: v[trie_value] / tSum}) for (k, v) in res.items() if k != trie_value}
+        res = {k: (v | {TRIE_VALUE: v[TRIE_VALUE] / tSum}) for (k, v) in res.items() if k != TRIE_VALUE}
 
-        return res | {trie_value: trb[trie_value]}
+        return res | {TRIE_VALUE: trb[TRIE_VALUE]}
 
 
 # -----------------------------------------------------------
@@ -288,7 +290,7 @@ def _trie_value_total(trb):
     if not is_trie_body(trb):
         ValueError("The first argument is expected to be a trie body.")
 
-    return sum([v[trie_value] for (k, v) in trb.items() if k != trie_value])
+    return sum([v[TRIE_VALUE] for (k, v) in trb.items() if k != TRIE_VALUE])
 
 
 # ===========================================================
@@ -321,11 +323,11 @@ def _trie_leaf_probabilities_rec(k, trb):
         ValueError("The first argument is expected to be a trie body.")
 
     if len(trb) == 1:
-        return [(k, trb[trie_value])]
+        return [(k, trb[TRIE_VALUE])]
     else:
         tSum = _trie_value_total(trb)
 
-        res = [_trie_leaf_probabilities_rec(k, v) for (k, v) in trb.items() if k != trie_value]
+        res = [_trie_leaf_probabilities_rec(k, v) for (k, v) in trb.items() if k != TRIE_VALUE]
 
         res2 = []
         for e in res:
@@ -334,7 +336,7 @@ def _trie_leaf_probabilities_rec(k, trb):
         if tSum < 1:
             res2 = res2 + [(k, 1 - tSum)]
 
-        res = [(p[0], p[1] * trb[trie_value]) for p in res2]
+        res = [(p[0], p[1] * trb[TRIE_VALUE]) for p in res2]
 
         return res
 
@@ -406,14 +408,14 @@ def trie_form(tr):
 
 def _visit(k, body, indent, mid=["├─", "│ "], end=["└─", "  "]):
     children = list(body.keys())
-    print(indent[0] + k, "=>", body[trie_value])
+    print(indent[0] + k, "=>", body[TRIE_VALUE])
 
     if len(children) == 1:
         return
 
     for i in range(len(children)):
         c = children[i]
-        if c != trie_value:
+        if c != TRIE_VALUE:
             if i < len(children) - 2:
                 indent2 = [indent[1] + x for x in mid]
                 _visit(c, body[c], indent2)
