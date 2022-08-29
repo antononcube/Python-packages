@@ -19,6 +19,14 @@ def _is_list_of_str_lists(obj):
     return isinstance(obj, list) and all([_is_str_list(x) for x in obj])
 
 
+# ===========================================================
+# Utilities
+# ===========================================================
+
+def _reverse_sort_dict(x):
+    return dict([(k, v) for k, v in sorted(x.items(), key=lambda item: -item[1])])
+
+
 def _merge_with(x, y, merge_func):
     result = dict(x)
     for key in y:
@@ -27,6 +35,27 @@ def _merge_with(x, y, merge_func):
         else:
             result[key] = y[key]
     return result
+
+def _deep_get(d, keys, partial=False):
+    if not isinstance(d, dict):
+        raise TypeError("The first argument is expected to be a dict.")
+    if not _is_str_list(keys):
+        raise TypeError("The second argument is expected to be a list of strings.")
+
+    res = d
+    if partial:
+        for k in keys:
+            r = res.get(k, None)
+            if r is None:
+                return res
+            else:
+                res = r
+
+    else:
+        for k in keys:
+            res = res.get(k, {})
+
+    return res
 
 
 # ===========================================================
@@ -40,7 +69,7 @@ def is_trie_body(tr):
     :param tr: A trie
     :return: bool
     """
-    return isinstance(tr, dict) and TRIE_VALUE in tr
+    return isinstance(tr, dict) and (TRIE_VALUE in tr)
 
 
 def is_trie(tr):
@@ -50,7 +79,7 @@ def is_trie(tr):
     :param tr: A trie
     :return: bool
     """
-    return isinstance(tr, dict) and len(tr) == 1 and is_trie_body(tr)
+    return isinstance(tr, dict) and len(tr) == 1 and is_trie_body(list(tr.items())[0][1])
 
 
 def is_trie_with_trie_root(tr):
@@ -60,7 +89,7 @@ def is_trie_with_trie_root(tr):
     :param tr: A trie
     :return: bool
     """
-    return is_trie_body(tr) and list(tr.keys())[0] == TRIE_ROOT
+    return is_trie(tr) and list(tr.keys())[0] == TRIE_ROOT
 
 
 def is_trie_leaf(tr):
@@ -249,6 +278,76 @@ def trie_create_by_split(words, bisection_threshold=15):
 
 
 # ===========================================================
+# Retrieve sub-trie
+# ===========================================================
+
+def trie_sub_trie(tr, word):
+    """
+    Trie sub-trie
+    -------------
+    :param tr: A trie.
+    :param word: Word (a list of strings) to find search with.
+    :return: A trie
+    """
+    if not (is_trie(tr) or is_trie_body(tr)):
+        raise TypeError("The first argument is expected to be a trie or trie body.")
+
+    if not _is_str_list(word):
+        raise TypeError("The second argument is expected to be a list of strings.")
+
+    wordLocal = word
+    if is_trie_with_trie_root(tr) and word[0] != TRIE_ROOT:
+        wordLocal.insert(0, TRIE_ROOT)
+
+    res = _trie_sub_trie_path(tr, wordLocal)
+
+    if len(res["path"]) == 0:
+        return {}
+
+    return {res["path"][-1]: res["trie"]}
+
+
+def _trie_sub_trie_path(tr, word):
+    if not (is_trie(tr) or is_trie_body(tr)):
+        raise TypeError("The first argument is expected to be a trie or trie body.")
+
+    if not _is_str_list(word):
+        raise TypeError("The second argument is expected to be a list of strings.")
+
+    path = []
+    trLocal = tr
+    for k in word:
+        if k in trLocal:
+            path.append(k)
+            trLocal = trLocal.get(k)
+        else:
+            break
+
+    return {"trie": trLocal, "path": path}
+
+
+def _trie_sub_trie_path_rec(tr, word):
+    if not (is_trie(tr) or is_trie_body(tr)):
+        raise TypeError("The first argument is expected to be a trie or trie body.")
+
+    if not _is_str_list(word):
+        raise TypeError("The second argument is expected to be a list of strings.")
+
+    if len(word) == 0:
+        return []
+
+    if word[0] in tr:
+        return [word[0], ].append(_trie_sub_trie_path_rec(tr=tr[word[0]]), word=word[1:])
+
+    return []
+
+
+# ===========================================================
+# Retrieve sub-trie
+# ===========================================================
+
+
+# ===========================================================
 # Node probabilities
 # ===========================================================
 
@@ -342,6 +441,39 @@ def _trie_leaf_probabilities_rec(k, trb):
 
 
 # ===========================================================
+# Classify
+# ===========================================================
+
+def trie_classify(tr, record, prop="Decision", default=None, verify_key_existence=True):
+    """
+    Trie classify
+    -------------
+    :param tr: A trie to be used as classifier.
+    :param record: Record to classifier.
+    :param prop: Property to
+    :param default: Default value.
+    :param verify_key_existence: Should the record-as-key existence be verified or not?
+    :return: A decision label or a dictionary with labels to probabilities.
+    """
+    if not is_trie(tr):
+        ValueError("The first argument is expected to be a trie.")
+
+    # Probabilities
+    res = trie_sub_trie(tr, record)
+
+    if len(res) == 0:
+        res = {default:0}
+    else:
+        res = _reverse_sort_dict(trie_leaf_probabilities(res))
+
+    if prop.lower() == "decision":
+        return list(res.keys())[0]
+    else:
+        return res
+    return res
+
+
+# ===========================================================
 # Node counts
 # ===========================================================
 
@@ -376,16 +508,6 @@ def _trie_node_counts_rec(tr, level):
             ValueError("Not a trie node at level", level)
 
     return res
-
-
-# ===========================================================
-# Retrieve sub-trie
-# ===========================================================
-
-
-# ===========================================================
-# Retrieve sub-trie
-# ===========================================================
 
 
 # ===========================================================
