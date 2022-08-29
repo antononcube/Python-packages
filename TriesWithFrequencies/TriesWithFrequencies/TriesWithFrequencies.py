@@ -17,6 +17,16 @@ def _is_list_of_str_lists(obj):
     return isinstance(obj, list) and all([_is_str_list(x) for x in obj])
 
 
+def _merge_with(x, y, merge_func):
+    result = dict(x)
+    for key in y:
+        if key in result:
+            result[key] = merge_func(result[key], y[key])
+        else:
+            result[key] = y[key]
+    return result
+
+
 # ===========================================================
 # Trie Predicates
 # ===========================================================
@@ -256,7 +266,7 @@ def trie_node_probabilities(tr):
 # -----------------------------------------------------------
 def _trie_node_probabilities_rec(trb):
     if not is_trie_body(trb):
-        ValueError("The first argument is expected to be a trie body")
+        ValueError("The first argument is expected to be a trie body.")
 
     if len(trb) == 1:
         return trb
@@ -268,7 +278,7 @@ def _trie_node_probabilities_rec(trb):
 
         res = {k: _trie_node_probabilities_rec(v) for (k, v) in trb.items() if k != trie_value}
 
-        res = {k: (v.copy() | {trie_value: v[trie_value] / tSum}) for (k, v) in res.items() if k != trie_value}
+        res = {k: (v | {trie_value: v[trie_value] / tSum}) for (k, v) in res.items() if k != trie_value}
 
         return res | {trie_value: trb[trie_value]}
 
@@ -276,9 +286,57 @@ def _trie_node_probabilities_rec(trb):
 # -----------------------------------------------------------
 def _trie_value_total(trb):
     if not is_trie_body(trb):
-        ValueError("The first argument is expected to be a trie body")
+        ValueError("The first argument is expected to be a trie body.")
 
     return sum([v[trie_value] for (k, v) in trb.items() if k != trie_value])
+
+
+# ===========================================================
+# Leaf probabilities
+# ===========================================================
+def trie_leaf_probabilities(tr):
+    """
+    Trie leaf probabilities
+    -----------------------
+    :param tr: Trie
+    :return: dict
+    """
+    if not is_trie_body(tr):
+        ValueError("The first argument is expected to be a trie.")
+
+    t = list(tr.items())[0]
+    res = _trie_leaf_probabilities_rec(t[0], t[1])
+
+    if len(res) == 1:
+        return dict(res)
+    else:
+        res2 = {}
+        for p in res:
+            res2 = _merge_with(res2, dict([p]), lambda x, y: x + y)
+        return res2
+
+
+def _trie_leaf_probabilities_rec(k, trb):
+    if not is_trie_body(trb):
+        ValueError("The first argument is expected to be a trie body.")
+
+    if len(trb) == 1:
+        return [(k, trb[trie_value])]
+    else:
+        tSum = _trie_value_total(trb)
+
+        res = [_trie_leaf_probabilities_rec(k, v) for (k, v) in trb.items() if k != trie_value]
+
+        res2 = []
+        for e in res:
+            res2 = res2 + e
+
+        if tSum < 1:
+            res2 = res2 + [(k, 1 - tSum)]
+
+        res = [(p[0], p[1] * trb[trie_value]) for p in res2]
+
+        return res
 
 
 # ===========================================================
