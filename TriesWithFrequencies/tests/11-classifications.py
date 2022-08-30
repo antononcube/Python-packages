@@ -26,14 +26,24 @@ class Classifications(unittest.TestCase):
     #           └─i = > 1.0
     #             └─a = > 1.0
 
-    def test_classifications_1(self):
+    def test_classify_1(self):
         # Simple classify call
         self.assertTrue(trie_classify(self.tr1, list("bar")) in set(["r", "e"]))
 
-    def test_classifications_2(self):
+    def test_classify_2(self):
         # Classify and give probabilities
         res = trie_classify(self.tr1, list("bar"), prop="Probabilities")
         self.assertEqual(res, {'r': 0.5454545454545454, 'k': 0.2727272727272727, 'e': 0.18181818181818182})
+
+    def test_classify_3(self):
+        # Classify with None
+        res = trie_classify(self.tr1, list("bar"), prop=None)
+        self.assertEqual(res, {'r': 0.5454545454545454, 'k': 0.2727272727272727, 'e': 0.18181818181818182})
+
+    def test_classify_list_1(self):
+        # Classify a list of records
+        res = trie_classify(self.tr1, [list(x) for x in ["bar", "cam", "ca"]])
+        self.assertEqual(res, ["r", "a", "a"])
 
 
 if __name__ == '__main__':
