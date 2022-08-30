@@ -36,6 +36,7 @@ def _merge_with(x, y, merge_func):
             result[key] = y[key]
     return result
 
+
 def _deep_get(d, keys, partial=False):
     if not isinstance(d, dict):
         raise TypeError("The first argument is expected to be a dict.")
@@ -145,12 +146,12 @@ def trie_merge(first, second):
 
     :return: Trie
     """
-    result = first
+    result = first.copy()
 
     for k in list(second.keys()):
 
         if k not in first:
-            result[k] = second[k]
+            result[k] = second[k].copy()
         else:
             if isinstance(first[k], dict):
                 result[k] = trie_merge(first[k], second[k])
@@ -462,7 +463,7 @@ def trie_classify(tr, record, prop="Decision", default=None, verify_key_existenc
     res = trie_sub_trie(tr, record)
 
     if len(res) == 0:
-        res = {default:0}
+        res = {default: 0}
     else:
         res = _reverse_sort_dict(trie_leaf_probabilities(res))
 
