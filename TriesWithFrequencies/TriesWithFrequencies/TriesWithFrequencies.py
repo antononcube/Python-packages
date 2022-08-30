@@ -450,14 +450,24 @@ def trie_classify(tr, record, prop="Decision", default=None, verify_key_existenc
     Trie classify
     -------------
     :param tr: A trie to be used as classifier.
-    :param record: Record to classifier.
-    :param prop: Property to
+    :param record: A record or a list of records to classify.
+    :param prop: Property to be returned.
     :param default: Default value.
     :param verify_key_existence: Should the record-as-key existence be verified or not?
     :return: A decision label or a dictionary with labels to probabilities.
     """
     if not is_trie(tr):
         ValueError("The first argument is expected to be a trie.")
+
+    propLocal = prop
+    if prop is None:
+        prop = "Probabilities"
+
+    if _is_list_of_str_lists(record):
+        return [trie_classify(tr, x,
+                              prop=propLocal,
+                              default=default,
+                              verify_key_existence=verify_key_existence) for x in record]
 
     # Probabilities
     res = trie_sub_trie(tr, record)
