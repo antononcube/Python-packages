@@ -1,6 +1,7 @@
 # This Python implementation follows mostly the Mathematica implementation:
 #    https://github.com/antononcube/MathematicaForPrediction/blob/master/TriesWithFrequencies.m
-# And to a lesser extent the Raku implementation:
+# And to a lesser extent the Raku implementations:
+#    https://github.com/antononcube/Raku-ML-TriesWithFrequencies ,
 #    https://github.com/antononcube/Raku-ML-HashTriesWithFrequencies
 
 
