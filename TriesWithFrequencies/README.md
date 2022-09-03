@@ -4,40 +4,112 @@ This Python package has functions for creation and manipulation of
 [Tries (Prefix trees)](https://en.wikipedia.org/wiki/Trie) 
 with frequencies.
 
-The package provides Machine Learning (ML) functionalities, not "just" a Trie data structure.
+The package provides Machine Learning (ML) functionalities, not "just" a 
+[Trie]((https://en.wikipedia.org/wiki/Trie)) 
+data structure.
 
 This Python implementation closely follows the Mathematica implementation [AAp2].
 
-------
+--------
 
-## Usage
+## Installation
 
-Consider a trie (prefix tree) created over a list of words:
+### From GitHub:
 
+```shell
+pip install -e git+https://github.com/antononcube/Python-packages.git#egg=TriesWithFrequencies-antononcube\&subdirectory=TriesWithFrequencies
+```
+
+### From PyPI:
+
+```shell
+python3 -m pip install TriesWithFrequencies
+```
+
+--------
+
+## Setup
 
 ```python
 from TriesWithFrequencies import *
-tr = trie_create_by_split( ["bar", "bark", "bars", "balm", "cert", "cell"] )
+```
 
+------
+
+## Creation examples
+
+In this section we show a few ways to create tries with frequencies.
+
+Consider a trie (prefix tree) created over a list of words:
+
+```python
+tr = trie_create_by_split( ["bar", "bark", "bars", "balm", "cert", "cell"] )
 trie_form(tr)
 ```
 
+Here we convert the trie with frequencies above into a trie with probabilities:
+
 ```python
-# TRIEROOT => 6.0
-# ├─b => 4.0
-#   └─a => 4.0
-#     ├─r => 3.0
-#       └─k => 1.0
-#       └─s => 1.0
-#     └─l => 1.0
-#       └─m => 1.0
-# └─c => 2.0
-#   └─e => 2.0
-#     ├─r => 1.0
-#       └─t => 1.0
-#     └─l => 1.0
-#       └─l => 1.0
+ptr = trie_node_probabilities( tr )
+trie_form(ptr)
 ```
+
+------
+
+## Shrinking
+
+Here we shrink the trie with probabilities above:
+
+```python
+trie_form(trie_shrink(ptr))
+```
+
+Here we shrink the frequencies trie using a separator:
+
+```python
+trie_form(trie_shrink(tr, sep="~"))
+```
+
+-------
+
+## Retrieval and sub-tries
+
+Here we retrieve a sub-trie with a key:
+
+```python
+trie_form(trie_sub_trie(tr, list("bar")))
+```
+
+------
+
+## Classification
+
+Create a trie:
+
+```python
+words = [*(["bar"] * 6), *(["bark"] * 3), *(["bare"] * 2), *(["cam"] * 3), "came", *(["camelia"] * 4)]
+tr = trie_create_by_split(words)
+tr = trie_node_probabilities(tr)
+```
+
+Show node counts:
+
+```python
+trie_node_counts(tr)
+```
+
+Show the trie form:
+
+```python
+trie_form(tr)
+```
+
+Classify with the letters of the word "cam":
+
+```python
+trie_classify(tr, list("cam"), prop="Probabilities")
+```
+
 
 ------
 
