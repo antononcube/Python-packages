@@ -363,11 +363,28 @@ def _take_body_value(tr_body: dict):
     return res[0][TRIE_VALUE]
 
 
-def _trie_shrink_rec(tr, sep: str, level: int):
+def _shrink_q(val, ch_val, threshold):
+    if threshold < 0 and val >= 1.0 and ch_val >= 1.0:
+        return val == ch_val
+    elif threshold < 0:
+        return ch_val == 1.0
+    else:
+        return ch_val >= threshold
+
+    return False
+
+
+def _trie_shrink_rec(tr,
+                     sep: str,
+                     threshold: float,
+                     internal_only: bool,
+                     level: int):
     if is_trie(tr):
 
         return _trie_shrink_rec(list(tr.items())[0],
                                 sep=sep,
+                                threshold=threshold,
+                                internal_only=internal_only,
                                 level=level + 1)
 
     elif isinstance(tr, tuple) and len(tr) == 2 and is_trie_body(tr[1]):
@@ -377,14 +394,22 @@ def _trie_shrink_rec(tr, sep: str, level: int):
 
         if len(vals) == 1:
             return dict([tr])
-        elif key != TRIE_ROOT and len(vals) == 2 and vals[TRIE_VALUE] == _take_body_value(vals):
+        elif key != TRIE_ROOT and len(vals) == 2 and _shrink_q(vals[TRIE_VALUE], _take_body_value(vals), threshold):
 
-            return _trie_shrink_rec((key + sep + valKeys[0], vals[valKeys[0]]), sep, level + 1)
+            return _trie_shrink_rec((key + sep + valKeys[0], vals[valKeys[0]]),
+                                    sep=sep,
+                                    threshold=threshold,
+                                    internal_only=internal_only,
+                                    level=level + 1)
         else:
             res = {}
             for (k, v) in vals.items():
                 if k != TRIE_VALUE:
-                    res = res | _trie_shrink_rec((k, v), sep, level + 1)
+                    res = res | _trie_shrink_rec((k, v),
+                                                 sep=sep,
+                                                 threshold=threshold,
+                                                 internal_only=internal_only,
+                                                 level=level + 1)
 
             return {key: ({TRIE_VALUE: vals[TRIE_VALUE]} | res)}
     else:
@@ -420,7 +445,7 @@ def trie_shrink(tr: dict,
     if not is_trie(tr):
         raise TypeError("The first argument is expected to be a trie or trie body.")
 
-    res = _trie_shrink_rec(tr, sep, 0)
+    res = _trie_shrink_rec(tr, sep=sep, threshold=threshold, internal_only=internal_only, level=0)
 
     return res
 
