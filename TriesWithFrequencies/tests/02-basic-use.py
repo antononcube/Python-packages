@@ -17,20 +17,20 @@ class BasicUse(unittest.TestCase):
         # print(trie_node_counts(tr))
 
         # The commands above should produce the trie:
-        # TRIE_ROOT = > 5.0
+        # TRIEROOT = > 5.0
         # └─b = > 5.0
-        # ├─a = > 3.0
-        # │ ├─r = > 2.0
-        # │ │ └─m = > 1.0
-        # │ │   └─a = > 1.0
-        # │ │     └─n = > 1.0
-        # │ └─s = > 1.0
-        # │   └─k = > 1.0
-        # └─e = > 2.0
-        # ├─l = > 1.0
-        # │ └─l = > 1.0
-        # └─s = > 1.0
-        # └─t = > 1.0
+        #   ├─a = > 3.0
+        #   │ ├─r = > 2.0
+        #   │ │ └─m = > 1.0
+        #   │ │   └─a = > 1.0
+        #   │ │     └─n = > 1.0
+        #   │ └─s = > 1.0
+        #   │   └─k = > 1.0
+        #   └─e = > 2.0
+        #     ├─l = > 1.0
+        #     │ └─l = > 1.0
+        #     └─s = > 1.0
+        #       └─t = > 1.0
         #
         # {'total': 14, 'internal': 10, 'leaves': 4}
 
@@ -43,12 +43,12 @@ class BasicUse(unittest.TestCase):
 
         self.assertTrue(isinstance(tr2, dict))
 
-        tr3 = {'TRIE_ROOT': {'b': {'a': {
-            'r': {'m': {'a': {'n': {'TRIE_VALUE': 1.0}, 'TRIE_VALUE': 1.0}, 'TRIE_VALUE': 0.5},
-                  'TRIE_VALUE': 0.6666666666666666}, 's': {'k': {'TRIE_VALUE': 1.0}, 'TRIE_VALUE': 0.3333333333333333},
-            'TRIE_VALUE': 0.6}, 'e': {'l': {'l': {'TRIE_VALUE': 1.0}, 'TRIE_VALUE': 0.5},
-                                      's': {'t': {'TRIE_VALUE': 1.0}, 'TRIE_VALUE': 0.5}, 'TRIE_VALUE': 0.4},
-            'TRIE_VALUE': 1.0}, 'TRIE_VALUE': 1.0}}
+        tr3 = {'TRIEROOT': {'b': {'a': {
+            'r': {'m': {'a': {'n': {'TRIEVALUE': 1.0}, 'TRIEVALUE': 1.0}, 'TRIEVALUE': 0.5},
+                  'TRIEVALUE': 0.6666666666666666}, 's': {'k': {'TRIEVALUE': 1.0}, 'TRIEVALUE': 0.3333333333333333},
+            'TRIEVALUE': 0.6}, 'e': {'l': {'l': {'TRIEVALUE': 1.0}, 'TRIEVALUE': 0.5},
+                                      's': {'t': {'TRIEVALUE': 1.0}, 'TRIEVALUE': 0.5}, 'TRIEVALUE': 0.4},
+            'TRIEVALUE': 1.0}, 'TRIEVALUE': 1.0}}
 
         self.assertEqual(tr2, tr3)
 

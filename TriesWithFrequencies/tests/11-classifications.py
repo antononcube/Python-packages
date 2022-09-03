@@ -12,7 +12,7 @@ class Classifications(unittest.TestCase):
     tr0 = trie_create_by_split(words1)
     tr1 = trie_node_probabilities(tr0)
 
-    # TRIE_ROOT = > 1.0
+    # TRIEROOT = > 1.0
     # ├─b = > 0.5789473684210527
     # │ └─a = > 1.0
     # │   └─r = > 1.0

@@ -3,8 +3,8 @@ import warnings
 
 # Constant naming directions here:
 # https://peps.python.org/pep-0008/#constants
-TRIE_ROOT = "TRIE_ROOT"
-TRIE_VALUE = "TRIE_VALUE"
+TRIE_ROOT = "TRIEROOT"
+TRIE_VALUE = "TRIEVALUE"
 
 
 # ===========================================================
@@ -67,7 +67,7 @@ def is_trie_body(tr):
     """
     Trie body check
     ---------------
-    :param tr: A trie
+    :param tr: An object to test.
     :return: bool
     """
     return isinstance(tr, dict) and (TRIE_VALUE in tr)
@@ -77,7 +77,8 @@ def is_trie(tr):
     """
     Trie check
     ----------
-    :param tr: A trie
+    :type tr: any
+    :param tr: An object to test.
     :return: bool
     """
     return isinstance(tr, dict) and len(tr) == 1 and is_trie_body(list(tr.items())[0][1])
@@ -87,7 +88,7 @@ def is_trie_with_trie_root(tr):
     """
     Trie with a trie root check
     ---------------------------
-    :param tr: A trie
+    :param tr: An object to test.
     :return: bool
     """
     return is_trie(tr) and list(tr.keys())[0] == TRIE_ROOT
@@ -97,7 +98,7 @@ def is_trie_leaf(tr):
     """
     Trie leaf check
     ---------------
-    :param tr: A trie
+    :param tr: An object to test.
     :return: bool
     """
     warnings.warn("Not implemented.")
@@ -140,8 +141,10 @@ def trie_merge(first, second):
     """
     Trie merge
     ----------
+    :type first: dict
     :param first: The first trie merge.
 
+    :type second: dict
     :param second: The second trie to merge
 
     :return: Trie
@@ -172,6 +175,7 @@ def trie_insert(tr, word, value=1.0, bottom_value=1.0, verify_input=True):
     """
     Trie create
     -----------
+    :type tr: dict
     :param tr: A trie to insert into.
 
     :type word: list
@@ -202,7 +206,7 @@ def trie_insert(tr, word, value=1.0, bottom_value=1.0, verify_input=True):
 # Create
 # ===========================================================
 
-def trie_create1(words, verify_input=True):
+def trie_create1(words: list, verify_input: bool = True):
     """
     Trie create sequentially
     -----------
@@ -230,7 +234,7 @@ def trie_create1(words, verify_input=True):
     return res
 
 
-def trie_create(words, bisection_threshold=15, verify_input=True):
+def trie_create(words: list, bisection_threshold: int = 15, verify_input: bool = True):
     """
     Trie create
     -----------
@@ -260,7 +264,7 @@ def trie_create(words, bisection_threshold=15, verify_input=True):
 # Create by split
 # ===========================================================
 
-def trie_create_by_split(words, bisection_threshold=15):
+def trie_create_by_split(words: list, bisection_threshold: int = 15):
     """
     Trie create by split
     --------------------
@@ -282,10 +286,11 @@ def trie_create_by_split(words, bisection_threshold=15):
 # Retrieve sub-trie
 # ===========================================================
 
-def trie_sub_trie(tr, word):
+def trie_sub_trie(tr: dict, word: list):
     """
     Trie sub-trie
     -------------
+    :type tr: dict
     :param tr: A trie.
     :param word: Word (a list of strings) to find search with.
     :return: A trie
@@ -308,7 +313,7 @@ def trie_sub_trie(tr, word):
     return {res["path"][-1]: res["trie"]}
 
 
-def _trie_sub_trie_path(tr, word):
+def _trie_sub_trie_path(tr: dict, word: list):
     if not (is_trie(tr) or is_trie_body(tr)):
         raise TypeError("The first argument is expected to be a trie or trie body.")
 
@@ -327,7 +332,7 @@ def _trie_sub_trie_path(tr, word):
     return {"trie": trLocal, "path": path}
 
 
-def _trie_sub_trie_path_rec(tr, word):
+def _trie_sub_trie_path_rec(tr: dict, word: list):
     if not (is_trie(tr) or is_trie_body(tr)):
         raise TypeError("The first argument is expected to be a trie or trie body.")
 
@@ -352,10 +357,11 @@ def _trie_sub_trie_path_rec(tr, word):
 # Node probabilities
 # ===========================================================
 
-def trie_node_probabilities(tr):
+def trie_node_probabilities(tr: dict):
     """
     Trie node probabilities
     -----------------------
+    :type tr: dict
     :param tr: A trie the frequencies of which are converted into probabilities.
     :return: Trie
     """
@@ -400,11 +406,12 @@ def trie_leaf_probabilities(tr):
     """
     Trie leaf probabilities
     -----------------------
+    :type tr: dict
     :param tr: Trie
     :return: dict
     """
     if not is_trie_body(tr):
-        ValueError("The first argument is expected to be a trie.")
+        ValueError("The first argument is expected to be a trie body.")
 
     t = list(tr.items())[0]
     res = _trie_leaf_probabilities_rec(t[0], t[1])
@@ -445,15 +452,22 @@ def _trie_leaf_probabilities_rec(k, trb):
 # Classify
 # ===========================================================
 
-def trie_classify(tr, record, prop="Decision", default=None, verify_key_existence=True):
+def trie_classify(tr, record, prop="Decision", default=None, verify_key_existence: bool = True):
     """
     Trie classify
     -------------
+    :type tr: dict
     :param tr: A trie to be used as classifier.
+
     :param record: A record or a list of records to classify.
+
     :param prop: Property to be returned.
+
     :param default: Default value.
+
+    :type verify_key_existence: bool
     :param verify_key_existence: Should the record-as-key existence be verified or not?
+
     :return: A decision label or a dictionary with labels to probabilities.
     """
     if not is_trie(tr):
@@ -488,7 +502,7 @@ def trie_classify(tr, record, prop="Decision", default=None, verify_key_existenc
 # Node counts
 # ===========================================================
 
-def trie_node_counts(tr):
+def trie_node_counts(tr: dict):
     """
     Trie node counts
     ----------------
@@ -503,7 +517,7 @@ def trie_node_counts(tr):
     return {"total": res["total"], "internal": res["internal"], "leaves": res["total"] - res["internal"]}
 
 
-def _trie_node_counts_rec(tr, level):
+def _trie_node_counts_rec(tr, level: int):
     res = {"internal": 0, "total": 0}
     for (k, v) in tr.items():
         if isinstance(v, float | int):
@@ -525,10 +539,11 @@ def _trie_node_counts_rec(tr, level):
 # Tree Form
 # ===========================================================
 
-def trie_form(tr):
+def trie_form(tr: dict):
     """
     Trie form
     ---------
+    :type tr: dict
     :param tr: A trie to put in tree form
     :return: Nil
     """
