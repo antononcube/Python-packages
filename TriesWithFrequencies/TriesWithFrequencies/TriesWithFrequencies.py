@@ -500,7 +500,7 @@ def _trie_value_total(trb):
 # ===========================================================
 # Leaf probabilities
 # ===========================================================
-def trie_leaf_probabilities(tr):
+def trie_leaf_probabilities(tr: dict):
     """
     Trie leaf probabilities
     -----------------------
@@ -508,8 +508,8 @@ def trie_leaf_probabilities(tr):
     :param tr: Trie
     :return: dict
     """
-    if not is_trie_body(tr):
-        raise ValueError("The first argument is expected to be a trie body.")
+    if not is_trie(tr):
+        raise ValueError("The first argument is expected to be a trie.")
 
     t = list(tr.items())[0]
     res = _trie_leaf_probabilities_rec(t[0], t[1])
