@@ -1,3 +1,9 @@
+# This Python implementation follows mostly the Mathematica implementation:
+#    https://github.com/antononcube/MathematicaForPrediction/blob/master/TriesWithFrequencies.m
+# And to a lesser extent the Raku implementation:
+#    https://github.com/antononcube/Raku-ML-HashTriesWithFrequencies
+
+
 import math
 import warnings
 
@@ -120,7 +126,7 @@ def trie_make(chars, value=1.0, bottom_value=1.0, verify_input=True):
     :return: Trie
     """
     if verify_input and not _is_str_list(chars):
-        ValueError("The first argument is expected to be a list of strings.")
+        raise ValueError("The first argument is expected to be a list of strings.")
 
     if len(chars) == 0:
         return {}
@@ -193,7 +199,7 @@ def trie_insert(tr, word, value=1.0, bottom_value=1.0, verify_input=True):
     :return: Trie
     """
     if verify_input and not _is_str_list(word):
-        ValueError("The second argument is expected to be a list of strings.")
+        raise ValueError("The second argument is expected to be a list of strings.")
 
     res0 = trie_make(word, value=value, bottom_value=bottom_value, verify_input=False)
 
@@ -219,7 +225,7 @@ def trie_create1(words: list, verify_input: bool = True):
     :return: Trie
     """
     if verify_input and not _is_list_of_str_lists(words):
-        ValueError("The first argument is expected to be a list of lists of strings.")
+        raise ValueError("The first argument is expected to be a list of lists of strings.")
 
     if len(words) == 0:
         return {}
@@ -250,7 +256,7 @@ def trie_create(words: list, bisection_threshold: int = 15, verify_input: bool =
     :return: Trie
     """
     if verify_input and not _is_list_of_str_lists(words):
-        ValueError("The first argument is expected to be a list of lists of strings.")
+        raise ValueError("The first argument is expected to be a list of lists of strings.")
 
     if len(words) <= bisection_threshold:
         return trie_create1(words, verify_input=False)
@@ -277,7 +283,7 @@ def trie_create_by_split(words: list, bisection_threshold: int = 15):
     :return: Trie
     """
     if not _is_str_list(words):
-        ValueError("The first argument is expected to be a list of strings.")
+        raise ValueError("The first argument is expected to be a list of strings.")
 
     return trie_create([list(x) for x in words], bisection_threshold=bisection_threshold)
 
@@ -349,8 +355,74 @@ def _trie_sub_trie_path_rec(tr: dict, word: list):
 
 
 # ===========================================================
-# Retrieve sub-trie
+# Shrinking
 # ===========================================================
+
+def _take_body_value(tr_body: dict):
+    res = [v for (k, v) in tr_body.items() if k != TRIE_VALUE]
+    return res[0][TRIE_VALUE]
+
+
+def _trie_shrink_rec(tr, sep: str, level: int):
+    if is_trie(tr):
+
+        return _trie_shrink_rec(list(tr.items())[0],
+                                sep=sep,
+                                level=level + 1)
+
+    elif isinstance(tr, tuple) and len(tr) == 2 and is_trie_body(tr[1]):
+        key = tr[0]
+        vals = tr[1]
+        valKeys = [k for (k, v) in vals.items() if k != TRIE_VALUE]
+
+        if len(vals) == 1:
+            return dict([tr])
+        elif key != TRIE_ROOT and len(vals) == 2 and vals[TRIE_VALUE] == _take_body_value(vals):
+
+            return _trie_shrink_rec((key + sep + valKeys[0], vals[valKeys[0]]), sep, level + 1)
+        else:
+            res = {}
+            for (k, v) in vals.items():
+                if k != TRIE_VALUE:
+                    res = res | _trie_shrink_rec((k, v), sep, level + 1)
+
+            return {key: ({TRIE_VALUE: vals[TRIE_VALUE]} | res)}
+    else:
+        raise ValueError(
+            "Do not how to process the argument at level " + str(level) + " with type = " + str(type(tr)) + " .")
+
+    return None
+
+
+def trie_shrink(tr: dict,
+                sep: str = "",
+                threshold: float = -1.0,
+                internal_only: bool = False):
+    """
+    Trie shrinking
+    --------------
+    Shrinks a trie by finding prefixes.
+    :type tr: dict
+    :param tr: A trie
+
+    :type sep: str
+    :param sep: A separator to be used when strings are joined.
+
+    :type threshold: float
+    :param threshold: Above what threshold to do the shrinking. If negative automatic shrinking test is applied.
+
+    :type internal_only: bool
+    :param internal_only:
+
+    :return: Trie
+    """
+
+    if not is_trie(tr):
+        raise TypeError("The first argument is expected to be a trie or trie body.")
+
+    res = _trie_shrink_rec(tr, sep, 0)
+
+    return res
 
 
 # ===========================================================
@@ -366,7 +438,7 @@ def trie_node_probabilities(tr: dict):
     :return: Trie
     """
     if not is_trie(tr):
-        ValueError("The first argument is expected to be a trie.")
+        raise ValueError("The first argument is expected to be a trie.")
 
     return {list(tr.keys())[0]: _trie_node_probabilities_rec(list(tr.values())[0]) | {TRIE_VALUE: 1.0}}
 
@@ -374,7 +446,7 @@ def trie_node_probabilities(tr: dict):
 # -----------------------------------------------------------
 def _trie_node_probabilities_rec(trb):
     if not is_trie_body(trb):
-        ValueError("The first argument is expected to be a trie body.")
+        raise ValueError("The first argument is expected to be a trie body.")
 
     if len(trb) == 1:
         return trb
@@ -394,7 +466,7 @@ def _trie_node_probabilities_rec(trb):
 # -----------------------------------------------------------
 def _trie_value_total(trb):
     if not is_trie_body(trb):
-        ValueError("The first argument is expected to be a trie body.")
+        raise ValueError("The first argument is expected to be a trie body.")
 
     return sum([v[TRIE_VALUE] for (k, v) in trb.items() if k != TRIE_VALUE])
 
@@ -411,7 +483,7 @@ def trie_leaf_probabilities(tr):
     :return: dict
     """
     if not is_trie_body(tr):
-        ValueError("The first argument is expected to be a trie body.")
+        raise ValueError("The first argument is expected to be a trie body.")
 
     t = list(tr.items())[0]
     res = _trie_leaf_probabilities_rec(t[0], t[1])
@@ -427,7 +499,7 @@ def trie_leaf_probabilities(tr):
 
 def _trie_leaf_probabilities_rec(k, trb):
     if not is_trie_body(trb):
-        ValueError("The first argument is expected to be a trie body.")
+        raise ValueError("The first argument is expected to be a trie body.")
 
     if len(trb) == 1:
         return [(k, trb[TRIE_VALUE])]
@@ -471,7 +543,7 @@ def trie_classify(tr, record, prop="Decision", default=None, verify_key_existenc
     :return: A decision label or a dictionary with labels to probabilities.
     """
     if not is_trie(tr):
-        ValueError("The first argument is expected to be a trie.")
+        raise ValueError("The first argument is expected to be a trie.")
 
     propLocal = prop
     if prop is None:
@@ -510,7 +582,7 @@ def trie_node_counts(tr: dict):
     :return: Dictionary with counts statistics.
     """
     if not is_trie(tr):
-        ValueError("The first argument is expected to be a trie.")
+        raise ValueError("The first argument is expected to be a trie.")
 
     res = _trie_node_counts_rec(tr, 0)
 
@@ -530,7 +602,7 @@ def _trie_node_counts_rec(tr, level: int):
                 res["internal"] = res["internal"] + res2["internal"]
                 res["total"] = res["total"] + res2["total"]
         else:
-            ValueError("Not a trie node at level", level)
+            raise ValueError("Not a trie node at level", level)
 
     return res
 

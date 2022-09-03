@@ -14,3 +14,4 @@ from TriesWithFrequencies.TriesWithFrequencies import trie_merge
 from TriesWithFrequencies.TriesWithFrequencies import trie_node_counts
 from TriesWithFrequencies.TriesWithFrequencies import trie_node_probabilities
 from TriesWithFrequencies.TriesWithFrequencies import trie_sub_trie
+from TriesWithFrequencies.TriesWithFrequencies import trie_shrink
