@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This Python package provides the class `SSparseMatrix` the objects of which a sparse matrices with named rows and columns.
+This Python package provides the class `SSparseMatrix` the objects of which are sparse matrices with named rows and columns.
 
 We can say the package attempts to cover as many as possible of the functionalities for 
 sparse matrix objects that are provided by R’s library [Matrix](http://matrix.r-forge.r-project.org). ([R](https://en.wikipedia.org/wiki/R_(programming_language)) is a implementation of [S](https://en.wikipedia.org/wiki/S_(programming_language)). S introduced named data structures for statistical computations, [RB1], hence the name `SSparseMatrix`.)
