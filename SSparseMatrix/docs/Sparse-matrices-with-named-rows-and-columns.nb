@@ -1,0 +1,3580 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    109659,       3572]
+NotebookOptionsPosition[     80583,       3138]
+NotebookOutlinePosition[     80979,       3154]
+CellTagsIndexPosition[     80936,       3151]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Sparse matrices with named rows and columns", "Title",ExpressionUUID->"7246e1a3-dba3-4c40-aaed-e90bbac49479"],
+
+Cell[TextData[{
+ "Anton Antonov\n",
+ ButtonBox["Python-packages at GitHub",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/Python-packages"], None},
+  ButtonNote->"https://github.com/antononcube/Python-packages"],
+ "\n",
+ ButtonBox["PythonForPrediction at WordsPress",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://pythonforprediction.wordpress.com"], None},
+  ButtonNote->"https://pythonforprediction.wordpress.com"],
+ "\nDecember 2021\nSeptember 2022"
+}], "Text",
+ CellChangeTimes->{{3.873220232862831*^9, 3.8732202668794603`*^9}, {
+  3.873221788629291*^9, 
+  3.873221813355547*^9}},ExpressionUUID->"c06d32f9-7c69-44bd-ada7-\
+37858f9d1df1"],
+
+Cell[CellGroupData[{
+
+Cell["Introduction", "Section",ExpressionUUID->"9d079e53-4eea-42f3-9218-8d2515eeac8f"],
+
+Cell[TextData[{
+ "This Python package, ",
+ ButtonBox["\"SSparseMatrix\"",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/Python-packages/tree/main/\
+SSparseMatrix"], None},
+  ButtonNote->
+   "https://github.com/antononcube/Python-packages/tree/main/SSparseMatrix"],
+ ", provides the class ",
+ StyleBox["SSparseMatrix", "Program"],
+ " the objects of which are sparse matrices with named rows and columns."
+}], "Text",
+ CellChangeTimes->{{3.873220277339292*^9, 3.87322029055693*^9}, {
+  3.8732203223419333`*^9, 3.873220323872491*^9}, {3.873221753842622*^9, 
+  3.873221772687989*^9}},ExpressionUUID->"4f677ee7-59a8-4e46-bff9-\
+df50d0747737"],
+
+Cell[TextData[{
+ "We can say the package attempts to cover as many as possible of the \
+functionalities for sparse matrix objects that are provided by R's library ",
+ ButtonBox["Matrix",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://matrix.r-forge.r-project.org"], None}],
+ " . ",
+ ButtonBox["R",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://en.wikipedia.org/wiki/R_(programming_language)"], None},
+  ButtonNote->"https://en.wikipedia.org/wiki/R_(programming_language)"],
+ " is a implementation of ",
+ ButtonBox["S",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://en.wikipedia.org/wiki/S_(programming_language)"], None},
+  ButtonNote->"https://en.wikipedia.org/wiki/S_(programming_language)"],
+ ". S introduced named data structures for statistical computations, [RB1], \
+hence the name ",
+ StyleBox["SSparseMatrix", "Program"],
+ " .)"
+}], "Text",
+ CellChangeTimes->{{3.873220071215584*^9, 
+  3.873220110412269*^9}},ExpressionUUID->"5608ab7d-5f6e-4e9b-bde0-\
+52bb4b5e00ca"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "package",
+ " ",
+ "builds",
+ " ",
+ "on",
+ " ",
+ "top",
+ " ",
+ "of",
+ " ",
+ "the",
+ " ",
+ ButtonBox["`scipy` sparse matrices",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://scipy.github.io/devdocs/reference/sparse.html"], None}],
+ " ",
+ ".",
+ " ",
+ "(The",
+ " ",
+ "added",
+ " ",
+ "functionalities",
+ " ",
+ "though",
+ " ",
+ "are",
+ " ",
+ "general",
+ " ",
+ "--",
+ " ",
+ "other",
+ " ",
+ "sparse",
+ " ",
+ "matrix",
+ " ",
+ "implementations",
+ " ",
+ "could",
+ " ",
+ "be",
+ " ",
+ "used.)"
+}], "Text",ExpressionUUID->"d252be4a-2efb-4f28-ad81-b794a8d5d23c"],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "is",
+ " ",
+ "a",
+ " ",
+ "list",
+ " ",
+ "of",
+ " ",
+ "functionalities",
+ " ",
+ "provided",
+ " ",
+ "for",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"741f12f3-74e6-42b7-a662-ce50b76a3c85"],
+
+Cell[CellGroupData[{
+
+Cell["Sub-matrix extraction by row and column names:", "Item",ExpressionUUID->"1de8cd4a-16f1-4c54-949d-d1fb94c357fd"],
+
+Cell["Single element access", "Subitem",ExpressionUUID->"6db59738-ff0d-424b-836e-0f8549775647"],
+
+Cell["Subsets of row names and column names", "Subitem",ExpressionUUID->"cbe2ef7d-c92b-424b-b318-777734c4602e"]
+}, Open  ]],
+
+Cell["Slices (with integers)", "Item",ExpressionUUID->"6681aae0-dc36-470f-a9d7-6bc1e8ba131b"],
+
+Cell[CellGroupData[{
+
+Cell["Row and column names propagation for dot products with:", "Item",ExpressionUUID->"f2dc99c2-b6b1-49ce-a877-f7b7e435630d"],
+
+Cell["Lists", "Subitem",ExpressionUUID->"e643baca-4538-4ec2-9e05-2baa50b4d342"],
+
+Cell["Dense vectors (`numpy.array`)", "Subitem",ExpressionUUID->"6f8bbf4c-bd27-4e93-8fdc-d1a1ee5a8479"],
+
+Cell[TextData[{
+ StyleBox["scipy", "Program"],
+ " ",
+ "sparse",
+ " ",
+ "matrices"
+}], "Subitem",ExpressionUUID->"ca884947-cb53-4e04-8d79-f075aa1e80a2"],
+
+Cell[TextData[{
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "objects"
+}], "Subitem",ExpressionUUID->"bf4924cb-f11d-4724-b5f1-0be814139a85"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Row and column sums", "Item",ExpressionUUID->"82928a61-7451-4273-9df5-698e28ed94d6"],
+
+Cell["Vector form", "Subitem",ExpressionUUID->"3c68ff05-f5aa-46f0-84d7-37512aa754e9"],
+
+Cell["Dictionary form", "Subitem",ExpressionUUID->"2d147a26-750a-4d59-9925-36a8a4f1ed34"]
+}, Open  ]],
+
+Cell["Transposing", "Item",ExpressionUUID->"34cf8b5d-5ea5-44df-beff-71a7a9652b6a"],
+
+Cell[CellGroupData[{
+
+Cell["Representation:", "Item",ExpressionUUID->"1d469b81-bc0c-4cef-9c03-73832e7378c6"],
+
+Cell["Tabular, matrix form (\"pretty printing\")", "Subitem",ExpressionUUID->"f151c335-4d17-4571-9ed7-bea2e871c9ed"],
+
+Cell[TextData[{
+ "String",
+ " ",
+ "and",
+ " ",
+ StyleBox["repr", "Program"],
+ " ",
+ "forms"
+}], "Subitem",ExpressionUUID->"f1294c33-cc6c-42bd-ba31-7a9ebd8b184d"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Row",
+ " ",
+ "and",
+ " ",
+ "column",
+ " ",
+ "binding",
+ " ",
+ "of",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "objects"
+}], "Item",ExpressionUUID->"13195998-534a-4b29-8306-69c34681377f"],
+
+Cell[CellGroupData[{
+
+Cell["\"Export\" functions", "Item",ExpressionUUID->"0baf7a16-4d47-4cb0-b2e2-66b5598c246c"],
+
+Cell["Triplets", "Subitem",ExpressionUUID->"884141d7-0833-46ff-bc17-a291bcca5ca1"],
+
+Cell["Row-dictionaries", "Subitem",ExpressionUUID->"9f7c47de-6c83-4dd5-b861-f55998edc0db"],
+
+Cell["Column-dictionaries", "Subitem",ExpressionUUID->"3ccad1df-a8cf-4fb8-9514-2a98a5b4804e"],
+
+Cell["Wolfram Language full form representation", "Subitem",ExpressionUUID->"176f22e4-b777-4528-ad87-99ff15d4c9ea"]
+}, Open  ]],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "full",
+ " ",
+ "list",
+ " ",
+ "of",
+ " ",
+ "features",
+ " ",
+ "and",
+ " ",
+ "development",
+ " ",
+ "status",
+ " ",
+ "can",
+ " ",
+ "be",
+ " ",
+ "found",
+ " ",
+ "in",
+ " ",
+ "the",
+ " ",
+ ButtonBox["org-mode",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://orgmode.org"], None}],
+ " ",
+ "file",
+ " ",
+ ButtonBox["SSparseMatrix-work-plan.org",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/Python-packages/blob/main/org/\
+SSparseMatrix-work-plan.org"], None}],
+ " ",
+ "."
+}], "Text",ExpressionUUID->"aa0a57c5-9277-4e88-a8af-467f8886c826"],
+
+Cell[TextData[{
+ "This",
+ " ",
+ "package",
+ " ",
+ "more",
+ " ",
+ "or",
+ " ",
+ "less",
+ " ",
+ "follows",
+ " ",
+ "the",
+ " ",
+ "design",
+ " ",
+ "of",
+ " ",
+ "the",
+ " ",
+ "Mathematica",
+ " ",
+ "package",
+ " ",
+ ButtonBox["SSparseMatrix.m",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/MathematicaForPrediction/blob/master/\
+SSparseMatrix.m"], None}],
+ " ",
+ "."
+}], "Text",ExpressionUUID->"0b60483a-e469-411c-878c-c681504e5de7"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "usage",
+ " ",
+ "examples",
+ " ",
+ "below",
+ " ",
+ "can",
+ " ",
+ "be",
+ " ",
+ "also",
+ " ",
+ "run",
+ " ",
+ "through",
+ " ",
+ "the",
+ " ",
+ "file",
+ " ",
+ ButtonBox["\"examples.py\"",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["./examples.py"], None}],
+ " ",
+ "."
+}], "Text",ExpressionUUID->"92d43bfc-79f6-4e1e-8184-2cb908123d1b"],
+
+Cell[CellGroupData[{
+
+Cell["Usage in other packages", "Subsection",ExpressionUUID->"7ab8cfe0-be45-4b1e-be07-ccd2e3a01239"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "class",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "is",
+ " ",
+ "foundational",
+ " ",
+ "in",
+ " ",
+ "the",
+ " ",
+ "packages",
+ " ",
+ ButtonBox["SparseMatrixRecommender",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/Python-packages/tree/main/\
+SparseMatrixRecommender"], None}],
+ " ",
+ "and",
+ " ",
+ ButtonBox["LatentSemanticAnalyzer",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/Python-packages/tree/main/\
+LatentSemanticAnalyzer"], None}],
+ " ",
+ ".",
+ " ",
+ "(The",
+ " ",
+ "implementation",
+ " ",
+ "of",
+ " ",
+ "those",
+ " ",
+ "packages",
+ " ",
+ "was",
+ " ",
+ "one",
+ " ",
+ "of",
+ " ",
+ "the",
+ " ",
+ "primary",
+ " ",
+ "motivations",
+ " ",
+ "to",
+ " ",
+ "develop",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ ".)"
+}], "Text",ExpressionUUID->"22bc217c-4bb2-4759-a51f-5542f8618fc8"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "package",
+ " ",
+ ButtonBox["RandomSparseMatrix",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/Python-packages/tree/main/\
+RandomSparseMatrix"], None}],
+ " ",
+ "can",
+ " ",
+ "be",
+ " ",
+ "used",
+ " ",
+ "to",
+ " ",
+ "generate",
+ " ",
+ "random",
+ " ",
+ "sparse",
+ " ",
+ "matrices",
+ " ",
+ "(`SSparseMatrix`",
+ " ",
+ "objects.)"
+}], "Text",ExpressionUUID->"ea52859d-9249-4aee-a14c-57247280ed3f"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Installation", "Section",ExpressionUUID->"cd09314c-a543-4fc8-98c3-c5926ddcd504"],
+
+Cell[CellGroupData[{
+
+Cell["Install from GitHub", "Subsection",ExpressionUUID->"7aa327f6-581b-48d7-8e9e-1084027025c1"],
+
+Cell["\<\
+pip install -e \
+git+https://github.com/antononcube/Python-packages.git#egg=SSparseMatrix-\
+antononcube\&subdirectory=SSparseMatrix\
+\>", "ExternalLanguage",
+ Evaluatable->False,
+ CellEvaluationLanguage->
+  "Shell",ExpressionUUID->"f2f3044b-ac3c-45cb-94bf-a33db1ab652b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["From PyPi", "Subsection",ExpressionUUID->"60667375-aa97-491f-9742-9d9ad1f1c64f"],
+
+Cell["pip install SSparseMatrix", "ExternalLanguage",
+ Evaluatable->False,
+ CellEvaluationLanguage->
+  "Shell",ExpressionUUID->"86a2621a-d4cd-4909-863c-7a1394977266"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Setup", "Section",ExpressionUUID->"c280f0ba-11b8-49dc-a593-d80b3d6b4c02"],
+
+Cell["Import the package:", "Text",ExpressionUUID->"5637760d-ae3c-4f76-8310-1f3ff2d5812a"],
+
+Cell["from SSparseMatrix import *", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[39]:=",ExpressionUUID->"d1c29e71-9866-4aa0-96d5-1ee5eddc072b"],
+
+Cell["\<\
+The import command above is equivalent to the import commands:\
+\>", "Text",ExpressionUUID->"a0d1305b-2af1-449e-9db0-66a3a3632776"],
+
+Cell["\<\
+from SSparseMatrix.SSparseMatrix import SSparseMatrix
+from SSparseMatrix.SSparseMatrix import make_s_sparse_matrix
+from SSparseMatrix.SSparseMatrix import is_s_sparse_matrix
+from SSparseMatrix.SSparseMatrix import column_bind\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[40]:=",ExpressionUUID->"17f2bc7a-731d-4b44-ba24-de654c6e9e00"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Creation", "Section",ExpressionUUID->"ce1cd1e5-93c5-4a98-8cd9-64f913fdeed6"],
+
+Cell[TextData[{
+ "Create",
+ " ",
+ "a",
+ " ",
+ "sparse",
+ " ",
+ "matrix",
+ " ",
+ "with",
+ " ",
+ "named",
+ " ",
+ "rows",
+ " ",
+ "and",
+ " ",
+ "columns",
+ " ",
+ "(a",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "object):"
+}], "Text",ExpressionUUID->"a60262a4-113a-4cdd-a4a9-4acf20d1cc7e"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+mat = [[1, 0, 0, 3], [4, 0, 0, 5], [0, 3, 0, 5], [0, 0, 1, 0], [0, 0, 0, 5]]
+smat = SSparseMatrix(mat)
+smat.set_row_names([\"A\", \"B\", \"C\", \"D\", \"E\"])
+smat.set_column_names([\"a\", \"b\", \"c\", \"d\"])\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[41]:=",ExpressionUUID->"ff628b19-a780-4ced-b19f-1e3cf1c8b090"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   TagBox["ExternalObject",
+    "SummaryHead"], "[", 
+   DynamicModuleBox[{Typeset`open$$ = False, Typeset`embedState$$ = "Ready"}, 
+    
+    TemplateBox[{
+      PaneSelectorBox[{False -> GridBox[{{
+            PaneBox[
+             ButtonBox[
+              DynamicBox[
+               FEPrivate`FrontEndResource["FEBitmaps", "SummaryBoxOpener"]], 
+              ButtonFunction :> (Typeset`open$$ = True), Appearance -> None, 
+              BaseStyle -> {}, Evaluator -> Automatic, Method -> 
+              "Preemptive"], Alignment -> {Center, Center}, ImageSize -> 
+             Dynamic[{
+               Automatic, 
+                3.5 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                 Magnification])}]], 
+            GridBox[{{
+               RowBox[{
+                 TagBox["\"Command: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"SSparseMatrix\"", "SummaryItem"]}], 
+               RowBox[{
+                 TagBox["\"System: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"Python\"", "SummaryItem"]}], ""}, {
+               RowBox[{
+                 TagBox["\"Type: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"PythonObject\"", "SummaryItem"]}], 
+               RowBox[{
+                 TagBox["\"IsModule: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}], "\[SpanFromLeft]"}}, 
+             GridBoxAlignment -> {
+              "Columns" -> {{Left}}, "Rows" -> {{Automatic}}}, AutoDelete -> 
+             False, GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{2}}, "Rows" -> {{Automatic}}},
+              BaseStyle -> {
+              ShowStringCharacters -> False, NumberMarks -> False, 
+               PrintPrecision -> 3, ShowSyntaxStyles -> False}]}}, 
+          GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+          AutoDelete -> False, 
+          GridBoxItemSize -> {
+           "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+          BaselinePosition -> {1, 1}], True -> GridBox[{{
+            PaneBox[
+             ButtonBox[
+              DynamicBox[
+               FEPrivate`FrontEndResource["FEBitmaps", "SummaryBoxCloser"]], 
+              ButtonFunction :> (Typeset`open$$ = False), Appearance -> None, 
+              BaseStyle -> {}, Evaluator -> Automatic, Method -> 
+              "Preemptive"], Alignment -> {Center, Center}, ImageSize -> 
+             Dynamic[{
+               Automatic, 
+                3.5 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                 Magnification])}]], 
+            GridBox[{{
+               RowBox[{
+                 TagBox["\"Command: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"SSparseMatrix\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"System: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"Python\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"Type: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"PythonObject\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsModule: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"Module: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"SSparseMatrix.SSparseMatrix\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsClass: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsFunction: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsMethod: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsCallable: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}}, 
+             GridBoxAlignment -> {
+              "Columns" -> {{Left}}, "Rows" -> {{Automatic}}}, AutoDelete -> 
+             False, GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{2}}, "Rows" -> {{Automatic}}},
+              BaseStyle -> {
+              ShowStringCharacters -> False, NumberMarks -> False, 
+               PrintPrecision -> 3, ShowSyntaxStyles -> False}]}}, 
+          GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+          AutoDelete -> False, 
+          GridBoxItemSize -> {
+           "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+          BaselinePosition -> {1, 1}]}, 
+       Dynamic[Typeset`open$$], ImageSize -> Automatic]},
+     "SummaryPanel"],
+    DynamicModuleValues:>{}], "]"}],
+  ExternalObject[<|
+   "System" -> "Python", "Type" -> "PythonObject", "Command" -> 
+    "SSparseMatrix", "IsModule" -> False, "Module" -> 
+    "SSparseMatrix.SSparseMatrix", "IsClass" -> False, "IsFunction" -> False, 
+    "IsMethod" -> False, "IsCallable" -> False|>],
+  Editable->False,
+  SelectWithContents->True,
+  Selectable->False]], "Output",
+ CellChangeTimes->{3.873221893025186*^9},
+ CellLabel->"Out[41]=",ExpressionUUID->"e3eacc9b-a6b1-4e81-83c9-db6900869fcd"]
+}, Open  ]],
+
+Cell["Print the created sparse matrix:", "Text",ExpressionUUID->"72b93073-8396-4da9-92a1-f1b1eb6542ce"],
+
+Cell[CellGroupData[{
+
+Cell["smat.print_matrix()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[42]:=",ExpressionUUID->"a2d5be90-d156-4003-a704-6f7450c8ae11"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.873221893069881*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"1eb27361-f991-4dfb-b44e-a428a61deaa9"],
+
+Cell[BoxData["\<\"  |       a       b       c       d\"\>"], "Print",
+ CellChangeTimes->{3.8732218930941067`*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"32b2395f-b41d-40f9-9cf7-b46402b3fc84"],
+
+Cell[BoxData["\<\"-----------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.87322189311869*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"b126afae-083a-464a-b121-c2d79879d0af"],
+
+Cell[BoxData["\<\"A |       1       .       .       3\"\>"], "Print",
+ CellChangeTimes->{3.873221893131237*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"b0753771-fa31-4da3-9abd-2c412dfc25f4"],
+
+Cell[BoxData["\<\"B |       4       .       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221893143887*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"2c69fe4c-7a66-4d94-93a5-955350238aa2"],
+
+Cell[BoxData["\<\"C |       .       3       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221893156495*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"056f32b9-6b62-4ab9-9aaf-06aa3640eca9"],
+
+Cell[BoxData["\<\"D |       .       .       1       .\"\>"], "Print",
+ CellChangeTimes->{3.87322189316953*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"aa899d88-de33-4daa-9864-51b1f61f3d44"],
+
+Cell[BoxData["\<\"E |       .       .       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221893182143*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"28949a6a-2d61-4239-98d8-5c215b02be66"],
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.873221893194922*^9},
+ CellLabel->
+  "During evaluation of \
+In[42]:=",ExpressionUUID->"c9f1c353-263e-43c6-bc89-243ff2e2e407"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "Another",
+ " ",
+ "way",
+ " ",
+ "to",
+ " ",
+ "create",
+ " ",
+ "using",
+ " ",
+ "the",
+ " ",
+ "function",
+ " ",
+ StyleBox["make_s_sparse_matrix", "Program"],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"5c06e77a-5e1d-48fd-b74b-36b12aa6e3b2"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+ssmat=make_s_sparse_matrix(mat)
+ssmat\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[43]:=",ExpressionUUID->"0426b58e-8092-44e1-be77-e29252cf3b5d"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   TagBox["ExternalObject",
+    "SummaryHead"], "[", 
+   DynamicModuleBox[{Typeset`open$$ = False, Typeset`embedState$$ = "Ready"}, 
+    
+    TemplateBox[{
+      PaneSelectorBox[{False -> GridBox[{{
+            PaneBox[
+             ButtonBox[
+              DynamicBox[
+               FEPrivate`FrontEndResource["FEBitmaps", "SummaryBoxOpener"]], 
+              ButtonFunction :> (Typeset`open$$ = True), Appearance -> None, 
+              BaseStyle -> {}, Evaluator -> Automatic, Method -> 
+              "Preemptive"], Alignment -> {Center, Center}, ImageSize -> 
+             Dynamic[{
+               Automatic, 
+                3.5 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                 Magnification])}]], 
+            GridBox[{{
+               RowBox[{
+                 TagBox["\"Command: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"SSparseMatrix\"", "SummaryItem"]}], 
+               RowBox[{
+                 TagBox["\"System: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"Python\"", "SummaryItem"]}], ""}, {
+               RowBox[{
+                 TagBox["\"Type: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"PythonObject\"", "SummaryItem"]}], 
+               RowBox[{
+                 TagBox["\"IsModule: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}], "\[SpanFromLeft]"}}, 
+             GridBoxAlignment -> {
+              "Columns" -> {{Left}}, "Rows" -> {{Automatic}}}, AutoDelete -> 
+             False, GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{2}}, "Rows" -> {{Automatic}}},
+              BaseStyle -> {
+              ShowStringCharacters -> False, NumberMarks -> False, 
+               PrintPrecision -> 3, ShowSyntaxStyles -> False}]}}, 
+          GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+          AutoDelete -> False, 
+          GridBoxItemSize -> {
+           "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+          BaselinePosition -> {1, 1}], True -> GridBox[{{
+            PaneBox[
+             ButtonBox[
+              DynamicBox[
+               FEPrivate`FrontEndResource["FEBitmaps", "SummaryBoxCloser"]], 
+              ButtonFunction :> (Typeset`open$$ = False), Appearance -> None, 
+              BaseStyle -> {}, Evaluator -> Automatic, Method -> 
+              "Preemptive"], Alignment -> {Center, Center}, ImageSize -> 
+             Dynamic[{
+               Automatic, 
+                3.5 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                 Magnification])}]], 
+            GridBox[{{
+               RowBox[{
+                 TagBox["\"Command: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"SSparseMatrix\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"System: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"Python\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"Type: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"PythonObject\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsModule: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"Module: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["\"SSparseMatrix.SSparseMatrix\"", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsClass: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsFunction: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsMethod: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}, {
+               RowBox[{
+                 TagBox["\"IsCallable: \"", "SummaryItemAnnotation"], 
+                 "\[InvisibleSpace]", 
+                 TagBox["False", "SummaryItem"]}]}}, 
+             GridBoxAlignment -> {
+              "Columns" -> {{Left}}, "Rows" -> {{Automatic}}}, AutoDelete -> 
+             False, GridBoxItemSize -> {
+              "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+             GridBoxSpacings -> {"Columns" -> {{2}}, "Rows" -> {{Automatic}}},
+              BaseStyle -> {
+              ShowStringCharacters -> False, NumberMarks -> False, 
+               PrintPrecision -> 3, ShowSyntaxStyles -> False}]}}, 
+          GridBoxAlignment -> {"Columns" -> {{Left}}, "Rows" -> {{Top}}}, 
+          AutoDelete -> False, 
+          GridBoxItemSize -> {
+           "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}, 
+          BaselinePosition -> {1, 1}]}, 
+       Dynamic[Typeset`open$$], ImageSize -> Automatic]},
+     "SummaryPanel"],
+    DynamicModuleValues:>{}], "]"}],
+  ExternalObject[<|
+   "System" -> "Python", "Type" -> "PythonObject", "Command" -> 
+    "SSparseMatrix", "IsModule" -> False, "Module" -> 
+    "SSparseMatrix.SSparseMatrix", "IsClass" -> False, "IsFunction" -> False, 
+    "IsMethod" -> False, "IsCallable" -> False|>],
+  Editable->False,
+  SelectWithContents->True,
+  Selectable->False]], "Output",
+ CellChangeTimes->{3.8732218932264347`*^9},
+ CellLabel->"Out[43]=",ExpressionUUID->"a6c96d40-f219-4fc6-aa1d-12da08bb22a1"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Structure", "Section",ExpressionUUID->"97fcf9a5-6dc2-4c91-8ca8-41d985342116"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "objects",
+ " ",
+ "have",
+ " ",
+ "a",
+ " ",
+ "simple",
+ " ",
+ "structure.",
+ " ",
+ "Here",
+ " ",
+ "are",
+ " ",
+ "the",
+ " ",
+ "attributes:",
+ " ",
+ "-",
+ " ",
+ StyleBox["_sparseMatrix", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["_rowNames", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["_colNames", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["_dimNames", "Program"]
+}], "Text",ExpressionUUID->"a4e6875e-e8bc-4a84-b69e-5e36526f7b5f"],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "are",
+ " ",
+ "the",
+ " ",
+ "methods",
+ " ",
+ "to",
+ " ",
+ "\"query\"",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "objects:",
+ " ",
+ "-",
+ " ",
+ StyleBox["sparse_matrix()", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["row_names()", "Program"],
+ " ",
+ "and",
+ " ",
+ StyleBox["row_names_dict()", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["column_names()", "Program"],
+ " ",
+ "and",
+ " ",
+ StyleBox["column_names_dict()", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["shape()", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["dimension_names()", "Program"]
+}], "Text",ExpressionUUID->"adf94db0-85cb-4545-8926-e3eac414b72e"],
+
+Cell[TextData[{
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "over-writes",
+ " ",
+ "the",
+ " ",
+ "methods",
+ " ",
+ "of",
+ " ",
+ StyleBox["scipy.sparse.csr_matrix", "Program"],
+ " ",
+ "that",
+ " ",
+ "might",
+ " ",
+ "require",
+ " ",
+ "the",
+ " ",
+ "handling",
+ " ",
+ "of",
+ " ",
+ "row",
+ " ",
+ "names",
+ " ",
+ "and",
+ " ",
+ "column",
+ " ",
+ "names."
+}], "Text",ExpressionUUID->"ccace347-6c36-4a74-a03f-d61a23e64a44"],
+
+Cell[TextData[{
+ "Most",
+ " ",
+ "of",
+ " ",
+ "the",
+ " ",
+ "rest",
+ " ",
+ "of",
+ " ",
+ "the",
+ " ",
+ StyleBox["scipy.sparse.csr_matrix", "Program"],
+ " ",
+ ButtonBox["methods",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.\
+csr_matrix.html"], None}],
+ " ",
+ "are",
+ " ",
+ "delegated",
+ " ",
+ "to",
+ " ",
+ "the",
+ " ",
+ StyleBox["_sparseMatrix", "Program"],
+ " ",
+ "attribute."
+}], "Text",ExpressionUUID->"75d64ff3-0591-46c7-bde2-ed623c69720f"],
+
+Cell[TextData[{
+ "For",
+ " ",
+ "example,",
+ " ",
+ "for",
+ " ",
+ "a",
+ " ",
+ "given",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "object",
+ " ",
+ StyleBox["smat", "Program"],
+ " ",
+ "the",
+ " ",
+ "dense",
+ " ",
+ "version",
+ " ",
+ "of",
+ " ",
+ StyleBox["smat", "Program"],
+ " ",
+ "'s",
+ " ",
+ "sparse",
+ " ",
+ "matrix",
+ " ",
+ "attribute",
+ " ",
+ "can",
+ " ",
+ "be",
+ " ",
+ "obtained",
+ " ",
+ "by",
+ " ",
+ "accessing",
+ " ",
+ "that",
+ " ",
+ "attribute",
+ " ",
+ "first",
+ " ",
+ "and",
+ " ",
+ "then",
+ " ",
+ "using",
+ " ",
+ "the",
+ " ",
+ "method",
+ " ",
+ StyleBox["todense", "Program"],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"377af9fa-f257-4eaf-b4dc-67748d64823b"],
+
+Cell[CellGroupData[{
+
+Cell["print(smat.sparse_matrix().todense())", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[44]:=",ExpressionUUID->"8003397c-23ae-48b1-bcf4-16d0fb829379"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"[[1 0 0 3]\"\>"], "Print",
+ CellChangeTimes->{3.873221893267789*^9},
+ CellLabel->
+  "During evaluation of \
+In[44]:=",ExpressionUUID->"91afdbcd-815a-40da-851e-0d1ab2eb63a1"],
+
+Cell[BoxData["\<\" [4 0 0 5]\"\>"], "Print",
+ CellChangeTimes->{3.873221893291828*^9},
+ CellLabel->
+  "During evaluation of \
+In[44]:=",ExpressionUUID->"e25b2837-e654-4e15-b812-336d668bfa4b"],
+
+Cell[BoxData["\<\" [0 3 0 5]\"\>"], "Print",
+ CellChangeTimes->{3.873221893316139*^9},
+ CellLabel->
+  "During evaluation of \
+In[44]:=",ExpressionUUID->"4553ce95-e220-447d-bb69-0920de1f6ce6"],
+
+Cell[BoxData["\<\" [0 0 1 0]\"\>"], "Print",
+ CellChangeTimes->{3.873221893328927*^9},
+ CellLabel->
+  "During evaluation of \
+In[44]:=",ExpressionUUID->"32799660-36b2-45e7-8379-d08d28e28428"],
+
+Cell[BoxData["\<\" [0 0 0 5]]\"\>"], "Print",
+ CellChangeTimes->{3.873221893341514*^9},
+ CellLabel->
+  "During evaluation of \
+In[44]:=",ExpressionUUID->"04155d58-6ab3-45ca-a923-c403bafc6edd"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "Alternatively,",
+ " ",
+ "we",
+ " ",
+ "can",
+ " ",
+ "use",
+ " ",
+ "the",
+ " ",
+ "\"delegated\"",
+ " ",
+ "form",
+ " ",
+ "and",
+ " ",
+ "directly",
+ " ",
+ "invoke",
+ " ",
+ StyleBox["todense", "Program"],
+ " ",
+ "on",
+ " ",
+ StyleBox["smat", "Program"],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"446d8c66-2b13-4dd0-af53-489b768c81b2"],
+
+Cell[CellGroupData[{
+
+Cell["print(smat.todense())", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[45]:=",ExpressionUUID->"23bc5553-0ecd-4a92-aded-5256f5baceda"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"[[1 0 0 3]\"\>"], "Print",
+ CellChangeTimes->{3.873221893371726*^9},
+ CellLabel->
+  "During evaluation of \
+In[45]:=",ExpressionUUID->"472a538f-9e74-4996-83ba-cf861ed32b7c"],
+
+Cell[BoxData["\<\" [4 0 0 5]\"\>"], "Print",
+ CellChangeTimes->{3.873221893395298*^9},
+ CellLabel->
+  "During evaluation of \
+In[45]:=",ExpressionUUID->"c9115922-fa49-458d-9d9b-7bac25c92668"],
+
+Cell[BoxData["\<\" [0 3 0 5]\"\>"], "Print",
+ CellChangeTimes->{3.8732218934190083`*^9},
+ CellLabel->
+  "During evaluation of \
+In[45]:=",ExpressionUUID->"5c349478-e952-4325-bcc9-021af7dc390d"],
+
+Cell[BoxData["\<\" [0 0 1 0]\"\>"], "Print",
+ CellChangeTimes->{3.873221893431224*^9},
+ CellLabel->
+  "During evaluation of \
+In[45]:=",ExpressionUUID->"480c263a-c8e8-4003-a39e-0db5b1df7367"],
+
+Cell[BoxData["\<\" [0 0 0 5]]\"\>"], "Print",
+ CellChangeTimes->{3.873221893443431*^9},
+ CellLabel->
+  "During evaluation of \
+In[45]:=",ExpressionUUID->"6cbb8d85-d615-4bb2-87db-2e159a5e98d5"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "is",
+ " ",
+ "another",
+ " ",
+ "example",
+ " ",
+ "showing",
+ " ",
+ "a",
+ " ",
+ "direct",
+ " ",
+ "application",
+ " ",
+ "of",
+ " ",
+ "the",
+ " ",
+ "element-wise",
+ " ",
+ "operation",
+ " ",
+ StyleBox["sin", "Program"],
+ " ",
+ "through",
+ " ",
+ "the",
+ " ",
+ StyleBox["scipy.sparse.csr_matrix", "Program"],
+ " ",
+ "method",
+ " ",
+ StyleBox["sin", "Program"],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"5fca95e5-29be-4acd-86b5-e0e476c3fc93"],
+
+Cell[CellGroupData[{
+
+Cell["smat.sin().print_matrix(n_digits=20)", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[46]:=",ExpressionUUID->"1c15c8e3-35ec-49cc-a1b0-aaf9a04ab303"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"============================================================\
+=======================\"\>"], "Print",
+ CellChangeTimes->{3.8732218934740543`*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"dd532942-9177-487d-b9b2-e4e94b9359e9"],
+
+Cell[BoxData["\<\"  |                   a                   b                 \
+  c                   d\"\>"], "Print",
+ CellChangeTimes->{3.873221893500051*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"f3a5b3bc-cd26-48ae-aef3-5708bfc87b6a"],
+
+Cell[BoxData["\<\"------------------------------------------------------------\
+-----------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221893527648*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"7e8596ab-ae32-43e0-88a8-c176df9cb83c"],
+
+Cell[BoxData["\<\"A |  0.8414709848078965                   .                 \
+  .  0.1411200080598672\"\>"], "Print",
+ CellChangeTimes->{3.8732218935429773`*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"3506d34a-f1ce-493a-8941-f0933b2f955a"],
+
+Cell[BoxData["\<\"B | -0.7568024953079283                   .                 \
+  . -0.9589242746631385\"\>"], "Print",
+ CellChangeTimes->{3.8732218935569563`*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"677aa049-4d46-4750-adf7-8d8683a44c9f"],
+
+Cell[BoxData["\<\"C |                   .  0.1411200080598672                 \
+  . -0.9589242746631385\"\>"], "Print",
+ CellChangeTimes->{3.873221893571156*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"3f8a9625-b962-4806-8b53-f07daa576b80"],
+
+Cell[BoxData["\<\"D |                   .                   .  \
+0.8414709848078965                   .\"\>"], "Print",
+ CellChangeTimes->{3.873221893583294*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"f3ad37d5-c0eb-4a4d-81b0-6ac6a7b0ef6a"],
+
+Cell[BoxData["\<\"E |                   .                   .                 \
+  . -0.9589242746631385\"\>"], "Print",
+ CellChangeTimes->{3.873221893595447*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"a864f055-6fc1-4475-a0be-87bc4fcb6e52"],
+
+Cell[BoxData["\<\"============================================================\
+=======================\"\>"], "Print",
+ CellChangeTimes->{3.873221893607348*^9},
+ CellLabel->
+  "During evaluation of \
+In[46]:=",ExpressionUUID->"98eba1d2-6764-47dd-903d-19e492911c76"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Representation", "Section",ExpressionUUID->"b9994f81-892c-4ee3-b6a9-ecbc0579dfd7"],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "the",
+ " ",
+ "function",
+ " ",
+ StyleBox["print", "Program"],
+ " ",
+ "uses",
+ " ",
+ "the",
+ " ",
+ "string",
+ " ",
+ "representation",
+ " ",
+ "of",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "object:"
+}], "Text",ExpressionUUID->"c6f1ce8d-1b58-46e8-94b0-b94ffaad93df"],
+
+Cell[CellGroupData[{
+
+Cell["print(smat)", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[47]:=",ExpressionUUID->"cbb3587e-37d6-4600-b684-38916a9f12ac"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"  ('A', 'a')\\t1\"\>"], "Print",
+ CellChangeTimes->{3.873221893638789*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"0f251510-d75c-4c3c-acb1-be52eb5e5c2d"],
+
+Cell[BoxData["\<\"  ('A', 'd')\\t3\"\>"], "Print",
+ CellChangeTimes->{3.873221893660903*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"e6d79d54-fb2c-4ca0-94cf-73053e89beb0"],
+
+Cell[BoxData["\<\"  ('B', 'a')\\t4\"\>"], "Print",
+ CellChangeTimes->{3.873221893683566*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"389f926c-d99d-477c-83b8-8105aa6d6146"],
+
+Cell[BoxData["\<\"  ('B', 'd')\\t5\"\>"], "Print",
+ CellChangeTimes->{3.8732218936951323`*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"89f27f53-56d3-482a-aded-963f4d65c9b9"],
+
+Cell[BoxData["\<\"  ('C', 'b')\\t3\"\>"], "Print",
+ CellChangeTimes->{3.873221893706658*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"c0670e85-a9b2-4128-b9e9-e3698f14a510"],
+
+Cell[BoxData["\<\"  ('C', 'd')\\t5\"\>"], "Print",
+ CellChangeTimes->{3.873221893718131*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"ee30a23c-4643-420a-b6aa-c141d7092a45"],
+
+Cell[BoxData["\<\"  ('D', 'c')\\t1\"\>"], "Print",
+ CellChangeTimes->{3.873221893729643*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"c0a6209a-a6d8-4046-8106-56f530d39454"],
+
+Cell[BoxData["\<\"  ('E', 'd')\\t5\"\>"], "Print",
+ CellChangeTimes->{3.873221893741083*^9},
+ CellLabel->
+  "During evaluation of \
+In[47]:=",ExpressionUUID->"a860fa25-0fc2-4f58-a533-20c550666d5d"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "we",
+ " ",
+ "print",
+ " ",
+ "the",
+ " ",
+ "representation",
+ " ",
+ "obtained",
+ " ",
+ "with",
+ " ",
+ ButtonBox["`repr`",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://docs.python.org/3.4/library/functions.html?highlight=repr#\
+repr"], None}],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"7f3054f0-5f62-47db-b99b-fbd9fc2eaa2f"],
+
+Cell[CellGroupData[{
+
+Cell["print(repr(smat))", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[48]:=",ExpressionUUID->"5a2a3033-4ae2-4564-b4c3-d810901cf776"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"<5x4 SSparseMatrix (sparse matrix with named rows and \
+columns) of type '<class 'numpy.int64'>'\"\>"], "Print",
+ CellChangeTimes->{3.873221893770535*^9},
+ CellLabel->
+  "During evaluation of \
+In[48]:=",ExpressionUUID->"5ca9ad14-6276-46ae-a91a-aad05998ea87"],
+
+Cell[BoxData["\<\"\\twith 8 stored elements in Compressed Sparse Row format, \
+and fill-in 0.4>\"\>"], "Print",
+ CellChangeTimes->{3.8732218937919693`*^9},
+ CellLabel->
+  "During evaluation of \
+In[48]:=",ExpressionUUID->"65295b04-ab8e-4545-a119-9016d4908317"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Here is the matrix form (\"pretty printing\" ):", "Text",ExpressionUUID->"79144aa9-7486-4516-983f-bf2c0370ed30"],
+
+Cell[CellGroupData[{
+
+Cell["smat.print_matrix()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[49]:=",ExpressionUUID->"380a0492-13cb-4464-811a-2c2c0e6eb406"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.873221893831745*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"86c4ffeb-edc4-46df-b528-6d4e1f781ed5"],
+
+Cell[BoxData["\<\"  |       a       b       c       d\"\>"], "Print",
+ CellChangeTimes->{3.873221893852747*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"b2a724bb-25ae-4337-9916-d0416c89b559"],
+
+Cell[BoxData["\<\"-----------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221893873953*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"ae5d1069-3936-479b-98ce-4911577cce2d"],
+
+Cell[BoxData["\<\"A |       1       .       .       3\"\>"], "Print",
+ CellChangeTimes->{3.8732218938849688`*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"fc19c8c2-db18-4fb0-aa6c-dbb5b2d24afe"],
+
+Cell[BoxData["\<\"B |       4       .       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221893895998*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"63ef1245-39d4-4ee8-9471-d03b1f6a1ae4"],
+
+Cell[BoxData["\<\"C |       .       3       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221893906989*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"ec9705b7-a1ed-43df-b37b-435d9a94e3a9"],
+
+Cell[BoxData["\<\"D |       .       .       1       .\"\>"], "Print",
+ CellChangeTimes->{3.873221893918005*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"c350e803-dbec-47d8-b55e-293e598b75cd"],
+
+Cell[BoxData["\<\"E |       .       .       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221893929*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"332fffa7-9f7c-41db-a929-3d81e2ddc6b3"],
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.8732218939399223`*^9},
+ CellLabel->
+  "During evaluation of \
+In[49]:=",ExpressionUUID->"b7b6b182-2ec4-4c82-ad9b-ae5426663bae"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "method",
+ " ",
+ StyleBox["triplets", "Program"],
+ " ",
+ "can",
+ " ",
+ "be",
+ " ",
+ "used",
+ " ",
+ "to",
+ " ",
+ "obtain",
+ " ",
+ "a",
+ " ",
+ "list",
+ " ",
+ "of",
+ " ",
+ "`(row,",
+ " ",
+ "column,",
+ " ",
+ "value)`",
+ " ",
+ "triplets:"
+}], "Text",ExpressionUUID->"186e9584-d07d-4c28-917a-d466f24713e5"],
+
+Cell[CellGroupData[{
+
+Cell["smat.triplets()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[50]:=",ExpressionUUID->"94077d40-21bf-481e-9a47-907335384f65"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\<\"A\"\>", ",", "\<\"a\"\>", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"A\"\>", ",", "\<\"d\"\>", ",", "3"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"B\"\>", ",", "\<\"a\"\>", ",", "4"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"B\"\>", ",", "\<\"d\"\>", ",", "5"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"C\"\>", ",", "\<\"b\"\>", ",", "3"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"C\"\>", ",", "\<\"d\"\>", ",", "5"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"D\"\>", ",", "\<\"c\"\>", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"\<\"E\"\>", ",", "\<\"d\"\>", ",", "5"}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.873221893968894*^9},
+ CellLabel->"Out[50]=",ExpressionUUID->"a720ca0d-828a-4740-a331-b9cf5a9b4f0c"]
+}, Open  ]],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "method",
+ " ",
+ StyleBox["row_dictionaries", "Program"],
+ " ",
+ "gives",
+ " ",
+ "a",
+ " ",
+ "dictionary",
+ " ",
+ "with",
+ " ",
+ "keys",
+ " ",
+ "that",
+ " ",
+ "are",
+ " ",
+ "row-names",
+ " ",
+ "and",
+ " ",
+ "values",
+ " ",
+ "that",
+ " ",
+ "are",
+ " ",
+ "column-name-to-matrix-value",
+ " ",
+ "dictionaries:"
+}], "Text",ExpressionUUID->"e6eaf0b1-2064-4a06-9b30-433823786b49"],
+
+Cell[CellGroupData[{
+
+Cell["smat.row_dictionaries()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[51]:=",ExpressionUUID->"00e8f44d-aaad-4802-8e77-a753e145e6e0"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"A\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{
+      RowBox[{"\<\"a\"\>", "\[Rule]", "1"}], ",", 
+      RowBox[{"\<\"d\"\>", "\[Rule]", "3"}]}], "\[RightAssociation]"}]}], ",", 
+   RowBox[{"\<\"B\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{
+      RowBox[{"\<\"a\"\>", "\[Rule]", "4"}], ",", 
+      RowBox[{"\<\"d\"\>", "\[Rule]", "5"}]}], "\[RightAssociation]"}]}], ",", 
+   RowBox[{"\<\"C\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{
+      RowBox[{"\<\"b\"\>", "\[Rule]", "3"}], ",", 
+      RowBox[{"\<\"d\"\>", "\[Rule]", "5"}]}], "\[RightAssociation]"}]}], ",", 
+   RowBox[{"\<\"D\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{"\<\"c\"\>", "\[Rule]", "1"}], "\[RightAssociation]"}]}], ",", 
+   RowBox[{"\<\"E\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{"\<\"d\"\>", "\[Rule]", "5"}], "\[RightAssociation]"}]}]}], 
+  "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{3.873221894008729*^9},
+ CellLabel->"Out[51]=",ExpressionUUID->"583bb353-af31-4c50-9649-a6666741845b"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Similarly,",
+ " ",
+ "the",
+ " ",
+ "method",
+ " ",
+ StyleBox["column_dictionaries", "Program"],
+ " ",
+ "gives",
+ " ",
+ "a",
+ " ",
+ "dictionary",
+ " ",
+ "with",
+ " ",
+ "keys",
+ " ",
+ "that",
+ " ",
+ "are",
+ " ",
+ "column-names",
+ " ",
+ "and",
+ " ",
+ "values",
+ " ",
+ "that",
+ " ",
+ "are",
+ " ",
+ "row-name-to-matrix-value",
+ " ",
+ "dictionaries:"
+}], "Text",ExpressionUUID->"3adea5bb-d421-497b-ba7f-a8eda1226ba0"],
+
+Cell[CellGroupData[{
+
+Cell["smat.column_dictionaries()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[52]:=",ExpressionUUID->"8a47df75-f7cb-4cca-af37-b36af471e8c2"],
+
+Cell[BoxData[
+ RowBox[{"\[LeftAssociation]", 
+  RowBox[{
+   RowBox[{"\<\"a\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{
+      RowBox[{"\<\"A\"\>", "\[Rule]", "1"}], ",", 
+      RowBox[{"\<\"B\"\>", "\[Rule]", "4"}]}], "\[RightAssociation]"}]}], ",", 
+   RowBox[{"\<\"b\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{"\<\"C\"\>", "\[Rule]", "3"}], "\[RightAssociation]"}]}], ",", 
+   RowBox[{"\<\"c\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{"\<\"D\"\>", "\[Rule]", "1"}], "\[RightAssociation]"}]}], ",", 
+   RowBox[{"\<\"d\"\>", "\[Rule]", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{
+      RowBox[{"\<\"A\"\>", "\[Rule]", "3"}], ",", 
+      RowBox[{"\<\"B\"\>", "\[Rule]", "5"}], ",", 
+      RowBox[{"\<\"C\"\>", "\[Rule]", "5"}], ",", 
+      RowBox[{"\<\"E\"\>", "\[Rule]", "5"}]}], "\[RightAssociation]"}]}]}], 
+  "\[RightAssociation]"}]], "Output",
+ CellChangeTimes->{3.8732218940642653`*^9},
+ CellLabel->"Out[52]=",ExpressionUUID->"a574446b-71bc-4309-a457-79a967dfc981"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Multiplication", "Section",ExpressionUUID->"1d5cf906-962d-4489-a00e-41a3d563eea3"],
+
+Cell["Multiply with the transpose and print:", "Text",ExpressionUUID->"0d9e7044-12fb-4ef9-a133-dedb476474b0"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+ssmat2 = ssmat.dot(smat.transpose())
+ssmat2.print_matrix()\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[53]:=",ExpressionUUID->"0cc0a8b8-3577-4136-bf4a-0cf1a2eb9fe8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===========================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894097702*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"6b7fca63-e925-41db-b01b-f6db462fbeaf"],
+
+Cell[BoxData["\<\"  |       A       B       C       D       E\"\>"], "Print",
+ CellChangeTimes->{3.8732218941158953`*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"cca1892d-b742-44f3-9b02-3d1d200d3833"],
+
+Cell[BoxData["\<\"-------------------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221894134329*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"e0211735-47e7-4d5f-9077-918fa97cd4e7"],
+
+Cell[BoxData["\<\"0 |      10      19      15       .      15\"\>"], "Print",
+ CellChangeTimes->{3.8732218941438837`*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"56bc9502-2423-48fd-99fc-defb9c95538f"],
+
+Cell[BoxData["\<\"1 |      19      41      25       .      25\"\>"], "Print",
+ CellChangeTimes->{3.873221894153419*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"8ae806bc-1dc2-4506-934c-ffed8f303915"],
+
+Cell[BoxData["\<\"2 |      15      25      34       .      25\"\>"], "Print",
+ CellChangeTimes->{3.873221894163002*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"e4992c5b-8411-4982-aac0-9c67410f1791"],
+
+Cell[BoxData["\<\"3 |       .       .       .       1       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218941723948`*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"b11433eb-8c86-4d13-8b9e-8e75843d7b34"],
+
+Cell[BoxData["\<\"4 |      15      25      25       .      25\"\>"], "Print",
+ CellChangeTimes->{3.873221894181898*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"05076046-5a0c-4a83-9c73-4ff2417d0172"],
+
+Cell[BoxData["\<\"===========================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894191874*^9},
+ CellLabel->
+  "During evaluation of \
+In[53]:=",ExpressionUUID->"d6b78409-da1c-49b6-90dd-800f9fcfa8c7"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Multiply with a list-vector:", "Text",ExpressionUUID->"36c52ab8-0e4c-422f-8f0b-a78e301bb99d"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+smat3 = smat.dot([1, 2, 1, 0])
+smat3.print_matrix()\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[54]:=",ExpressionUUID->"4d04de8b-bbdd-4e2d-98fc-454275163730"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===========\"\>"], "Print",
+ CellChangeTimes->{3.8732218942197237`*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"682b6e6a-9a70-407e-bbf3-7536cdfec064"],
+
+Cell[BoxData["\<\"  |       0\"\>"], "Print",
+ CellChangeTimes->{3.87322189423703*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"25cf266b-fddd-4304-bbe5-41f94c892902"],
+
+Cell[BoxData["\<\"-----------\"\>"], "Print",
+ CellChangeTimes->{3.873221894254443*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"cf23a44c-136b-45aa-863b-c25ae3510bb9"],
+
+Cell[BoxData["\<\"A |       1\"\>"], "Print",
+ CellChangeTimes->{3.8732218942635317`*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"6660b8c4-59d7-4835-babe-22d1778e940f"],
+
+Cell[BoxData["\<\"B |       4\"\>"], "Print",
+ CellChangeTimes->{3.87322189427262*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"a3ead437-5405-4506-9982-5f580f9051f2"],
+
+Cell[BoxData["\<\"C |       6\"\>"], "Print",
+ CellChangeTimes->{3.873221894281706*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"35760c93-db40-4c90-a6da-804e16f569dd"],
+
+Cell[BoxData["\<\"D |       1\"\>"], "Print",
+ CellChangeTimes->{3.8732218942907953`*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"0bcff8c7-1d3e-49be-8f2f-a3dc209cb0e5"],
+
+Cell[BoxData["\<\"E |       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894299889*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"8c7f97e3-f598-49c6-a933-1bf13eddd07e"],
+
+Cell[BoxData["\<\"===========\"\>"], "Print",
+ CellChangeTimes->{3.873221894308984*^9},
+ CellLabel->
+  "During evaluation of \
+In[54]:=",ExpressionUUID->"fda30e98-1794-43ef-a4b8-5458cb05803a"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Remark:",
+  FontWeight->"Bold"],
+ " ",
+ "The",
+ " ",
+ "type",
+ " ",
+ "of",
+ " ",
+ "the",
+ " ",
+ StyleBox[".dot", "Program"],
+ " ",
+ "argument",
+ " ",
+ "can",
+ " ",
+ "be:",
+ " ",
+ "-",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["list", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["numpy.array", "Program"],
+ " ",
+ "-",
+ " ",
+ StyleBox["scipy.sparse.csr_matrix", "Program"]
+}], "Text",ExpressionUUID->"77d909a0-8a47-406f-af8e-7b4c118714e8"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Slices", "Section",ExpressionUUID->"6a0abea8-8660-4020-9ed5-72c43a45fe44"],
+
+Cell["Single element access:", "Text",ExpressionUUID->"558a2e41-9dbc-4a9f-8dca-a80e371e1ac8"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+print(smat[\"A\", \"d\"])
+print(smat[0, 3])\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[55]:=",ExpressionUUID->"7f75e8f3-3160-4e05-a173-64678f8224de"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"3\"\>"], "Print",
+ CellChangeTimes->{3.873221894335909*^9},
+ CellLabel->
+  "During evaluation of \
+In[55]:=",ExpressionUUID->"0519f9de-073f-487b-a90c-e0e6b3eb60c2"],
+
+Cell[BoxData["\<\"3\"\>"], "Print",
+ CellChangeTimes->{3.873221894351932*^9},
+ CellLabel->
+  "During evaluation of \
+In[55]:=",ExpressionUUID->"f52e29fb-f89c-449e-afb0-cea2be085387"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Get sub-matrix of rows using row names:", "Text",ExpressionUUID->"b3624a30-3a78-4f50-87db-05978da8ae76"],
+
+Cell[CellGroupData[{
+
+Cell["smat[[\"A\", \"D\", \"B\"], :].print_matrix()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[56]:=",ExpressionUUID->"9a4938d9-fc40-49c7-936f-2483754e7360"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894385895*^9},
+ CellLabel->
+  "During evaluation of \
+In[56]:=",ExpressionUUID->"157e244e-04b6-4c4d-8670-ebeb0664fdc0"],
+
+Cell[BoxData["\<\"  |       a       b       c       d\"\>"], "Print",
+ CellChangeTimes->{3.873221894401286*^9},
+ CellLabel->
+  "During evaluation of \
+In[56]:=",ExpressionUUID->"9c99f2e1-3454-4b2a-b483-8b9357f9ebf8"],
+
+Cell[BoxData["\<\"-----------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221894416877*^9},
+ CellLabel->
+  "During evaluation of \
+In[56]:=",ExpressionUUID->"1ea3d89c-3025-4c7c-b6c2-8bc956b17d8e"],
+
+Cell[BoxData["\<\"A |       1       .       .       3\"\>"], "Print",
+ CellChangeTimes->{3.873221894425012*^9},
+ CellLabel->
+  "During evaluation of \
+In[56]:=",ExpressionUUID->"cacb9586-2f9d-4c3e-8f1b-e6a52cb0e175"],
+
+Cell[BoxData["\<\"D |       .       .       1       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218944331827`*^9},
+ CellLabel->
+  "During evaluation of \
+In[56]:=",ExpressionUUID->"ea750260-af83-4c40-b2e4-f573a7538039"],
+
+Cell[BoxData["\<\"B |       4       .       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221894441312*^9},
+ CellLabel->
+  "During evaluation of \
+In[56]:=",ExpressionUUID->"7b89fb61-56c6-43c9-b7dc-3b4099ac7e05"],
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894449429*^9},
+ CellLabel->
+  "During evaluation of \
+In[56]:=",ExpressionUUID->"acb4797a-f484-4fd8-b91b-acd1708536e4"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Get sub-matrix using row indices:", "Text",ExpressionUUID->"a551d0cc-866c-4627-922c-123e90fe3e69"],
+
+Cell[CellGroupData[{
+
+Cell["smat[[0, 3, 1], :].print_matrix()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[57]:=",ExpressionUUID->"09d395a9-10b7-458f-999c-b83f92586df4"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894479225*^9},
+ CellLabel->
+  "During evaluation of \
+In[57]:=",ExpressionUUID->"62209529-1344-4829-aef5-ec88adb855af"],
+
+Cell[BoxData["\<\"  |       a       b       c       d\"\>"], "Print",
+ CellChangeTimes->{3.873221894494005*^9},
+ CellLabel->
+  "During evaluation of \
+In[57]:=",ExpressionUUID->"41a285dc-3ef3-46c9-a18c-bc8ceae80039"],
+
+Cell[BoxData["\<\"-----------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221894509111*^9},
+ CellLabel->
+  "During evaluation of \
+In[57]:=",ExpressionUUID->"0e5c854a-bb81-41d5-bd35-a6156410b91c"],
+
+Cell[BoxData["\<\"A |       1       .       .       3\"\>"], "Print",
+ CellChangeTimes->{3.873221894516972*^9},
+ CellLabel->
+  "During evaluation of \
+In[57]:=",ExpressionUUID->"7025f397-1606-4566-8fe8-8d533226a83f"],
+
+Cell[BoxData["\<\"D |       .       .       1       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894524823*^9},
+ CellLabel->
+  "During evaluation of \
+In[57]:=",ExpressionUUID->"de6b34da-7f8c-4409-98b4-5fe9c63f3c06"],
+
+Cell[BoxData["\<\"B |       4       .       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221894532652*^9},
+ CellLabel->
+  "During evaluation of \
+In[57]:=",ExpressionUUID->"874fe2cb-c289-404d-8e8a-19c0ac6a61df"],
+
+Cell[BoxData["\<\"===================================\"\>"], "Print",
+ CellChangeTimes->{3.8732218945404663`*^9},
+ CellLabel->
+  "During evaluation of \
+In[57]:=",ExpressionUUID->"8d324ff9-3cfd-4c19-9010-59ed1a8c5936"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Get sub-matrix with columns names:", "Text",ExpressionUUID->"02d09008-dcd0-4a9b-8e21-ae983b045fd8"],
+
+Cell[CellGroupData[{
+
+Cell["smat[:, ['a', 'c']].print_matrix()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[58]:=",ExpressionUUID->"238adf73-4640-40f5-a3e6-cfd2bd397361"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===================\"\>"], "Print",
+ CellChangeTimes->{3.873221894569955*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"6ab092e2-5600-40f9-a55c-a0e1c8a537af"],
+
+Cell[BoxData["\<\"  |       a       c\"\>"], "Print",
+ CellChangeTimes->{3.873221894584134*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"391ef566-cdae-4a68-857e-2c32f1d852b9"],
+
+Cell[BoxData["\<\"-------------------\"\>"], "Print",
+ CellChangeTimes->{3.8732218945985613`*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"b987fe07-a185-451f-b7b6-765a2cdc8cea"],
+
+Cell[BoxData["\<\"A |       1       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894606073*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"21a2709c-41e8-4d3c-a140-f9eeaae52be3"],
+
+Cell[BoxData["\<\"B |       4       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894613572*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"7703fb0f-68a9-4c75-8da0-b9c357ce0f4a"],
+
+Cell[BoxData["\<\"C |       .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894621086*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"a03bce93-3ec4-46e5-aa21-fe74e8f3c564"],
+
+Cell[BoxData["\<\"D |       .       1\"\>"], "Print",
+ CellChangeTimes->{3.8732218946286077`*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"913d4531-836b-4e12-b011-111d0021be3b"],
+
+Cell[BoxData["\<\"E |       .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894636138*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"43e6c3f7-1b4f-420d-9085-a7a3ab872b3e"],
+
+Cell[BoxData["\<\"===================\"\>"], "Print",
+ CellChangeTimes->{3.873221894643629*^9},
+ CellLabel->
+  "During evaluation of \
+In[58]:=",ExpressionUUID->"0e9e59fa-ecd3-46c3-94f6-be8ccd2e7259"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Get sub-matrix with columns indices:", "Text",ExpressionUUID->"98b120fe-bec2-4ec2-9dd6-4414fe064b22"],
+
+Cell[CellGroupData[{
+
+Cell["smat[:, [0, 2]].print_matrix()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[59]:=",ExpressionUUID->"428eff95-3acf-4c70-8d22-dc4fd4db69a2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===================\"\>"], "Print",
+ CellChangeTimes->{3.8732218946726637`*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"4188cf7a-92df-4a8e-a774-a76ee4411433"],
+
+Cell[BoxData["\<\"  |       a       c\"\>"], "Print",
+ CellChangeTimes->{3.873221894686166*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"3d79bfbc-615a-4046-aeab-d583d1c288a7"],
+
+Cell[BoxData["\<\"-------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221894699901*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"7b360980-0e43-4fa2-99b4-94d1a36bd765"],
+
+Cell[BoxData["\<\"A |       1       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894707116*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"9169402c-1314-4c4a-9bf4-304fb30b8476"],
+
+Cell[BoxData["\<\"B |       4       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894714314*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"323dbd1a-a643-40bb-b0f1-59342f420c52"],
+
+Cell[BoxData["\<\"C |       .       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218947215*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"1d45dbf8-18be-456f-b3fb-fce8f0e728da"],
+
+Cell[BoxData["\<\"D |       .       1\"\>"], "Print",
+ CellChangeTimes->{3.8732218947286797`*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"c6b97521-569d-4564-94d3-99c2db4a1831"],
+
+Cell[BoxData["\<\"E |       .       .\"\>"], "Print",
+ CellChangeTimes->{3.87322189473588*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"7638d793-1aa9-4270-bc78-243c805b1528"],
+
+Cell[BoxData["\<\"===================\"\>"], "Print",
+ CellChangeTimes->{3.87322189474305*^9},
+ CellLabel->
+  "During evaluation of \
+In[59]:=",ExpressionUUID->"9ac96d54-c17d-46b8-b355-779ace3cb7d1"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Remark:",
+  FontWeight->"Bold"],
+ " ",
+ "The",
+ " ",
+ "current",
+ " ",
+ "implementation",
+ " ",
+ "of",
+ " ",
+ StyleBox["scipy", "Program"],
+ " ",
+ "(1.7.1)",
+ " ",
+ "does",
+ " ",
+ "not",
+ " ",
+ "allow",
+ " ",
+ "retrieval",
+ " ",
+ "of",
+ " ",
+ "sub-matrices",
+ " ",
+ "by",
+ " ",
+ "specifying",
+ " ",
+ StyleBox["both",
+  FontSlant->"Italic"],
+ " ",
+ "row",
+ " ",
+ "and",
+ " ",
+ "column",
+ " ",
+ "ranges",
+ " ",
+ "or",
+ " ",
+ "slices."
+}], "Text",ExpressionUUID->"2a23e35b-fb95-4ff0-9dad-c899064e73a6"],
+
+Cell[TextData[{
+ StyleBox["Remark:",
+  FontWeight->"Bold"],
+ " ",
+ "\"Standard\"",
+ " ",
+ "slices",
+ " ",
+ "with",
+ " ",
+ "integers",
+ " ",
+ "also",
+ " ",
+ "work."
+}], "Text",ExpressionUUID->"8603aef6-eefd-46d1-8be6-095e680f8f0c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Row and column sums", "Section",ExpressionUUID->"b304355a-1016-49c3-b013-b95ae08673c9"],
+
+Cell["Row sums and dictionary of row sums:", "Text",ExpressionUUID->"8818a0c5-b672-4b58-b094-4810d84c0a7c"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+print(smat.row_sums())
+print(smat.row_sums_dict())\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[60]:=",ExpressionUUID->"66f7083c-dd68-40a0-abb6-f6b77982a1d3"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"[4, 9, 8, 1, 5]\"\>"], "Print",
+ CellChangeTimes->{3.87322189477334*^9},
+ CellLabel->
+  "During evaluation of \
+In[60]:=",ExpressionUUID->"8d2051cc-c1a9-4246-8620-58d3a33b211d"],
+
+Cell[BoxData["\<\"{'A': 4, 'B': 9, 'C': 8, 'D': 1, 'E': 5}\"\>"], "Print",
+ CellChangeTimes->{3.873221894785288*^9},
+ CellLabel->
+  "During evaluation of \
+In[60]:=",ExpressionUUID->"169cea10-b814-4d5b-b649-4533e05d626e"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Column sums and dictionary of column sums:", "Text",ExpressionUUID->"3eb3efb6-b39e-4afd-aa6b-6f132a96511b"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+print(smat.column_sums())
+print(smat.column_sums_dict())\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[61]:=",ExpressionUUID->"8e55fb35-b6fa-4e3c-909e-f5e051887e08"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"[5, 3, 1, 18]\"\>"], "Print",
+ CellChangeTimes->{3.873221894832349*^9},
+ CellLabel->
+  "During evaluation of \
+In[61]:=",ExpressionUUID->"be6498ff-dc96-4b1c-8244-af80a61ee891"],
+
+Cell[BoxData["\<\"{'a': 5, 'b': 3, 'c': 1, 'd': 18}\"\>"], "Print",
+ CellChangeTimes->{3.873221894834544*^9},
+ CellLabel->
+  "During evaluation of \
+In[61]:=",ExpressionUUID->"ca3d1dbb-f1c1-4e12-b22f-a08f2ea0b31c"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Column and row binding", "Section",ExpressionUUID->"602fedc5-7f49-428c-9717-589b9470ca9a"],
+
+Cell[CellGroupData[{
+
+Cell["Column binding", "Subsection",ExpressionUUID->"01315feb-6abd-47a8-9bb3-9a2c2a8f8a01"],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "we",
+ " ",
+ "create",
+ " ",
+ "another",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "object:"
+}], "Text",ExpressionUUID->"72613806-9966-44ac-9a6e-b36acaee0d7c"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+mat2=smat.sparse_matrix().transpose()
+smat2 = SSparseMatrix(mat2, row_names=list(\"ABCD\"), column_names=\"c\")
+smat2.print_matrix()\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[62]:=",ExpressionUUID->"49353297-6eaf-4a2f-991e-8d3f2da25336"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===========================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894876896*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"062ddc54-3aa6-40e7-acb1-623b39bd29ea"],
+
+Cell[BoxData["\<\"  |      c0      c1      c2      c3      c4\"\>"], "Print",
+ CellChangeTimes->{3.873221894879006*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"7fca8a87-f44e-42ff-95cf-82337bfc7cdd"],
+
+Cell[BoxData["\<\"-------------------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221894882779*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"f47960ab-d6dc-4692-b170-c386faadb7dd"],
+
+Cell[BoxData["\<\"A |       1       4       .       .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894884309*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"9e8c637b-174b-43a6-9d77-39d1bc30cafd"],
+
+Cell[BoxData["\<\"B |       .       .       3       .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894885826*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"d82ccbd3-94c0-4976-a751-169441077178"],
+
+Cell[BoxData["\<\"C |       .       .       .       1       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218948872623`*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"269f5f0b-1f5f-4c70-8ef3-2baba5aa39ae"],
+
+Cell[BoxData["\<\"D |       3       5       5       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221894888695*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"e7abc663-54aa-4b75-a4f9-013277dc9683"],
+
+Cell[BoxData["\<\"===========================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894890119*^9},
+ CellLabel->
+  "During evaluation of \
+In[62]:=",ExpressionUUID->"87708bb1-bfce-4534-ae91-2705e04c895b"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Here we column-bind two SSparseMatrix objects:", "Text",ExpressionUUID->"13a2a445-e573-42f0-8eac-4e356488c14d"],
+
+Cell[CellGroupData[{
+
+Cell["smat[list(\"ABCD\"), :].column_bind(smat2).print_matrix()", \
+"ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[63]:=",ExpressionUUID->"e2709421-f8fd-45f7-a45e-9c13b7472e53"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"============================================================\
+===============\"\>"], "Print",
+ CellChangeTimes->{3.873221894949211*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"534284d9-5a1e-44ee-9b17-e8a1fb5e8aad"],
+
+Cell[BoxData["\<\"  |       a       b       c       d      c0      c1      c2 \
+     c3      c4\"\>"], "Print",
+ CellChangeTimes->{3.873221894951092*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"3ae637f0-00b1-46e2-badb-82e328d8e01e"],
+
+Cell[BoxData["\<\"------------------------------------------------------------\
+---------------\"\>"], "Print",
+ CellChangeTimes->{3.8732218949544287`*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"9f0881a5-ce52-48bf-842c-9024441dbd44"],
+
+Cell[BoxData["\<\"A |       1       .       .       3       1       4       . \
+      .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894955862*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"b05c8308-2c4d-43ff-91c3-fb3cf3d2bfb6"],
+
+Cell[BoxData["\<\"B |       4       .       .       5       .       .       3 \
+      .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894957307*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"afe36d10-4071-40ae-99f3-e3219ab59dcb"],
+
+Cell[BoxData["\<\"C |       .       3       .       5       .       .       . \
+      1       .\"\>"], "Print",
+ CellChangeTimes->{3.873221894958733*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"c2f8c9d1-36de-4763-9699-62e69226783f"],
+
+Cell[BoxData["\<\"D |       .       .       1       .       3       5       5 \
+      .       5\"\>"], "Print",
+ CellChangeTimes->{3.8732218949601517`*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"a85abd6f-1ab2-42f4-9452-70b0e3c642f4"],
+
+Cell[BoxData["\<\"============================================================\
+===============\"\>"], "Print",
+ CellChangeTimes->{3.87322189496157*^9},
+ CellLabel->
+  "During evaluation of \
+In[63]:=",ExpressionUUID->"fb93703d-516d-48ec-b296-c879d7498ad4"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Remark:",
+  FontWeight->"Bold"],
+ " ",
+ "If",
+ " ",
+ "during",
+ " ",
+ "column-binding",
+ " ",
+ "some",
+ " ",
+ "column",
+ " ",
+ "names",
+ " ",
+ "are",
+ " ",
+ "duplicated",
+ " ",
+ "then",
+ " ",
+ "to",
+ " ",
+ "the",
+ " ",
+ "column",
+ " ",
+ "names",
+ " ",
+ "of",
+ " ",
+ "both",
+ " ",
+ "matrices",
+ " ",
+ "are",
+ " ",
+ "added",
+ " ",
+ "suffixes",
+ " ",
+ "that",
+ " ",
+ "designate",
+ " ",
+ "to",
+ " ",
+ "which",
+ " ",
+ "matrix",
+ " ",
+ "each",
+ " ",
+ "column",
+ " ",
+ "belongs",
+ " ",
+ "to."
+}], "Text",ExpressionUUID->"7cb57947-bcbf-49f1-b545-76bc39f4ba3f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Row binding", "Subsection",ExpressionUUID->"cc5343df-1fb8-46a7-81cc-bf10357504aa"],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "we",
+ " ",
+ "rename",
+ " ",
+ "the",
+ " ",
+ "column",
+ " ",
+ "names",
+ " ",
+ "of",
+ " ",
+ StyleBox["smat", "Program"],
+ " ",
+ "to",
+ " ",
+ "be",
+ " ",
+ "the",
+ " ",
+ "same",
+ " ",
+ "as",
+ " ",
+ StyleBox["smat2", "Program"],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"a7b06c50-30a1-4a45-9b43-e492f6ab8ee2"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+smat3 = smat.copy()
+smat3.set_column_names(smat2.column_names()[0:4])
+smat3 = smat3.impose_column_names(smat2.column_names())
+smat3.print_matrix()\
+\>", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[64]:=",ExpressionUUID->"00c016c2-e6b8-4d2b-9270-dddc137e8174"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"===========================================\"\>"], "Print",
+ CellChangeTimes->{3.873221894997805*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"99638d75-7e97-4ce4-8eb4-ff8b08841fac"],
+
+Cell[BoxData["\<\"  |      c0      c1      c2      c3      c4\"\>"], "Print",
+ CellChangeTimes->{3.873221894999639*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"b837f8b2-9514-4cea-ac47-130e8a2b0544"],
+
+Cell[BoxData["\<\"-------------------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221895002942*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"faec5f47-1026-4e4a-9f80-70eca7a3b1e8"],
+
+Cell[BoxData["\<\"A |       1       .       .       3       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895004366*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"8e4b6cae-a01e-4a94-83fe-8420b21684a7"],
+
+Cell[BoxData["\<\"B |       4       .       .       5       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895005777*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"f0429ea1-4d87-476c-8ffa-5780803b53a0"],
+
+Cell[BoxData["\<\"C |       .       3       .       5       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895007186*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"cda795f9-0999-4d76-b0a0-5194141281b6"],
+
+Cell[BoxData["\<\"D |       .       .       1       .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895008601*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"a6301b4f-4be4-42e0-8483-cada7efc5718"],
+
+Cell[BoxData["\<\"E |       .       .       .       5       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895010014*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"45e267ad-108d-4379-872c-9a6202bf45b8"],
+
+Cell[BoxData["\<\"===========================================\"\>"], "Print",
+ CellChangeTimes->{3.8732218950114183`*^9},
+ CellLabel->
+  "During evaluation of \
+In[64]:=",ExpressionUUID->"a7aa7a5c-6f45-499c-b9d6-84cc3046bf40"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "Here",
+ " ",
+ "we",
+ " ",
+ "row-bind",
+ " ",
+ StyleBox["smat2", "Program"],
+ " ",
+ "and",
+ " ",
+ StyleBox["smat3", "Program"],
+ " ",
+ ":"
+}], "Text",ExpressionUUID->"de2e48d4-8a69-45e2-99f3-d04e592cc6ae"],
+
+Cell[CellGroupData[{
+
+Cell["smat2.row_bind(smat3).print_matrix()", "ExternalLanguage",
+ CellEvaluationLanguage->"Python",
+ CellLabel->"In[65]:=",ExpressionUUID->"4bec4a1e-7083-43ab-8ee2-eaf98c5a2c56"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"=============================================\"\>"], "Print",
+ CellChangeTimes->{3.873221895071191*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"4b4d92c9-707e-459d-a833-ea11cc77cfa4"],
+
+Cell[BoxData["\<\"    |      c0      c1      c2      c3      c4\"\>"], "Print",
+ CellChangeTimes->{3.873221895073032*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"fa5cf933-74e2-4d60-801f-e16e050825ba"],
+
+Cell[BoxData["\<\"---------------------------------------------\"\>"], "Print",
+ CellChangeTimes->{3.873221895076445*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"fb26cb42-4680-4a7d-8014-c0b2f63e804d"],
+
+Cell[BoxData["\<\"A.1 |       1       4       .       .       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895077874*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"bd446d0e-5028-4db1-b535-ff6f1bc65958"],
+
+Cell[BoxData["\<\"B.1 |       .       .       3       .       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218950792933`*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"03609143-c100-4181-a02f-18e4d767c25b"],
+
+Cell[BoxData["\<\"C.1 |       .       .       .       1       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895080737*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"694e5c7a-08a3-4faa-850c-65a093ac6572"],
+
+Cell[BoxData["\<\"D.1 |       3       5       5       .       5\"\>"], "Print",
+ CellChangeTimes->{3.873221895082172*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"8d4c7ca0-e06f-4502-8b7a-0365127f9924"],
+
+Cell[BoxData["\<\"A.2 |       1       .       .       3       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895083589*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"52a4d40c-007e-44ef-8908-c52c596a4345"],
+
+Cell[BoxData["\<\"B.2 |       4       .       .       5       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218950850143`*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"52613897-39c9-4bae-8c31-f3d34d4264a1"],
+
+Cell[BoxData["\<\"C.2 |       .       3       .       5       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218950864277`*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"af9abd71-eb77-4bf8-945e-8df23fafe47c"],
+
+Cell[BoxData["\<\"D.2 |       .       .       1       .       .\"\>"], "Print",
+ CellChangeTimes->{3.8732218950878363`*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"e45421e2-2d59-4e24-9d6c-ec3dfd63af13"],
+
+Cell[BoxData["\<\"E.2 |       .       .       .       5       .\"\>"], "Print",
+ CellChangeTimes->{3.873221895089251*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"6378d05b-a28a-4f4c-b235-a51f883ad0c5"],
+
+Cell[BoxData["\<\"=============================================\"\>"], "Print",
+ CellChangeTimes->{3.8732218950906754`*^9},
+ CellLabel->
+  "During evaluation of \
+In[65]:=",ExpressionUUID->"24099874-82f1-4f15-9974-57ab0813a383"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["Remark:",
+  FontWeight->"Bold"],
+ " ",
+ "If",
+ " ",
+ "during",
+ " ",
+ "row-binding",
+ " ",
+ "some",
+ " ",
+ "row",
+ " ",
+ "names",
+ " ",
+ "are",
+ " ",
+ "duplicated",
+ " ",
+ "then",
+ " ",
+ "to",
+ " ",
+ "the",
+ " ",
+ "row",
+ " ",
+ "names",
+ " ",
+ "of",
+ " ",
+ "both",
+ " ",
+ "matrices",
+ " ",
+ "are",
+ " ",
+ "added",
+ " ",
+ "suffixes",
+ " ",
+ "that",
+ " ",
+ "designate",
+ " ",
+ "to",
+ " ",
+ "which",
+ " ",
+ "matrix",
+ " ",
+ "each",
+ " ",
+ "row",
+ " ",
+ "belongs",
+ " ",
+ "to."
+}], "Text",ExpressionUUID->"9a7bce5a-1789-4f9b-9106-fc78a2d074b1"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["In place computations", "Section",ExpressionUUID->"64a3e7b9-d8ee-4a58-a36c-63872c8d816d"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "methods",
+ " ",
+ "for",
+ " ",
+ "setting",
+ " ",
+ "row-",
+ " ",
+ "and",
+ " ",
+ "column-names",
+ " ",
+ "are",
+ " ",
+ "\"in",
+ " ",
+ "place\"",
+ " ",
+ "methods",
+ " ",
+ "--",
+ " ",
+ "no",
+ " ",
+ "new",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "objects",
+ " ",
+ "a",
+ " ",
+ "created."
+}], "Item",ExpressionUUID->"a076ad5b-ff8c-437a-8d4d-c644729fd506"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The dot product, arithmetic, and transposing methods have an optional \
+argument whether to do computations in place or not.\
+\>", "Item",ExpressionUUID->"bc9f6243-90b4-4c8f-965d-f4085b280602"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "optional",
+ " ",
+ "argument",
+ " ",
+ "is",
+ " ",
+ StyleBox["copy", "Program"],
+ " ",
+ ",",
+ " ",
+ "which",
+ " ",
+ "corresponds",
+ " ",
+ "to",
+ " ",
+ "argument",
+ " ",
+ "with",
+ " ",
+ "the",
+ " ",
+ "same",
+ " ",
+ "name",
+ " ",
+ "and",
+ " ",
+ "function",
+ " ",
+ "in",
+ " ",
+ StyleBox["scipy.sparse", "Program"],
+ " ",
+ "."
+}], "Subsubitem",ExpressionUUID->"7c2eb571-3698-4950-9ba5-e146a1e016e4"],
+
+Cell[TextData[{
+ "By",
+ " ",
+ "default,",
+ " ",
+ "the",
+ " ",
+ "computations",
+ " ",
+ "are",
+ " ",
+ StyleBox["not",
+  FontSlant->"Italic"],
+ " ",
+ "in",
+ " ",
+ "place:",
+ " ",
+ "new",
+ " ",
+ "objects",
+ " ",
+ "are",
+ " ",
+ "created."
+}], "Subsubitem",ExpressionUUID->"640cd8f5-48a3-4ec0-9ce9-154ac477e585"],
+
+Cell[TextData[{
+ "I.e.",
+ " ",
+ StyleBox["copy=True", "Program"],
+ " ",
+ "default."
+}], "Subsubitem",ExpressionUUID->"532323b0-9d89-4c6b-8246-2d1147b1a542"]
+}, Open  ]],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "class",
+ " ",
+ StyleBox["SSparseMatrix", "Program"],
+ " ",
+ "has",
+ " ",
+ "the",
+ " ",
+ "method",
+ " ",
+ StyleBox["copy()", "Program"],
+ " ",
+ "that",
+ " ",
+ "produces",
+ " ",
+ "deep",
+ " ",
+ "copies",
+ " ",
+ "when",
+ " ",
+ "invoked."
+}], "Item",ExpressionUUID->"107ea6e1-0b79-471e-bf10-da26fbc3eed9"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Unit tests", "Section",ExpressionUUID->"d2466a14-7332-41f6-94da-d6cb35091515"],
+
+Cell[TextData[{
+ "The",
+ " ",
+ "unit",
+ " ",
+ "tests",
+ " ",
+ "(so",
+ " ",
+ "far)",
+ " ",
+ "are",
+ " ",
+ "broken",
+ " ",
+ "into",
+ " ",
+ "functionalities;",
+ " ",
+ "see",
+ " ",
+ "the",
+ " ",
+ "folder",
+ " ",
+ ButtonBox["./tests",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/Python-packages/tree/main/\
+SSparseMatrix/tests"], None}],
+ " ",
+ ".",
+ " ",
+ "Similar",
+ " ",
+ "unit",
+ " ",
+ "tests",
+ " ",
+ "are",
+ " ",
+ "given",
+ " ",
+ "in",
+ " ",
+ "[AAp2]."
+}], "Text",ExpressionUUID->"c2b54e5f-0c92-46e2-9fc3-a0a9184f5a5d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["References", "Section",ExpressionUUID->"6dae9a60-1953-4d27-b192-e1f1cb51dd10"],
+
+Cell[CellGroupData[{
+
+Cell["Articles", "Subsection",ExpressionUUID->"fc71d4ba-8f7f-4249-b3c8-c7f6162b45c6"],
+
+Cell[TextData[{
+ "[AA1]",
+ " ",
+ "Anton",
+ " ",
+ "Antonov,",
+ " ",
+ ButtonBox["\"RSparseMatrix for sparse matrices with named rows and columns\"",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://mathematicaforprediction.wordpress.com/2015/10/08/\
+rsparsematrix-for-sparse-matrices-with-named-rows-and-columns/"], None}],
+ " ",
+ ",",
+ " ",
+ "(2015),",
+ " ",
+ ButtonBox["MathematicaForPrediction at WordPress",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://mathematicaforprediction.wordpress.com"], None}],
+ " ",
+ "."
+}], "Text",ExpressionUUID->"df95aacb-0452-41e5-973c-bcf8e4a368c7"],
+
+Cell[TextData[{
+ "[RB1] Richard Becker, \"",
+ ButtonBox["A Brief History of S\"",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.131.1428&\
+rep=rep1&type=pdf"], None}],
+ ", (2004)."
+}], "Text",
+ CellChangeTimes->{{3.873220049840084*^9, 
+  3.873220056354117*^9}},ExpressionUUID->"6038a59e-91c8-450a-9576-\
+ad3e3e3f4a1b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Packages", "Subsection",ExpressionUUID->"607fa682-65b9-4a45-996e-480e3dfe80e7"],
+
+Cell[TextData[{
+ "[AAp1]",
+ " ",
+ "Anton",
+ " ",
+ "Antonov,",
+ " ",
+ ButtonBox["SSparseMatrix.m",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/MathematicaForPrediction/blob/master/\
+SSparseMatrix.m"], None}],
+ " ",
+ ",",
+ " ",
+ "(2018),",
+ " ",
+ ButtonBox["MathematicaForPrediction at GitHub",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/MathematicaForPrediction"], None}],
+ " ",
+ "."
+}], "Text",ExpressionUUID->"2e45dda8-d379-47a0-8274-f04ca68e9478"],
+
+Cell[TextData[{
+ "[AAp2]",
+ " ",
+ "Anton",
+ " ",
+ "Antonov,",
+ " ",
+ ButtonBox["SSparseMatrix Mathematica unit tests",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/MathematicaForPrediction/blob/master/\
+UnitTests/SSparseMatrix-tests.wlt"], None}],
+ " ",
+ ",",
+ " ",
+ "(2018),",
+ " ",
+ ButtonBox["MathematicaForPrediction at GitHub",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://github.com/antononcube/MathematicaForPrediction"], None}],
+ " ",
+ "."
+}], "Text",ExpressionUUID->"8a01d341-4442-493c-be96-e27c24240925"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1101, 1149},
+WindowMargins->{{1023, Automatic}, {Automatic, 0}},
+FrontEndVersion->"13.1 for Mac OS X ARM (64-bit) (June 16, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"aed04636-cc4b-400e-845a-9f85e222e20f"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 115, 0, 98, "Title",ExpressionUUID->"7246e1a3-dba3-4c40-aaed-e90bbac49479"],
+Cell[698, 24, 690, 18, 127, "Text",ExpressionUUID->"c06d32f9-7c69-44bd-ada7-37858f9d1df1"],
+Cell[CellGroupData[{
+Cell[1413, 46, 86, 0, 67, "Section",ExpressionUUID->"9d079e53-4eea-42f3-9218-8d2515eeac8f"],
+Cell[1502, 48, 673, 16, 35, "Text",ExpressionUUID->"4f677ee7-59a8-4e46-bff9-df50d0747737"],
+Cell[2178, 66, 1011, 26, 58, "Text",ExpressionUUID->"5608ab7d-5f6e-4e9b-bde0-52bb4b5e00ca"],
+Cell[3192, 94, 591, 49, 58, "Text",ExpressionUUID->"d252be4a-2efb-4f28-ad81-b794a8d5d23c"],
+Cell[3786, 145, 259, 20, 35, "Text",ExpressionUUID->"741f12f3-74e6-42b7-a662-ce50b76a3c85"],
+Cell[CellGroupData[{
+Cell[4070, 169, 117, 0, 32, "Item",ExpressionUUID->"1de8cd4a-16f1-4c54-949d-d1fb94c357fd"],
+Cell[4190, 171, 95, 0, 27, "Subitem",ExpressionUUID->"6db59738-ff0d-424b-836e-0f8549775647"],
+Cell[4288, 173, 111, 0, 27, "Subitem",ExpressionUUID->"cbe2ef7d-c92b-424b-b318-777734c4602e"]
+}, Open  ]],
+Cell[4414, 176, 93, 0, 32, "Item",ExpressionUUID->"6681aae0-dc36-470f-a9d7-6bc1e8ba131b"],
+Cell[CellGroupData[{
+Cell[4532, 180, 126, 0, 32, "Item",ExpressionUUID->"f2dc99c2-b6b1-49ce-a877-f7b7e435630d"],
+Cell[4661, 182, 79, 0, 27, "Subitem",ExpressionUUID->"e643baca-4538-4ec2-9e05-2baa50b4d342"],
+Cell[4743, 184, 103, 0, 27, "Subitem",ExpressionUUID->"6f8bbf4c-bd27-4e93-8fdc-d1a1ee5a8479"],
+Cell[4849, 186, 151, 6, 27, "Subitem",ExpressionUUID->"ca884947-cb53-4e04-8d79-f075aa1e80a2"],
+Cell[5003, 194, 141, 4, 27, "Subitem",ExpressionUUID->"bf4924cb-f11d-4724-b5f1-0be814139a85"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5181, 203, 90, 0, 32, "Item",ExpressionUUID->"82928a61-7451-4273-9df5-698e28ed94d6"],
+Cell[5274, 205, 85, 0, 27, "Subitem",ExpressionUUID->"3c68ff05-f5aa-46f0-84d7-37512aa754e9"],
+Cell[5362, 207, 89, 0, 27, "Subitem",ExpressionUUID->"2d147a26-750a-4d59-9925-36a8a4f1ed34"]
+}, Open  ]],
+Cell[5466, 210, 82, 0, 32, "Item",ExpressionUUID->"34cf8b5d-5ea5-44df-beff-71a7a9652b6a"],
+Cell[CellGroupData[{
+Cell[5573, 214, 86, 0, 32, "Item",ExpressionUUID->"1d469b81-bc0c-4cef-9c03-73832e7378c6"],
+Cell[5662, 216, 116, 0, 27, "Subitem",ExpressionUUID->"f151c335-4d17-4571-9ed7-bea2e871c9ed"],
+Cell[5781, 218, 161, 8, 27, "Subitem",ExpressionUUID->"f1294c33-cc6c-42bd-ba31-7a9ebd8b184d"]
+}, Open  ]],
+Cell[5957, 229, 214, 14, 32, "Item",ExpressionUUID->"13195998-534a-4b29-8306-69c34681377f"],
+Cell[CellGroupData[{
+Cell[6196, 247, 91, 0, 32, "Item",ExpressionUUID->"0baf7a16-4d47-4cb0-b2e2-66b5598c246c"],
+Cell[6290, 249, 82, 0, 27, "Subitem",ExpressionUUID->"884141d7-0833-46ff-bc17-a291bcca5ca1"],
+Cell[6375, 251, 90, 0, 27, "Subitem",ExpressionUUID->"9f7c47de-6c83-4dd5-b861-f55998edc0db"],
+Cell[6468, 253, 93, 0, 27, "Subitem",ExpressionUUID->"3ccad1df-a8cf-4fb8-9514-2a98a5b4804e"],
+Cell[6564, 255, 115, 0, 27, "Subitem",ExpressionUUID->"176f22e4-b777-4528-ad87-99ff15d4c9ea"]
+}, Open  ]],
+Cell[6694, 258, 613, 41, 35, "Text",ExpressionUUID->"aa0a57c5-9277-4e88-a8af-467f8886c826"],
+Cell[7310, 301, 463, 32, 35, "Text",ExpressionUUID->"0b60483a-e469-411c-878c-c681504e5de7"],
+Cell[7776, 335, 367, 29, 35, "Text",ExpressionUUID->"92d43bfc-79f6-4e1e-8184-2cb908123d1b"],
+Cell[CellGroupData[{
+Cell[8168, 368, 100, 0, 54, "Subsection",ExpressionUUID->"7ab8cfe0-be45-4b1e-be07-ccd2e3a01239"],
+Cell[8271, 370, 906, 62, 58, "Text",ExpressionUUID->"22bc217c-4bb2-4759-a51f-5542f8618fc8"],
+Cell[9180, 434, 460, 30, 35, "Text",ExpressionUUID->"ea52859d-9249-4aee-a14c-57247280ed3f"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9689, 470, 86, 0, 67, "Section",ExpressionUUID->"cd09314c-a543-4fc8-98c3-c5926ddcd504"],
+Cell[CellGroupData[{
+Cell[9800, 474, 96, 0, 54, "Subsection",ExpressionUUID->"7aa327f6-581b-48d7-8e9e-1084027025c1"],
+Cell[9899, 476, 280, 7, 50, "ExternalLanguage",ExpressionUUID->"f2f3044b-ac3c-45cb-94bf-a33db1ab652b",
+ Evaluatable->False]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10216, 488, 86, 0, 54, "Subsection",ExpressionUUID->"60667375-aa97-491f-9742-9d9ad1f1c64f"],
+Cell[10305, 490, 166, 3, 50, "ExternalLanguage",ExpressionUUID->"86a2621a-d4cd-4909-863c-7a1394977266",
+ Evaluatable->False]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10520, 499, 79, 0, 67, "Section",ExpressionUUID->"c280f0ba-11b8-49dc-a593-d80b3d6b4c02"],
+Cell[10602, 501, 90, 0, 35, "Text",ExpressionUUID->"5637760d-ae3c-4f76-8310-1f3ff2d5812a"],
+Cell[10695, 503, 169, 2, 50, "ExternalLanguage",ExpressionUUID->"d1c29e71-9866-4aa0-96d5-1ee5eddc072b"],
+Cell[10867, 507, 141, 2, 35, "Text",ExpressionUUID->"a0d1305b-2af1-449e-9db0-66a3a3632776"],
+Cell[11011, 511, 375, 7, 101, "ExternalLanguage",ExpressionUUID->"17f2bc7a-731d-4b44-ba24-de654c6e9e00"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11423, 523, 82, 0, 67, "Section",ExpressionUUID->"ce1cd1e5-93c5-4a98-8cd9-64f913fdeed6"],
+Cell[11508, 525, 293, 24, 35, "Text",ExpressionUUID->"a60262a4-113a-4cdd-a4a9-4acf20d1cc7e"],
+Cell[CellGroupData[{
+Cell[11826, 553, 360, 7, 101, "ExternalLanguage",ExpressionUUID->"ff628b19-a780-4ced-b19f-1e3cf1c8b090"],
+Cell[12189, 562, 5881, 123, 61, "Output",ExpressionUUID->"e3eacc9b-a6b1-4e81-83c9-db6900869fcd"]
+}, Open  ]],
+Cell[18085, 688, 103, 0, 35, "Text",ExpressionUUID->"72b93073-8396-4da9-92a1-f1b1eb6542ce"],
+Cell[CellGroupData[{
+Cell[18213, 692, 161, 2, 50, "ExternalLanguage",ExpressionUUID->"a2d5be90-d156-4003-a704-6f7450c8ae11"],
+Cell[CellGroupData[{
+Cell[18399, 698, 216, 4, 24, "Print",ExpressionUUID->"1eb27361-f991-4dfb-b44e-a428a61deaa9"],
+Cell[18618, 704, 218, 4, 24, "Print",ExpressionUUID->"32b2395f-b41d-40f9-9cf7-b46402b3fc84"],
+Cell[18839, 710, 215, 4, 24, "Print",ExpressionUUID->"b126afae-083a-464a-b121-c2d79879d0af"],
+Cell[19057, 716, 216, 4, 24, "Print",ExpressionUUID->"b0753771-fa31-4da3-9abd-2c412dfc25f4"],
+Cell[19276, 722, 216, 4, 24, "Print",ExpressionUUID->"2c69fe4c-7a66-4d94-93a5-955350238aa2"],
+Cell[19495, 728, 216, 4, 24, "Print",ExpressionUUID->"056f32b9-6b62-4ab9-9aaf-06aa3640eca9"],
+Cell[19714, 734, 215, 4, 24, "Print",ExpressionUUID->"aa899d88-de33-4daa-9864-51b1f61f3d44"],
+Cell[19932, 740, 216, 4, 24, "Print",ExpressionUUID->"28949a6a-2d61-4239-98d8-5c215b02be66"],
+Cell[20151, 746, 216, 4, 24, "Print",ExpressionUUID->"c9f1c353-263e-43c6-bc89-243ff2e2e407"]
+}, Open  ]]
+}, Open  ]],
+Cell[20394, 754, 250, 18, 35, "Text",ExpressionUUID->"5c06e77a-5e1d-48fd-b74b-36b12aa6e3b2"],
+Cell[CellGroupData[{
+Cell[20669, 776, 187, 5, 67, "ExternalLanguage",ExpressionUUID->"0426b58e-8092-44e1-be77-e29252cf3b5d"],
+Cell[20859, 783, 5883, 123, 61, "Output",ExpressionUUID->"a6c96d40-f219-4fc6-aa1d-12da08bb22a1"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26791, 912, 83, 0, 67, "Section",ExpressionUUID->"97fcf9a5-6dc2-4c91-8ca8-41d985342116"],
+Cell[26877, 914, 498, 38, 35, "Text",ExpressionUUID->"a4e6875e-e8bc-4a84-b69e-5e36526f7b5f"],
+Cell[27378, 954, 644, 44, 58, "Text",ExpressionUUID->"adf94db0-85cb-4545-8926-e3eac414b72e"],
+Cell[28025, 1000, 415, 34, 35, "Text",ExpressionUUID->"ccace347-6c36-4a74-a03f-d61a23e64a44"],
+Cell[28443, 1036, 515, 32, 35, "Text",ExpressionUUID->"75d64ff3-0591-46c7-bde2-ed623c69720f"],
+Cell[28961, 1070, 669, 64, 58, "Text",ExpressionUUID->"377af9fa-f257-4eaf-b4dc-67748d64823b"],
+Cell[CellGroupData[{
+Cell[29655, 1138, 179, 2, 50, "ExternalLanguage",ExpressionUUID->"8003397c-23ae-48b1-bcf4-16d0fb829379"],
+Cell[CellGroupData[{
+Cell[29859, 1144, 191, 4, 24, "Print",ExpressionUUID->"91afdbcd-815a-40da-851e-0d1ab2eb63a1"],
+Cell[30053, 1150, 191, 4, 24, "Print",ExpressionUUID->"e25b2837-e654-4e15-b812-336d668bfa4b"],
+Cell[30247, 1156, 191, 4, 24, "Print",ExpressionUUID->"4553ce95-e220-447d-bb69-0920de1f6ce6"],
+Cell[30441, 1162, 191, 4, 24, "Print",ExpressionUUID->"32799660-36b2-45e7-8379-d08d28e28428"],
+Cell[30635, 1168, 192, 4, 24, "Print",ExpressionUUID->"04155d58-6ab3-45ca-a923-c403bafc6edd"]
+}, Open  ]]
+}, Open  ]],
+Cell[30854, 1176, 344, 28, 35, "Text",ExpressionUUID->"446d8c66-2b13-4dd0-af53-489b768c81b2"],
+Cell[CellGroupData[{
+Cell[31223, 1208, 163, 2, 50, "ExternalLanguage",ExpressionUUID->"23bc5553-0ecd-4a92-aded-5256f5baceda"],
+Cell[CellGroupData[{
+Cell[31411, 1214, 191, 4, 24, "Print",ExpressionUUID->"472a538f-9e74-4996-83ba-cf861ed32b7c"],
+Cell[31605, 1220, 191, 4, 24, "Print",ExpressionUUID->"c9115922-fa49-458d-9d9b-7bac25c92668"],
+Cell[31799, 1226, 193, 4, 24, "Print",ExpressionUUID->"5c349478-e952-4325-bcc9-021af7dc390d"],
+Cell[31995, 1232, 191, 4, 24, "Print",ExpressionUUID->"480c263a-c8e8-4003-a39e-0db5b1df7367"],
+Cell[32189, 1238, 192, 4, 24, "Print",ExpressionUUID->"6cbb8d85-d615-4bb2-87db-2e159a5e98d5"]
+}, Open  ]]
+}, Open  ]],
+Cell[32408, 1246, 464, 38, 35, "Text",ExpressionUUID->"5fca95e5-29be-4acd-86b5-e0e476c3fc93"],
+Cell[CellGroupData[{
+Cell[32897, 1288, 178, 2, 50, "ExternalLanguage",ExpressionUUID->"1c15c8e3-35ec-49cc-a1b0-aaf9a04ab303"],
+Cell[CellGroupData[{
+Cell[33100, 1294, 268, 5, 24, "Print",ExpressionUUID->"dd532942-9177-487d-b9b2-e4e94b9359e9"],
+Cell[33371, 1301, 266, 5, 24, "Print",ExpressionUUID->"f3a5b3bc-cd26-48ae-aef3-5708bfc87b6a"],
+Cell[33640, 1308, 266, 5, 24, "Print",ExpressionUUID->"7e8596ab-ae32-43e0-88a8-c176df9cb83c"],
+Cell[33909, 1315, 268, 5, 24, "Print",ExpressionUUID->"3506d34a-f1ce-493a-8941-f0933b2f955a"],
+Cell[34180, 1322, 268, 5, 24, "Print",ExpressionUUID->"677aa049-4d46-4750-adf7-8d8683a44c9f"],
+Cell[34451, 1329, 266, 5, 24, "Print",ExpressionUUID->"3f8a9625-b962-4806-8b53-f07daa576b80"],
+Cell[34720, 1336, 266, 5, 24, "Print",ExpressionUUID->"f3ad37d5-c0eb-4a4d-81b0-6ac6a7b0ef6a"],
+Cell[34989, 1343, 266, 5, 24, "Print",ExpressionUUID->"a864f055-6fc1-4475-a0be-87bc4fcb6e52"],
+Cell[35258, 1350, 266, 5, 24, "Print",ExpressionUUID->"98eba1d2-6764-47dd-903d-19e492911c76"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[35585, 1362, 88, 0, 67, "Section",ExpressionUUID->"b9994f81-892c-4ee3-b6a9-ecbc0579dfd7"],
+Cell[35676, 1364, 307, 22, 35, "Text",ExpressionUUID->"c6f1ce8d-1b58-46e8-94b0-b94ffaad93df"],
+Cell[CellGroupData[{
+Cell[36008, 1390, 153, 2, 50, "ExternalLanguage",ExpressionUUID->"cbb3587e-37d6-4600-b684-38916a9f12ac"],
+Cell[CellGroupData[{
+Cell[36186, 1396, 197, 4, 24, "Print",ExpressionUUID->"0f251510-d75c-4c3c-acb1-be52eb5e5c2d"],
+Cell[36386, 1402, 197, 4, 24, "Print",ExpressionUUID->"e6d79d54-fb2c-4ca0-94cf-73053e89beb0"],
+Cell[36586, 1408, 197, 4, 24, "Print",ExpressionUUID->"389f926c-d99d-477c-83b8-8105aa6d6146"],
+Cell[36786, 1414, 199, 4, 24, "Print",ExpressionUUID->"89f27f53-56d3-482a-aded-963f4d65c9b9"],
+Cell[36988, 1420, 197, 4, 24, "Print",ExpressionUUID->"c0670e85-a9b2-4128-b9e9-e3698f14a510"],
+Cell[37188, 1426, 197, 4, 24, "Print",ExpressionUUID->"ee30a23c-4643-420a-b6aa-c141d7092a45"],
+Cell[37388, 1432, 197, 4, 24, "Print",ExpressionUUID->"c0a6209a-a6d8-4046-8106-56f530d39454"],
+Cell[37588, 1438, 197, 4, 24, "Print",ExpressionUUID->"a860fa25-0fc2-4f58-a533-20c550666d5d"]
+}, Open  ]]
+}, Open  ]],
+Cell[37812, 1446, 366, 22, 35, "Text",ExpressionUUID->"7f3054f0-5f62-47db-b99b-fbd9fc2eaa2f"],
+Cell[CellGroupData[{
+Cell[38203, 1472, 159, 2, 50, "ExternalLanguage",ExpressionUUID->"5a2a3033-4ae2-4564-b4c3-d810901cf776"],
+Cell[CellGroupData[{
+Cell[38387, 1478, 277, 5, 24, "Print",ExpressionUUID->"5ca9ad14-6276-46ae-a91a-aad05998ea87"],
+Cell[38667, 1485, 260, 5, 24, "Print",ExpressionUUID->"65295b04-ab8e-4545-a119-9016d4908317"]
+}, Open  ]]
+}, Open  ]],
+Cell[38954, 1494, 118, 0, 35, "Text",ExpressionUUID->"79144aa9-7486-4516-983f-bf2c0370ed30"],
+Cell[CellGroupData[{
+Cell[39097, 1498, 161, 2, 50, "ExternalLanguage",ExpressionUUID->"380a0492-13cb-4464-811a-2c2c0e6eb406"],
+Cell[CellGroupData[{
+Cell[39283, 1504, 216, 4, 24, "Print",ExpressionUUID->"86c4ffeb-edc4-46df-b528-6d4e1f781ed5"],
+Cell[39502, 1510, 216, 4, 24, "Print",ExpressionUUID->"b2a724bb-25ae-4337-9916-d0416c89b559"],
+Cell[39721, 1516, 216, 4, 24, "Print",ExpressionUUID->"ae5d1069-3936-479b-98ce-4911577cce2d"],
+Cell[39940, 1522, 218, 4, 24, "Print",ExpressionUUID->"fc19c8c2-db18-4fb0-aa6c-dbb5b2d24afe"],
+Cell[40161, 1528, 216, 4, 24, "Print",ExpressionUUID->"63ef1245-39d4-4ee8-9471-d03b1f6a1ae4"],
+Cell[40380, 1534, 216, 4, 24, "Print",ExpressionUUID->"ec9705b7-a1ed-43df-b37b-435d9a94e3a9"],
+Cell[40599, 1540, 216, 4, 24, "Print",ExpressionUUID->"c350e803-dbec-47d8-b55e-293e598b75cd"],
+Cell[40818, 1546, 213, 4, 24, "Print",ExpressionUUID->"332fffa7-9f7c-41db-a929-3d81e2ddc6b3"],
+Cell[41034, 1552, 218, 4, 24, "Print",ExpressionUUID->"b7b6b182-2ec4-4c82-ad9b-ae5426663bae"]
+}, Open  ]]
+}, Open  ]],
+Cell[41279, 1560, 331, 30, 35, "Text",ExpressionUUID->"186e9584-d07d-4c28-917a-d466f24713e5"],
+Cell[CellGroupData[{
+Cell[41635, 1594, 157, 2, 50, "ExternalLanguage",ExpressionUUID->"94077d40-21bf-481e-9a47-907335384f65"],
+Cell[41795, 1598, 857, 21, 34, "Output",ExpressionUUID->"a720ca0d-828a-4740-a331-b9cf5a9b4f0c"]
+}, Open  ]],
+Cell[42667, 1622, 404, 34, 35, "Text",ExpressionUUID->"e6eaf0b1-2064-4a06-9b30-433823786b49"],
+Cell[CellGroupData[{
+Cell[43096, 1660, 165, 2, 50, "ExternalLanguage",ExpressionUUID->"00e8f44d-aaad-4802-8e77-a753e145e6e0"],
+Cell[43264, 1664, 1156, 26, 37, "Output",ExpressionUUID->"583bb353-af31-4c50-9649-a6666741845b"]
+}, Open  ]],
+Cell[44435, 1693, 428, 36, 58, "Text",ExpressionUUID->"3adea5bb-d421-497b-ba7f-a8eda1226ba0"],
+Cell[CellGroupData[{
+Cell[44888, 1733, 168, 2, 50, "ExternalLanguage",ExpressionUUID->"8a47df75-f7cb-4cca-af37-b36af471e8c2"],
+Cell[45059, 1737, 1044, 23, 37, "Output",ExpressionUUID->"a574446b-71bc-4309-a457-79a967dfc981"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[46152, 1766, 88, 0, 67, "Section",ExpressionUUID->"1d5cf906-962d-4489-a00e-41a3d563eea3"],
+Cell[46243, 1768, 109, 0, 35, "Text",ExpressionUUID->"0d9e7044-12fb-4ef9-a133-dedb476474b0"],
+Cell[CellGroupData[{
+Cell[46377, 1772, 208, 5, 67, "ExternalLanguage",ExpressionUUID->"0cc0a8b8-3577-4136-bf4a-0cf1a2eb9fe8"],
+Cell[CellGroupData[{
+Cell[46610, 1781, 224, 4, 24, "Print",ExpressionUUID->"6b7fca63-e925-41db-b01b-f6db462fbeaf"],
+Cell[46837, 1787, 226, 4, 24, "Print",ExpressionUUID->"cca1892d-b742-44f3-9b02-3d1d200d3833"],
+Cell[47066, 1793, 224, 4, 24, "Print",ExpressionUUID->"e0211735-47e7-4d5f-9077-918fa97cd4e7"],
+Cell[47293, 1799, 226, 4, 24, "Print",ExpressionUUID->"56bc9502-2423-48fd-99fc-defb9c95538f"],
+Cell[47522, 1805, 224, 4, 24, "Print",ExpressionUUID->"8ae806bc-1dc2-4506-934c-ffed8f303915"],
+Cell[47749, 1811, 224, 4, 24, "Print",ExpressionUUID->"e4992c5b-8411-4982-aac0-9c67410f1791"],
+Cell[47976, 1817, 226, 4, 24, "Print",ExpressionUUID->"b11433eb-8c86-4d13-8b9e-8e75843d7b34"],
+Cell[48205, 1823, 224, 4, 24, "Print",ExpressionUUID->"05076046-5a0c-4a83-9c73-4ff2417d0172"],
+Cell[48432, 1829, 224, 4, 24, "Print",ExpressionUUID->"d6b78409-da1c-49b6-90dd-800f9fcfa8c7"]
+}, Open  ]]
+}, Open  ]],
+Cell[48683, 1837, 99, 0, 35, "Text",ExpressionUUID->"36c52ab8-0e4c-422f-8f0b-a78e301bb99d"],
+Cell[CellGroupData[{
+Cell[48807, 1841, 201, 5, 67, "ExternalLanguage",ExpressionUUID->"4d04de8b-bbdd-4e2d-98fc-454275163730"],
+Cell[CellGroupData[{
+Cell[49033, 1850, 194, 4, 24, "Print",ExpressionUUID->"682b6e6a-9a70-407e-bbf3-7536cdfec064"],
+Cell[49230, 1856, 191, 4, 24, "Print",ExpressionUUID->"25cf266b-fddd-4304-bbe5-41f94c892902"],
+Cell[49424, 1862, 192, 4, 24, "Print",ExpressionUUID->"cf23a44c-136b-45aa-863b-c25ae3510bb9"],
+Cell[49619, 1868, 194, 4, 24, "Print",ExpressionUUID->"6660b8c4-59d7-4835-babe-22d1778e940f"],
+Cell[49816, 1874, 191, 4, 24, "Print",ExpressionUUID->"a3ead437-5405-4506-9982-5f580f9051f2"],
+Cell[50010, 1880, 192, 4, 24, "Print",ExpressionUUID->"35760c93-db40-4c90-a6da-804e16f569dd"],
+Cell[50205, 1886, 194, 4, 24, "Print",ExpressionUUID->"0bcff8c7-1d3e-49be-8f2f-a3dc209cb0e5"],
+Cell[50402, 1892, 192, 4, 24, "Print",ExpressionUUID->"8c7f97e3-f598-49c6-a933-1bf13eddd07e"],
+Cell[50597, 1898, 192, 4, 24, "Print",ExpressionUUID->"fda30e98-1794-43ef-a4b8-5458cb05803a"]
+}, Open  ]]
+}, Open  ]],
+Cell[50816, 1906, 491, 35, 35, "Text",ExpressionUUID->"77d909a0-8a47-406f-af8e-7b4c118714e8"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[51344, 1946, 80, 0, 67, "Section",ExpressionUUID->"6a0abea8-8660-4020-9ed5-72c43a45fe44"],
+Cell[51427, 1948, 93, 0, 35, "Text",ExpressionUUID->"558a2e41-9dbc-4a9f-8dca-a80e371e1ac8"],
+Cell[CellGroupData[{
+Cell[51545, 1952, 193, 5, 67, "ExternalLanguage",ExpressionUUID->"7f75e8f3-3160-4e05-a173-64678f8224de"],
+Cell[CellGroupData[{
+Cell[51763, 1961, 182, 4, 24, "Print",ExpressionUUID->"0519f9de-073f-487b-a90c-e0e6b3eb60c2"],
+Cell[51948, 1967, 182, 4, 24, "Print",ExpressionUUID->"f52e29fb-f89c-449e-afb0-cea2be085387"]
+}, Open  ]]
+}, Open  ]],
+Cell[52157, 1975, 110, 0, 35, "Text",ExpressionUUID->"b3624a30-3a78-4f50-87db-05978da8ae76"],
+Cell[CellGroupData[{
+Cell[52292, 1979, 187, 2, 50, "ExternalLanguage",ExpressionUUID->"9a4938d9-fc40-49c7-936f-2483754e7360"],
+Cell[CellGroupData[{
+Cell[52504, 1985, 216, 4, 24, "Print",ExpressionUUID->"157e244e-04b6-4c4d-8670-ebeb0664fdc0"],
+Cell[52723, 1991, 216, 4, 24, "Print",ExpressionUUID->"9c99f2e1-3454-4b2a-b483-8b9357f9ebf8"],
+Cell[52942, 1997, 216, 4, 24, "Print",ExpressionUUID->"1ea3d89c-3025-4c7c-b6c2-8bc956b17d8e"],
+Cell[53161, 2003, 216, 4, 24, "Print",ExpressionUUID->"cacb9586-2f9d-4c3e-8f1b-e6a52cb0e175"],
+Cell[53380, 2009, 218, 4, 24, "Print",ExpressionUUID->"ea750260-af83-4c40-b2e4-f573a7538039"],
+Cell[53601, 2015, 216, 4, 24, "Print",ExpressionUUID->"7b89fb61-56c6-43c9-b7dc-3b4099ac7e05"],
+Cell[53820, 2021, 216, 4, 24, "Print",ExpressionUUID->"acb4797a-f484-4fd8-b91b-acd1708536e4"]
+}, Open  ]]
+}, Open  ]],
+Cell[54063, 2029, 104, 0, 35, "Text",ExpressionUUID->"a551d0cc-866c-4627-922c-123e90fe3e69"],
+Cell[CellGroupData[{
+Cell[54192, 2033, 175, 2, 50, "ExternalLanguage",ExpressionUUID->"09d395a9-10b7-458f-999c-b83f92586df4"],
+Cell[CellGroupData[{
+Cell[54392, 2039, 216, 4, 24, "Print",ExpressionUUID->"62209529-1344-4829-aef5-ec88adb855af"],
+Cell[54611, 2045, 216, 4, 24, "Print",ExpressionUUID->"41a285dc-3ef3-46c9-a18c-bc8ceae80039"],
+Cell[54830, 2051, 216, 4, 24, "Print",ExpressionUUID->"0e5c854a-bb81-41d5-bd35-a6156410b91c"],
+Cell[55049, 2057, 216, 4, 24, "Print",ExpressionUUID->"7025f397-1606-4566-8fe8-8d533226a83f"],
+Cell[55268, 2063, 216, 4, 24, "Print",ExpressionUUID->"de6b34da-7f8c-4409-98b4-5fe9c63f3c06"],
+Cell[55487, 2069, 216, 4, 24, "Print",ExpressionUUID->"874fe2cb-c289-404d-8e8a-19c0ac6a61df"],
+Cell[55706, 2075, 218, 4, 24, "Print",ExpressionUUID->"8d324ff9-3cfd-4c19-9010-59ed1a8c5936"]
+}, Open  ]]
+}, Open  ]],
+Cell[55951, 2083, 105, 0, 35, "Text",ExpressionUUID->"02d09008-dcd0-4a9b-8e21-ae983b045fd8"],
+Cell[CellGroupData[{
+Cell[56081, 2087, 176, 2, 50, "ExternalLanguage",ExpressionUUID->"238adf73-4640-40f5-a3e6-cfd2bd397361"],
+Cell[CellGroupData[{
+Cell[56282, 2093, 200, 4, 24, "Print",ExpressionUUID->"6ab092e2-5600-40f9-a55c-a0e1c8a537af"],
+Cell[56485, 2099, 200, 4, 24, "Print",ExpressionUUID->"391ef566-cdae-4a68-857e-2c32f1d852b9"],
+Cell[56688, 2105, 202, 4, 24, "Print",ExpressionUUID->"b987fe07-a185-451f-b7b6-765a2cdc8cea"],
+Cell[56893, 2111, 200, 4, 24, "Print",ExpressionUUID->"21a2709c-41e8-4d3c-a140-f9eeaae52be3"],
+Cell[57096, 2117, 200, 4, 24, "Print",ExpressionUUID->"7703fb0f-68a9-4c75-8da0-b9c357ce0f4a"],
+Cell[57299, 2123, 200, 4, 24, "Print",ExpressionUUID->"a03bce93-3ec4-46e5-aa21-fe74e8f3c564"],
+Cell[57502, 2129, 202, 4, 24, "Print",ExpressionUUID->"913d4531-836b-4e12-b011-111d0021be3b"],
+Cell[57707, 2135, 200, 4, 24, "Print",ExpressionUUID->"43e6c3f7-1b4f-420d-9085-a7a3ab872b3e"],
+Cell[57910, 2141, 200, 4, 24, "Print",ExpressionUUID->"0e9e59fa-ecd3-46c3-94f6-be8ccd2e7259"]
+}, Open  ]]
+}, Open  ]],
+Cell[58137, 2149, 107, 0, 35, "Text",ExpressionUUID->"98b120fe-bec2-4ec2-9dd6-4414fe064b22"],
+Cell[CellGroupData[{
+Cell[58269, 2153, 172, 2, 50, "ExternalLanguage",ExpressionUUID->"428eff95-3acf-4c70-8d22-dc4fd4db69a2"],
+Cell[CellGroupData[{
+Cell[58466, 2159, 202, 4, 24, "Print",ExpressionUUID->"4188cf7a-92df-4a8e-a774-a76ee4411433"],
+Cell[58671, 2165, 200, 4, 24, "Print",ExpressionUUID->"3d79bfbc-615a-4046-aeab-d583d1c288a7"],
+Cell[58874, 2171, 200, 4, 24, "Print",ExpressionUUID->"7b360980-0e43-4fa2-99b4-94d1a36bd765"],
+Cell[59077, 2177, 200, 4, 24, "Print",ExpressionUUID->"9169402c-1314-4c4a-9bf4-304fb30b8476"],
+Cell[59280, 2183, 200, 4, 24, "Print",ExpressionUUID->"323dbd1a-a643-40bb-b0f1-59342f420c52"],
+Cell[59483, 2189, 198, 4, 24, "Print",ExpressionUUID->"1d45dbf8-18be-456f-b3fb-fce8f0e728da"],
+Cell[59684, 2195, 202, 4, 24, "Print",ExpressionUUID->"c6b97521-569d-4564-94d3-99c2db4a1831"],
+Cell[59889, 2201, 199, 4, 24, "Print",ExpressionUUID->"7638d793-1aa9-4270-bc78-243c805b1528"],
+Cell[60091, 2207, 199, 4, 24, "Print",ExpressionUUID->"9ac96d54-c17d-46b8-b355-779ace3cb7d1"]
+}, Open  ]]
+}, Open  ]],
+Cell[60317, 2215, 526, 46, 35, "Text",ExpressionUUID->"2a23e35b-fb95-4ff0-9dad-c899064e73a6"],
+Cell[60846, 2263, 230, 15, 35, "Text",ExpressionUUID->"8603aef6-eefd-46d1-8be6-095e680f8f0c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[61113, 2283, 93, 0, 67, "Section",ExpressionUUID->"b304355a-1016-49c3-b013-b95ae08673c9"],
+Cell[61209, 2285, 107, 0, 35, "Text",ExpressionUUID->"8818a0c5-b672-4b58-b094-4810d84c0a7c"],
+Cell[CellGroupData[{
+Cell[61341, 2289, 200, 5, 67, "ExternalLanguage",ExpressionUUID->"66f7083c-dd68-40a0-abb6-f6b77982a1d3"],
+Cell[CellGroupData[{
+Cell[61566, 2298, 195, 4, 24, "Print",ExpressionUUID->"8d2051cc-c1a9-4246-8620-58d3a33b211d"],
+Cell[61764, 2304, 221, 4, 24, "Print",ExpressionUUID->"169cea10-b814-4d5b-b649-4533e05d626e"]
+}, Open  ]]
+}, Open  ]],
+Cell[62012, 2312, 113, 0, 35, "Text",ExpressionUUID->"3eb3efb6-b39e-4afd-aa6b-6f132a96511b"],
+Cell[CellGroupData[{
+Cell[62150, 2316, 206, 5, 67, "ExternalLanguage",ExpressionUUID->"8e55fb35-b6fa-4e3c-909e-f5e051887e08"],
+Cell[CellGroupData[{
+Cell[62381, 2325, 194, 4, 24, "Print",ExpressionUUID->"be6498ff-dc96-4b1c-8244-af80a61ee891"],
+Cell[62578, 2331, 214, 4, 24, "Print",ExpressionUUID->"ca3d1dbb-f1c1-4e12-b22f-a08f2ea0b31c"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[62853, 2342, 96, 0, 67, "Section",ExpressionUUID->"602fedc5-7f49-428c-9717-589b9470ca9a"],
+Cell[CellGroupData[{
+Cell[62974, 2346, 91, 0, 54, "Subsection",ExpressionUUID->"01315feb-6abd-47a8-9bb3-9a2c2a8f8a01"],
+Cell[63068, 2348, 201, 12, 35, "Text",ExpressionUUID->"72613806-9966-44ac-9a6e-b36acaee0d7c"],
+Cell[CellGroupData[{
+Cell[63294, 2364, 282, 6, 84, "ExternalLanguage",ExpressionUUID->"49353297-6eaf-4a2f-991e-8d3f2da25336"],
+Cell[CellGroupData[{
+Cell[63601, 2374, 224, 4, 24, "Print",ExpressionUUID->"062ddc54-3aa6-40e7-acb1-623b39bd29ea"],
+Cell[63828, 2380, 224, 4, 24, "Print",ExpressionUUID->"7fca8a87-f44e-42ff-95cf-82337bfc7cdd"],
+Cell[64055, 2386, 224, 4, 24, "Print",ExpressionUUID->"f47960ab-d6dc-4692-b170-c386faadb7dd"],
+Cell[64282, 2392, 224, 4, 24, "Print",ExpressionUUID->"9e8c637b-174b-43a6-9d77-39d1bc30cafd"],
+Cell[64509, 2398, 224, 4, 24, "Print",ExpressionUUID->"d82ccbd3-94c0-4976-a751-169441077178"],
+Cell[64736, 2404, 226, 4, 24, "Print",ExpressionUUID->"269f5f0b-1f5f-4c70-8ef3-2baba5aa39ae"],
+Cell[64965, 2410, 224, 4, 24, "Print",ExpressionUUID->"e7abc663-54aa-4b75-a4f9-013277dc9683"],
+Cell[65192, 2416, 224, 4, 24, "Print",ExpressionUUID->"87708bb1-bfce-4534-ae91-2705e04c895b"]
+}, Open  ]]
+}, Open  ]],
+Cell[65443, 2424, 117, 0, 35, "Text",ExpressionUUID->"13a2a445-e573-42f0-8eac-4e356488c14d"],
+Cell[CellGroupData[{
+Cell[65585, 2428, 201, 3, 50, "ExternalLanguage",ExpressionUUID->"e2709421-f8fd-45f7-a45e-9c13b7472e53"],
+Cell[CellGroupData[{
+Cell[65811, 2435, 258, 5, 24, "Print",ExpressionUUID->"534284d9-5a1e-44ee-9b17-e8a1fb5e8aad"],
+Cell[66072, 2442, 258, 5, 24, "Print",ExpressionUUID->"3ae637f0-00b1-46e2-badb-82e328d8e01e"],
+Cell[66333, 2449, 260, 5, 24, "Print",ExpressionUUID->"9f0881a5-ce52-48bf-842c-9024441dbd44"],
+Cell[66596, 2456, 258, 5, 24, "Print",ExpressionUUID->"b05c8308-2c4d-43ff-91c3-fb3cf3d2bfb6"],
+Cell[66857, 2463, 258, 5, 24, "Print",ExpressionUUID->"afe36d10-4071-40ae-99f3-e3219ab59dcb"],
+Cell[67118, 2470, 258, 5, 24, "Print",ExpressionUUID->"c2f8c9d1-36de-4763-9699-62e69226783f"],
+Cell[67379, 2477, 260, 5, 24, "Print",ExpressionUUID->"a85abd6f-1ab2-42f4-9452-70b0e3c642f4"],
+Cell[67642, 2484, 257, 5, 24, "Print",ExpressionUUID->"fb93703d-516d-48ec-b296-c879d7498ad4"]
+}, Open  ]]
+}, Open  ]],
+Cell[67926, 2493, 579, 59, 58, "Text",ExpressionUUID->"7cb57947-bcbf-49f1-b545-76bc39f4ba3f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[68542, 2557, 88, 0, 54, "Subsection",ExpressionUUID->"cc5343df-1fb8-46a7-81cc-bf10357504aa"],
+Cell[68633, 2559, 333, 30, 35, "Text",ExpressionUUID->"a7b06c50-30a1-4a45-9b43-e492f6ab8ee2"],
+Cell[CellGroupData[{
+Cell[68991, 2593, 296, 7, 101, "ExternalLanguage",ExpressionUUID->"00c016c2-e6b8-4d2b-9270-dddc137e8174"],
+Cell[CellGroupData[{
+Cell[69312, 2604, 224, 4, 24, "Print",ExpressionUUID->"99638d75-7e97-4ce4-8eb4-ff8b08841fac"],
+Cell[69539, 2610, 224, 4, 24, "Print",ExpressionUUID->"b837f8b2-9514-4cea-ac47-130e8a2b0544"],
+Cell[69766, 2616, 224, 4, 24, "Print",ExpressionUUID->"faec5f47-1026-4e4a-9f80-70eca7a3b1e8"],
+Cell[69993, 2622, 224, 4, 24, "Print",ExpressionUUID->"8e4b6cae-a01e-4a94-83fe-8420b21684a7"],
+Cell[70220, 2628, 224, 4, 24, "Print",ExpressionUUID->"f0429ea1-4d87-476c-8ffa-5780803b53a0"],
+Cell[70447, 2634, 224, 4, 24, "Print",ExpressionUUID->"cda795f9-0999-4d76-b0a0-5194141281b6"],
+Cell[70674, 2640, 224, 4, 24, "Print",ExpressionUUID->"a6301b4f-4be4-42e0-8483-cada7efc5718"],
+Cell[70901, 2646, 224, 4, 24, "Print",ExpressionUUID->"45e267ad-108d-4379-872c-9a6202bf45b8"],
+Cell[71128, 2652, 226, 4, 24, "Print",ExpressionUUID->"a7aa7a5c-6f45-499c-b9d6-84cc3046bf40"]
+}, Open  ]]
+}, Open  ]],
+Cell[71381, 2660, 222, 14, 35, "Text",ExpressionUUID->"de2e48d4-8a69-45e2-99f3-d04e592cc6ae"],
+Cell[CellGroupData[{
+Cell[71628, 2678, 178, 2, 50, "ExternalLanguage",ExpressionUUID->"4bec4a1e-7083-43ab-8ee2-eaf98c5a2c56"],
+Cell[CellGroupData[{
+Cell[71831, 2684, 226, 4, 24, "Print",ExpressionUUID->"4b4d92c9-707e-459d-a833-ea11cc77cfa4"],
+Cell[72060, 2690, 226, 4, 24, "Print",ExpressionUUID->"fa5cf933-74e2-4d60-801f-e16e050825ba"],
+Cell[72289, 2696, 226, 4, 24, "Print",ExpressionUUID->"fb26cb42-4680-4a7d-8014-c0b2f63e804d"],
+Cell[72518, 2702, 226, 4, 24, "Print",ExpressionUUID->"bd446d0e-5028-4db1-b535-ff6f1bc65958"],
+Cell[72747, 2708, 228, 4, 24, "Print",ExpressionUUID->"03609143-c100-4181-a02f-18e4d767c25b"],
+Cell[72978, 2714, 226, 4, 24, "Print",ExpressionUUID->"694e5c7a-08a3-4faa-850c-65a093ac6572"],
+Cell[73207, 2720, 226, 4, 24, "Print",ExpressionUUID->"8d4c7ca0-e06f-4502-8b7a-0365127f9924"],
+Cell[73436, 2726, 226, 4, 24, "Print",ExpressionUUID->"52a4d40c-007e-44ef-8908-c52c596a4345"],
+Cell[73665, 2732, 228, 4, 24, "Print",ExpressionUUID->"52613897-39c9-4bae-8c31-f3d34d4264a1"],
+Cell[73896, 2738, 228, 4, 24, "Print",ExpressionUUID->"af9abd71-eb77-4bf8-945e-8df23fafe47c"],
+Cell[74127, 2744, 228, 4, 24, "Print",ExpressionUUID->"e45421e2-2d59-4e24-9d6c-ec3dfd63af13"],
+Cell[74358, 2750, 226, 4, 24, "Print",ExpressionUUID->"6378d05b-a28a-4f4c-b235-a51f883ad0c5"],
+Cell[74587, 2756, 228, 4, 24, "Print",ExpressionUUID->"24099874-82f1-4f15-9974-57ab0813a383"]
+}, Open  ]]
+}, Open  ]],
+Cell[74842, 2764, 567, 59, 58, "Text",ExpressionUUID->"9a7bce5a-1789-4f9b-9106-fc78a2d074b1"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[75458, 2829, 95, 0, 67, "Section",ExpressionUUID->"64a3e7b9-d8ee-4a58-a36c-63872c8d816d"],
+Cell[75556, 2831, 390, 36, 32, "Item",ExpressionUUID->"a076ad5b-ff8c-437a-8d4d-c644729fd506"],
+Cell[CellGroupData[{
+Cell[75971, 2871, 203, 3, 32, "Item",ExpressionUUID->"bc9f6243-90b4-4c8f-965d-f4085b280602"],
+Cell[76177, 2876, 425, 38, 25, "Subsubitem",ExpressionUUID->"7c2eb571-3698-4950-9ba5-e146a1e016e4"],
+Cell[76605, 2916, 306, 25, 25, "Subsubitem",ExpressionUUID->"640cd8f5-48a3-4ec0-9ce9-154ac477e585"],
+Cell[76914, 2943, 156, 6, 25, "Subsubitem",ExpressionUUID->"532323b0-9d89-4c6b-8246-2d1147b1a542"]
+}, Open  ]],
+Cell[77085, 2952, 333, 26, 32, "Item",ExpressionUUID->"107ea6e1-0b79-471e-bf10-da26fbc3eed9"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[77455, 2983, 84, 0, 67, "Section",ExpressionUUID->"d2466a14-7332-41f6-94da-d6cb35091515"],
+Cell[77542, 2985, 558, 46, 35, "Text",ExpressionUUID->"c2b54e5f-0c92-46e2-9fc3-a0a9184f5a5d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[78137, 3036, 84, 0, 67, "Section",ExpressionUUID->"6dae9a60-1953-4d27-b192-e1f1cb51dd10"],
+Cell[CellGroupData[{
+Cell[78246, 3040, 85, 0, 54, "Subsection",ExpressionUUID->"fc71d4ba-8f7f-4249-b3c8-c7f6162b45c6"],
+Cell[78334, 3042, 606, 23, 35, "Text",ExpressionUUID->"df95aacb-0452-41e5-973c-bcf8e4a368c7"],
+Cell[78943, 3067, 381, 11, 35, "Text",ExpressionUUID->"6038a59e-91c8-450a-9576-ad3e3e3f4a1b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[79361, 3083, 85, 0, 54, "Subsection",ExpressionUUID->"607fa682-65b9-4a45-996e-480e3dfe80e7"],
+Cell[79449, 3085, 526, 23, 35, "Text",ExpressionUUID->"2e45dda8-d379-47a0-8274-f04ca68e9478"],
+Cell[79978, 3110, 565, 23, 35, "Text",ExpressionUUID->"8a01d341-4442-493c-be96-e27c24240925"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
