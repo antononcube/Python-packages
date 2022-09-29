@@ -85,8 +85,8 @@
 - [X] Classify by profile
   - [X] Program
   - [X] Test
-- [ ] Filter matrix
-- [ ] Retrieve by profile with search engine specs
+- [X] Filter matrix
+- [X] Retrieve by profile with search engine specs
   - I.e. having the specs: should, must, must_not
 - [ ] Average row per segment
 - [ ] Top-K statistics facilitation
@@ -96,13 +96,13 @@
   - [C] Using queries over the long form representation of the
     recommender matrix
 ** TODO Recommender algebra [0%] [0/5]
-- [ ] Remove tag types
+- [X] Remove tag types
 - [ ] Row binding with a matrix
-- [ ] Column binding with a matrix
-- [ ] Join across with another recommender
+- [X] Column binding with a matrix
+- [X] Join across with another recommender
   - Concatenate horizontally
   - (Column binding)
-- [ ] Join with another recommender 
+- [ ] Join with another recommender
   - Stack vertically
   - (Row binding)
 ** TODO Composite design pattern application [%] [/]
