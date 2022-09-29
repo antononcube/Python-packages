@@ -27,6 +27,8 @@ and
 The list of features and its implementation status is given in the [org-mode](https://orgmode.org) file
 ["SparseMatrixRecommender-work-plan.org"](https://github.com/antononcube/Python-packages/blob/main/org/SparseMatrixRecommender-work-plan.org).
 
+**Remark:** "SMR" stands for "Sparse Matrix Recommender". Most of the operations of this Python package
+mirror the operations of the software monads "SMRMon-WL", "SMRMon-R", [AAp1, AAp2].
 
 ------
 
@@ -34,11 +36,29 @@ The list of features and its implementation status is given in the [org-mode](ht
 
 Here is a diagram that encompasses the workflows this package supports (or will support):
 
-![SMR-workflows](https://github.com/antononcube/SimplifiedMachineLearningWorkflows-book/raw/master/Part-2-Monadic-Workflows/Diagrams/A-monad-for-Sparse-Matrix-Recommender-workflows/SMR-workflows.jpeg)
+[![SMR-workflows](https://github.com/antononcube/SimplifiedMachineLearningWorkflows-book/raw/master/Part-2-Monadic-Workflows/Diagrams/A-monad-for-Sparse-Matrix-Recommender-workflows/SMR-workflows.jpeg)](https://github.com/antononcube/SimplifiedMachineLearningWorkflows-book/raw/master/Part-2-Monadic-Workflows/Diagrams/A-monad-for-Sparse-Matrix-Recommender-workflows/SMR-workflows.pdf)
+
+Here is narration of a certain workflow scenario:
+
+1. Get a dataset.
+2. Create contingency matrices for a given identifier column and a set of "tag type" columns.
+3. Examine recommender matrix statistics.
+4. If the assumptoins about the data hold apply LSI functions.
+   - For example, the "usual trio" IDF, Frequency, Cosine.
+5. Do (verify) example profile recommendations.
+6. If satisfactory results are obtained use the recommender as a nearest neighbors classifier. 
+
+
+------
+
+## Monadic design
 
 Here is a diagram of typical pipeline building using a `SparseMatrixRecommender` object:
 
 ![SMRMon-pipeline-Python](https://github.com/antononcube/SimplifiedMachineLearningWorkflows-book/raw/master/Part-2-Monadic-Workflows/Diagrams/A-monad-for-Recommender-workflows/SMRMon-pipeline-Python.jpg)
+
+**Remark:** The **monadic design** allows "pipelining" of the SMR operations -- see the usage example section.
+
 
 ------
 
@@ -163,6 +183,51 @@ smrObj <-
 
 ------
 
+## Recommender comparison project
+
+The project repository "Scalable Recommender Framework", [AAr1],
+has documents, diagrams, tests, and benchmarks of a recommender system implemented in multiple programming languages.
+
+This Python recommender package is a decisive winneer in the comparisson -- see the first 10 min of 
+the video recording [AAv1] or the benchmarks at [AAr1].
+
+------
+
+## Code generation with natural language commands
+
+### Using grammar-based interpreters
+
+The project "Raku for Prediction", [AAr2, AAv2, AAp6], has a Domain Specific Language (DSL) grammar and interpreters 
+that allow the generation of SMR code for corresponding Mathematica, Python, R, and Raku packages. 
+
+Here is Command Line Interface (CLI) invocation example that generate code for this package:
+
+```shell
+> ToRecommenderWorkflowCode Python 'create with dfTitanic; apply the LSI functions IDF, None, Cosine;recommend by profile 1st and male' 
+obj = SparseMatrixRecommender().create_from_wide_form(data = dfTitanic).apply_term_weight_functions(global_weight_func = "IDF", local_weight_func = "None", normalizer_func = "Cosine").recommend_by_profile( profile = ["1st", "male"])
+```
+
+### NLP Template Engine
+
+Here is an example using the NLP Template Engine, [AAr2, AAv3]:
+
+```mathematica
+Concretize["create with dfTitanic; apply the LSI functions IDF, None, Cosine;recommend by profile 1st and male", 
+ "TargetLanguage" -> "Python"]
+
+(*
+"smrObj = (SparseMatrixRecommender()
+ .create_from_wide_form(data = None, item_column_name=\"id\", columns=None, add_tag_types_to_column_names=True, tag_value_separator=\":\")
+ .apply_term_weight_functions(\"IDF\", \"None\", \"Cosine\")
+ .recommend_by_profile(profile=[\"1st\", \"male\"], nrecs=profile)
+ .join_across(data=None, on=\"id\")
+ .echo_value())"
+*)
+```
+
+
+------
+
 ## References
 
 ### Articles
@@ -172,7 +237,7 @@ smrObj <-
 (2017),
 [MathematicaForPrediction at GitHub](https://github.com/antononcube/MathematicaForPrediction).
 
-### Mathematica and R Packages 
+### Mathematica/WL and R packages 
 
 [AAp1] Anton Antonov, 
 [Monadic Sparse Matrix Recommender Mathematica package](https://github.com/antononcube/MathematicaForPrediction/blob/master/MonadicProgramming/MonadicSparseMatrixRecommender.m),
@@ -205,3 +270,40 @@ smrObj <-
 [LatentSemanticAnalyzer package in Python](https://github.com/antononcube/Python-packages/tree/main/LatentSemanticAnalyzer)
 (2021),
 [Python-packages at GitHub/antononcube](https://github.com/antononcube/Python-packages).
+
+### Raku packages
+
+[AAp6] Anton Antonov,
+[DSL::English::RecommenderWorkflows Raku package](),
+(2018-2022),
+[GitHub/antononcube](https://github.com/antononcube/Raku-DSL-English-RecommenderWorkflows).
+([At raku.land]((https://raku.land/zef:antononcube/DSL::English::RecommenderWorkflows))).
+
+### Repositories
+
+[AAr1] Anton Antonov,
+[Scalable Recommender Framework project](https://github.com/antononcube/Scalable-Recommender-Framework-project),
+(2022)
+[GitHub/antononcube](https://github.com/antononcube).
+
+[AAr2] Anton Antonov,
+["Raku for Prediction" book project](https://github.com/antononcube/RakuForPrediction-book),
+(2021-2022),
+[GitHub/antononcube](https://github.com/antononcube).
+
+### Videos
+
+[AAv1] Anton Antonov,
+["TRC 2022 Implementation of ML algorithms in Raku"](https://www.youtube.com/watch?v=efRHfjYebs4),
+(2022),
+[Anton A. Antonov's channel at YouTube](https://www.youtube.com/channel/UC5qMPIsJeztfARXWdIw3Xzw).
+
+[AAv2] Anton Antonov,
+["Raku for Prediction"](https://www.youtube.com/watch?v=frpCBjbQtnA),
+(2021),
+[The Raku Conference (TRC) at YouTube](https://www.youtube.com/channel/UCnKoF-TknjGtFIpU3Bc_jUA).
+
+[AAv3] Anton Antonov,
+["NLP Template Engine, Part 1"](https://www.youtube.com/watch?v=a6PvmZnvF9I),
+(2021),
+[Anton A. Antonov's channel at YouTube](https://www.youtube.com/channel/UC5qMPIsJeztfARXWdIw3Xzw).
