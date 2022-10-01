@@ -188,7 +188,7 @@ smrObj <-
 The project repository "Scalable Recommender Framework", [AAr1],
 has documents, diagrams, tests, and benchmarks of a recommender system implemented in multiple programming languages.
 
-This Python recommender package is a decisive winneer in the comparisson -- see the first 10 min of 
+This Python recommender package is a decisive winner in the comparison -- see the first 10 min of 
 the video recording [AAv1] or the benchmarks at [AAr1].
 
 ------
