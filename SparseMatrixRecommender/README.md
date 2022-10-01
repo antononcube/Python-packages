@@ -274,7 +274,7 @@ Concretize["create with dfTitanic; apply the LSI functions IDF, None, Cosine;rec
 ### Raku packages
 
 [AAp6] Anton Antonov,
-[DSL::English::RecommenderWorkflows Raku package](),
+[DSL::English::RecommenderWorkflows Raku package](ttps://github.com/antononcube/Raku-DSL-English-RecommenderWorkflows),
 (2018-2022),
 [GitHub/antononcube](https://github.com/antononcube/Raku-DSL-English-RecommenderWorkflows).
 ([At raku.land]((https://raku.land/zef:antononcube/DSL::English::RecommenderWorkflows))).
