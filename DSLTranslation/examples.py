@@ -1,4 +1,4 @@
-from DSLTranslation import dsl_translation
+from DSLTranslation import *
 
 print(dsl_translation("use dfTitanic; group by passengerSex; counts", fmt="json"))
 
