@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages/tree/main/DSLTranslation",
     packages=setuptools.find_packages(),
-    install_requires=["json", "urllib", "pyperclip"],
+    install_requires=["pyperclip"],
     classifiers=[
         "Intended Audience :: Science/Research",
         "Intended Audience :: Developers",
