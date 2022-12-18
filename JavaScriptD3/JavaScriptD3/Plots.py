@@ -73,7 +73,7 @@ def _js_d3_list_plot(data,
 
     # Chose to add legend code fragment or not
     if isinstance(legends, bool) and legends or legends is None and hasGroups:
-        jsPlotMiddle = jsPlotMiddle + "\n" + CodeSnippets.get_legend_code()
+        jsPlotMiddle = jsPlotMiddle + "\n" + cs.get_legend_code()
 
     # Stencil
     jsScatterPlot = cs.get_plot_preparation_code(fmt, gridLinesLocal[0], gridLinesLocal[1]) + "\n" + \
