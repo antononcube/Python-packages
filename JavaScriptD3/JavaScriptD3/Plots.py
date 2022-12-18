@@ -52,11 +52,11 @@ def _js_d3_list_plot(data,
     # Convert to JSON data
     jsData = json.dumps(dataLocal, default=str)
 
-    # Process margins
-    marginsLocal = process_margins(margins)
-
     # Grid lines
     gridLinesLocal = process_grid_lines(grid_lines)
+
+    # Process margins
+    marginsLocal = process_margins(margins)
 
     # Groups
     hasGroups = True
