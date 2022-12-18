@@ -335,3 +335,93 @@ class CodeSnippets:
 
     def get_multi_path_plot_part(self):
         return self._jsMultiPathPlotPart
+
+    # --------------------------------------------------------
+    # DateListPlot code snippets
+    # --------------------------------------------------------
+    _jsPlotDateDataAndScales = """
+    // Obtain data
+    var data = $DATA
+
+    data = data.map(function(d){
+        var d2 = d;
+        d2["x"] = d3.timeParse("%Y-%m-%d")(d.date);
+        if ( "value" in d ) { d2["y"] = d.value; }
+        return d2
+    })
+
+    var yMin = Math.min.apply(Math, data.map(function(o) { return o.y; }))
+    var yMax = Math.max.apply(Math, data.map(function(o) { return o.y; }))
+
+    // Add X axis --> it is a date format
+    var x = d3.scaleTime()
+      .domain(d3.extent(data, function(d) { return d.x; }))
+      .range([ 0, width ]);
+
+    svg
+        .append('g')
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+
+    // Y scale and Axis
+    var y = d3.scaleLinear()
+        .domain([yMin, yMax])
+        .range([height, 0]);
+
+    svg
+        .append('g')
+        .call(d3.axisLeft(y));
+    """
+
+    # --------------------------------------------------------
+    # DateListPlot code snippets accessors
+    # --------------------------------------------------------
+    def get_plot_date_data_and_scales(self):
+        return self._jsPlotDateDataAndScales
+
+    # --------------------------------------------------------
+    # BarChart code snippets
+    # --------------------------------------------------------
+    _jsBarChartPart = """
+// Obtain data
+var data = $DATA
+
+var valueMin = Math.min.apply(Math, data.map(function(o) { return o.Value; }))
+var valueMax = Math.max.apply(Math, data.map(function(o) { return o.Value; }))
+
+// X axis
+var x = d3.scaleBand()
+  .range([ 0, width ])
+  .domain(data.map(function(d) { return d.Label; }))
+  .padding(0.2);
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x))
+  .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+// Add Y axis
+var y = d3.scaleLinear()
+  .domain([0, valueMax])
+  .range([ height, 0]);
+svg.append("g")
+  .call(d3.axisLeft(y));
+
+// Bars
+svg.selectAll("mybar")
+  .data(data)
+  .enter()
+  .append("rect")
+    .attr("x", function(d) { return x(d.Label); })
+    .attr("y", function(d) { return y(d.Value); })
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { return height - y(d.Value); })
+    .attr("fill", $FILL_COLOR)    
+    """
+
+    # --------------------------------------------------------
+    # BarChart code snippets accessors
+    # --------------------------------------------------------
+    def get_bar_chart_part(self):
+        return self._jsBarChartPart
