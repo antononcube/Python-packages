@@ -52,6 +52,9 @@ def _js_d3_list_plot(data,
     # Convert to JSON data
     jsData = json.dumps(dataLocal)
 
+    # Process margins
+    marginsLocal = process_margins(margins)
+
     # Grid lines
     gridLinesLocal = process_grid_lines(grid_lines)
 
@@ -72,15 +75,17 @@ def _js_d3_list_plot(data,
         jsPlotMiddle = single_dataset_code
 
     # Chose to add legend code fragment or not
+    maxGroupChars = len("all")
+    if hasGroups:
+        maxGroupChars = max([len(x) for x in [r["group"] for r in data]])
+
     if isinstance(legends, bool) and legends or legends is None and hasGroups:
+        marginsLocal["right"] = max(marginsLocal["right"], (maxGroupChars + 4) * 12)
         jsPlotMiddle = jsPlotMiddle + "\n" + cs.get_legend_code()
 
     # Stencil
     jsScatterPlot = cs.get_plot_preparation_code(fmt, gridLinesLocal[0], gridLinesLocal[1]) + "\n" + \
                     jsPlotMiddle + "\n" + cs.get_plot_ending_code(fmt)
-
-    # Concrete parameters
-    marginsLocal = process_margins(margins)
 
     # Concrete parameters
     res = (jsScatterPlot
