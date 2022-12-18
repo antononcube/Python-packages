@@ -50,7 +50,7 @@ def _js_d3_list_plot(data,
         raise TypeError("The first argument is expected to be coercible to numpy.ndarray or a list of dictionaries.")
 
     # Convert to JSON data
-    jsData = json.dumps(dataLocal)
+    jsData = json.dumps(dataLocal, default=str)
 
     # Process margins
     marginsLocal = process_margins(margins)
