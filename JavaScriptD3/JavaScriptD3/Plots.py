@@ -131,6 +131,7 @@ def js_d3_list_plot(data,
 
     return _js_d3_list_plot(
         data=data,
+        background=background,
         color=color,
         width=width,
         height=height,
@@ -165,6 +166,7 @@ def js_d3_list_line_plot(data,
 
     return _js_d3_list_plot(
         data=data,
+        background=background,
         color=color,
         width=width,
         height=height,
