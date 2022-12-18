@@ -22,15 +22,15 @@ def js_d3_bar_chart(data,
                     y_axis_label='',
                     grid_lines=False,
                     margins=None,
-                    legends=False,
+                    legends=None,
                     fmt="jupyter"):
     # Type checking and coercion
     dataLocal = data
     if isinstance(dataLocal, numpy.ndarray):
         if len(dataLocal.shape) == 1:
-            dataLocal = [{"Label": k, "Value": dataLocal[k]} for k in range(0, dataLocal.shape[0])]
+            dataLocal = [{"variable": k, "value": dataLocal[k]} for k in range(0, dataLocal.shape[0])]
         elif len(dataLocal.shape) == 2:
-            dataLocal = [{"Label": dataLocal[k, 0], "Value": dataLocal[k, 1]} for k in range(0, dataLocal.shape[0])]
+            dataLocal = [{"variable": dataLocal[k, 0], "value": dataLocal[k, 1]} for k in range(0, dataLocal.shape[0])]
 
     if not is_list_of_dicts(dataLocal):
         raise TypeError("The first argument is expected to be coercible to numpy.ndarray or a list of dictionaries.")
@@ -58,7 +58,7 @@ def js_d3_bar_chart(data,
     if hasGroups:
         jsPlotMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
                                                         n_y_ticks=gridLinesLocal[1],
-                                                        code_fragment=cs.get_bar_chart_part())
+                                                        code_fragment=cs.get_multi_bar_chart_part())
     else:
         jsPlotMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
                                                         n_y_ticks=gridLinesLocal[1],
@@ -71,7 +71,7 @@ def js_d3_bar_chart(data,
 
     if isinstance(legends, bool) and legends or legends is None and hasGroups:
         marginsLocal["right"] = max(marginsLocal["right"], (maxGroupChars + 4) * 12)
-        jsPlotMiddle = jsPlotMiddle + "\n" + cs.get_legend_code()
+        jsPlotMiddle = jsPlotMiddle + "\n" + cs.get_legend_code().replace('return o.group;', "return o.variable;")
 
     # Stencil
     jsChart = cs.get_plot_starting_code(fmt) + "\n" + cs.get_plot_margins_and_labels_code(fmt) + "\n" + \

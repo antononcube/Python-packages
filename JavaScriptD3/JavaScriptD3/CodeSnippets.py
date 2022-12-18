@@ -386,13 +386,13 @@ class CodeSnippets:
     // Obtain data
     var data = $DATA
     
-    var valueMin = Math.min.apply(Math, data.map(function(o) { return o.Value; }))
-    var valueMax = Math.max.apply(Math, data.map(function(o) { return o.Value; }))
+    var valueMin = Math.min.apply(Math, data.map(function(o) { return o.value; }))
+    var valueMax = Math.max.apply(Math, data.map(function(o) { return o.value; }))
     
     // X axis
     var x = d3.scaleBand()
       .range([ 0, width ])
-      .domain(data.map(function(d) { return d.Label; }))
+      .domain(data.map(function(d) { return d.variable; }))
       .padding(0.2);
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
@@ -413,11 +413,69 @@ class CodeSnippets:
       .data(data)
       .enter()
       .append("rect")
-        .attr("x", function(d) { return x(d.Label); })
-        .attr("y", function(d) { return y(d.Value); })
+        .attr("x", function(d) { return x(d.variable); })
+        .attr("y", function(d) { return y(d.value); })
         .attr("width", x.bandwidth())
-        .attr("height", function(d) { return height - y(d.Value); })
+        .attr("height", function(d) { return height - y(d.value); })
         .attr("fill", $FILL_COLOR)    
+    """
+
+    _jsMultiBarChartPart = """
+    // Obtain data
+    var data = $DATA
+    
+    var valueMin = Math.min.apply(Math, data.map(function(o) { return o.value; }))
+    var valueMax = Math.max.apply(Math, data.map(function(o) { return o.value; }))
+    
+    // List of subgroups
+    var subgroups = d3.map(data, function(d){return(d.variable)}).values()
+    subgroups = [...new Set(subgroups)];
+    
+    // List of groups
+    var groups = d3.map(data, function(d){return(d.group)}).values()
+    
+    // Add X axis
+    var x = d3.scaleBand()
+      .domain(groups)
+      .range([0, width])
+      .padding([0.2])
+    svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x).tickSize(0));
+    
+    // Add Y axis
+    var y = d3.scaleLinear()
+        .domain([0, valueMax])
+        .range([ height, 0 ]);
+    svg.append("g")
+        .call(d3.axisLeft(y));
+    
+    // Another scale for subgroup position?
+    var xSubgroup = d3.scaleBand()
+        .domain(subgroups)
+        .range([0, x.bandwidth()])
+        .padding([0.05])
+    
+    // Color palette = one color per subgroup
+    var myColor = d3.scaleOrdinal()
+        .domain(subgroups)
+        .range(d3.schemeSet2);
+    
+    // Show the bars
+    svg.append("g")
+        .selectAll("g")
+        // Enter in data = loop group per group
+        .data(data)
+        .join("g")
+          .attr("transform", d => `translate(${x(d.group)}, 0)`)
+        .selectAll("rect")
+        .data(function(d) { return data.filter(function(x){ return x.group == d.group }) })
+        .join("rect")
+          .attr("x", d => xSubgroup(d.variable))
+          .attr("y", d => y(d.value))
+          .attr("width", xSubgroup.bandwidth())
+          .attr("height", d => height - y(d.value))
+          .attr("fill", d => myColor(d.variable));
     """
 
     # --------------------------------------------------------
@@ -425,3 +483,6 @@ class CodeSnippets:
     # --------------------------------------------------------
     def get_bar_chart_part(self):
         return self._jsBarChartPart
+
+    def get_multi_bar_chart_part(self):
+        return self._jsMultiBarChartPart
