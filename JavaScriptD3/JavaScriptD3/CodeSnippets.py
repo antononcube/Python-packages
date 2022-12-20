@@ -145,35 +145,18 @@ class CodeSnippets:
         .range([height, 0]);
     """
 
-    _jsPlotDataScalesAndAxes = """
-    // Obtain data
-    var data = $DATA
-    
-    var xMin = Math.min.apply(Math, data.map(function(o) { return o.x; }))
-    var xMax = Math.max.apply(Math, data.map(function(o) { return o.x; }))
-    
-    var yMin = Math.min.apply(Math, data.map(function(o) { return o.y; }))
-    var yMax = Math.max.apply(Math, data.map(function(o) { return o.y; }))
-    
-    // X scale and Axis
-    var x = d3.scaleLinear()
-        .domain([xMin, xMax])
-        .range([0, width]);
-    
+    _jsPlotDataAxes = """
     svg
       .append('g')
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
     
-    // Y scale and Axis
-    var y = d3.scaleLinear()
-        .domain([yMin, yMax])
-        .range([height, 0]);
-    
     svg
       .append('g')
       .call(d3.axisLeft(y));
     """
+
+    _jsPlotDataScalesAndAxes = _jsPlotDataAndScales + "\n" + _jsPlotDataAxes
 
     # See https://d3-graph-gallery.com/graph/custom_legend.html
     _jsGroupsLegend = """
@@ -386,15 +369,17 @@ class CodeSnippets:
       .domain(d3.extent(data, function(d) { return d.x; }))
       .range([ 0, width ]);
 
-    svg
-        .append('g')
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x))
-
     // Y scale and Axis
     var y = d3.scaleLinear()
         .domain([yMin, yMax])
         .range([height, 0]);
+    """
+
+    _jsPlotDateAxes = """
+    svg
+        .append('g')
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
 
     svg
         .append('g')
@@ -406,6 +391,9 @@ class CodeSnippets:
     # --------------------------------------------------------
     def get_plot_date_data_and_scales(self):
         return self._jsPlotDateDataAndScales
+
+    def get_plot_date_data_scales_and_axes(self):
+        return self._jsPlotDateDataAndScales + "\n" + self._jsPlotDateAxes
 
     # --------------------------------------------------------
     # BarChart code snippets

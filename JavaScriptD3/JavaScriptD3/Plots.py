@@ -46,9 +46,11 @@ def _js_d3_list_plot(data,
                      grid_lines=False,
                      margins=None,
                      legends=False,
+                     axes=True,
                      single_dataset_code='',
                      multi_dataset_code='',
                      data_scales_and_axes_code='',
+                     data_and_scales_code='',
                      fmt="jupyter"):
     """
     Generic list plot
@@ -64,6 +66,7 @@ def _js_d3_list_plot(data,
     :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
     :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
     :param legends: Should legends be placed or not?
+    :param axes: Should axes be drawn or not?
     :param single_dataset_code: Code for single dataset.
     :param multi_dataset_code: Code for multiple datasets.
     :param data_scales_and_axes_code: Code for the data, scales, and axes.
@@ -115,12 +118,18 @@ def _js_d3_list_plot(data,
         marginsLocal["right"] = max(marginsLocal["right"], (maxGroupChars + 4) * 12)
         jsPlotMiddle = jsPlotMiddle + "\n" + cs.get_legend_code()
 
+    # Axes with or without
+    if axes:
+        jsTemp = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                       n_y_ticks=gridLinesLocal[1],
+                                                       code_fragment=data_scales_and_axes_code)
+    else:
+        jsTemp = data_and_scales_code
+
     # Stencil
     jsScatterPlot = cs.get_plot_starting_code(fmt=fmt) + "\n" + \
                     cs.get_plot_margins_and_labels_code(fmt=fmt) + "\n" + \
-                    cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
-                                                          n_y_ticks=gridLinesLocal[1],
-                                                          code_fragment=data_scales_and_axes_code) + "\n" + \
+                    jsTemp + "\n" + \
                     jsPlotMiddle + "\n" + \
                     cs.get_plot_ending_code(fmt=fmt)
 
@@ -163,6 +172,7 @@ def js_d3_list_plot(data,
                     grid_lines=False,
                     margins=None,
                     legends=False,
+                    axes=True,
                     fmt="jupyter"):
     """
     List plot (or scatter plot)
@@ -178,6 +188,7 @@ def js_d3_list_plot(data,
     :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
     :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
     :param legends: Should legends be placed or not?
+    :param axes: Should axes be drawn or not?
     :param fmt: Format, one of "html", "jupyter", or "script".
     :return: JavaScript code or HTML code.
     """
@@ -195,9 +206,11 @@ def js_d3_list_plot(data,
         grid_lines=grid_lines,
         margins=margins,
         legends=legends,
+        axes=axes,
         single_dataset_code=cs.get_scatter_plot_part(),
         multi_dataset_code=cs.get_multi_scatter_plot_part(),
         data_scales_and_axes_code=cs.get_plot_data_scales_and_axes_code(),
+        data_and_scales_code=cs.get_plot_data_and_scales_code(),
         fmt=fmt
     )
 
@@ -216,6 +229,7 @@ def js_d3_list_line_plot(data,
                          grid_lines=False,
                          margins=None,
                          legends=False,
+                         axes=True,
                          fmt="jupyter"):
     """
     List line plot
@@ -231,6 +245,7 @@ def js_d3_list_line_plot(data,
     :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
     :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
     :param legends: Should legends be placed or not?
+    :param axes: Should axes be drawn or not?
     :param fmt: Format, one of "html", "jupyter", or "script".
     :return: JavaScript code or HTML code.
     """
@@ -248,9 +263,11 @@ def js_d3_list_line_plot(data,
         grid_lines=grid_lines,
         margins=margins,
         legends=legends,
+        axes=axes,
         single_dataset_code=cs.get_path_plot_part(),
         multi_dataset_code=cs.get_multi_path_plot_part(),
         data_scales_and_axes_code=cs.get_plot_data_scales_and_axes_code(),
+        data_and_scales_code=cs.get_plot_data_and_scales_code(),
         fmt=fmt
     )
 
@@ -272,6 +289,7 @@ def js_d3_date_list_plot(data,
                          grid_lines=False,
                          margins=None,
                          legends=False,
+                         axes=True,
                          fmt="jupyter"):
     """
     Generic list plot
@@ -288,6 +306,7 @@ def js_d3_date_list_plot(data,
     :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
     :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
     :param legends: Should legends be placed or not?
+    :param axes: Should axes be drawn or not?
     :param fmt: Format, one of "html", "jupyter", or "script".
     :return: JavaScript code or HTML code.
     """
@@ -319,9 +338,11 @@ def js_d3_date_list_plot(data,
         grid_lines=grid_lines,
         margins=margins,
         legends=legends,
+        axes=axes,
         single_dataset_code=cs.get_path_plot_part(),
         multi_dataset_code=cs.get_multi_path_plot_part(),
-        data_scales_and_axes_code=cs.get_plot_date_data_and_scales(),
+        data_scales_and_axes_code=cs.get_plot_date_data_scales_and_axes(),
+        data_and_scales_code=cs.get_plot_date_data_and_scales(),
         fmt="script"
     )
 
