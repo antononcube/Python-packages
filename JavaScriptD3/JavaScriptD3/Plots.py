@@ -20,6 +20,17 @@ def is_list_of_dicts(obj):
     return True
 
 
+def is_list_of_date_value_pairs(obj):
+    if not isinstance(obj, list):
+        return False
+    for a in obj:
+        if not isinstance(a, list) and len(a) == 2:
+            return False
+        if not isinstance(a[0], str) and isinstance(a[1], int | float):
+            return False
+    return True
+
+
 # ============================================================
 # ListPlot
 # ============================================================
@@ -37,6 +48,7 @@ def _js_d3_list_plot(data,
                      legends=False,
                      single_dataset_code='',
                      multi_dataset_code='',
+                     data_scales_and_axes_code='',
                      fmt="jupyter"):
     """
     Generic list plot
@@ -54,6 +66,7 @@ def _js_d3_list_plot(data,
     :param legends: Should legends be placed or not?
     :param single_dataset_code: Code for single dataset.
     :param multi_dataset_code: Code for multiple datasets.
+    :param data_scales_and_axes_code: Code for the data, scales, and axes.
     :param fmt: Format, one of "html", "jupyter", or "script".
     :return: JavaScript code or HTML code.
     """
@@ -103,8 +116,13 @@ def _js_d3_list_plot(data,
         jsPlotMiddle = jsPlotMiddle + "\n" + cs.get_legend_code()
 
     # Stencil
-    jsScatterPlot = cs.get_plot_preparation_code(fmt, gridLinesLocal[0], gridLinesLocal[1]) + "\n" + \
-                    jsPlotMiddle + "\n" + cs.get_plot_ending_code(fmt)
+    jsScatterPlot = cs.get_plot_starting_code(fmt=fmt) + "\n" + \
+                    cs.get_plot_margins_and_labels_code(fmt=fmt) + "\n" + \
+                    cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                          n_y_ticks=gridLinesLocal[1],
+                                                          code_fragment=data_scales_and_axes_code) + "\n" + \
+                    jsPlotMiddle + "\n" + \
+                    cs.get_plot_ending_code(fmt=fmt)
 
     # Concrete parameters
     res = (jsScatterPlot
@@ -179,6 +197,7 @@ def js_d3_list_plot(data,
         legends=legends,
         single_dataset_code=cs.get_scatter_plot_part(),
         multi_dataset_code=cs.get_multi_scatter_plot_part(),
+        data_scales_and_axes_code=cs.get_plot_data_scales_and_axes_code(),
         fmt=fmt
     )
 
@@ -231,5 +250,75 @@ def js_d3_list_line_plot(data,
         legends=legends,
         single_dataset_code=cs.get_path_plot_part(),
         multi_dataset_code=cs.get_multi_path_plot_part(),
+        data_scales_and_axes_code=cs.get_plot_data_scales_and_axes_code(),
+        fmt=fmt
+    )
+
+
+# ============================================================
+# DateListPlot
+# ============================================================
+
+
+def js_d3_date_list_plot(data,
+                         background="white",
+                         color="steelblue",
+                         width=600,
+                         height=400,
+                         title='',
+                         x_axis_label='',
+                         y_axis_label='',
+                         grid_lines=False,
+                         margins=None,
+                         legends=False,
+                         fmt="jupyter"):
+    """
+    Generic list plot
+    ----------------------------------
+    :param data: Data to plotted.
+    :param background: Background color.
+    :param color: Color of the points.
+    :param width: Width of the plot.
+    :param height: Height of the plot.
+    :param title: Plot title.
+    :param x_axis_label: X-axis label.
+    :param y_axis_label: Y-axis label.
+    :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
+    :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
+    :param legends: Should legends be placed or not?
+    :param fmt: Format, one of "html", "jupyter", or "script".
+    :return: JavaScript code or HTML code.
+    """
+
+    # Type checking and coercion
+    dataLocal = data
+    if isinstance(dataLocal, numpy.ndarray):
+        if len(dataLocal.shape) == 1:
+            dataLocal = [{"date": k, "value": dataLocal[k]} for k in range(0, dataLocal.shape[0])]
+        elif len(dataLocal.shape) == 2:
+            dataLocal = [{"date": dataLocal[k, 0], "value": dataLocal[k, 1]} for k in range(0, dataLocal.shape[0])]
+    elif is_list_of_date_value_pairs(dataLocal):
+        dataLocal = [{"date": dataLocal[k][0], "value": dataLocal[k][1]} for k in range(0, len(dataLocal))]
+
+    if not is_list_of_dicts(dataLocal):
+        raise TypeError("The first argument is expected to be coercible to numpy.ndarray or a list of dictionaries.")
+
+    cs = CodeSnippets()
+
+    return _js_d3_list_plot(
+        data=dataLocal,
+        background=background,
+        color=color,
+        width=width,
+        height=height,
+        title=title,
+        x_axis_label=x_axis_label,
+        y_axis_label=y_axis_label,
+        grid_lines=grid_lines,
+        margins=margins,
+        legends=legends,
+        single_dataset_code=cs.get_path_plot_part(),
+        multi_dataset_code=cs.get_multi_path_plot_part(),
+        data_scales_and_axes_code=cs.get_plot_date_data_and_scales(),
         fmt=fmt
     )

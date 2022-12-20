@@ -127,6 +127,27 @@ class CodeSnippets:
     _jsPlotDataAndScales = """
     // Obtain data
     var data = $DATA
+
+    var xMin = Math.min.apply(Math, data.map(function(o) { return o.x; }))
+    var xMax = Math.max.apply(Math, data.map(function(o) { return o.x; }))
+
+    var yMin = Math.min.apply(Math, data.map(function(o) { return o.y; }))
+    var yMax = Math.max.apply(Math, data.map(function(o) { return o.y; }))
+
+    // X scale and Axis
+    var x = d3.scaleLinear()
+        .domain([xMin, xMax])
+        .range([0, width]);
+
+    // Y scale and Axis
+    var y = d3.scaleLinear()
+        .domain([yMin, yMax])
+        .range([height, 0]);
+    """
+
+    _jsPlotDataScalesAndAxes = """
+    // Obtain data
+    var data = $DATA
     
     var xMin = Math.min.apply(Math, data.map(function(o) { return o.x; }))
     var xMax = Math.max.apply(Math, data.map(function(o) { return o.x; }))
@@ -136,18 +157,18 @@ class CodeSnippets:
     
     // X scale and Axis
     var x = d3.scaleLinear()
-        .domain([xMin, xMax])         // This is the min and the max of the data: 0 to 100 if percentages
-        .range([0, width]);           // This is the corresponding value I want in Pixel
+        .domain([xMin, xMax])
+        .range([0, width]);
     
     svg
       .append('g')
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
     
-    // X scale and Axis
+    // Y scale and Axis
     var y = d3.scaleLinear()
-        .domain([yMin, yMax])         // This is the min and the max of the data: 0 to 100 if percentages
-        .range([height, 0]);          // This is the corresponding value I want in Pixel
+        .domain([yMin, yMax])
+        .range([height, 0]);
     
     svg
       .append('g')
@@ -166,7 +187,7 @@ class CodeSnippets:
       .enter()
       .append("circle")
         .attr("cx", $LEGEND_X_POS)
-        .attr("cy", function(d,i){ return $LEGEND_Y_POS + i*$LEGEND_Y_GAP}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("cy", function(d,i){ return $LEGEND_Y_POS + i*$LEGEND_Y_GAP})
         .attr("r", 6)
         .style("fill", function(d){ return myColor(d)})
     
@@ -176,7 +197,7 @@ class CodeSnippets:
       .enter()
       .append("text")
         .attr("x", $LEGEND_X_POS + 12)
-        .attr("y", function(d,i){ return $LEGEND_Y_POS + i*$LEGEND_Y_GAP}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("y", function(d,i){ return $LEGEND_Y_POS + i*$LEGEND_Y_GAP})
         .style("fill", function(d){ return myColor(d)})
         .text(function(d){ return d})
         .attr("text-anchor", "left")
@@ -195,7 +216,7 @@ class CodeSnippets:
     }) })(element);
     """
 
-    _jsPlotPreparation = _jsPlotStarting + "\n" + _jsPlotMarginsAndLabels + "\n" + _jsPlotDataAndScales
+    _jsPlotPreparation = _jsPlotStarting + "\n" + _jsPlotMarginsAndLabels + "\n" + _jsPlotDataScalesAndAxes
 
     # --------------------------------------------------------
     # Accessors
@@ -219,11 +240,14 @@ class CodeSnippets:
         else:
             return self._jsPlotMarginsAndLabels.replace('element.get(0)', '"#my_dataviz"')
 
-    def get_plot_data_and_scales_code(self, n_x_ticks=0, n_y_ticks=0, code_fragment=None):
+    def get_plot_data_and_scales_code(self):
+        return self._jsPlotDataAndScales
+
+    def get_plot_data_scales_and_axes_code(self, n_x_ticks=0, n_y_ticks=0, code_fragment=None):
         if isinstance(code_fragment, str):
             res = code_fragment
         else:
-            res = self._jsPlotDataAndScales
+            res = self._jsPlotDataScalesAndAxes
 
         if n_x_ticks > 0:
             res = res.replace('.call(d3.axisBottom(x))',
@@ -238,7 +262,7 @@ class CodeSnippets:
     def get_plot_preparation_code(self, fmt='jupyter', n_x_ticks=0, n_y_ticks=0):
         return self.get_plot_starting_code(fmt) + "\n" + \
                self.get_plot_margins_and_labels_code(fmt) + "\n" + \
-               self.get_plot_data_and_scales_code(n_x_ticks, n_y_ticks)
+               self.get_plot_data_scales_and_axes_code(n_x_ticks, n_y_ticks)
 
     def get_legend_code(self):
         return self._jsGroupsLegend

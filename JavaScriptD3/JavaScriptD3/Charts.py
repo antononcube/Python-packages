@@ -73,13 +73,13 @@ def js_d3_bar_chart(data,
 
     # Select code fragment to splice in
     if hasGroups:
-        jsChartMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
-                                                         n_y_ticks=gridLinesLocal[1],
-                                                         code_fragment=cs.get_multi_bar_chart_part())
+        jsChartMiddle = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                              n_y_ticks=gridLinesLocal[1],
+                                                              code_fragment=cs.get_multi_bar_chart_part())
     else:
-        jsChartMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
-                                                         n_y_ticks=gridLinesLocal[1],
-                                                         code_fragment=cs.get_bar_chart_part())
+        jsChartMiddle = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                              n_y_ticks=gridLinesLocal[1],
+                                                              code_fragment=cs.get_bar_chart_part())
 
     # Chose to add legend code fragment or not
     maxGroupChars = len("all")
@@ -179,13 +179,13 @@ def js_d3_histogram(data,
 
     # Select code fragment to splice in
     if hasGroups:
-        jsChartMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
-                                                         n_y_ticks=gridLinesLocal[1],
-                                                         code_fragment=cs.get_histogram_part())
+        jsChartMiddle = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                              n_y_ticks=gridLinesLocal[1],
+                                                              code_fragment=cs.get_histogram_part())
     else:
-        jsChartMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
-                                                         n_y_ticks=gridLinesLocal[1],
-                                                         code_fragment=cs.get_histogram_part())
+        jsChartMiddle = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                              n_y_ticks=gridLinesLocal[1],
+                                                              code_fragment=cs.get_histogram_part())
 
     # Chose to add legend code fragment or not
     maxGroupChars = len("all")
@@ -264,11 +264,12 @@ def js_d3_bubble_chart(data,
     dataLocal = data
     if isinstance(dataLocal, numpy.ndarray):
         if len(dataLocal.shape) == 1:
-            dataLocal = [{"x": k, "y": dataLocal[k], "z": 1 } for k in range(0, dataLocal.shape[0])]
+            dataLocal = [{"x": k, "y": dataLocal[k], "z": 1} for k in range(0, dataLocal.shape[0])]
         elif len(dataLocal.shape) == 2 and dataLocal.shape[1] == 2:
             dataLocal = [{"x": dataLocal[k, 0], "y": dataLocal[k, 1], "z": 1} for k in range(0, dataLocal.shape[0])]
         elif len(dataLocal.shape) == 2 and dataLocal.shape[1] == 3:
-            dataLocal = [{"x": dataLocal[k, 0], "y": dataLocal[k, 1], "z": dataLocal[k, 2]} for k in range(0, dataLocal.shape[0])]
+            dataLocal = [{"x": dataLocal[k, 0], "y": dataLocal[k, 1], "z": dataLocal[k, 2]} for k in
+                         range(0, dataLocal.shape[0])]
 
     if not is_list_of_dicts(dataLocal):
         raise TypeError("The first argument is expected to be coercible to numpy.ndarray or a list of dictionaries.")
@@ -297,17 +298,17 @@ def js_d3_bubble_chart(data,
 
     # Select code fragment to splice in
     if hasGroups and not tooltipLocal:
-        jsChartMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
-                                                         n_y_ticks=gridLinesLocal[1],
-                                                         code_fragment=cs.get_multi_bubble_chart_part())
+        jsChartMiddle = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                              n_y_ticks=gridLinesLocal[1],
+                                                              code_fragment=cs.get_multi_bubble_chart_part())
     elif tooltipLocal:
-        jsChartMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
-                                                         n_y_ticks=gridLinesLocal[1],
-                                                         code_fragment=cs.get_tooltip_multi_bubble_chart_part())
+        jsChartMiddle = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                              n_y_ticks=gridLinesLocal[1],
+                                                              code_fragment=cs.get_tooltip_multi_bubble_chart_part())
     else:
-        jsChartMiddle = cs.get_plot_data_and_scales_code(n_x_ticks=gridLinesLocal[0],
-                                                         n_y_ticks=gridLinesLocal[1],
-                                                         code_fragment=cs.get_bubble_chart_part())
+        jsChartMiddle = cs.get_plot_data_scales_and_axes_code(n_x_ticks=gridLinesLocal[0],
+                                                              n_y_ticks=gridLinesLocal[1],
+                                                              code_fragment=cs.get_bubble_chart_part())
 
     # Chose to add legend code fragment or not
     maxGroupChars = len("all")
