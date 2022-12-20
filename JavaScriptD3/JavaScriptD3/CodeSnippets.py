@@ -223,22 +223,22 @@ class CodeSnippets:
     # --------------------------------------------------------
 
     def get_plot_starting_code(self, fmt='jupyter'):
-        if fmt.lower() == 'jupyter':
-            return self._jsPlotStarting
-        else:
+        if fmt.lower() == 'html':
             return self._jsPlotStartingHTML
+        else:
+            return self._jsPlotStarting
 
     def get_plot_ending_code(self, fmt='jupyter'):
-        if fmt.lower() == 'jupyter':
-            return self._jsPlotEnding
-        else:
+        if fmt.lower() == 'html':
             return self._jsPlotEndingHTML
+        else:
+            return self._jsPlotEnding
 
     def get_plot_margins_and_labels_code(self, fmt='jupyter'):
-        if fmt.lower() == 'jupyter':
-            return self._jsPlotMarginsAndLabels
-        else:
+        if fmt.lower() == 'html':
             return self._jsPlotMarginsAndLabels.replace('element.get(0)', '"#my_dataviz"')
+        else:
+            return self._jsPlotMarginsAndLabels
 
     def get_plot_data_and_scales_code(self):
         return self._jsPlotDataAndScales

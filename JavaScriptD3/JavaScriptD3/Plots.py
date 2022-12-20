@@ -266,8 +266,9 @@ def js_d3_date_list_plot(data,
                          width=600,
                          height=400,
                          title='',
-                         x_axis_label='',
-                         y_axis_label='',
+                         date_axis_label='',
+                         value_axis_label='',
+                         time_parse_spec='%Y-%m-%d',
                          grid_lines=False,
                          margins=None,
                          legends=False,
@@ -281,8 +282,9 @@ def js_d3_date_list_plot(data,
     :param width: Width of the plot.
     :param height: Height of the plot.
     :param title: Plot title.
-    :param x_axis_label: X-axis label.
-    :param y_axis_label: Y-axis label.
+    :param date_axis_label: Date-axis label.
+    :param value_axis_label: Value-axis label.
+    :param time_parse_spec: Time parse spec (for D3.js.)
     :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
     :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
     :param legends: Should legends be placed or not?
@@ -305,20 +307,29 @@ def js_d3_date_list_plot(data,
 
     cs = CodeSnippets()
 
-    return _js_d3_list_plot(
+    res = _js_d3_list_plot(
         data=dataLocal,
         background=background,
         color=color,
         width=width,
         height=height,
         title=title,
-        x_axis_label=x_axis_label,
-        y_axis_label=y_axis_label,
+        x_axis_label=date_axis_label,
+        y_axis_label=value_axis_label,
         grid_lines=grid_lines,
         margins=margins,
         legends=legends,
         single_dataset_code=cs.get_path_plot_part(),
         multi_dataset_code=cs.get_multi_path_plot_part(),
         data_scales_and_axes_code=cs.get_plot_date_data_and_scales(),
-        fmt=fmt
+        fmt="script"
     )
+
+    res = res.replace('$TIME_PARSE_SPEC', '"' + time_parse_spec + '"')
+
+    if fmt.lower() == "html":
+        res = res.replace('element.get(0)', '"#my_dataviz"')
+    elif fmt.lower() == "jupyter":
+        res = display(Javascript(res))
+
+    return res
