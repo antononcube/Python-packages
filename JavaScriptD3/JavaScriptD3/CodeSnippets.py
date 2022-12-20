@@ -7,6 +7,10 @@ def process_margins(margins):
     defaultMargins = {"top": 40, "bottom": 40, "left": 40, "right": 40}
     if marginsLocal is None:
         marginsLocal = defaultMargins
+    elif isinstance(marginsLocal, int):
+        marginsLocal = {k: marginsLocal for k in list(defaultMargins.keys())}
+    elif isinstance(marginsLocal, float):
+        marginsLocal = {k: marginsLocal.round() for k in list(defaultMargins.keys())}
     if not isinstance(marginsLocal, dict):
         raise TypeError("The argument margins is expected to be a dict or None.")
     marginsLocal = defaultMargins | marginsLocal
@@ -486,3 +490,184 @@ class CodeSnippets:
 
     def get_multi_bar_chart_part(self):
         return self._jsMultiBarChartPart
+
+    # --------------------------------------------------------
+    # Histogram code snippets
+    # --------------------------------------------------------
+    _jsHistogramPart = """
+    // Obtain data
+    var data = $DATA
+    
+    var valueMin = Math.min.apply(Math, data)
+    var valueMax = Math.max.apply(Math, data)
+    
+    // X axis: scale and draw:
+    var x = d3.scaleLinear()
+          .domain([valueMin, valueMax])
+          .range([0, width]);
+    svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+    
+    // set the parameters for the histogram
+    var histogram = d3.histogram()
+          .value(function(d) { return d; }) 
+          .domain(x.domain())
+          .thresholds(x.ticks(70));
+    
+    // And apply this function to data to get the bins
+    var bins = histogram(data);
+    
+    // Y axis: scale and draw:
+    var y = d3.scaleLinear()
+          .range([height, 0]);
+          y.domain([0, d3.max(bins, function(d) { return d.length; })]);
+    svg.append("g")
+          .call(d3.axisLeft(y));
+    
+    // append the bar rectangles to the svg element
+    svg.selectAll("rect")
+          .data(bins)
+          .enter()
+          .append("rect")
+            .attr("x", 1)
+            .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+            .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+            .attr("height", function(d) { return height - y(d.length); })
+            .style("fill", $FILL_COLOR)
+    """
+
+    # --------------------------------------------------------
+    # Histogram code snippets accessors
+    # --------------------------------------------------------
+    def get_histogram_part(self):
+        return self._jsHistogramPart
+
+    # --------------------------------------------------------
+    # BubbleChart code snippets
+    # --------------------------------------------------------
+    _jsBubbleChartPart = """
+    var zMin = Math.min.apply(Math, data.map(function(o) { return o.z; }))
+    var zMax = Math.max.apply(Math, data.map(function(o) { return o.z; }))
+    
+    // Add a scale for bubble size
+    const z = d3.scaleLinear()
+        .domain([zMin, zMax])
+        .range([1, 40]);
+    
+    // Add dots
+    svg.append('g')
+        .selectAll("dot")
+        .data(data)
+        .join("circle")
+          .attr("cx", d => x(d.x))
+          .attr("cy", d => y(d.y))
+          .attr("r",  d => z(d.z))
+          .style("fill", $FILL_COLOR)
+          .style("opacity", "0.7")
+          .attr("stroke", "black")
+    """
+
+    _jsMultiBubbleChartPart = """
+    var zMin = Math.min.apply(Math, data.map(function(o) { return o.z; }))
+    var zMax = Math.max.apply(Math, data.map(function(o) { return o.z; }))
+    
+    // Add a scale for bubble size
+    const z = d3.scaleLinear()
+        .domain([zMin, zMax])
+        .range([1, 40]);
+    
+    // Add a scale for bubble color
+    var myColor = d3.scaleOrdinal()
+        .domain(data.map(function(o) { return o.group; }))
+        .range(d3.schemeSet2);
+    
+    // Add dots
+    svg.append('g')
+        .selectAll("dot")
+        .data(data)
+        .join("circle")
+          .attr("cx", d => x(d.x))
+          .attr("cy", d => y(d.y))
+          .attr("r",  d => z(d.z))
+          .style("fill", function (d) { return myColor(d.group); } )
+          .style("opacity", $OPACITY)
+          .attr("stroke", "black")
+    """
+
+    _jsTooltipMultiBubbleChartPart = """
+    var zMin = Math.min.apply(Math, data.map(function(o) { return o.z; }))
+    var zMax = Math.max.apply(Math, data.map(function(o) { return o.z; }))
+    
+    // Add a scale for bubble size
+    const z = d3.scaleLinear()
+        .domain([zMin, zMax])
+        .range([1, 40]);
+    
+    // Add a scale for bubble color
+    var myColor = d3.scaleOrdinal()
+        .domain(data.map(function(o) { return o.group; }))
+        .range(d3.schemeSet2);
+    
+    // -1- Create a tooltip div that is hidden by default:
+    const tooltip = d3.select(element.get(0))
+        .append("div")
+          .style("opacity", 0)
+          .attr("class", "tooltip")
+          .style("background-color", "black")
+          .style("border-radius", "5px")
+          .style("padding", "10px")
+          .style("color", "white")
+    
+    // -2- Create 3 functions to show / update (when mouse move but stay on same circle) / hide the tooltip
+    const showTooltip = function(event, d) {
+        tooltip
+          .transition()
+          .duration(200)
+        tooltip
+          .style("opacity", 1)
+          .html("Group: " + d.group + '<br/>z: ' + d.z.toString() + '<br/>x: ' + d.x.toString() + '<br/>y: ' + d.y.toString())
+          .style("left", (event.x)/2 + "px")
+          .style("top", (event.y)/2+10 + "px")
+      }
+      const moveTooltip = function(event, d) {
+        tooltip
+          .style("left", (event.x)/2 + "px")
+          .style("top", (event.y)/2+10 + "px")
+      }
+      const hideTooltip = function(event, d) {
+        tooltip
+          .transition()
+          .duration(200)
+          .style("opacity", 0)
+      }
+    
+    // Add dots
+      svg.append('g')
+        .selectAll("dot")
+        .data(data)
+        .join("circle")
+          .attr("class", "bubbles")
+          .attr("cx", d => x(d.x))
+          .attr("cy", d => y(d.y))
+          .attr("r",  d => z(d.z))
+          .style("fill", d => myColor(d.group))
+          .style("opacity", $OPACITY)
+        // -3- Trigger the functions
+        .on("mouseover", showTooltip )
+        .on("mousemove", moveTooltip )
+        .on("mouseleave", hideTooltip )
+    """
+
+    # --------------------------------------------------------
+    # BubbleChart code snippets accessors
+    # --------------------------------------------------------
+
+    def get_bubble_chart_part(self):
+        return self._jsBubbleChartPart
+
+    def get_multi_bubble_chart_part(self):
+        return self._jsMultiBubbleChartPart
+
+    def get_tooltip_multi_bubble_chart_part(self):
+        return self._jsTooltipMultiBubbleChartPart
