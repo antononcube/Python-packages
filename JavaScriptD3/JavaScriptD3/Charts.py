@@ -24,6 +24,23 @@ def js_d3_bar_chart(data,
                     margins=None,
                     legends=None,
                     fmt="jupyter"):
+    """
+    Bar chart
+    -------------------------------
+    :param data: Data to charted.
+    :param background: Background color.
+    :param color: Color of the points.
+    :param width: Width of the plot.
+    :param height: Height of the plot.
+    :param title: Plot title.
+    :param x_axis_label: X-axis label.
+    :param y_axis_label: Y-axis label.
+    :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
+    :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
+    :param legends: Should legends be placed or not?
+    :param fmt: Format, one of "html", "jupyter", or "script".
+    :return: JavaScript code or HTML code.
+    """
     # Type checking and coercion
     dataLocal = data
     if isinstance(dataLocal, numpy.ndarray):
@@ -103,7 +120,8 @@ def js_d3_bar_chart(data,
 # ============================================================
 # Histogram
 # ============================================================
-
+# The Histogram and BarChart codes have to be refactored.
+# (After Histogram for multi-datasets is implemented.)
 def js_d3_histogram(data,
                     background="white",
                     color="steelblue",
@@ -116,6 +134,23 @@ def js_d3_histogram(data,
                     margins=None,
                     legends=None,
                     fmt="jupyter"):
+    """
+    Histogram
+    -------------------------------
+    :param data: Data to charted.
+    :param background: Background color.
+    :param color: Color of the points.
+    :param width: Width of the plot.
+    :param height: Height of the plot.
+    :param title: Plot title.
+    :param x_axis_label: X-axis label.
+    :param y_axis_label: Y-axis label.
+    :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
+    :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
+    :param legends: Should legends be placed or not?
+    :param fmt: Format, one of "html", "jupyter", or "script".
+    :return: JavaScript code or HTML code.
+    """
     # Type checking and coercion
     dataLocal = data
     if isinstance(dataLocal, numpy.ndarray):
@@ -206,6 +241,25 @@ def js_d3_bubble_chart(data,
                        legends=None,
                        tooltip=None,
                        fmt="jupyter"):
+    """
+    Bubble chart
+    -------------------------------
+    :param data: Data to charted.
+    :param background: Background color.
+    :param color: Color of the bubbles. (Single dataset.)
+    :param opacity: Opacity of the bubbles.
+    :param width: Width of the plot.
+    :param height: Height of the plot.
+    :param title: Plot title.
+    :param x_axis_label: X-axis label.
+    :param y_axis_label: Y-axis label.
+    :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
+    :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
+    :param legends: Should legends be placed or not?
+    :param tooltip: Should tooltips be placed or not?
+    :param fmt: Format, one of "html", "jupyter", or "script".
+    :return: JavaScript code or HTML code.
+    """
     # Type checking and coercion
     dataLocal = data
     if isinstance(dataLocal, numpy.ndarray):

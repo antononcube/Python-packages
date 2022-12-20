@@ -38,6 +38,25 @@ def _js_d3_list_plot(data,
                      single_dataset_code='',
                      multi_dataset_code='',
                      fmt="jupyter"):
+    """
+    Generic list plot
+    ----------------------------------
+    :param data: Data to plotted.
+    :param background: Background color.
+    :param color: Color of the points.
+    :param width: Width of the plot.
+    :param height: Height of the plot.
+    :param title: Plot title.
+    :param x_axis_label: X-axis label.
+    :param y_axis_label: Y-axis label.
+    :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
+    :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
+    :param legends: Should legends be placed or not?
+    :param single_dataset_code: Code for single dataset.
+    :param multi_dataset_code: Code for multiple datasets.
+    :param fmt: Format, one of "html", "jupyter", or "script".
+    :return: JavaScript code or HTML code.
+    """
     # Type checking and coercion
     dataLocal = data
     if isinstance(dataLocal, numpy.ndarray):
@@ -127,6 +146,23 @@ def js_d3_list_plot(data,
                     margins=None,
                     legends=False,
                     fmt="jupyter"):
+    """
+    List plot (or scatter plot)
+    --------------------------------
+    :param data: Data to plotted.
+    :param background: Background color.
+    :param color: Color of the points.
+    :param width: Width of the plot.
+    :param height: Height of the plot.
+    :param title: Plot title.
+    :param x_axis_label: X-axis label.
+    :param y_axis_label: Y-axis label.
+    :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
+    :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
+    :param legends: Should legends be placed or not?
+    :param fmt: Format, one of "html", "jupyter", or "script".
+    :return: JavaScript code or HTML code.
+    """
     cs = CodeSnippets()
 
     return _js_d3_list_plot(
@@ -162,6 +198,23 @@ def js_d3_list_line_plot(data,
                          margins=None,
                          legends=False,
                          fmt="jupyter"):
+    """
+    List line plot
+    ------------------------------------
+    :param data: Data to plotted.
+    :param background: Background color.
+    :param color: Color of the points.
+    :param width: Width of the plot.
+    :param height: Height of the plot.
+    :param title: Plot title.
+    :param x_axis_label: X-axis label.
+    :param y_axis_label: Y-axis label.
+    :param grid_lines: Grid lines spec. If True automatic grid lines spec made.
+    :param margins: Margins spec: an integer or dictionary with keys "top", "bottom", "left", "right".
+    :param legends: Should legends be placed or not?
+    :param fmt: Format, one of "html", "jupyter", or "script".
+    :return: JavaScript code or HTML code.
+    """
     cs = CodeSnippets()
 
     return _js_d3_list_plot(
