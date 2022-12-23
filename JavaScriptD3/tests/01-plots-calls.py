@@ -79,6 +79,14 @@ class PlotCalls(unittest.TestCase):
         res = js_d3_date_list_plot(self.tsRand2, fmt="script")
         self.assertTrue(isinstance(res, str))
 
+    def test9(self):
+        res = js_d3_list_plot(
+            list(zip(numpy.random.uniform(30, 70, 400), numpy.random.normal(120, 10, 400))),
+            x_axis_label='random-real',
+            y_axis_label='N[12,19]',
+            title='Real 2D data')
+        self.assertTrue(isinstance(res, str))
+
 
 if __name__ == '__main__':
     unittest.main()
