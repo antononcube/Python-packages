@@ -5,6 +5,7 @@ from JavaScriptD3.CodeSnippets import wrap_it
 
 import json
 import numpy
+import pandas
 from IPython.display import clear_output, display, HTML, Javascript
 
 
@@ -25,9 +26,29 @@ def is_list_of_date_value_pairs(obj):
     if not isinstance(obj, list):
         return False
     for a in obj:
-        if not isinstance(a, list) and len(a) == 2:
+        if not (isinstance(a, list) and len(a) == 2):
             return False
         if not isinstance(a[0], str) and isinstance(a[1], int | float):
+            return False
+    return True
+
+
+def is_numeric_array(obj, length=2):
+    if isinstance(obj, numpy.ndarray) and len(obj.shape) == 1:
+        return True
+    elif isinstance(obj, list | tuple) and len(obj) == length:
+        for a in obj:
+            if not isinstance(a, int | float):
+                return False
+        return True
+    return False
+
+
+def is_list_of_numeric_arrays(obj, length=2):
+    if not isinstance(obj, list):
+        return False
+    for a in obj:
+        if not is_numeric_array(a, length=length):
             return False
     return True
 
@@ -46,7 +67,7 @@ def _js_d3_list_plot(data,
                      y_axis_label='',
                      grid_lines=False,
                      margins=None,
-                     legends=False,
+                     legends=None,
                      axes=True,
                      single_dataset_code='',
                      multi_dataset_code='',
@@ -76,6 +97,12 @@ def _js_d3_list_plot(data,
     """
     # Type checking and coercion
     dataLocal = data
+    if is_list_of_numeric_arrays(obj=dataLocal, length=2):
+        dataLocal = numpy.asarray(dataLocal)
+
+    if isinstance(dataLocal, pandas.core.frame.DataFrame):
+        dataLocal = list(dataLocal.transpose().to_dict().values())
+
     if isinstance(dataLocal, numpy.ndarray):
         if len(dataLocal.shape) == 1:
             dataLocal = [{"x": k, "y": dataLocal[k]} for k in range(0, dataLocal.shape[0])]
@@ -113,7 +140,7 @@ def _js_d3_list_plot(data,
     # Chose to add legend code fragment or not
     maxGroupChars = len("all")
     if hasGroups:
-        maxGroupChars = max([len(x) for x in [r["group"] for r in data]])
+        maxGroupChars = max([len(x) for x in [r["group"] for r in dataLocal]])
 
     if isinstance(legends, bool) and legends or legends is None and hasGroups:
         marginsLocal["right"] = max(marginsLocal["right"], (maxGroupChars + 4) * 12)
@@ -165,7 +192,7 @@ def js_d3_list_plot(data,
                     y_axis_label='',
                     grid_lines=False,
                     margins=None,
-                    legends=False,
+                    legends=None,
                     axes=True,
                     fmt="jupyter"):
     """
@@ -222,7 +249,7 @@ def js_d3_list_line_plot(data,
                          y_axis_label='',
                          grid_lines=False,
                          margins=None,
-                         legends=False,
+                         legends=None,
                          axes=True,
                          fmt="jupyter"):
     """

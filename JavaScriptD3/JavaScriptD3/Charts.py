@@ -3,9 +3,11 @@ from JavaScriptD3.CodeSnippets import process_margins
 from JavaScriptD3.CodeSnippets import process_grid_lines
 from JavaScriptD3.CodeSnippets import wrap_it
 from JavaScriptD3.Plots import is_list_of_dicts
+from JavaScriptD3.Plots import is_list_of_numeric_arrays
 
 import json
 import numpy
+import pandas
 from IPython.display import clear_output, display, HTML, Javascript
 
 
@@ -85,7 +87,7 @@ def js_d3_bar_chart(data,
     # Chose to add legend code fragment or not
     maxGroupChars = len("all")
     if hasGroups:
-        maxGroupChars = max([len(x) for x in [r["group"] for r in data]])
+        maxGroupChars = max([len(x) for x in [r["group"] for r in dataLocal]])
 
     if isinstance(legends, bool) and legends or legends is None and hasGroups:
         marginsLocal["right"] = max(marginsLocal["right"], (maxGroupChars + 4) * 12)
@@ -185,7 +187,7 @@ def js_d3_histogram(data,
     # Chose to add legend code fragment or not
     maxGroupChars = len("all")
     if hasGroups:
-        maxGroupChars = max([len(x) for x in [r["group"] for r in data]])
+        maxGroupChars = max([len(x) for x in [r["group"] for r in dataLocal]])
 
     if isinstance(legends, bool) and legends or legends is None and hasGroups:
         marginsLocal["right"] = max(marginsLocal["right"], (maxGroupChars + 4) * 12)
@@ -251,6 +253,12 @@ def js_d3_bubble_chart(data,
     """
     # Type checking and coercion
     dataLocal = data
+    if is_list_of_numeric_arrays(obj=dataLocal, length=3) or is_list_of_numeric_arrays(obj=dataLocal, length=2):
+        dataLocal = numpy.asarray(dataLocal)
+
+    if isinstance(dataLocal, pandas.core.frame.DataFrame):
+        dataLocal = list(dataLocal.transpose().to_dict().values())
+
     if isinstance(dataLocal, numpy.ndarray):
         if len(dataLocal.shape) == 1:
             dataLocal = [{"x": k, "y": dataLocal[k], "z": 1} for k in range(0, dataLocal.shape[0])]
@@ -302,7 +310,7 @@ def js_d3_bubble_chart(data,
     # Chose to add legend code fragment or not
     maxGroupChars = len("all")
     if hasGroups:
-        maxGroupChars = max([len(x) for x in [r["group"] for r in data]])
+        maxGroupChars = max([len(str(x)) for x in [r["group"] for r in dataLocal]])
 
     if isinstance(legends, bool) and legends or legends is None and hasGroups:
         marginsLocal["right"] = max(marginsLocal["right"], (maxGroupChars + 4) * 12)
