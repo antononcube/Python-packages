@@ -1,6 +1,7 @@
 from JavaScriptD3.CodeSnippets import CodeSnippets
 from JavaScriptD3.CodeSnippets import process_margins
 from JavaScriptD3.CodeSnippets import process_grid_lines
+from JavaScriptD3.CodeSnippets import wrap_it
 
 import json
 import numpy
@@ -127,11 +128,9 @@ def _js_d3_list_plot(data,
         jsTemp = data_and_scales_code
 
     # Stencil
-    jsScatterPlot = cs.get_plot_starting_code(fmt=fmt) + "\n" + \
-                    cs.get_plot_margins_and_labels_code(fmt=fmt) + "\n" + \
+    jsScatterPlot = cs.get_plot_margins_and_labels_code(fmt=fmt) + "\n" + \
                     jsTemp + "\n" + \
-                    jsPlotMiddle + "\n" + \
-                    cs.get_plot_ending_code(fmt=fmt)
+                    jsPlotMiddle + "\n"
 
     # Concrete parameters
     res = (jsScatterPlot
@@ -149,12 +148,7 @@ def _js_d3_list_plot(data,
            .replace('$LEGEND_Y_POS', '0')
            .replace('$LEGEND_Y_GAP', '25'))
 
-    if fmt.lower() == "html":
-        res = res.replace('element.get(0)', '"#my_dataviz"')
-    elif fmt.lower() == "jupyter":
-        res = display(Javascript(res))
-
-    return res
+    return wrap_it(code=res, fmt=fmt)
 
 
 # ============================================================
@@ -343,14 +337,9 @@ def js_d3_date_list_plot(data,
         multi_dataset_code=cs.get_multi_path_plot_part(),
         data_scales_and_axes_code=cs.get_plot_date_data_scales_and_axes(),
         data_and_scales_code=cs.get_plot_date_data_and_scales(),
-        fmt="script"
+        fmt="asis"
     )
 
     res = res.replace('$TIME_PARSE_SPEC', '"' + time_parse_spec + '"')
 
-    if fmt.lower() == "html":
-        res = res.replace('element.get(0)', '"#my_dataviz"')
-    elif fmt.lower() == "jupyter":
-        res = display(Javascript(res))
-
-    return res
+    return wrap_it(code=res, fmt=fmt)

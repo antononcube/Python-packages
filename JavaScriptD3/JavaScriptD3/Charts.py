@@ -1,6 +1,7 @@
 from JavaScriptD3.CodeSnippets import CodeSnippets
 from JavaScriptD3.CodeSnippets import process_margins
 from JavaScriptD3.CodeSnippets import process_grid_lines
+from JavaScriptD3.CodeSnippets import wrap_it
 from JavaScriptD3.Plots import is_list_of_dicts
 
 import json
@@ -91,8 +92,7 @@ def js_d3_bar_chart(data,
         jsChartMiddle = jsChartMiddle + "\n" + cs.get_legend_code().replace('return o.group;', "return o.variable;")
 
     # Stencil
-    jsChart = cs.get_plot_starting_code(fmt) + "\n" + cs.get_plot_margins_and_labels_code(fmt) + "\n" + \
-              jsChartMiddle + "\n" + cs.get_plot_ending_code(fmt)
+    jsChart = cs.get_plot_margins_and_labels_code(fmt) + "\n" + jsChartMiddle
 
     # Concrete parameters
     res = (jsChart
@@ -109,12 +109,7 @@ def js_d3_bar_chart(data,
            .replace('$LEGEND_Y_POS', '0')
            .replace('$LEGEND_Y_GAP', '25'))
 
-    if fmt.lower() == "html":
-        res = res.replace('element.get(0)', '"#my_dataviz"')
-    elif fmt.lower() == "jupyter":
-        res = display(Javascript(res))
-
-    return res
+    return wrap_it(code=res, fmt=fmt)
 
 
 # ============================================================
@@ -197,8 +192,7 @@ def js_d3_histogram(data,
         jsChartMiddle = jsChartMiddle + "\n" + cs.get_legend_code().replace('return o.group;', "return o.variable;")
 
     # Stencil
-    jsChart = cs.get_plot_starting_code(fmt) + "\n" + cs.get_plot_margins_and_labels_code(fmt) + "\n" + \
-              jsChartMiddle + "\n" + cs.get_plot_ending_code(fmt)
+    jsChart = cs.get_plot_margins_and_labels_code(fmt) + "\n" + jsChartMiddle
 
     # Concrete parameters
     res = (jsChart
@@ -215,12 +209,7 @@ def js_d3_histogram(data,
            .replace('$LEGEND_Y_POS', '0')
            .replace('$LEGEND_Y_GAP', '25'))
 
-    if fmt.lower() == "html":
-        res = res.replace('element.get(0)', '"#my_dataviz"')
-    elif fmt.lower() == "jupyter":
-        res = display(Javascript(res))
-
-    return res
+    return wrap_it(code=res, fmt=fmt)
 
 
 # ============================================================
@@ -320,8 +309,7 @@ def js_d3_bubble_chart(data,
         jsChartMiddle = jsChartMiddle + "\n" + cs.get_legend_code()
 
     # Stencil
-    jsChart = cs.get_plot_preparation_code(fmt, gridLinesLocal[0], gridLinesLocal[1]) + "\n" + \
-              jsChartMiddle + "\n" + cs.get_plot_ending_code(fmt)
+    jsChart = cs.get_plot_preparation_code(fmt, gridLinesLocal[0], gridLinesLocal[1]) + "\n" + jsChartMiddle
 
     # Concrete parameters
     res = (jsChart
@@ -339,9 +327,4 @@ def js_d3_bubble_chart(data,
            .replace('$LEGEND_Y_POS', '0')
            .replace('$LEGEND_Y_GAP', '25'))
 
-    if fmt.lower() == "html":
-        res = res.replace('element.get(0)', '"#my_dataviz"')
-    elif fmt.lower() == "jupyter":
-        res = display(Javascript(res))
-
-    return res
+    return wrap_it(code=res, fmt=fmt)

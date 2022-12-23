@@ -1,3 +1,5 @@
+from IPython.display import clear_output, display, HTML, Javascript
+
 # ============================================================
 # JavaScript plot template parts
 # ============================================================
@@ -44,6 +46,25 @@ def process_grid_lines(grid_lines):
             "None, or a two element list of those type of values.")
 
     return gridLinesLocal
+
+
+# ============================================================
+# Wrapping
+# ============================================================
+
+def wrap_it(code, fmt="jupyter", div_id="my_dataviz"):
+    if fmt == "asis":
+        return code
+
+    cs = CodeSnippets()
+    res = cs.get_plot_starting_code(fmt=fmt) + "\n" + code + "\n" + cs.get_plot_ending_code(fmt=fmt)
+
+    if fmt.lower() == "html":
+        res = res.replace('element.get(0)', '"#my_dataviz"')
+    elif fmt.lower() == "jupyter":
+        res = display(Javascript(res))
+
+    return res
 
 
 class CodeSnippets:
@@ -243,8 +264,7 @@ class CodeSnippets:
         return res
 
     def get_plot_preparation_code(self, fmt='jupyter', n_x_ticks=0, n_y_ticks=0):
-        return self.get_plot_starting_code(fmt) + "\n" + \
-               self.get_plot_margins_and_labels_code(fmt) + "\n" + \
+        return self.get_plot_margins_and_labels_code(fmt) + "\n" + \
                self.get_plot_data_scales_and_axes_code(n_x_ticks, n_y_ticks)
 
     def get_legend_code(self):
@@ -315,7 +335,7 @@ class CodeSnippets:
     # See https://d3-graph-gallery.com/graph/line_several_group.html
     _jsMultiPathPlotPart = """
     // group the data: I want to draw one line per group
-    const sumstat = d3.group(data, d => d.group); // nest function allows to group the calculation per level of a factor
+    var sumstat = d3.group(data, d => d.group); // nest function allows to group the calculation per level of a factor
 
     // Add a scale for line color
     var myColor = d3.scaleOrdinal()
