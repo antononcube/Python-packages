@@ -4,6 +4,13 @@
 
 This Python package implements the function `random_sparse_matrix` that generates random sparse matrices.
 
+The sparse matrices have named rows and columns -- see the package
+["SSparseMatrix"](https://pypi.org/project/SSparseMatrix/), [AAp1]. 
+
+Functions from the package
+["RandomDataGenerators"](https://pypi.org/project/RandomDataGenerators/), [AAp2],
+are used to obtain row- and column names and entry values.
+
 ------
 
 ## Installation 
