@@ -1,4 +1,5 @@
 from JavaScriptD3.CodeSnippets import CodeSnippets
+from JavaScriptD3.CodeSnippets import wrap_it
 from JavaScriptD3.Plots import js_d3_list_line_plot
 from JavaScriptD3.Plots import is_list_of_dicts
 
@@ -63,6 +64,8 @@ def mandala(radius=1,
     for i in range(1, math.floor(2 * numpy.pi / ang)):
         nodes = numpy.dot(rotMat, nodes)
         nodeDicts = [{"group": str(i), "x": nodes[0, j], "y": nodes[1, j]} for j in range(nodes.shape[1])]
+        if rotational_symmetry_order % 2 == 0 and i % 2 == 1:
+             nodeDicts.reverse()
         randomMandala = randomMandala + nodeDicts
 
     return randomMandala
@@ -81,19 +84,19 @@ def js_d3_random_mandala(radius=1,
                          stroke_width=None,
                          fill=None,
                          background="white",
-                         width=600,
-                         height=400,
+                         width=300,
+                         height=300,
                          title='',
                          x_axis_label='',
                          y_axis_label='',
                          grid_lines=False,
-                         margins=None,
+                         margins=10,
                          legends=False,
                          axes=False,
                          count=1,
                          fmt="jupyter"):
     """
-    Generic list plot
+    Random mandala
     ----------------------------------
     :param radius: Radius.
     :param rotational_symmetry_order: Rotational symmetry order.
@@ -122,6 +125,11 @@ def js_d3_random_mandala(radius=1,
     # Process options
     # --------------------------------------------------------
 
+    # Number of seed elements
+    numberOfSeedElements = number_of_seed_elements
+    if numberOfSeedElements is None:
+        numberOfSeedElements = random.sample(range(4, 10), 1)[0]
+
     # Stroke
     strokeLocal = color
     if strokeLocal is None:
@@ -143,7 +151,7 @@ def js_d3_random_mandala(radius=1,
     for i in range(count):
         randomMandala = mandala(radius=radius,
                                 rotational_symmetry_order=rotational_symmetry_order,
-                                number_of_seed_elements=number_of_seed_elements,
+                                number_of_seed_elements=numberOfSeedElements,
                                 symmetric_seed=symmetric_seed)
 
         jsCode = jsCode + js_d3_list_line_plot(
@@ -159,7 +167,7 @@ def js_d3_random_mandala(radius=1,
             margins=margins,
             legends=False,
             axes=axes,
-            fmt=fmt
+            fmt="asis"
         )
 
     # --------------------------------------------------------
@@ -172,4 +180,4 @@ def js_d3_random_mandala(radius=1,
               .replace('.y(function(d) { return y(+d.y); })',
                        '.y(function(d) { return y(+d.y); }).curve(d3.' + connecting_function + ')'))
 
-    return jsCode
+    return wrap_it(code=jsCode, fmt=fmt)
