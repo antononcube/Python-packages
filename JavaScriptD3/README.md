@@ -14,7 +14,10 @@ The (original versions of the) JavaScript snippets used in this package are take
 The design and implementation of this package closely follows the [Raku package "JavaScript::D3"](https://raku.land/zef:antononcube/JavaScript::D3).
 
 There is another Python package, ["ipychart"](https://github.com/nicohlr/ipychart),
-that makes visualziations with JavaScript in Jupyter, but uses [Chart.js](https://www.chartjs.org) instead of [D3.js](https://d3js.org/).
+that makes visualizations with JavaScript in Jupyter, but uses [Chart.js](https://www.chartjs.org) instead of [D3.js](https://d3js.org/).
+
+**Remark:** This Markdown file was automatically generated from the notebook:
+["./docs/Python-JavaScriptD3-README.ipynb"](https://nbviewer.org/github/antononcube/Python-packages/blob/main/JavaScriptD3/docs/Python-JavaScriptD3-README.ipynb).
 
 --------
 
@@ -350,7 +353,7 @@ js_d3_bubble_chart(df3DGroups,
 
 ### Raku package
 
-As it was mentioned abov, the design and implementation of this package closely follows the [Raku package "JavaScript::D3"](https://raku.land/zef:antononcube/JavaScript::D3).
+As it was mentioned above, the design and implementation of this package closely follows the [Raku package "JavaScript::D3"](https://raku.land/zef:antononcube/JavaScript::D3).
 
 ### Different backend
 
@@ -364,7 +367,7 @@ I.e. at first I considered having Raku plotting implementations with Chart.js
 But I had hard time making Chart.js plots work consistently within Jupyter.
 
 As it was mentioned above, there is another Python package, ["ipychart"](https://github.com/nicohlr/ipychart),
-that makes visualziations with JavaScript in Jupyter, but uses [Chart.js](https://www.chartjs.org) instead of [D3.js](https://d3js.org/).
+that makes visualizations with JavaScript in Jupyter, but uses [Chart.js](https://www.chartjs.org) instead of [D3.js](https://d3js.org/).
 
 --------
 
@@ -378,7 +381,7 @@ js_d3_graphics --help
 
 ***TBD..***
 
-Here is an usage example that produces a list line plot:
+Here is a usage example that produces a list line plot:
 
 ```
  js_d3_graphics list-line-plot 1 2 2 12 33 41 15 5 -t="Nice plot" --x-label="My X" --y-label="My Y" > out.html && open out.html
@@ -444,8 +447,3 @@ In a sense, JavaScript macros are used to construct the final code through text 
 [ipychart Python package](https://github.com/nicohlr/ipychart),
 (2019-2022),
 [GitHub/nicohlr](https://github.com/nicohlr/ipychart).
-
-
-```python
-
-```
