@@ -26,7 +26,7 @@ def _is_list_of_positive_numbers(obj):
 # ===========================================================
 # Replicate to list
 # ===========================================================
-def replicate_to_list(param, element_type, whatever_to_roll, count, value):
+def _replicate_to_list(param, element_type, whatever_to_roll, count, value):
     if value is None:
         res = [random.choice(whatever_to_roll) for k in range(count)]
     elif isinstance(value, int | float):
@@ -83,10 +83,10 @@ def _make_seed_segment(
 # ============================================================
 # Mandala
 # ============================================================
-def mandala(radius=1,
-            rotational_symmetry_order=6,
-            number_of_seed_elements=None,
-            symmetric_seed=True):
+def _mandala(radius=1,
+             rotational_symmetry_order=6,
+             number_of_seed_elements=None,
+             symmetric_seed=True):
     ang = 2 * numpy.pi / rotational_symmetry_order
 
     # Make seed segment
@@ -175,22 +175,22 @@ def js_d3_random_mandala(radius=1,
         TypeError("The parameter radius is expected to be a positive number or None.")
 
     # Rotational symmetry order
-    rotationalSymmetryOrder = replicate_to_list(param="rotational_symmetry_order",
-                                                element_type=float | int,
-                                                whatever_to_roll=[4, 5, 6, 7, 9, 12],
-                                                count=count,
-                                                value=rotational_symmetry_order)
+    rotationalSymmetryOrder = _replicate_to_list(param="rotational_symmetry_order",
+                                                 element_type=float | int,
+                                                 whatever_to_roll=[4, 5, 6, 7, 9, 12],
+                                                 count=count,
+                                                 value=rotational_symmetry_order)
     if not _is_list_of_positive_numbers(rotationalSymmetryOrder):
         TypeError(
             "The parameter rotational_symmetry_order is expected to be a positive number," +
             "a list of positive numbers, or None.")
 
     # Number of seed elements
-    numberOfSeedElements = replicate_to_list(param="number_of_seed_elements",
-                                             element_type=int,
-                                             whatever_to_roll=list(range(5, 10)),
-                                             count=count,
-                                             value=number_of_seed_elements)
+    numberOfSeedElements = _replicate_to_list(param="number_of_seed_elements",
+                                              element_type=int,
+                                              whatever_to_roll=list(range(5, 10)),
+                                              count=count,
+                                              value=number_of_seed_elements)
     if not _is_list_of_positive_numbers(numberOfSeedElements):
         TypeError(
             "The parameter number_of_seed_elements is expected to be a positive number," +
@@ -232,10 +232,10 @@ def js_d3_random_mandala(radius=1,
     # --------------------------------------------------------
     jsCode = ""
     for i in range(count):
-        randomMandala = mandala(radius=radius,
-                                rotational_symmetry_order=rotationalSymmetryOrder[i],
-                                number_of_seed_elements=numberOfSeedElements[i],
-                                symmetric_seed=symmetric_seed)
+        randomMandala = _mandala(radius=radius,
+                                 rotational_symmetry_order=rotationalSymmetryOrder[i],
+                                 number_of_seed_elements=numberOfSeedElements[i],
+                                 symmetric_seed=symmetric_seed)
 
         jsCode = jsCode + js_d3_list_line_plot(
             data=randomMandala,
