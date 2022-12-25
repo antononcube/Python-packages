@@ -11,6 +11,49 @@ from IPython.display import clear_output, display, HTML, Javascript
 
 
 # ===========================================================
+# Predicates
+# ===========================================================
+
+def _is_list_of_positive_numbers(obj):
+    if not isinstance(obj, list):
+        return False
+    for x in obj:
+        if not isinstance(x, int | float) and x > 0:
+            return False
+    return True
+
+
+# ===========================================================
+# Replicate to list
+# ===========================================================
+def replicate_to_list(param, element_type, whatever_to_roll, count, value):
+    if value is None:
+        res = [random.choice(whatever_to_roll) for k in range(count)]
+    elif isinstance(value, int | float):
+        res = [value for k in range(count)]
+    elif isinstance(value, list):
+        res = value
+        while len(res) < count:
+            res = res + value
+        res = res[:count]
+    else:
+        res = value
+
+    typeCheck = True
+    if isinstance(res, list):
+        for a in res:
+            if not isinstance(a, element_type):
+                typeCheck = False
+                break
+
+    if not typeCheck:
+        raise TypeError("The argument " + param + " is expected to be " + str(element_type) +
+                        ", a list of " + str(element_type) + ", or None.")
+
+    return res
+
+
+# ===========================================================
 # Random seed segment
 # ===========================================================
 def _make_seed_segment(
@@ -65,7 +108,7 @@ def mandala(radius=1,
         nodes = numpy.dot(rotMat, nodes)
         nodeDicts = [{"group": str(i), "x": nodes[0, j], "y": nodes[1, j]} for j in range(nodes.shape[1])]
         if rotational_symmetry_order % 2 == 0 and i % 2 == 1:
-             nodeDicts.reverse()
+            nodeDicts.reverse()
         randomMandala = randomMandala + nodeDicts
 
     return randomMandala
@@ -125,10 +168,50 @@ def js_d3_random_mandala(radius=1,
     # Process options
     # --------------------------------------------------------
 
+    # Radius
+    if radius is None:
+        radius = 1
+    if not isinstance(radius, int | float) and radius > 0:
+        TypeError("The parameter radius is expected to be a positive number or None.")
+
+    # Rotational symmetry order
+    rotationalSymmetryOrder = replicate_to_list(param="rotational_symmetry_order",
+                                                element_type=float | int,
+                                                whatever_to_roll=[4, 5, 6, 7, 9, 12],
+                                                count=count,
+                                                value=rotational_symmetry_order)
+    if not _is_list_of_positive_numbers(rotationalSymmetryOrder):
+        TypeError(
+            "The parameter rotational_symmetry_order is expected to be a positive number," +
+            "a list of positive numbers, or None.")
+
     # Number of seed elements
-    numberOfSeedElements = number_of_seed_elements
-    if numberOfSeedElements is None:
-        numberOfSeedElements = random.sample(range(4, 10), 1)[0]
+    numberOfSeedElements = replicate_to_list(param="number_of_seed_elements",
+                                             element_type=int,
+                                             whatever_to_roll=list(range(5, 10)),
+                                             count=count,
+                                             value=number_of_seed_elements)
+    if not _is_list_of_positive_numbers(numberOfSeedElements):
+        TypeError(
+            "The parameter number_of_seed_elements is expected to be a positive number," +
+            "a list of positive numbers, or None.")
+
+    # Connecting function
+    d3Curves = ["curveLinear", "curveStep", "curveStepAfter", "curveStepBefore", "curveBasis", "curveBasisClosed",
+                "curveCardinal", "curveCatmullRom", "curveMonotoneX", "curveMonotoneY", "curveBundle"]
+    d3CurvesShort = [x[5:] for x in d3Curves]
+    d3Curves = set(d3Curves)
+    d3CurvesShort = set(d3CurvesShort)
+    connectingFunction = connecting_function
+
+    if connectingFunction is None:
+        connectingFunction = random.choice(list(d3Curves))
+    elif connectingFunction in d3CurvesShort:
+        connectingFunction = "curve" + connectingFunction
+
+    if connectingFunction not in d3Curves:
+        TypeError(
+            "The parameter connecting_function is expected to be None or a sting, one of " + str(d3Curves))
 
     # Stroke
     strokeLocal = color
@@ -142,7 +225,7 @@ def js_d3_random_mandala(radius=1,
     # Fill
     fillLocal = fill
     if fillLocal is None:
-        fillLocal = "rgb(100,100,100)"
+        fillLocal = 'rgb(100,100,100)'
 
     # --------------------------------------------------------
     # Random mandala
@@ -150,8 +233,8 @@ def js_d3_random_mandala(radius=1,
     jsCode = ""
     for i in range(count):
         randomMandala = mandala(radius=radius,
-                                rotational_symmetry_order=rotational_symmetry_order,
-                                number_of_seed_elements=numberOfSeedElements,
+                                rotational_symmetry_order=rotationalSymmetryOrder[i],
+                                number_of_seed_elements=numberOfSeedElements[i],
                                 symmetric_seed=symmetric_seed)
 
         jsCode = jsCode + js_d3_list_line_plot(
@@ -176,8 +259,9 @@ def js_d3_random_mandala(radius=1,
     jsCode = (jsCode
               .replace('.attr("stroke-width", 1.5)',
                        '.attr("stroke-width", ' + str(strokeWidth) + ').attr("fill", "' + fillLocal + '")')
-              .replace('.attr("stroke", function(d){ return myColor(d[0]) })', '.attr("stroke", "' + strokeLocal + '")')
+              .replace('.attr("stroke", function(d){ return myColor(d[0]) })',
+                       '.attr("stroke", "' + strokeLocal + '")')
               .replace('.y(function(d) { return y(+d.y); })',
-                       '.y(function(d) { return y(+d.y); }).curve(d3.' + connecting_function + ')'))
+                       '.y(function(d) { return y(+d.y); }).curve(d3.' + connectingFunction + ')'))
 
     return wrap_it(code=jsCode, fmt=fmt)
