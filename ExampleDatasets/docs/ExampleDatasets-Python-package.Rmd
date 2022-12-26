@@ -103,7 +103,7 @@ import time
 startTime = time.time()
 data = example_dataset(itemSpec = 'titanic', packageSpec = 'COUNT', keep = True)
 endTime = time.time()
-print("Geting the data first time took " + str( endTime - startTime ) + " seconds")
+print("Getting the data first time took " + str( endTime - startTime ) + " seconds")
 ```
 
 ```{python}

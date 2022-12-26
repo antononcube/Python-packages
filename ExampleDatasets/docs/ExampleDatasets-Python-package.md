@@ -127,17 +127,17 @@ This can be demonstrated with the following timings of a dataset with
     startTime = time.time()
     data = example_dataset(itemSpec = 'titanic', packageSpec = 'COUNT', keep = True)
     endTime = time.time()
-    print("Geting the data first time took " + str( endTime - startTime ) + " seconds")
+    print("Getting the data first time took " + str( endTime - startTime ) + " seconds")
 
-    ## Geting the data first time took 0.013968706130981445 seconds
+    ## Getting the data first time took 0.013968706130981445 seconds
 
     import time
     startTime = time.time()
     data = example_dataset(itemSpec = 'titanic', packageSpec = 'COUNT', keep = True)
     endTime = time.time()
-    print("Geting the data second time took " + str( endTime - startTime ) + " seconds")
+    print("Getting the data second time took " + str( endTime - startTime ) + " seconds")
 
-    ## Geting the data second time took 0.013860702514648438 seconds
+    ## Getting the data second time took 0.013860702514648438 seconds
 
 ------------------------------------------------------------------------
 
