@@ -77,9 +77,9 @@ graph TD
    JSOutput[/JavaScript code output/]
    CellEval[Cell evaluation]
    JSResDisplay[JavaScript code result display]
-   Jupyter -.-> |1|IRaku -.-> |2|Raku -.-> |3|JSOutput -.-> |4|Jupyter
+   Jupyter -.-> |1|IPython -.-> |2|Python -.-> |3|JSOutput -.-> |4|Jupyter
    Jupyter -.-> |5|JS -.-> |6|JSResDisplay
-   PythonInput ---> CellEval ---> Jupyter  ---> JSResDisplay
+   PythonInput --> CellEval --> Jupyter --> JSResDisplay
 ```
 
 Here is the corresponding narration:
