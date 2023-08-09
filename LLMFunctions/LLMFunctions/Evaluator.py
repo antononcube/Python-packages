@@ -1,6 +1,9 @@
 import pickle
 from collections.abc import Iterable
 from LLMFunctions.Configuration import Configuration
+from LLMFunctions.SubParser import SubParser
+from LLMFunctions.SubParser import sub_parser
+from LLMFunctions.SubParser import exact_parser
 import openai
 
 
@@ -33,6 +36,14 @@ class Evaluator:
     def get_formatron(self, spec):
         if spec is None:
             return None
+        elif isinstance(spec, str):
+            return sub_parser(spec)
+        elif callable(spec):
+            return sub_parser(spec)
+        elif isinstance(spec, SubParser):
+            return spec
+        else:
+            return None
 
     def post_process(self, res, form=None):
 
@@ -45,7 +56,7 @@ class Evaluator:
         else:
             reformater = self.get_formatron(form)
 
-        if callable(reformater):
+        if isinstance(reformater, SubParser):
             return reformater.process(resLocal)
         return resLocal
 
