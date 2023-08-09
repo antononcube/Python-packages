@@ -1,3 +1,4 @@
+import pickle
 from typing import List, Callable, Union, Dict
 
 
@@ -15,7 +16,7 @@ class Configuration:
                  fmt: Union[str, None] = None,
                  prompts=None,
                  prompt_delimiter: str = ' ',
-                 stop_tokens=None,
+                 stop_tokens: Union[list, None]=None,
                  tools=None,
                  tool_prompt: str = '',
                  tool_request_parser: Union[Callable, None] = None,
@@ -32,8 +33,8 @@ class Configuration:
             tools = []
         if prompts is None:
             prompts = []
-        if stop_tokens is None:
-            stop_tokens = ['.', '?', '!']
+        #if stop_tokens is None:
+        #    stop_tokens = ['.', '?', '!']
         self.name = name
         self.api_key = api_key
         self.api_user_id = api_user_id
@@ -46,7 +47,10 @@ class Configuration:
         self.fmt = fmt
         self.prompts = prompts.copy()
         self.prompt_delimiter = prompt_delimiter
-        self.stop_tokens = stop_tokens.copy()
+        if isinstance(stop_tokens, list):
+            self.stop_tokens = stop_tokens.copy()
+        else:
+            self.stop_tokens = stop_tokens
         self.tools = tools.copy()
         self.tool_prompt = tool_prompt
         self.tool_request_parser = tool_request_parser
@@ -56,16 +60,24 @@ class Configuration:
         self.known_params = known_params
         self.response_value_keys = response_value_keys
 
-    def clone(self, **kwargs):
-        return Configuration(
-            name=self.name,
-            prompts=self.prompts.copy(),
-            stop_tokens=self.stop_tokens.copy(),
-            tools=self.tools.copy(),
-            argument_renames=self.argument_renames.copy(),
-            **kwargs
-        )
+    # ------------------------------------------------------------------
+    # Copying
+    # ------------------------------------------------------------------
+    def copy(self):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
 
+    def __copy__(self):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    def __deepcopy__(self, memodict={}):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    # ------------------------------------------------------------------
+    # Representations
+    # ------------------------------------------------------------------
     def to_dict(self):
         return {
             'name': self.name,
