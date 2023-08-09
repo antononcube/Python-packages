@@ -17,6 +17,22 @@ def catch_by_pattern(p, s, converter=None):
     return res
 
 
+def numify_text(p, text, converter=None):
+    res = []
+    repl_str = re.compile('^\d+$')
+    # t = r'\d+.?\d*'
+    line = text.split()
+    for word in line:
+        word = re.sub(r'(\d),(\d)', r'\1\2', word, count=0)
+        match = re.search(repl_str, word)
+        if match:
+            res.append(converter(match.group()))
+        else:
+            res.append(word)
+
+    return res
+
+
 # Taken from https://stackoverflow.com/a/61384796/14163984
 def extract_json_objects(text, decoder=JSONDecoder()):
     pos = 0
@@ -34,9 +50,9 @@ def extract_json_objects(text, decoder=JSONDecoder()):
             pos = match + 1
 
 
-def jsonify_line(line):
+def jsonify_text(text):
     line_parts = []
-    for result in extract_json_objects(line):
+    for result in extract_json_objects(text):
         if isinstance(result, dict):  # got a JSON obj
             line_parts.append(result)
         else:  # got text/non-JSON-obj
@@ -68,17 +84,17 @@ class SubParser:
         elif isinstance(self.spec, str) and self.spec.lower() == 'int':
 
             p = r'[+|-]?[\d]+'
-            return catch_by_pattern(p, inpt, int)
+            return numify_text(p, inpt, int)
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'float':
 
-            p = r'[+|-]?[\d]*[.][\d]+'
-            return catch_by_pattern(p, inpt, float)
+            p = r'[+|-]?[\d]*[.]\d+'
+            return numify_text(p, inpt, float)
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'number':
 
             p = '[+|-]?[\d]+[_.\d]+|[\d]*[.][\d]+|[\d]+'
-            return catch_by_pattern(p, inpt, float)
+            return numify_text(p, inpt, float)
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'json':
 
@@ -87,7 +103,7 @@ class SubParser:
                 # Error handling?
                 return res
             else:
-                return jsonify_line(inpt)
+                return jsonify_text(inpt)
 
         elif callable(self.spec):
 
