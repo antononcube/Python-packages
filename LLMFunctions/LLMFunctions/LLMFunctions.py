@@ -59,21 +59,31 @@ def llm_configuration(spec):
     pass
 
 
-def llm_evaluator(spec, frm=None):
+def llm_evaluator(spec, form=None):
     if spec is None:
-        return Evaluator(conf=llm_configuration(None), formatron=frm)
+        return Evaluator(conf=llm_configuration(None), formatron=form)
     elif isinstance(spec, str):
-        return Evaluator(conf=spec, formatron=frm)
+        return Evaluator(conf=spec, formatron=form)
     else:
         warnings.warn("Do not know what to do with given configuration spec.")
-        return llm_evaluator(None, frm)
+        return llm_evaluator(None, form)
     pass
 
 
-def llm_function(prompt, frm=None, e=None):
-    llmEvaluator = llm_evaluator(spec=e, frm=frm)
+def llm_function(prompt, form=None, e=None):
+    llmEvaluator = llm_evaluator(spec=e, form=form)
     return Functor(llmEvaluator, prompt)
 
 
-def llm_example_evaluator(prompt):
-    pass
+def llm_example_function(rules, form=None, e=None):
+    if isinstance(rules, dict):
+        pre = ""
+        for (k, v) in rules.items():
+            pre = f'Input: {k}\nOutput: {v}\n\n'
+
+        prompt = lambda x: pre + f"\nInput {x}\nOutput:"
+
+        return llm_function(prompt, form=form, e=e)
+
+    else:
+        TypeError("The first argument is expected to be a dictionary.")
