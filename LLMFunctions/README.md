@@ -47,7 +47,7 @@ fPrompt = lambda x1, x2, x3: f'What is the {x1} if {x2} in {x3}?. Give the resul
 # LLM function creation
 fData = llm_function(fPrompt)
 
-# Invocation over concrete paraemeters
+# Invocation over concrete parameters
 resData = fData("GDP", "top 10 countries", "2020", max_tokens=600)
 
 print(resData)
@@ -70,14 +70,16 @@ The GDP of the top 10 countries in 2020 is as follows:
 }
 ```
 
-Creation and invocation of an LLM example funciton:
+Creation and invocation of an LLM example function:
 
 ```python
+# LLM example function creation with a set of few-shot training rules
 fEx = llm_example_function({"1,000": "1000",
                             "34,232,900": "34232900",
                             "5.15 trillion": "5.15E12",
                             "32.8 trillion USD": "32.8E12"})
 
+# Invocation over the result above
 print(fEx(resData))
 ```
 
