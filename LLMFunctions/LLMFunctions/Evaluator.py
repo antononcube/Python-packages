@@ -7,10 +7,12 @@ import openai
 class Evaluator:
     conf: Configuration = None
     formatron = None
+    llm_result = None
 
     def __init__(self, conf=None, formatron='Str'):
         self.conf = conf
         self.formatron = formatron
+        self.llm_result = None
 
     def prompt_texts_combiner(self, prompt, texts, **args):
         if isinstance(texts, list):
@@ -74,6 +76,9 @@ class Evaluator:
         if echo:
             print(f'Messages: {messages}')
 
+        # Remove (last) LLM result
+        self.llm_result = None
+        
         # Invoke the LLM function
         args2["prompt"] = messages
         args2["messages"] = messages
@@ -82,9 +87,13 @@ class Evaluator:
 
         res = self.conf.function(**args2)
 
-        #if echo:
-        print(f'LLM result: {res}')
+        if echo:
+            print(f'LLM result: {res}')
 
+        # Same LLM result
+        self.llm_result = res
+
+        # Get values
         if isinstance(self.conf.response_value_keys, list):
             for k in self.conf.response_value_keys:
                 res = res[k]
