@@ -23,6 +23,7 @@ def llm_configuration(spec):
             total_probability_cutoff=0.03,
             prompts=None,
             prompt_delimiter=' ',
+            stop_tokens=None,
             argument_renames={"stop_tokens": "stop"},
             fmt='values',
             known_params=["api_keu", "model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
@@ -43,6 +44,7 @@ def llm_configuration(spec):
             total_probability_cutoff=0.03,
             prompts=None,
             prompt_delimiter=' ',
+            stop_tokens=None,
             argument_renames={"stop_tokens": "stop"},
             fmt='values',
             known_params=["api_keu", "model", "messages", "functions", "function_call", "temperature", "top_p", "n",
@@ -70,10 +72,6 @@ def llm_evaluator(spec, frm=None):
 
 def llm_function(prompt, frm=None, e=None):
     llmEvaluator = llm_evaluator(e, frm)
-    print(llmEvaluator)
-    llmEvaluator.conf.prompts.append(prompt)
-    print("llmEvaluator.conf.prompts: ", llmEvaluator.conf.prompts)
-    # return lambda text, **kwargs: llmEvaluator.eval(text, **kwargs)
     return Functor(llmEvaluator, prompt)
 
 
