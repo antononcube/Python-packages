@@ -12,13 +12,87 @@ of the Raku package "LLM::Functions", [AAp1], supported by "Text::SubParsers", [
 
 ## Installation
 
-*TBD...*
+### Install from GitHub
+
+```shell
+pip install -e git+https://github.com/antononcube/Python-packages.git#egg=LLMFunctions-antononcube\&subdirectory=LLMFunctions
+```
+
+### From PyPi
+
+```shell
+pip install LLMFunctions
+```
 
 ------
 
-## Usage examples
+## Basic usage examples
 
-*TBD...*
+Simple text prompt LLM function creation and invocation:
+
+```python
+from LLMFunctions import *
+
+fPop = llm_function("What is the population of ")
+
+print(fPop("Niger?"))
+```
+
+Parameterized prompt function creation and invocation:
+
+```python
+# Pure/lambda function
+fPrompt = lambda x1, x2, x3: f'What is the {x1} if {x2} in {x3}?. Give the result as JSON object with name-value pairs.'
+
+# LLM function creation
+fData = llm_function(fPrompt)
+
+# Invocation over concrete paraemeters
+resData = fData("GDP", "top 10 countries", "2020", max_tokens=600)
+
+print(resData)
+```
+
+```
+The GDP of the top 10 countries in 2020 is as follows:
+
+{
+    "United States": 21.44 trillion,
+    "China": 14.14 trillion,
+    "Japan": 5.15 trillion,
+    "Germany": 3.86 trillion,
+    "India": 2.94 trillion,
+    "United Kingdom": 2.83 trillion,
+    "France": 2.71 trillion,
+    "Brazil": 2.14 trillion,
+    "Italy": 2.04 trillion,
+    "Canada": 1.73 trillion
+}
+```
+
+Creation and invocation of an LLM example funciton:
+
+```python
+fEx = llm_example_function({"1,000": "1000",
+                            "34,232,900": "34232900",
+                            "5.15 trillion": "5.15E12",
+                            "32.8 trillion USD": "32.8E12"})
+
+print(fEx(resData))
+```
+
+```
+United States: 21.44E12
+China: 14.14E12
+Japan: 5.15E12
+Germany: 3.86E12
+India: 2.94E12
+United Kingdom: 2.83E12
+France: 2.71E12
+Brazil: 2.14E12
+Italy: 2.07E12
+Canada: 1.68E12
+```
 
 --------
 
