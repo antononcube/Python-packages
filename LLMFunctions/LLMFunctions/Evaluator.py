@@ -87,6 +87,10 @@ class Evaluator:
 
         res = self.conf.function(**args2)
 
+        if isinstance(self.conf.response_value_keys, list):
+            for k in self.conf.response_value_keys:
+                res = res[k]
+
         # Process the result
         return self.post_process(res, form=args.get('form', None))
 

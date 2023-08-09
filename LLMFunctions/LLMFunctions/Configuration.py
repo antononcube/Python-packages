@@ -22,7 +22,8 @@ class Configuration:
                  tool_response_insertion_function: Union[Callable, None] = None,
                  argument_renames=None,
                  evaluator: Union = None,
-                 known_params: Union[list, None] = None):
+                 known_params: Union[list, None] = None,
+                 response_value_keys: Union[list, None] = None):
         if argument_renames is None:
             argument_renames = {}
         if known_params is None:
@@ -53,6 +54,7 @@ class Configuration:
         self.argument_renames = argument_renames.copy()
         self.evaluator = evaluator
         self.known_params = known_params
+        self.response_value_keys = response_value_keys
 
     def clone(self, **kwargs):
         return Configuration(

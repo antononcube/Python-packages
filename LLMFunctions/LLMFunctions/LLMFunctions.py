@@ -25,9 +25,10 @@ def llm_configuration(spec):
             prompt_delimiter=' ',
             argument_renames={"stop_tokens": "stop"},
             fmt='values',
-            known_params= ["api_keu","model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
-                           "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
-                           "user"])
+            known_params=["api_keu", "model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
+                          "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
+                          "user"],
+            response_value_keys=["choices", 0, "text"])
         return confOpenAI
     elif isinstance(spec, str) and spec.lower() == 'chatgpt':
         confChatGPT = Configuration(
@@ -44,8 +45,10 @@ def llm_configuration(spec):
             prompt_delimiter=' ',
             argument_renames={"stop_tokens": "stop"},
             fmt='values',
-            known_params=["api_keu", "model", "messages", "functions", "function_call", "temperature", "top_p", "n", "stream",
-                          "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "logit_bias", "user"]
+            known_params=["api_keu", "model", "messages", "functions", "function_call", "temperature", "top_p", "n",
+                          "stream", "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "logit_bias",
+                          "user"],
+            response_value_keys=["choices", 0, "text"]
         )
         return confChatGPT
     else:
@@ -70,7 +73,7 @@ def llm_function(prompt, frm=None, e=None):
     print(llmEvaluator)
     llmEvaluator.conf.prompts.append(prompt)
     print("llmEvaluator.conf.prompts: ", llmEvaluator.conf.prompts)
-    #return lambda text, **kwargs: llmEvaluator.eval(text, **kwargs)
+    # return lambda text, **kwargs: llmEvaluator.eval(text, **kwargs)
     return Functor(llmEvaluator, prompt)
 
 
