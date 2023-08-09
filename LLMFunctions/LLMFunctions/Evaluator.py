@@ -1,3 +1,4 @@
+import pickle
 from collections.abc import Iterable
 from LLMFunctions.Configuration import Configuration
 import openai
@@ -10,9 +11,6 @@ class Evaluator:
     def __init__(self, conf=None, formatron='Str'):
         self.conf = conf
         self.formatron = formatron
-
-    def clone(self, **kwargs):
-        return Evaluator(conf=self.conf.copy(), **kwargs)
 
     def prompt_texts_combiner(self, prompt, texts, **args):
         if isinstance(texts, list):
@@ -76,9 +74,6 @@ class Evaluator:
         if echo:
             print(f'Messages: {messages}')
 
-        print(sorted(args2.keys()))
-        print(args2)
-
         # Invoke the LLM function
         args2["prompt"] = messages
         args2["messages"] = messages
@@ -87,12 +82,34 @@ class Evaluator:
 
         res = self.conf.function(**args2)
 
+        #if echo:
+        print(f'LLM result: {res}')
+
         if isinstance(self.conf.response_value_keys, list):
             for k in self.conf.response_value_keys:
                 res = res[k]
 
         # Process the result
         return self.post_process(res, form=args.get('form', None))
+
+    # ------------------------------------------------------------------
+    # Copying
+    # ------------------------------------------------------------------
+    def copy(self):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    def __copy__(self):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    def __deepcopy__(self, memodict={}):
+        """Deep copy."""
+        return pickle.loads(pickle.dumps(self, -1))
+
+    # ------------------------------------------------------------------
+    # Representations
+    # ------------------------------------------------------------------
 
     def __repr__(self):
         if self.conf is Configuration:
