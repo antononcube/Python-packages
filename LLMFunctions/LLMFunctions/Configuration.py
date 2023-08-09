@@ -16,7 +16,7 @@ class Configuration:
                  fmt: Union[str, None] = None,
                  prompts=None,
                  prompt_delimiter: str = ' ',
-                 stop_tokens: Union[list, None]=None,
+                 stop_tokens: Union[list, None] = None,
                  tools=None,
                  tool_prompt: str = '',
                  tool_request_parser: Union[Callable, None] = None,
@@ -33,7 +33,7 @@ class Configuration:
             tools = []
         if prompts is None:
             prompts = []
-        #if stop_tokens is None:
+        # if stop_tokens is None:
         #    stop_tokens = ['.', '?', '!']
         self.name = name
         self.api_key = api_key
@@ -45,17 +45,43 @@ class Configuration:
         self.total_probability_cutoff = total_probability_cutoff
         self.max_tokens = max_tokens
         self.fmt = fmt
-        self.prompts = prompts.copy()
+
+        self.prompts = []
+        if isinstance(prompts, list):
+            self.prompts = prompts.copy()
+        elif isinstance(prompts, str):
+            self.prompts = [prompts, ]
+        elif prompts is not None:
+            TypeError("The argument prompts is expected to be a string, a list of strings, or None.")
+
         self.prompt_delimiter = prompt_delimiter
+
+        self.stop_tokens = None
         if isinstance(stop_tokens, list):
             self.stop_tokens = stop_tokens.copy()
-        else:
-            self.stop_tokens = stop_tokens
-        self.tools = tools.copy()
+        elif isinstance(stop_tokens, str):
+            self.stop_tokens = [stop_tokens, ]
+        elif stop_tokens is not None:
+            TypeError("The argument stop_tokens is expected to be a string, a list of strings, or None.")
+
+        self.tools = None
+        if isinstance(tools, list):
+            self.tools = tools.copy()
+        elif tools is not None:
+            TypeError("The argument tools is expected to a list or None.")
+
         self.tool_prompt = tool_prompt
         self.tool_request_parser = tool_request_parser
         self.tool_response_insertion_function = tool_response_insertion_function
-        self.argument_renames = argument_renames.copy()
+
+        argument_renames = {}
+        if isinstance(argument_renames, dict):
+            self.argument_renames = argument_renames.copy()
+        elif argument_renames is None:
+            self.argument_renames = {}
+        else:
+            TypeError("The argument argument_renames is expected to a dictionary or None.")
+
         self.evaluator = evaluator
         self.known_params = known_params
         self.response_value_keys = response_value_keys
@@ -74,6 +100,16 @@ class Configuration:
     def __deepcopy__(self, memodict={}):
         """Deep copy."""
         return pickle.loads(pickle.dumps(self, -1))
+
+    def combine(self, conf):
+        if isinstance(conf, Configuration):
+            return self.combine(conf.to_dict())
+        elif isinstance(conf, dict):
+            # newArgs = self.to_dict() | conf
+            newArgs = {**self.to_dict(), **conf}
+            return Configuration(**newArgs)
+        else:
+            TypeError("The first argument is expected to a Configuration object or a dictionary")
 
     # ------------------------------------------------------------------
     # Representations
