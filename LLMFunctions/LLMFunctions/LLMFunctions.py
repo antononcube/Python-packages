@@ -61,9 +61,9 @@ def llm_configuration(spec):
 
 def llm_evaluator(spec, frm=None):
     if spec is None:
-        return Evaluator(llm_configuration(None), frm)
+        return Evaluator(conf=llm_configuration(None), formatron=frm)
     elif isinstance(spec, str):
-        return Evaluator(spec, frm)
+        return Evaluator(conf=spec, formatron=frm)
     else:
         warnings.warn("Do not know what to do with given configuration spec.")
         return llm_evaluator(None, frm)
@@ -71,7 +71,7 @@ def llm_evaluator(spec, frm=None):
 
 
 def llm_function(prompt, frm=None, e=None):
-    llmEvaluator = llm_evaluator(e, frm)
+    llmEvaluator = llm_evaluator(spec=e, frm=frm)
     return Functor(llmEvaluator, prompt)
 
 
