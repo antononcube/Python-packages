@@ -62,6 +62,14 @@ def jsonify_text(text):
     return line_parts
 
 
+def sub_parser(spec):
+    return SubParser(spec, False)
+
+
+def exact_parser(spec):
+    return SubParser(spec, True)
+
+
 class SubParser:
     def __init__(self,
                  spec: Union[str, Callable, None] = None,
