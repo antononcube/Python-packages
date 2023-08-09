@@ -7,9 +7,11 @@ import openai
 import warnings
 
 
-def llm_configuration(spec):
+def llm_configuration(spec, **kwargs):
     if spec is None:
-        return llm_configuration('openai')
+        return llm_configuration('openai', **kwargs)
+    elif isinstance(spec, Configuration):
+        return spec.combine(kwargs)
     elif isinstance(spec, str) and spec.lower() == 'openai':
         confOpenAI = Configuration(
             name="openai",
@@ -30,6 +32,8 @@ def llm_configuration(spec):
                           "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
                           "user"],
             response_value_keys=["choices", 0, "text"])
+        if len(kwargs) > 0:
+            confOpenAI = confOpenAI.combine(kwargs)
         return confOpenAI
     elif isinstance(spec, str) and spec.lower() == 'chatgpt':
         confChatGPT = Configuration(
@@ -52,10 +56,12 @@ def llm_configuration(spec):
                           "user"],
             response_value_keys=["choices", 0, "text"]
         )
+        if len(kwargs) > 0:
+            confChatGPT = confChatGPT.combine(kwargs)
         return confChatGPT
     else:
         warnings.warn("Do not know what to do with given configuration spec.")
-        return llm_configuration('openai')
+        return llm_configuration('openai', **kwargs)
     pass
 
 
