@@ -24,7 +24,9 @@ class Configuration:
                  argument_renames=None,
                  evaluator: Union = None,
                  known_params: Union[list, None] = None,
-                 response_value_keys: Union[list, None] = None):
+                 response_object_attribute: Union[str, None] = None,
+                 response_value_keys: Union[list, None] = None
+                 ):
         if argument_renames is None:
             argument_renames = {}
         if known_params is None:
@@ -85,6 +87,12 @@ class Configuration:
         self.evaluator = evaluator
         self.known_params = known_params
 
+        self.response_object_attribute = None
+        if isinstance(response_object_attribute, str):
+            self.response_object_attribute = response_object_attribute
+        elif response_object_attribute is not None:
+            TypeError("The argument response_object_attribute is expected to a string or None.")
+
         self.response_value_keys = None
         if isinstance(response_value_keys, list):
             self.response_value_keys = response_value_keys.copy()
@@ -141,7 +149,8 @@ class Configuration:
             'argument_renames': self.argument_renames,
             'evaluator': self.evaluator,
             'known_params': self.known_params,
-            'response_value_keys': self.response_value_keys
+            'response_object_attribute': self.response_object_attribute,
+            'response_value_keys': self.response_value_keys,
         }
 
     def __str__(self):
