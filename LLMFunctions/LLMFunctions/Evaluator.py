@@ -18,17 +18,19 @@ class Evaluator:
         self.llm_result = None
 
     def prompt_texts_combiner(self, prompt, texts, **args):
+        textsLocal = []
         if isinstance(texts, list):
             textsLocal = texts
         elif isinstance(texts, str):
-            textsLocal = [texts]
+            textsLocal = [texts,]
         else:
             TypeError("Cannot convert")
 
+        promptLocal = []
         if isinstance(prompt, list):
             promptLocal = prompt
         elif isinstance(prompt, str):
-            promptLocal = [prompt]
+            promptLocal = [prompt, ]
         else:
             TypeError("Cannot convert")
         return self.conf.to_dict()['prompt_delimiter'].join(promptLocal + textsLocal)
@@ -76,7 +78,7 @@ class Evaluator:
             args2[v] = args2.get(v, args2.get(k, None))
 
         # Make the full prompt
-        prompt = confDict['prompts'] + [confDict['prompt_delimiter'], ]
+        prompt = confDict['prompt_delimiter'].join(confDict['prompts'])
 
         if echo:
             print(f'Full prompt: {prompt}')
@@ -96,6 +98,7 @@ class Evaluator:
 
         args2 = dict(filter(lambda x: x[0] in self.conf.known_params, args2.items()))
 
+        print(args2)
         res = self.conf.function(**args2)
 
         if echo:
@@ -104,7 +107,11 @@ class Evaluator:
         # Same LLM result
         self.llm_result = res
 
-        # Get values
+        # Get result attribute
+        if isinstance(self.conf.response_object_attribute, str):
+            res = getattr(res, self.conf.response_object_attribute)
+
+        # Get result values
         if isinstance(self.conf.response_value_keys, list):
             for k in self.conf.response_value_keys:
                 res = res[k]
