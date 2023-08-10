@@ -5,19 +5,19 @@ import warnings
 from json import JSONDecoder
 
 
-def catch_by_pattern(p, s, converter=None):
+def catch_by_pattern(p, s, converter=None, drop: bool = False):
     res = []
     if re.search(p, s) is not None:
         for catch in re.finditer(p, s):
             # catch is a match object
             if callable(converter):
                 res.append(converter(catch[0]))
-            else:
+            elif not drop:
                 res.append(catch[0])
     return res
 
 
-def numify_text(p, text, converter=None):
+def numify_text(p, text, converter=None, drop: bool = False):
     res = []
     repl_str = re.compile('^\d+$')
     # t = r'\d+.?\d*'
@@ -27,7 +27,7 @@ def numify_text(p, text, converter=None):
         match = re.search(repl_str, word)
         if match:
             res.append(converter(match.group()))
-        else:
+        elif not drop:
             res.append(word)
 
     return res
@@ -50,32 +50,34 @@ def extract_json_objects(text, decoder=JSONDecoder()):
             pos = match + 1
 
 
-def jsonify_text(text):
+def jsonify_text(text, drop: bool = False):
     line_parts = []
     for result in extract_json_objects(text):
         if isinstance(result, dict):  # got a JSON obj
             line_parts.append(result)
-        else:  # got text/non-JSON-obj
+        elif not drop:  # got text/non-JSON-obj
             line_parts.append(result)
     # (don't make that a list comprehension, quite un-readable)
 
     return line_parts
 
 
-def sub_parser(spec):
-    return SubParser(spec, False)
+def sub_parser(spec, drop=False):
+    return SubParser(spec, exact=False, drop=drop)
 
 
-def exact_parser(spec):
-    return SubParser(spec, True)
+def exact_parser(spec, drop=False):
+    return SubParser(spec, exact=True, drop=drop)
 
 
 class SubParser:
     def __init__(self,
                  spec: Union[str, Callable, None] = None,
-                 exact: bool = False):
+                 exact: bool = False,
+                 drop: bool = False):
         self.spec = spec
         self.exact = exact
+        self.drop = drop
 
     def process(self, inpt):
         if self.exact:
@@ -92,17 +94,17 @@ class SubParser:
         elif isinstance(self.spec, str) and self.spec.lower() == 'int':
 
             p = r'[+|-]?[\d]+'
-            return numify_text(p, inpt, int)
+            return numify_text(p=p, text=inpt, converter=int, drop=self.drop)
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'float':
 
             p = r'[+|-]?[\d]*[.]\d+'
-            return numify_text(p, inpt, float)
+            return numify_text(p=p, text=inpt, converter=float)
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'number':
 
             p = '[+|-]?[\d]+[_.\d]+|[\d]*[.][\d]+|[\d]+'
-            return numify_text(p, inpt, float)
+            return numify_text(p=p, text=inpt, converter=float, drop=self.drop)
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'json':
 
@@ -111,7 +113,7 @@ class SubParser:
                 # Error handling?
                 return res
             else:
-                return jsonify_text(inpt)
+                return jsonify_text(text=inpt, drop=self.drop)
 
         elif callable(self.spec):
 
