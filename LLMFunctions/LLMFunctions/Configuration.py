@@ -84,7 +84,12 @@ class Configuration:
 
         self.evaluator = evaluator
         self.known_params = known_params
-        self.response_value_keys = response_value_keys
+
+        self.response_value_keys = None
+        if isinstance(response_value_keys, list):
+            self.response_value_keys = response_value_keys.copy()
+        elif response_value_keys is not None:
+            TypeError("The argument response_value_keys is expected to a list or None.")
 
     # ------------------------------------------------------------------
     # Copying
@@ -135,7 +140,8 @@ class Configuration:
             'tool_response_insertion_function': self.tool_response_insertion_function,
             'argument_renames': self.argument_renames,
             'evaluator': self.evaluator,
-            'known_params': self.known_params
+            'known_params': self.known_params,
+            'response_value_keys': self.response_value_keys
         }
 
     def __str__(self):
