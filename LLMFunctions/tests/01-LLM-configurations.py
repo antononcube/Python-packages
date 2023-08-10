@@ -25,7 +25,12 @@ class LLMConfigurations(unittest.TestCase):
 
     def test_config6(self):
         c6 = llm_configuration('openai', prompts=self.pre3)
-        self.assertEqual(c6.prompts, [self.pre3,])
+        self.assertEqual(c6.prompts, [self.pre3, ])
+
+    def test_config7(self):
+        c7 = llm_configuration('chatgpt', temperature=1.1)
+        self.assertEqual(c7.temperature, 1.1)
+        self.assertEqual(c7.name, 'chatgpt')
 
 
 if __name__ == '__main__':
