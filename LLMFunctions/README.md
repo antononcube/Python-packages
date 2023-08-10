@@ -42,7 +42,7 @@ Parameterized prompt function creation and invocation:
 
 ```python
 # Pure/lambda function
-fPrompt = lambda x1, x2, x3: f'What is the {x1} if {x2} in {x3}?. Give the result as JSON object with name-value pairs.'
+fPrompt = lambda x1, x2, x3: f'What is the {x1} of {x2} in {x3}?. Give the result as a JSON object with name-value pairs.'
 
 # LLM function creation
 fData = llm_function(fPrompt)
