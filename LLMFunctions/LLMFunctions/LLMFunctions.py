@@ -28,7 +28,7 @@ def llm_configuration(spec, **kwargs):
             stop_tokens=None,
             argument_renames={"stop_tokens": "stop"},
             fmt='values',
-            known_params=["api_keu", "model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
+            known_params=["api_key", "model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
                           "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
                           "user"],
             response_value_keys=["choices", 0, "text"])
@@ -36,26 +36,18 @@ def llm_configuration(spec, **kwargs):
             confOpenAI = confOpenAI.combine(kwargs)
         return confOpenAI
     elif isinstance(spec, str) and spec.lower() == 'chatgpt':
-        confChatGPT = Configuration(
-            name="chatgpt",
-            api_key=None,
-            api_user_id='user',
-            module='openai',
-            model='gpt-3.5-turbo-0613',
-            function=openai.ChatCompletion.create,
-            temperature=0.2,
-            max_tokens=300,
-            total_probability_cutoff=0.03,
-            prompts=None,
-            prompt_delimiter=' ',
-            stop_tokens=None,
-            argument_renames={"stop_tokens": "stop"},
-            fmt='values',
-            known_params=["api_keu", "model", "messages", "functions", "function_call", "temperature", "top_p", "n",
-                          "stream", "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "logit_bias",
-                          "user"],
-            response_value_keys=["choices", 0, "text"]
-        )
+        confChatGPT = llm_configuration("openai",
+                                        name="chatgpt",
+                                        module='openai',
+                                        model='gpt-3.5-turbo-0613',
+                                        function=openai.ChatCompletion.create,
+                                        known_params=["api_key", "model", "messages", "functions", "function_call",
+                                                      "temperature", "top_p", "n",
+                                                      "stream", "logprobs", "echo", "stop", "presence_penalty",
+                                                      "frequency_penalty", "logit_bias",
+                                                      "user"],
+                                        response_value_keys=["choices", 0, "text"]
+                                        )
         if len(kwargs) > 0:
             confChatGPT = confChatGPT.combine(kwargs)
         return confChatGPT
