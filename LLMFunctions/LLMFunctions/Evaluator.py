@@ -98,7 +98,6 @@ class Evaluator:
 
         args2 = dict(filter(lambda x: x[0] in self.conf.known_params, args2.items()))
 
-        print(args2)
         res = self.conf.function(**args2)
 
         if echo:
