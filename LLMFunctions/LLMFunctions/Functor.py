@@ -26,8 +26,10 @@ class Functor:
         res = ''
         if isinstance(self.prompt, str):
 
+            args2 = [self.prompt,] + list(args)
+
             # LLM evaluate
-            res = llmEvaluatorLocal.eval(*args, **dargs)
+            res = llmEvaluatorLocal.eval(args2, **dargs)
 
         elif callable(self.prompt):
 
