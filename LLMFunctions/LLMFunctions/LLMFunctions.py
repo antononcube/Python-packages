@@ -41,7 +41,7 @@ def llm_configuration(spec, **kwargs):
             api_key=None,
             api_user_id='user',
             module='openai',
-            model='gpt-3.5-turbo-16k-0613',
+            model='gpt-3.5-turbo-0613',
             function=openai.ChatCompletion.create,
             temperature=0.2,
             max_tokens=300,
@@ -69,9 +69,11 @@ def llm_evaluator(spec, form=None):
     if spec is None:
         return Evaluator(conf=llm_configuration(None), formatron=form)
     elif isinstance(spec, str):
+        return Evaluator(conf=llm_configuration(spec), formatron=form)
+    elif isinstance(spec, Configuration):
         return Evaluator(conf=spec, formatron=form)
     else:
-        warnings.warn("Do not know what to do with given configuration spec.")
+        warnings.warn("Do not know what to do with the given configuration spec.")
         return llm_evaluator(None, form)
     pass
 
