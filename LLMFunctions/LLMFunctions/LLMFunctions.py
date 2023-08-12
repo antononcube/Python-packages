@@ -2,6 +2,7 @@ import warnings
 import os
 from LLMFunctions.Configuration import Configuration
 from LLMFunctions.Evaluator import Evaluator
+from LLMFunctions.EvaluatorChatPaLM import EvaluatorChatPaLM
 from LLMFunctions.Functor import Functor
 import openai
 import google.generativeai
@@ -32,7 +33,8 @@ def llm_configuration(spec, **kwargs):
             known_params=["api_key", "model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
                           "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
                           "user"],
-            response_value_keys=["choices", 0, "text"])
+            response_value_keys=["choices", 0, "text"],
+            llm_evaluator = Evaluator)
         if len(kwargs) > 0:
             confOpenAI = confOpenAI.combine(kwargs)
         return confOpenAI
@@ -78,8 +80,9 @@ def llm_configuration(spec, **kwargs):
                 "model", "prompt", "temperature", "candidate_count", "max_output_tokens", "top_p", "top_k",
                 "safety_settings", "stop_sequences", "client"
             ],
-            response_object_attribute = "result",
-            response_value_keys=[])
+            response_object_attribute="result",
+            response_value_keys=[],
+            llm_evaluator= Evaluator)
 
         # Modify by additional arguments
         if len(kwargs) > 0:
@@ -89,9 +92,30 @@ def llm_configuration(spec, **kwargs):
         return confPaLM
 
     elif isinstance(spec, str) and spec.lower() == 'ChatPaLM'.lower():
+
+        # Start as PaLM text completion configuration
         confChatPaLM = llm_configuration("PaLM")
+
+        # Default PaLM chat model
+        confChatPaLM.model = 'models/chat-bison-001'
+
+        # The parameters are taken from here:
+        #   https://github.com/google/generative-ai-python/blob/f370f5ab908a095282a0cdd946385db23c695498/google/generativeai/discuss.py#L210
+        # and used in EvaluatorChatPaLM.eval
+        confChatPaLM.known_params = [
+            "model", "context", "examples", "temperature", "candidate_count", "top_p", "top_k", "prompt"
+        ]
+
+        # Adding it this for consistency
+        confChatPaLM.response_value_keys = ["messages", -1, "content"]
+
+        # Evaluator class
+        confChatPaLM.llm_evaluator = EvaluatorChatPaLM
+
+        # Combine with given additional parameters (if any)
         if len(kwargs) > 0:
             confChatPaLM = confChatPaLM.combine(kwargs)
+
         return confChatPaLM
     else:
         warnings.warn("Do not know what to do with given configuration spec.")
@@ -105,7 +129,10 @@ def llm_evaluator(spec, form=None):
     elif isinstance(spec, str):
         return Evaluator(conf=llm_configuration(spec), formatron=form)
     elif isinstance(spec, Configuration):
-        return Evaluator(conf=spec, formatron=form)
+        evaluatorClass = Evaluator
+        if spec.llm_evaluator is not None:
+            evaluatorClass = spec.llm_evaluator
+        return evaluatorClass(conf=spec, formatron=form)
     else:
         warnings.warn("Do not know what to do with the given configuration spec.")
         return llm_evaluator(None, form)
