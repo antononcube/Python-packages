@@ -89,13 +89,13 @@ class Evaluator:
             args2[v] = args2.get(v, args2.get(k, None))
 
         # Make the full prompt
-        prompt = confDict['prompt_delimiter'].join(confDict['prompts'])
+        fullPrompt = confDict['prompt_delimiter'].join(confDict['prompts'])
 
         if echo:
-            print(f'Full prompt: {prompt}')
+            print(f'Full prompt: {fullPrompt}')
 
         # Form messages
-        messages = self.prompt_texts_combiner(prompt, texts)
+        messages = self.prompt_texts_combiner(fullPrompt, texts)
 
         if echo:
             print(f'Messages: {messages}')
