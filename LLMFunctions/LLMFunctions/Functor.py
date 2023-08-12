@@ -49,7 +49,7 @@ class Functor:
         return res
 
     def __repr__(self):
-        return {'type': 'functor', 'prompt': repr(self.prompt), 'llm_evaluator': self.llm_evaluator}
+        return str({'type': 'functor', 'prompt': repr(self.prompt), 'llm_evaluator': self.llm_evaluator})
 
     def __str__(self):
         return str(repr(self))
