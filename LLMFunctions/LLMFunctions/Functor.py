@@ -26,7 +26,7 @@ class Functor:
         res = ''
         if isinstance(self.prompt, str):
 
-            args2 = [self.prompt,] + list(args)
+            args2 = [self.prompt, ] + list(args)
 
             # LLM evaluate
             res = llmEvaluatorLocal.eval(args2, **dargs)
@@ -47,6 +47,9 @@ class Functor:
 
         # Result
         return res
+
+    def __repr__(self):
+        return {'type': 'functor', 'prompt': repr(self.prompt), 'llm_evaluator': self.llm_evaluator}
 
     def __str__(self):
         return str(repr(self.prompt))
