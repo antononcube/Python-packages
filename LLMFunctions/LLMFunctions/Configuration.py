@@ -25,7 +25,8 @@ class Configuration:
                  evaluator: Union = None,
                  known_params: Union[list, None] = None,
                  response_object_attribute: Union[str, None] = None,
-                 response_value_keys: Union[list, None] = None
+                 response_value_keys: Union[list, None] = None,
+                 llm_evaluator=None
                  ):
         if argument_renames is None:
             argument_renames = {}
@@ -99,6 +100,8 @@ class Configuration:
         elif response_value_keys is not None:
             TypeError("The argument response_value_keys is expected to a list or None.")
 
+        self.llm_evaluator = llm_evaluator
+
     # ------------------------------------------------------------------
     # Copying
     # ------------------------------------------------------------------
@@ -151,6 +154,7 @@ class Configuration:
             'known_params': self.known_params,
             'response_object_attribute': self.response_object_attribute,
             'response_value_keys': self.response_value_keys,
+            'llm_evaluator': self.llm_evaluator
         }
 
     def __str__(self):
