@@ -17,22 +17,28 @@ class Evaluator:
         self.formatron = formatron
         self.llm_result = None
 
+    # This prompt combiner method is for the generic LLM evaluation
+    # using the Evaluator class.
     def prompt_texts_combiner(self, prompt, texts, **args):
-        textsLocal = []
-        if isinstance(texts, list):
-            textsLocal = texts
-        elif isinstance(texts, str):
-            textsLocal = [texts,]
-        else:
-            TypeError("Cannot convert")
-
+        # Make a list from prompts
         promptLocal = []
         if isinstance(prompt, list):
             promptLocal = prompt
         elif isinstance(prompt, str):
             promptLocal = [prompt, ]
         else:
-            TypeError("Cannot convert")
+            TypeError("Cannot convert prompt argument to a list of strings.")
+
+        # Make a list from texts
+        textsLocal = []
+        if isinstance(texts, list):
+            textsLocal = texts
+        elif isinstance(texts, str):
+            textsLocal = [texts, ]
+        else:
+            TypeError("Cannot convert texts argument to a list of strings.")
+
+        # Result by joining the list string with the context delimiter
         return self.conf.to_dict()['prompt_delimiter'].join(promptLocal + textsLocal)
 
     def get_formatron(self, spec):
@@ -62,6 +68,11 @@ class Evaluator:
             return reformater.process(resLocal)
         return resLocal
 
+    # This is a generic LLM evaluator method
+    # that works for OpenAI's text completions, and
+    # PaLM's text generation.
+    # The children classes override this method completely.
+    # (instead of reusing it because of logging, etc.)
     def eval(self, texts, **args):
 
         confDict = self.conf.to_dict()
@@ -91,7 +102,7 @@ class Evaluator:
 
         # Remove (last) LLM result
         self.llm_result = None
-        
+
         # Invoke the LLM function
         args2["prompt"] = messages
         args2["messages"] = messages
