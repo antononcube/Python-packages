@@ -1,4 +1,4 @@
-from LLMFunctions.Evaluator import Evaluator
+from LLMFunctions.EvaluatorChat import EvaluatorChat
 import google.generativeai as palm
 from google.generativeai.types import discuss_types
 
@@ -11,33 +11,29 @@ def is_all_pairs(a):
     return True
 
 
-class EvaluatorChatPaLM(Evaluator):
+class EvaluatorChatPaLM(EvaluatorChat):
 
-    def __init__(self, conf=None, formatron='Str'):
-        Evaluator.__init__(self, conf=conf, formatron=formatron)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Process context
+        self.user_role = kwargs.get('user_role', 'user')
+        self.assistant_role = kwargs.get('assistant_role', 'assistant')
+        self.system_role = kwargs.get('system_role', 'context')
 
-    def prompt_texts_combiner(self, prompt, texts, **args):
+    def prompt_texts_combiner(self, prompt, texts, **kwargs):
 
-        # Default role
-        role = 'user'
-        if 'role' in args.keys():
-            role = args['role']
+        messages = super().prompt_texts_combiner(prompt, texts, **kwargs)
 
-        # Make texts
-        textsLocal = None
-        if isinstance(texts, str):
-            textsLocal = texts
-        elif isinstance(texts, list):
-            textsLocal = self.conf.to_dict()['prompt_delimiter'].join(texts)
+        res_messages = []
 
-        if not isinstance(textsLocal, str):
-            TypeError("Cannot convert texts argument to a single strings.")
-
-        # Make PaLM message object
-        message = discuss_types.MessageDict(author=role, content=textsLocal, citation_metadata=None)
+        for d in messages:
+            for k, v in d.items():
+                # Make PaLM message object
+                m = discuss_types.MessageDict(author=k, content=v, citation_metadata=None)
+                res_messages.append(m)
 
         # Result
-        return message
+        return res_messages
 
 
     # The eval implementation follows the description and examples in:
