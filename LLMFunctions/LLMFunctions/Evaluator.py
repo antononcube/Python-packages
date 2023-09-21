@@ -147,14 +147,16 @@ class Evaluator:
     # ------------------------------------------------------------------
     # Representations
     # ------------------------------------------------------------------
-
-    def __repr__(self):
+    def to_dict(self):
         if self.conf is Configuration:
             res = self.conf.to_dict()
         else:
             res = {"conf": None}
         res["formatron"] = self.formatron
-        return repr(res)
+        return res
+
+    def __repr__(self):
+        return repr(self.to_dict())
 
     def __str__(self):
         return str(repr(self))
