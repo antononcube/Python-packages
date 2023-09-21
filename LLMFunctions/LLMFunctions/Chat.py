@@ -8,12 +8,16 @@ from LLMFunctions.EvaluatorChat import EvaluatorChat
 class Chat:
     chat_id: str = ''
     llm_evaluator: EvaluatorChat
-    messages: Union[list, None] = None
-    examples: Union[list, None] = None
+    messages: list = []
+    examples: list = []
     lmm_result = None
 
     # ------------------------------------------------------
     def __init__(self, llm_evaluator, messages=None, examples=None):
+        if examples is None:
+            examples = []
+        if messages is None:
+            messages = []
         self.llm_evaluator = llm_evaluator
         self.messages = messages
         self.examples = examples
@@ -101,8 +105,11 @@ class Chat:
             print(m)
 
     # ------------------------------------------------------
+    def to_dict(self):
+        return {'id': self.chat_id, 'type': 'chat', 'prompt': repr(self.prompt()), 'messages': len(self.messages)}
+
     def __repr__(self):
-        return {'id': self.chat_id, 'type': 'chat', 'prompt': repr(self.prompt), 'messages': len(self.messages)}
+        return repr(self.to_dict())
 
     # ------------------------------------------------------
     def __str__(self):
