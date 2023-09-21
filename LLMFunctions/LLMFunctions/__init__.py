@@ -1,8 +1,11 @@
 """LLMFunctions"""
 from LLMFunctions.Configuration import Configuration
 from LLMFunctions.Evaluator import Evaluator
+from LLMFunctions.EvaluatorChat import EvaluatorChat
+from LLMFunctions.EvaluatorChatGPT import EvaluatorChatGPT
 from LLMFunctions.EvaluatorChatPaLM import EvaluatorChatPaLM
 from LLMFunctions.Functor import Functor
+from LLMFunctions.Chat import Chat
 from LLMFunctions.LLMFunctions import llm_configuration
 from LLMFunctions.LLMFunctions import llm_evaluator
 from LLMFunctions.LLMFunctions import llm_example_function
