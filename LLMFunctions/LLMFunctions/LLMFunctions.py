@@ -2,6 +2,8 @@ import warnings
 import os
 from LLMFunctions.Configuration import Configuration
 from LLMFunctions.Evaluator import Evaluator
+from LLMFunctions.EvaluatorChat import EvaluatorChat
+from LLMFunctions.EvaluatorChatGPT import EvaluatorChatGPT
 from LLMFunctions.EvaluatorChatPaLM import EvaluatorChatPaLM
 from LLMFunctions.Functor import Functor
 from LLMFunctions.Chat import Chat
@@ -176,6 +178,45 @@ def llm_example_function(rules, form=None, e=None):
 # Chat object creation
 # ===========================================================
 
-def llm_chat(prompt, chat_id="", e=None):
-    llmEvaluator = llm_evaluator(spec=e)
-    return Chat(prompt=prompt, chat_id=chat_id, llm_evaluator=llmEvaluator)
+from typing import Type, Union
+
+_mustPassConfKeys = ["name", "prompts", "examples", "temperature", "max_tokens", "stop_tokens", "api_key", "api_user_id"]
+
+def llm_chat(prompt: str = '', **kwargs):
+    # Get evaluator spec
+    spec = kwargs.get('llm_evaluator', kwargs.get('llm_configuration', kwargs.get('conf', None)))
+
+    # Default evaluator class
+    evaluator_class = kwargs.get('llm_evaluator_class', None)
+
+    if evaluator_class is not None and not isinstance(evaluator_class, EvaluatorChat):
+        raise ValueError('The value of llm_evaluator_class is expected to be None or of the type EvaluatorChat.')
+
+    # Make evaluator object
+    if spec is None:
+        # Make Configuration object
+        conf = llm_configuration('ChatGPT', prompts=prompt, **kwargs)
+
+        # Make Evaluator object
+        llm_eval_obj = EvaluatorChatGPT(conf=conf, formatron=kwargs.get('form', kwargs.get('formatron')))
+
+    elif isinstance(spec, Configuration) or isinstance(spec, Evaluator) or isinstance(spec, str):
+        # Make Configuration object
+        conf = llm_configuration(spec, prompts=prompt, **kwargs)
+
+        # Obtain Evaluator class
+        if evaluator_class is None:
+            if 'palm' in conf.name.lower():
+                conf = llm_configuration('ChatPaLM', **{k: v for k, v in conf.items() if k in _mustPassConfKeys})
+                evaluator_class = EvaluatorChatPaLM
+            else:
+                evaluator_class = EvaluatorChatGPT
+
+        # Make Evaluator object
+        llm_eval_obj = evaluator_class(conf=conf, formatron=kwargs.get('form', kwargs.get('formatron')))
+    else:
+        raise ValueError("Cannot obtain or make a LLM evaluator object with the given specs.")
+
+    # Result
+    args2 = {k: v for k, v in kwargs.items() if k not in ['llm_evaluator', 'llm_configuration', 'conf', 'prompt', 'form', 'formatron']}
+    return Chat(llm_evaluator=llm_eval_obj, **args2)
