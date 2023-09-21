@@ -60,12 +60,12 @@ class Evaluator:
             resLocal = resLocal[0]
 
         if form is None:
-            reformater = self.get_formatron(self.formatron)
+            reFormatter = self.get_formatron(self.formatron)
         else:
-            reformater = self.get_formatron(form)
+            reFormatter = self.get_formatron(form)
 
-        if isinstance(reformater, SubParser):
-            return reformater.process(resLocal)
+        if isinstance(reFormatter, SubParser):
+            return reFormatter.process(resLocal)
         return resLocal
 
     # This is a generic LLM evaluator method
