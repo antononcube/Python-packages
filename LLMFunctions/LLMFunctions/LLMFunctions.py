@@ -4,11 +4,15 @@ from LLMFunctions.Configuration import Configuration
 from LLMFunctions.Evaluator import Evaluator
 from LLMFunctions.EvaluatorChatPaLM import EvaluatorChatPaLM
 from LLMFunctions.Functor import Functor
+from LLMFunctions.Chat import Chat
 import openai
 import google.generativeai
 import warnings
 
 
+# ===========================================================
+# Configuration creation
+# ===========================================================
 def llm_configuration(spec, **kwargs):
     if spec is None:
         return llm_configuration('openai', **kwargs)
@@ -31,10 +35,10 @@ def llm_configuration(spec, **kwargs):
             argument_renames={"stop_tokens": "stop"},
             fmt='values',
             known_params=["api_key", "model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
-                          "logprobs", "echo", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
+                          "logprobs", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
                           "user"],
             response_value_keys=["choices", 0, "text"],
-            llm_evaluator = Evaluator)
+            llm_evaluator=Evaluator)
         if len(kwargs) > 0:
             confOpenAI = confOpenAI.combine(kwargs)
         return confOpenAI
@@ -46,10 +50,10 @@ def llm_configuration(spec, **kwargs):
                                         function=openai.ChatCompletion.create,
                                         known_params=["api_key", "model", "messages", "functions", "function_call",
                                                       "temperature", "top_p", "n",
-                                                      "stream", "logprobs", "echo", "stop", "presence_penalty",
+                                                      "stream", "logprobs", "stop", "presence_penalty",
                                                       "frequency_penalty", "logit_bias",
                                                       "user"],
-                                        response_value_keys=["choices", 0, "text"])
+                                        response_value_keys=["choices", 0, "message"])
         if len(kwargs) > 0:
             confChatGPT = confChatGPT.combine(kwargs)
         return confChatGPT
@@ -82,7 +86,7 @@ def llm_configuration(spec, **kwargs):
             ],
             response_object_attribute="result",
             response_value_keys=[],
-            llm_evaluator= Evaluator)
+            llm_evaluator=Evaluator)
 
         # Modify by additional arguments
         if len(kwargs) > 0:
@@ -123,6 +127,9 @@ def llm_configuration(spec, **kwargs):
     pass
 
 
+# ===========================================================
+# Evaluator creation
+# ===========================================================
 def llm_evaluator(spec, form=None):
     if spec is None:
         return Evaluator(conf=llm_configuration(None), formatron=form)
@@ -139,10 +146,17 @@ def llm_evaluator(spec, form=None):
     pass
 
 
+# ===========================================================
+# Function creation
+# ===========================================================
 def llm_function(prompt, form=None, e=None):
     llmEvaluator = llm_evaluator(spec=e, form=form)
     return Functor(llmEvaluator, prompt)
 
+
+# ===========================================================
+# Example function creation
+# ===========================================================
 
 def llm_example_function(rules, form=None, e=None):
     if isinstance(rules, dict):
@@ -156,3 +170,12 @@ def llm_example_function(rules, form=None, e=None):
 
     else:
         TypeError("The first argument is expected to be a dictionary.")
+
+
+# ===========================================================
+# Chat object creation
+# ===========================================================
+
+def llm_chat(prompt, chat_id="", e=None):
+    llmEvaluator = llm_evaluator(spec=e)
+    return Chat(prompt=prompt, chat_id=chat_id, llm_evaluator=llmEvaluator)
