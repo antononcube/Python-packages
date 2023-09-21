@@ -26,7 +26,7 @@ def llm_configuration(spec, **kwargs):
             api_key=None,
             api_user_id='user',
             module='openai',
-            model='text-davinci-003',  # 'gpt-3.5-turbo-instruct',
+            model='gpt-3.5-turbo-instruct',  # was 'text-davinci-003'
             function=openai.Completion.create,
             temperature=0.2,
             max_tokens=300,
@@ -55,7 +55,7 @@ def llm_configuration(spec, **kwargs):
                                                       "stream", "logprobs", "stop", "presence_penalty",
                                                       "frequency_penalty", "logit_bias",
                                                       "user"],
-                                        response_value_keys=["choices", 0, "message"])
+                                        response_value_keys=["choices", 0, "message", "content"])
         if len(kwargs) > 0:
             confChatGPT = confChatGPT.combine(kwargs)
         return confChatGPT
@@ -180,7 +180,9 @@ def llm_example_function(rules, form=None, e=None):
 
 from typing import Type, Union
 
-_mustPassConfKeys = ["name", "prompts", "examples", "temperature", "max_tokens", "stop_tokens", "api_key", "api_user_id"]
+_mustPassConfKeys = ["name", "prompts", "examples", "temperature", "max_tokens", "stop_tokens", "api_key",
+                     "api_user_id"]
+
 
 def llm_chat(prompt: str = '', **kwargs):
     # Get evaluator spec
@@ -207,7 +209,8 @@ def llm_chat(prompt: str = '', **kwargs):
         # Obtain Evaluator class
         if evaluator_class is None:
             if 'palm' in conf.name.lower():
-                conf = llm_configuration('ChatPaLM', **{k: v for k, v in conf.items() if k in _mustPassConfKeys})
+                conf = llm_configuration('ChatPaLM',
+                                         **{k: v for k, v in conf.to_dict().items() if k in _mustPassConfKeys})
                 evaluator_class = EvaluatorChatPaLM
             else:
                 evaluator_class = EvaluatorChatGPT
@@ -218,5 +221,6 @@ def llm_chat(prompt: str = '', **kwargs):
         raise ValueError("Cannot obtain or make a LLM evaluator object with the given specs.")
 
     # Result
-    args2 = {k: v for k, v in kwargs.items() if k not in ['llm_evaluator', 'llm_configuration', 'conf', 'prompt', 'form', 'formatron']}
+    args2 = {k: v for k, v in kwargs.items() if
+             k not in ['llm_evaluator', 'llm_configuration', 'conf', 'prompt', 'form', 'formatron']}
     return Chat(llm_evaluator=llm_eval_obj, **args2)
