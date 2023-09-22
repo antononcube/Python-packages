@@ -20,7 +20,7 @@ def llm_configuration(spec, **kwargs):
         return llm_configuration('openai', **kwargs)
     elif isinstance(spec, Configuration):
         return spec.combine(kwargs)
-    elif isinstance(spec, str) and spec.lower() == 'openai':
+    elif isinstance(spec, str) and spec.lower() == 'OpenAI'.lower():
         confOpenAI = Configuration(
             name="openai",
             api_key=None,
@@ -44,7 +44,7 @@ def llm_configuration(spec, **kwargs):
         if len(kwargs) > 0:
             confOpenAI = confOpenAI.combine(kwargs)
         return confOpenAI
-    elif isinstance(spec, str) and spec.lower() == 'chatgpt':
+    elif isinstance(spec, str) and spec.lower() == 'ChatGPT'.lower():
         confChatGPT = llm_configuration("openai",
                                         name="chatgpt",
                                         module='openai',
@@ -58,6 +58,10 @@ def llm_configuration(spec, **kwargs):
                                         response_value_keys=["choices", 0, "message", "content"])
         if len(kwargs) > 0:
             confChatGPT = confChatGPT.combine(kwargs)
+
+        # Evaluator class
+        confChatGPT.llm_evaluator = EvaluatorChatGPT
+
         return confChatGPT
     elif isinstance(spec, str) and spec.lower() == 'PaLM'.lower():
 
@@ -105,6 +109,13 @@ def llm_configuration(spec, **kwargs):
         # Default PaLM chat model
         confChatPaLM.model = 'models/chat-bison-001'
 
+        # Function
+        confChatPaLM.function = google.generativeai.chat
+
+        # Get result
+        # https://developers.generativeai.google/api/python/google/generativeai/types/ChatResponse
+        confChatPaLM.response_object_attribute = "last"
+
         # The parameters are taken from here:
         #   https://github.com/google/generative-ai-python/blob/f370f5ab908a095282a0cdd946385db23c695498/google/generativeai/discuss.py#L210
         # and used in EvaluatorChatPaLM.eval
@@ -113,7 +124,7 @@ def llm_configuration(spec, **kwargs):
         ]
 
         # Adding it this for consistency
-        confChatPaLM.response_value_keys = ["messages", -1, "content"]
+        confChatPaLM.response_value_keys = None
 
         # Evaluator class
         confChatPaLM.llm_evaluator = EvaluatorChatPaLM
@@ -136,7 +147,7 @@ def llm_evaluator(spec, form=None):
     if spec is None:
         return Evaluator(conf=llm_configuration(None), formatron=form)
     elif isinstance(spec, str):
-        return Evaluator(conf=llm_configuration(spec), formatron=form)
+        return llm_evaluator(llm_configuration(spec), form=form)
     elif isinstance(spec, Configuration):
         evaluatorClass = Evaluator
         if spec.llm_evaluator is not None:
@@ -175,13 +186,70 @@ def llm_example_function(rules, form=None, e=None):
 
 
 # ===========================================================
+# LLM Synthesise
+# ===========================================================
+
+def llm_synthesize(prompts, prop=None, llm_evaluator=None):
+    promptsLocal = prompts
+    if isinstance(promptsLocal, str):
+        promptsLocal = [promptsLocal, ]
+
+    if not isinstance(promptsLocal, list):
+        TypeError("The first argument is expected to be a string or list of string.")
+
+    # Process properties
+    expected_props = ['FullText', 'CompletionText', 'PromptText']
+
+    if prop is None:
+        prop = 'CompletionText'
+    if not (isinstance(prop, str) and prop in expected_props):
+        raise ValueError(
+            f"The value of the second argument is expected to be Whatever or one of: {', '.join(expected_props)}.")
+
+    # Get evaluator
+    evlr = llm_evaluator(llm_evaluator)
+
+    # Add configuration prompts
+    promptsLocal = evlr.conf.prompts + promptsLocal
+    evlr.conf.prompts = []
+
+    # Reduce prompts
+    processed = []
+    for p in promptsLocal:
+        if isinstance(p, str):
+            processed.append(p)
+        elif callable(p):
+            try:
+                pres = p()
+            except Exception:
+                pres = None
+
+            if not pres or not isinstance(pres, str):
+                args = [''] * p.__code__.co_argcount  # Get the arity of the function
+                pres = p(*args)
+
+            processed.append(pres)
+
+    # Find the separator from the configuration
+    sep = evlr.conf.prompt_delimiter
+    prompt_text = sep.join(processed)
+
+    # Post process
+    if prop == 'FullText':
+        res = llm_function('', e=evlr)(prompt_text)
+        return processed + [res]
+    elif prop == 'PromptText':
+        return prompt_text
+    else:
+        return llm_function('', e=evlr)(prompt_text)
+
+
+# ===========================================================
 # Chat object creation
 # ===========================================================
 
-from typing import Type, Union
-
-_mustPassConfKeys = ["name", "prompts", "examples", "temperature", "max_tokens", "stop_tokens", "api_key",
-                     "api_user_id"]
+_mustPassConfKeys = ["name", "prompts", "examples", "temperature", "max_tokens",
+                     "stop_tokens", "api_key", "api_user_id"]
 
 
 def llm_chat(prompt: str = '', **kwargs):
