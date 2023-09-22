@@ -6,7 +6,7 @@ class Functor:
     llm_evaluator = None
     prompt = None
     args: Union[list, None] = None
-    kwonlyargs: Union[list, None] = None
+    kwOnlyArgs: Union[list, None] = None
     lmm_result = None
 
     def __init__(self, llm_evaluator, prompt):
@@ -15,7 +15,7 @@ class Functor:
         if callable(self.prompt):
             ires = inspect.getfullargspec(self.prompt)
             self.args = ires[0]
-            self.kwonlyargs = ires[4]
+            self.kwOnlyArgs = ires[4]
         self.lmm_result = None
 
     def __call__(self, *args, **dargs):
