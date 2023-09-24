@@ -1,5 +1,5 @@
 from collections import Counter
-from DataTypeSystem.Predicates import is_hash_of_hashes
+from DataTypeSystem.Predicates import is_hash_of_hashes, is_array_of_pairs
 
 from DataTypeSystem.TypeClasses import Type, Atom, Pair, Vector, Tuple, Assoc, Struct
 import datetime
@@ -30,12 +30,16 @@ class Examiner:
     def record_types(self, data):
         types = []
 
-        if isinstance(data, list) and self.has_homogeneous_type(data) and not isinstance(data[0], tuple):
-            types = [self.record_types(x) for x in data[0]]
-        elif isinstance(data, list):
+        if is_array_of_pairs(data):
+            types = [(x[0], type(x[1])) for x in data]
+        elif self.is_reshapable(data, list, dict):
             types = [self.record_types(x) for x in data]
-        elif isinstance(data, dict):
+        elif is_hash_of_hashes(data):
             types = {k: self.record_types(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            types = {type(x) for x in data}
+        elif isinstance(data, dict):
+            types = {k: type(v) for k, v in data.items()}
         else:
             print('Do not know how to find the type(s) of the given record(s).')
 
