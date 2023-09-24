@@ -3,7 +3,7 @@
 
 This Python package provides a type system for different data structures that are 
 coercible to full arrays. It is Python translation of the code of the Raku package
-["Data::Reshapers"](https://github.com/antononcube/Raku-Data-Reshapers), [AAp1].
+["Data::TypeSystem"](https://raku.land/zef:antononcube/Data::TypeSystem), [AAp1].
 
 ------
 
