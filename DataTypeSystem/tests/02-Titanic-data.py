@@ -45,25 +45,25 @@ class MyTestCase(unittest.TestCase):
     def test_whole_set(self):
         self.assertEqual(
             str(deduce_type(self.dsTitanic)),
-            'Vector(Struct([id, passengerAge, passengerClass, passengerSex, passengerSurvival], [Str, Int, Str, Str, Str]), 20)')
+            'Vector(Struct([id, passengerAge, passengerClass, passengerSex, passengerSurvival], [str, int, str, str, str]), 20)')
 
     # 2
     def test_record1(self):
         self.assertEqual(
             str(deduce_type(self.dsTitanic[12])),
-            'Struct([id, passengerAge, passengerClass, passengerSex, passengerSurvival], [Str, Int, Str, Str, Str])')
+            'Struct([id, passengerAge, passengerClass, passengerSex, passengerSurvival], [str, int, str, str, str])')
 
     # 3
     def test_record2(self):
         self.assertEqual(
-            str(deduce_type(self.dsTitanic[12].sort(key=lambda x: x.key), list)),
-            'Tuple([Atom((Str)), Atom((Int)), Atom((Str)), Atom((Str)), Atom((Str))])')
+            str(deduce_type([ v for k, v in sorted(list(self.dsTitanic[12].items()), key=lambda x: x[0])])),
+            "Tuple([Atom(<class 'str'>), Atom(<class 'int'>), Atom(<class 'str'>), Atom(<class 'str'>), Atom(<class 'str'>)])")
 
     # 4
     def test_record3(self):
         self.assertEqual(
             str(deduce_type(self.dsTitanic[12]['passengerClass'])),
-            'Atom(Str)')
+            "Atom(<class 'str'>)")
 
 
 if __name__ == '__main__':
