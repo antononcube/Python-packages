@@ -6,7 +6,7 @@ from DataTypeSystem.Examiner import Examiner
 # Determines if given data is reshapable.
 # (For example, a list of dictionaries in Python.)
 def is_reshapable(data, iterable_type=None, record_type=None):
-    if iterable_type and record_type:
+    if iterable_type is not None and record_type is not None:
         return Examiner().is_reshapable(data, iterable_type=iterable_type, record_type=record_type)
     else:
         return Examiner().is_reshapable(data)
