@@ -1,5 +1,6 @@
 import unittest
-from DataTypeSystem import deduce_type
+from DataTypeSystem import deduce_type, record_types
+from DataTypeSystem.Predicates import is_array_of_hashes
 from DataTypeSystem.TypeClasses import Assoc, Atom, Pair, Struct, Tuple, Vector
 import datetime
 
@@ -39,6 +40,13 @@ class TestDeduceType(unittest.TestCase):
     }
 
     dsRandNum_dict = dict(zip('abcdefghijklmnopqrstuvwxyz', dsRandNum))
+
+    dsTable = [
+        {"Date": datetime.date(2020, 12, 23), "Nick": "Watson", "Weekday": 3 / 7},
+        {"Date": datetime.date(2019, 10, 29), "Nick": "Roxy", "Weekday": 2 / 3},
+        {"Date": datetime.date(2020, 8, 6), "Nick": "Jimi", "Weekday": 4 / 5},
+        {"Date": datetime.date(2021, 11, 18), "Nick": "Tucker", "Weekday": 4 / 9},
+    ]
 
     # 1
     def test_deduce_type_dataset1(self):
@@ -103,21 +111,18 @@ class TestDeduceType(unittest.TestCase):
 
         self.assertEqual(
             str(deduce_type(dsIRC10)),
-            "Vector(Assoc(Atom(<class 'str'>), Atom(<class 'str'>), 6), 4)"
+            "Vector(Struct([DateString, DateTime, Nick, TimeBucket, Timestamp, Weekday], [str, datetime, str, str, str, int]), 4)"
         )
 
     # 6
     def test_deduce_type_datetime2(self):
+        self.assertEqual(str(deduce_type(self.dsTable)),
+                         "Vector(Struct([Date, Nick, Weekday], [date, str, float]), 4)")
 
-        dsTable11 = [
-            {"Date": datetime.date(2020, 12, 23), "Nick": "Watson", "Weekday": 3 / 7},
-            {"Date": datetime.date(2019, 10, 29), "Nick": "Roxy", "Weekday": 2 / 3},
-            {"Date": datetime.date(2020, 8, 6), "Nick": "Jimi", "Weekday": 4 / 5},
-            {"Date": datetime.date(2021, 11, 18), "Nick": "Tucker", "Weekday": 4 / 9},
-        ]
+    def test_record_types_datetime1(self):
+        self.assertTrue(isinstance(record_types(self.dsTable), list))
+        self.assertTrue( is_array_of_hashes(record_types(self.dsTable)))
 
-        self.assertEqual(str(deduce_type(dsTable11)),
-                         "Vector(Assoc(Atom(<class 'str'>), None, 3), 4)")
 
 
 if __name__ == '__main__':
