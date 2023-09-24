@@ -1,10 +1,14 @@
 from collections import Counter
+from DataTypeSystem.Predicates import is_hash_of_hashes
 
 from DataTypeSystem.TypeClasses import Type, Atom, Pair, Vector, Tuple, Assoc, Struct
 import datetime
 
 
 class Examiner:
+    max_enum_elems: int = 6
+    max_struct_elems: int = 16
+    max_tuple_elems: int = 16
 
     def __init__(self, max_enum_elems=6, max_struct_elems=16, max_tuple_elems=16):
         self.max_enum_elems = max_enum_elems
@@ -63,13 +67,32 @@ class Examiner:
             else:
                 return Vector(None, len(data))
 
-        elif isinstance(data, dict):
+        elif is_hash_of_hashes(data):
             kType = self.deduce_type(list(data.keys())[0], tally=tally)
             vType = self.deduce_type(list(data.values())[0], tally=tally)
 
             if isinstance(vType, Vector):
                 return Assoc(key_type=kType, type=vType.type, count=len(data))
             return Assoc(key_type=kType, type=vType, count=len(data))
+
+        elif isinstance(data, dict):
+            res = [(k, type(v)) for k, v in data.items()]
+            res = sorted(res, key=lambda x: x[0])
+
+            if not self.has_homogeneous_type(list(data.values())) and len(data) <= self.max_struct_elems:
+                return Struct(keys=[pair[0] for pair in res], values=[pair[1] for pair in res])
+            elif self.has_homogeneous_type(list(data.values())):
+                return Assoc(key_type=self.deduce_type(list(data.keys())[0]),
+                             type=self.deduce_type(list(data.values())[0]), count=len(data))
+            elif tally:
+                t = [self.deduce_type(x) for x in data.items()]
+                tBag = Counter([repr(v) for v in t])
+                return Assoc(key_type='Tally', type=sorted(tBag.items(), key=lambda x: x[0]), count=len(data))
+            else:
+                return Assoc(
+                    key_type=self.deduce_type(list(data.keys()), tally=True),
+                    type=self.deduce_type(list(data.values()), tally=True),
+                    count=len(data))
 
         else:
             return None
