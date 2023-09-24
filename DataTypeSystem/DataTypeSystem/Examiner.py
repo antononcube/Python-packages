@@ -1,3 +1,4 @@
+import warnings
 from collections import Counter
 from DataTypeSystem.Predicates import is_hash_of_hashes, is_array_of_pairs
 
@@ -41,7 +42,7 @@ class Examiner:
         elif isinstance(data, dict):
             types = {k: type(v) for k, v in data.items()}
         else:
-            print('Do not know how to find the type(s) of the given record(s).')
+            warnings.warn('Do not know how to find the type(s) of the given record(s).')
 
         return types
 
@@ -99,4 +100,5 @@ class Examiner:
                     count=len(data))
 
         else:
+            warnings.warn(f"Do not know how to process the given argument of type {type(data)}.")
             return None
