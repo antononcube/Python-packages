@@ -143,27 +143,64 @@ def llm_configuration(spec, **kwargs):
 # ===========================================================
 # Evaluator creation
 # ===========================================================
-def llm_evaluator(spec, form=None):
+def llm_evaluator(spec, **args):
+    # Default evaluator class
+    evaluator_class = args.get('llm_evaluator_class', None)
+    if evaluator_class is None:
+        evaluator_class = Evaluator
+
+    if not evaluator_class is Evaluator:
+        raise ValueError(
+            'The value of llm_evaluator_class is expected to be None or of type LLMFunctions.Evaluator.')
+
+    # Separate configuration from evaluator options
+    attr_conf = list(llm_configuration('openai').to_dict().keys())
+    args_conf = {k: v for k, v in args.items() if k in attr_conf}
+    args_evlr = {k: v for k, v in args.items() if k not in args_conf and k not in ['llm_evaluator_class', 'form']}
+
+    fd = {"formatron": args.get("formatron", args.get("form", None))}
+    args_evlr = {**args_evlr, **fd}
+
     if spec is None:
-        return Evaluator(conf=llm_configuration(None), formatron=form)
+        return Evaluator(conf=llm_configuration(None, **args_conf), **args_evlr)
     elif isinstance(spec, str):
-        return llm_evaluator(llm_configuration(spec), form=form)
+        return llm_evaluator(llm_configuration(spec), **args_evlr,
+                             llm_evaluator_class=args.get('llm_evaluator_class', None))
     elif isinstance(spec, Configuration):
         evaluatorClass = Evaluator
         if spec.llm_evaluator is not None:
             evaluatorClass = spec.llm_evaluator
-        return evaluatorClass(conf=spec, formatron=form)
+        return evaluatorClass(conf=spec, **args_evlr)
+    elif isinstance(spec, Evaluator):
+        res = spec.copy()
+        conf = spec.conf.copy()
+
+        if 'conf' in args_evlr:
+            conf = llm_configuration(conf, **args_evlr['conf'])
+
+        if args_conf:
+            conf = llm_configuration(conf, **args_conf)
+
+        res.conf = conf
+
+        if 'formatron' in args_evlr:
+            res.formatron = args_evlr['formatron']
+
+        return res
+
     else:
-        warnings.warn("Do not know what to do with the given configuration spec.")
-        return llm_evaluator(None, form)
-    pass
+        warnings.warn(
+            "The first argument is expected to be None, or one of the types str, LLMFunctions.Evaluator, or LLMFunctions.Configuration.")
+        return llm_evaluator(None, **args_evlr)
 
 
 # ===========================================================
 # Function creation
 # ===========================================================
-def llm_function(prompt, form=None, e=None):
-    llmEvaluator = llm_evaluator(spec=e, form=form)
+def llm_function(prompt='', **kwargs):
+    llm_evaluator_spec = kwargs.get("llm_evaluator", kwargs.get("e", None))
+    formatron_spec = kwargs.get("formatron", kwargs.get("form", kwargs.get("f", None)))
+    llmEvaluator = llm_evaluator(spec=llm_evaluator_spec, formatron=formatron_spec)
     return Functor(llmEvaluator, prompt)
 
 
