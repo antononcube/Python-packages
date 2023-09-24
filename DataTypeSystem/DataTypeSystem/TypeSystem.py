@@ -28,6 +28,8 @@ def record_types(data):
 # :tally -- should tally be returned or not?
 def deduce_type(data, max_enum_elems=6, max_struct_elems=16, max_tuple_elems=16, tally=False):
     ts = Examiner(max_enum_elems, max_struct_elems, max_tuple_elems)
-    if type(data) is {}.keys().__class__ or type(data) is {}.values().__class__:
+    if (type(data) is {}.keys().__class__ or
+            type(data) is {}.values().__class__ or
+            type(data) is {}.items().__class__):
         return ts.deduce_type(list(data), tally=tally)
     return ts.deduce_type(data, tally=tally)
