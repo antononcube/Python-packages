@@ -69,4 +69,4 @@ class Struct(Type):
         self.values = values
 
     def __repr__(self) -> str:
-        return f'Struct([{", ".join(map(str, self.keys))}], [{", ".join(map(lambda v: v.__class__.__name__, self.values))}])'
+        return f'Struct([{", ".join(map(str, self.keys))}], [{", ".join(map(lambda v: str(v.__name__), self.values))}])'
