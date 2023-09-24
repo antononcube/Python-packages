@@ -74,6 +74,12 @@ class TestDeduceType(unittest.TestCase):
         )
 
     # 5
+    def test_deduce_type_dict4(self):
+        self.assertTrue(isinstance(str(self.dsTable[0].values()), str))
+        self.assertTrue(isinstance(str(self.dsTable[0].keys()), str))
+        self.assertTrue(isinstance(str(self.dsTable[0].items()), str))
+
+    # 6
     def test_deduce_type_datetime1(self):
         dsIRC10 = [
             {
@@ -114,15 +120,15 @@ class TestDeduceType(unittest.TestCase):
             "Vector(Struct([DateString, DateTime, Nick, TimeBucket, Timestamp, Weekday], [str, datetime, str, str, str, int]), 4)"
         )
 
-    # 6
+    # 7
     def test_deduce_type_datetime2(self):
         self.assertEqual(str(deduce_type(self.dsTable)),
                          "Vector(Struct([Date, Nick, Weekday], [date, str, float]), 4)")
 
+    # 8
     def test_record_types_datetime1(self):
         self.assertTrue(isinstance(record_types(self.dsTable), list))
         self.assertTrue( is_array_of_hashes(record_types(self.dsTable)))
-
 
 
 if __name__ == '__main__':
