@@ -1,9 +1,9 @@
 import pickle
 from collections.abc import Iterable
-from LLMFunctions.Configuration import Configuration
-from LLMFunctions.SubParser import SubParser
-from LLMFunctions.SubParser import sub_parser
-from LLMFunctions.SubParser import exact_parser
+from LLMFunctionObjects.Configuration import Configuration
+from LLMFunctionObjects.SubParser import SubParser
+from LLMFunctionObjects.SubParser import sub_parser
+from LLMFunctionObjects.SubParser import exact_parser
 import openai
 
 

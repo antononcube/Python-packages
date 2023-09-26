@@ -1,4 +1,4 @@
-from LLMFunctions.EvaluatorChat import EvaluatorChat
+from LLMFunctionObjects.EvaluatorChat import EvaluatorChat
 import google.generativeai as palm
 from google.generativeai.types import discuss_types
 

@@ -1,4 +1,4 @@
-# LLMFunctions
+# LLMFunctionObjects
 
 ## In brief
 
@@ -15,13 +15,13 @@ of the Raku package "LLM::Functions", [AAp1], supported by "Text::SubParsers", [
 ### Install from GitHub
 
 ```shell
-pip install -e git+https://github.com/antononcube/Python-packages.git#egg=LLMFunctions-antononcube\&subdirectory=LLMFunctions
+pip install -e git+https://github.com/antononcube/Python-packages.git#egg=LLMFunctionObjects-antononcube\&subdirectory=LLMFunctionObjects
 ```
 
 ### From PyPi
 
 ```shell
-pip install LLMFunctions
+pip install LLMFunctionObjects
 ```
 
 --------
@@ -29,14 +29,14 @@ pip install LLMFunctions
 ## Design
 
 "Out of the box"
-["LLMFunctions"](https://pypi.org/project/LLMFunctions) uses
+["LLMFunctionObjects"](https://pypi.org/project/LLMFunctionObjects) uses
 ["openai"](https://pypi.org/project/openai/), [OAIp1], and
 ["google-generativeai"](https://pypi.org/project/google-generativeai/), [GAIp1].
 Other LLM access packages can be utilized via appropriate LLM configurations.
 
 Configurations:
-- Are instances of the class `LLMFunctions.Configuration`
-- Are used by instances of the class `LLMFunctions.Evaluator`
+- Are instances of the class `LLMFunctionObjects.Configuration`
+- Are used by instances of the class `LLMFunctionObjects.Evaluator`
 - Can be converted to dictionary objects (i.e. have a `to_dict` method)
 
 New LLM functions are constructed with the function `llm_function`.
@@ -109,7 +109,7 @@ Here is the default, OpenAI-based configuration:
 
 
 ```python
-from LLMFunctions import *
+from LLMFunctionObjects import *
 
 for k, v in llm_configuration('OpenAI').to_dict().items():
     print(f"{k} : {repr(v)}")
@@ -137,7 +137,7 @@ for k, v in llm_configuration('OpenAI').to_dict().items():
     known_params : ['api_key', 'model', 'prompt', 'suffix', 'max_tokens', 'temperature', 'top_p', 'n', 'stream', 'logprobs', 'stop', 'presence_penalty', 'frequency_penalty', 'best_of', 'logit_bias', 'user']
     response_object_attribute : None
     response_value_keys : ['choices', 0, 'text']
-    llm_evaluator : <class 'LLMFunctions.Evaluator.Evaluator'>
+    llm_evaluator : <class 'LLMFunctionObjects.Evaluator.Evaluator'>
 
 
 Here is the ChatGPT-based configuration:
@@ -170,7 +170,7 @@ for k, v in llm_configuration('ChatGPT').to_dict().items():
     known_params : ['api_key', 'model', 'messages', 'functions', 'function_call', 'temperature', 'top_p', 'n', 'stream', 'logprobs', 'stop', 'presence_penalty', 'frequency_penalty', 'logit_bias', 'user']
     response_object_attribute : None
     response_value_keys : ['choices', 0, 'message', 'content']
-    llm_evaluator : <class 'LLMFunctions.EvaluatorChatGPT.EvaluatorChatGPT'>
+    llm_evaluator : <class 'LLMFunctionObjects.EvaluatorChatGPT.EvaluatorChatGPT'>
 
 
 **Remark:** `llm_configuration(None)` is equivalent to `llm_configuration('OpenAI')`.
@@ -211,7 +211,7 @@ for k, v in llm_configuration('PaLM').to_dict().items():
     known_params : ['model', 'prompt', 'temperature', 'candidate_count', 'max_output_tokens', 'top_p', 'top_k', 'safety_settings', 'stop_sequences', 'client']
     response_object_attribute : 'result'
     response_value_keys : []
-    llm_evaluator : <class 'LLMFunctions.Evaluator.Evaluator'>
+    llm_evaluator : <class 'LLMFunctionObjects.Evaluator.Evaluator'>
 
 
 -------
@@ -462,8 +462,6 @@ Here we create chat object that uses OpenAI's ChatGPT:
 
 
 ```python
-from LLMFunctions import *
-
 prompt = "You are a gem expert and you give concise answers."
 chat = llm_chat(prompt = prompt, chat_id = 'gem-expert-talk', conf = 'ChatGPT')
 ```
@@ -589,6 +587,6 @@ chat.print()
 [PyPI.org](https://pypi.org/).
 
 [WRIp1] Wolfram Research, Inc.
-[LLMFunctions paclet](https://resources.wolframcloud.com/PacletRepository/resources/Wolfram/LLMFunctions/),
+[LLMFunctions paclet](https://resources.wolframcloud.com/PacletRepository/resources/Wolfram/LLMFunctionObjects/),
 (2023),
 [Wolfram Language Paclet Repository](https://resources.wolframcloud.com/PacletRepository/).

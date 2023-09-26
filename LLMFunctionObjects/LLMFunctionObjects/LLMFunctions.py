@@ -1,13 +1,13 @@
 import re
 import warnings
 import os
-from LLMFunctions.Configuration import Configuration
-from LLMFunctions.Evaluator import Evaluator
-from LLMFunctions.EvaluatorChat import EvaluatorChat
-from LLMFunctions.EvaluatorChatGPT import EvaluatorChatGPT
-from LLMFunctions.EvaluatorChatPaLM import EvaluatorChatPaLM
-from LLMFunctions.Functor import Functor
-from LLMFunctions.Chat import Chat
+from LLMFunctionObjects.Configuration import Configuration
+from LLMFunctionObjects.Evaluator import Evaluator
+from LLMFunctionObjects.EvaluatorChat import EvaluatorChat
+from LLMFunctionObjects.EvaluatorChatGPT import EvaluatorChatGPT
+from LLMFunctionObjects.EvaluatorChatPaLM import EvaluatorChatPaLM
+from LLMFunctionObjects.Functor import Functor
+from LLMFunctionObjects.Chat import Chat
 import openai
 import google.generativeai
 import warnings
@@ -152,7 +152,7 @@ def llm_evaluator(spec, **args):
 
     if not evaluator_class is Evaluator:
         raise ValueError(
-            'The value of llm_evaluator_class is expected to be None or of type LLMFunctions.Evaluator.')
+            'The value of llm_evaluator_class is expected to be None or of type LLMFunctionObjects.Evaluator.')
 
     # Separate configuration from evaluator options
     attr_conf = list(llm_configuration('openai').to_dict().keys())
@@ -191,7 +191,7 @@ def llm_evaluator(spec, **args):
 
     else:
         warnings.warn(
-            "The first argument is expected to be None, or one of the types str, LLMFunctions.Evaluator, or LLMFunctions.Configuration.")
+            "The first argument is expected to be None, or one of the types str, LLMFunctionObjects.Evaluator, or LLMFunctionObjects.Configuration.")
         return llm_evaluator(None, **args_evlr)
 
 

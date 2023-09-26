@@ -1,7 +1,7 @@
 import unittest
-from LLMFunctions.LLMFunctions import llm_function
-from LLMFunctions.LLMFunctions import llm_configuration
-from LLMFunctions.LLMFunctions import llm_evaluator
+from LLMFunctionObjects.LLMFunctions import llm_function
+from LLMFunctionObjects.LLMFunctions import llm_configuration
+from LLMFunctionObjects.LLMFunctions import llm_evaluator
 
 
 class LLMFunctionsTests(unittest.TestCase):

@@ -2,7 +2,7 @@ import logging
 import time
 from typing import List, Callable, Union, Dict
 import inspect
-from LLMFunctions.EvaluatorChat import EvaluatorChat
+from LLMFunctionObjects.EvaluatorChat import EvaluatorChat
 
 
 class Chat:

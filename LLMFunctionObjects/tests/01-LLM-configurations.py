@@ -1,6 +1,6 @@
 import unittest
-from LLMFunctions.LLMFunctions import llm_configuration
-from LLMFunctions.Configuration import Configuration
+from LLMFunctionObjects.LLMFunctions import llm_configuration
+from LLMFunctionObjects.Configuration import Configuration
 
 
 class LLMConfigurations(unittest.TestCase):

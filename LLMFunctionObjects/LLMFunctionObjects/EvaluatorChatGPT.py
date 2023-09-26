@@ -1,4 +1,4 @@
-from LLMFunctions.EvaluatorChat import EvaluatorChat
+from LLMFunctionObjects.EvaluatorChat import EvaluatorChat
 
 
 class EvaluatorChatGPT(EvaluatorChat):

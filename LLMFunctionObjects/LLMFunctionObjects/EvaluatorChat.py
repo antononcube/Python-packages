@@ -1,7 +1,7 @@
 from typing import List, Callable, Union, Dict
 
-from LLMFunctions.Evaluator import Evaluator
-from LLMFunctions.Configuration import Configuration
+from LLMFunctionObjects.Evaluator import Evaluator
+from LLMFunctionObjects.Configuration import Configuration
 
 
 class EvaluatorChat(Evaluator):
