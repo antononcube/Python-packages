@@ -1,3 +1,4 @@
+import re
 import warnings
 import os
 from LLMFunctions.Configuration import Configuration
@@ -208,18 +209,31 @@ def llm_function(prompt='', **kwargs):
 # Example function creation
 # ===========================================================
 
-def llm_example_function(rules, form=None, e=None):
+def llm_example_function(rules, hint=None, **kwargs):
+    hintLocal = hint
+    if hintLocal is None:
+        hintLocal = ""
+
     if isinstance(rules, dict):
         pre = ""
         for (k, v) in rules.items():
-            pre = f'Input: {k}\nOutput: {v}\n\n'
+            pre = f"Input: {k}\nOutput: {v}\n\n"
 
+        if isinstance(hintLocal, str) and len(hintLocal) > 0:
+            hint = hint if re.search(r'.*{Punct}$', hint) else hint + '.'
+            pre = f"{hint}\n\n{pre}"
         prompt = lambda x: pre + f"\nInput {x}\nOutput:"
 
-        return llm_function(prompt, form=form, e=e)
+        return llm_function(prompt, **kwargs)
+
+    elif isinstance(rules, tuple) and len(rules) == 2:
+        return llm_example_function({rules[0]: rules[1]}, **kwargs)
+
+    elif isinstance(rules, list) and all(isinstance(x, tuple) and len(x) == 2 for x in rules):
+        return llm_example_function({x[0]: x[1] for x in rules}, **kwargs)
 
     else:
-        TypeError("The first argument is expected to be a dictionary.")
+        TypeError("The first argument is expected to be a tuple, a list of tuples, or a dictionary.")
 
 
 # ===========================================================
@@ -296,20 +310,23 @@ def llm_chat(prompt: str = '', **kwargs):
     # Default evaluator class
     evaluator_class = kwargs.get('llm_evaluator_class', None)
 
+    # Filter conf args
+    conf_args = {k: v for k, v in kwargs.items() if k in list(llm_configuration(None).to_dict().keys())}
+
     if evaluator_class is not None and not isinstance(evaluator_class, EvaluatorChat):
         raise ValueError('The value of llm_evaluator_class is expected to be None or of the type EvaluatorChat.')
 
     # Make evaluator object
     if spec is None:
         # Make Configuration object
-        conf = llm_configuration('ChatGPT', prompts=prompt, **kwargs)
+        conf = llm_configuration('ChatGPT', prompts=prompt, **conf_args)
 
         # Make Evaluator object
         llm_eval_obj = EvaluatorChatGPT(conf=conf, formatron=kwargs.get('form', kwargs.get('formatron')))
 
     elif isinstance(spec, Configuration) or isinstance(spec, Evaluator) or isinstance(spec, str):
         # Make Configuration object
-        conf = llm_configuration(spec, prompts=prompt, **kwargs)
+        conf = llm_configuration(spec, prompts=prompt, **conf_args)
 
         # Obtain Evaluator class
         if evaluator_class is None:
