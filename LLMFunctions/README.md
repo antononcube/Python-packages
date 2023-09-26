@@ -423,6 +423,26 @@ print(fec('raccoon'))
 
      cardinal
 
+### Synthesizing responses
+
+Here is an example of prompt synthesis with the function `llm_synthesize` using prompts from the package ["LLMPrompts"](https://pypi.org/project/LLMPrompts/), [AAp8]:
+
+
+```python
+print(
+    llm_synthesize([
+        llm_prompt("Yoda"), 
+        "Hi! How old are you?",
+        llm_prompt("HaikuStyled")
+    ]))
+```
+
+    
+    
+    Young or old, matters not
+    Age is just a number, hmm
+    The Force is with me.
+
 
 --------
 
@@ -550,6 +570,11 @@ chat.print()
 [ML::NLPTemplateEngine Raku package](https://github.com/antononcube/Raku-ML-NLPTemplateEngine),
 (2023),
 [GitHub/antononcube](https://github.com/antononcube).
+
+[AAp8] Anton Antonov,
+[LLMPrompts Python package](https://pypi.org/project/LLMPrompts/),
+(2023),
+[PyPI.org/antononcube](https://pypi.org/user/antononcube/).
 
 [GAIp1] Google AI,
 [google-generativeai (Google Generative AI Python Client)](https://pypi.org/project/google-generativeai/),
