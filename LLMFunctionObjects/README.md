@@ -43,6 +43,7 @@ New LLM functions are constructed with the function `llm_function`.
 
 The function `llm_function`:
 
+- Produces objects that are set to be "callable" (i.e. function objects or functors)
 - Has the option "llm_evaluator" that takes evaluators, configurations, or string shorthands as values
 - Returns anonymous functions (that access LLMs via evaluators/configurations.)
 - Gives result functions that can be applied to different types of arguments depending on the first argument
