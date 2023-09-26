@@ -13,7 +13,11 @@ class Chat:
     lmm_result = None
 
     # ------------------------------------------------------
-    def __init__(self, llm_evaluator, messages=None, examples=None):
+    def __init__(self, chat_id=None, llm_evaluator=None, messages=None, examples=None):
+        if chat_id is None:
+            self.chat_id = ''
+        else:
+            self.chat_id = chat_id
         if examples is None:
             examples = []
         if messages is None:
