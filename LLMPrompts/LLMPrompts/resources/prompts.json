@@ -7251,8 +7251,8 @@
 			"Product",
 			"GenZ"
 		],
-		"ContributedBy":"Anton Antonov",
-		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/BuyItGenZ"
+		"ContributedBy":"Google AI",
+		"URL":"https:\/\/developers.generativeai.google\/prompts\/product-descriptions"
 	},
 	{
 		"Name":"CodeWriterX",
@@ -7359,8 +7359,8 @@
 			"Writer",
 			"Template"
 		],
-		"ContributedBy":"Anton Antonov",
-		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/EmailWriter"
+		"ContributedBy":"Google AI",
+		"URL":"https:\/\/developers.generativeai.google\/prompts\/email-writer"
 	},
 	{
 		"Name":"FictionQuestioned",
@@ -7409,8 +7409,8 @@
 			"Fiction",
 			"Creative"
 		],
-		"ContributedBy":"Anton Antonov",
-		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/FictionQuestioned"
+		"ContributedBy":"Google AI",
+		"URL":"https:\/\/developers.generativeai.google\/prompts\/questions-from-fiction"
 	},
 	{
 		"Name":"FriendlySnowman",
@@ -7457,8 +7457,8 @@
 			"Fun",
 			"Winter"
 		],
-		"ContributedBy":"Anton Antonov",
-		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/FriendlySnowman"
+		"ContributedBy":"Google AI",
+		"URL":"https:\/\/developers.generativeai.google\/prompts\/talk-to-snowman"
 	},
 	{
 		"Name":"HugoAwardWinner",
@@ -7505,8 +7505,8 @@
 			"Science fiction",
 			"Hugo Award"
 		],
-		"ContributedBy":"Anton Antonov",
-		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/HugoAwardWinner"
+		"ContributedBy":"Google AI",
+		"URL":"https:\/\/developers.generativeai.google\/prompts\/scifi-novel-writer"
 	},
 	{
 		"Name":"ShortLineIt",
@@ -7606,8 +7606,8 @@
 			"Assertive",
 			"Unhedge"
 		],
-		"ContributedBy":"Anton Antonov",
-		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/Unhedged"
+		"ContributedBy":"Google AI",
+		"URL":"https:\/\/developers.generativeai.google\/prompts\/unhedge"
 	},
 	{
 		"Name":"WordGuesser",
@@ -7655,7 +7655,7 @@
 			"Riddle",
 			"Game"
 		],
-		"ContributedBy":"Anton Antonov",
-		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/WordGuesser"
+		"ContributedBy":"Google AI",
+		"URL":"https:\/\/developers.generativeai.google\/prompts\/guess-the-word"
 	}
 ]
