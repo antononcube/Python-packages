@@ -5,7 +5,7 @@
 This Python package provides functions and function objects to access, interact, and utilize 
 Large Language Models (LLMs), like OpenAI, [OAI1], and PaLM, [ZG1].
 
-The structure and implementation of this Python package close follows the design and implementation
+The structure and implementation of this Python package closely follows the design and implementation
 of the Raku package "LLM::Functions", [AAp1], supported by "Text::SubParsers", [AAp4].
 
 --------
@@ -60,11 +60,11 @@ LLM configuration- and evaluator objects, and the corresponding LLM-function tha
 ```mermaid
 sequenceDiagram
   participant User
-  participant llmfunc as llm-function
-  participant llmconf as llm-configuration
+  participant llmfunc as llm_function
+  participant llmconf as llm_configuration
   participant LLMConf as LLM configuration
   participant LLMEval as LLM evaluator
-  participant AnonFunc as Anonymous function
+  participant AnonFunc as Function object<br/>(callable)
   User ->> llmfunc: ・prompt<br>・conf spec
   llmfunc ->> llmconf: conf spec
   llmconf ->> LLMConf: conf spec
@@ -82,11 +82,11 @@ and using that configuration to generate a chat message response:
 sequenceDiagram
   participant WWWOpenAI as WWW::OpenAI
   participant User
-  participant llmfunc as llm-function
-  participant llmconf as llm-configuration
+  participant llmfunc as llm_function
+  participant llmconf as llm_configuration
   participant LLMConf as LLM configuration
   participant LLMChatEval as LLM chat evaluator
-  participant AnonFunc as Anonymous function
+  participant AnonFunc as Function object<br/>(callable)
   User ->> llmconf: engineered prompt
   llmconf ->> User: configuration object
   User ->> llmfunc: ・prompt<br>・configuration object
@@ -408,7 +408,7 @@ The function `llm_example_function` takes as a first argument:
 - A `dict`
 - A `list` object of pairs (`tuple` objects)
 
-**Remark:** The function `llm_example_function` is implemented with `llm-function` and suitable prompt.
+**Remark:** The function `llm_example_function` is implemented with `llm_function` and suitable prompt.
 
 Here is an example of using hints:
 
