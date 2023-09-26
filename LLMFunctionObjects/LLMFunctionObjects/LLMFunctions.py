@@ -262,7 +262,7 @@ def llm_synthesize(prompts, prop=None, **kwargs):
             f"The value of the second argument is expected to be Whatever or one of: {', '.join(expected_props)}.")
 
     # Get evaluator
-    evlr = llm_evaluator(evlrSpec)
+    evlr = llm_evaluator(evlrSpec, **kwargs)
 
     # Add configuration prompts
     promptsLocal = evlr.conf.prompts + promptsLocal
@@ -284,6 +284,8 @@ def llm_synthesize(prompts, prop=None, **kwargs):
                 pres = p(*args)
 
             processed.append(pres)
+        else:
+            processed.append(str(p))
 
     # Find the separator from the configuration
     sep = evlr.conf.prompt_delimiter
