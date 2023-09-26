@@ -8,6 +8,8 @@ Large Language Models (LLMs), like OpenAI, [OAI1], and PaLM, [ZG1].
 The structure and implementation of this Python package closely follows the design and implementation
 of the Raku package "LLM::Functions", [AAp1], supported by "Text::SubParsers", [AAp4].
 
+*(Here is a [link to the corresponding notebook](https://github.com/antononcube/Python-packages/blob/main/LLMFunctionObjects/docs/LLM-function-objects.ipynb).)*
+
 --------
 
 ## Installation
