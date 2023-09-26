@@ -429,6 +429,8 @@ Here is an example of prompt synthesis with the function `llm_synthesize` using 
 
 
 ```python
+from LLMPrompts import *
+
 print(
     llm_synthesize([
         llm_prompt("Yoda"), 
