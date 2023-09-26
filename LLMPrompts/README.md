@@ -25,7 +25,29 @@ pip install LLMPrompts
 
 ## Basic usage examples
 
-*TBD...*
+
+### Synthesizing responses
+
+Here is an example of prompt synthesis with the function `llm_synthesize` using prompts from the package ["LLMFunctions"](https://github.com/antononcube/Python-packages/tree/main/LLMFunctions):
+
+
+```python
+from LLMPrompts import *
+
+print(
+    llm_synthesize([
+        llm_prompt("Yoda"), 
+        "Hi! How old are you?",
+        llm_prompt("HaikuStyled")
+    ]))
+```
+
+    
+    
+    Young or old, matters not
+    Age is just a number, hmm
+    The Force is with me.
+
 
 ------
 
