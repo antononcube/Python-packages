@@ -240,7 +240,11 @@ def llm_example_function(rules, hint=None, **kwargs):
 # LLM Synthesise
 # ===========================================================
 
-def llm_synthesize(prompts, prop=None, llm_evaluator=None):
+def llm_synthesize(prompts, prop=None, **kwargs):
+    # Get evaluator spec
+    evlrSpec = kwargs.get("llm_evaluator", kwargs.get("e", None))
+
+    # Prompts processing
     promptsLocal = prompts
     if isinstance(promptsLocal, str):
         promptsLocal = [promptsLocal, ]
@@ -258,7 +262,7 @@ def llm_synthesize(prompts, prop=None, llm_evaluator=None):
             f"The value of the second argument is expected to be Whatever or one of: {', '.join(expected_props)}.")
 
     # Get evaluator
-    evlr = llm_evaluator(llm_evaluator)
+    evlr = llm_evaluator(evlrSpec)
 
     # Add configuration prompts
     promptsLocal = evlr.conf.prompts + promptsLocal
@@ -275,7 +279,7 @@ def llm_synthesize(prompts, prop=None, llm_evaluator=None):
             except Exception:
                 pres = None
 
-            if not pres or not isinstance(pres, str):
+            if not pres is not None or not isinstance(pres, str):
                 args = [''] * p.__code__.co_argcount  # Get the arity of the function
                 pres = p(*args)
 
