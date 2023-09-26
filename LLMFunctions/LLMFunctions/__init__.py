@@ -10,6 +10,7 @@ from LLMFunctions.LLMFunctions import llm_configuration
 from LLMFunctions.LLMFunctions import llm_evaluator
 from LLMFunctions.LLMFunctions import llm_example_function
 from LLMFunctions.LLMFunctions import llm_function
+from LLMFunctions.LLMFunctions import llm_synthesize
 from LLMFunctions.LLMFunctions import llm_chat
 from LLMFunctions.SubParser import SubParser
 from LLMFunctions.SubParser import sub_parser
