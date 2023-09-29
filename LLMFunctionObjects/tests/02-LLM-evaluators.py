@@ -31,6 +31,12 @@ class LLMEvaluators(unittest.TestCase):
         e2 = llm_evaluator('openai')
         self.assertTrue(e1.to_dict() == e2.to_dict())
 
+    def test_evaluator8(self):
+        e = llm_evaluator(llm_configuration('OpenAI'))
+        c1 = llm_configuration('OpenAI')
+        c2 = llm_configuration(e)
+        self.assertTrue(c1.to_dict() == c2.to_dict())
+
 
 if __name__ == '__main__':
     unittest.main()
