@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LLMFunctionObjects",
-    version="0.1.2",
+    version="0.1.3",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Large Language Models (LLMs) functions package.",
@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages/tree/main/LLMFunctionObjects",
     packages=setuptools.find_packages(),
-    install_requires=[],
+    install_requires=["google.generativeai", "openai"],
     classifiers=[
         "Intended Audience :: Science/Research",
         "Intended Audience :: Developers",
