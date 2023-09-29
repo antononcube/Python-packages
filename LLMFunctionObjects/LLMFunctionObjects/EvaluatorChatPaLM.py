@@ -29,8 +29,9 @@ class EvaluatorChatPaLM(EvaluatorChat):
         for d in messages:
             for k, v in d.items():
                 # Make PaLM message object
-                m = discuss_types.MessageDict(author=k, content=v, citation_metadata=None)
-                res_messages.append(m)
+                if k != self.system_role:
+                    m = discuss_types.MessageDict(author=k, content=v, citation_metadata=None)
+                    res_messages.append(m)
 
         # Result
         return res_messages
@@ -55,6 +56,7 @@ class EvaluatorChatPaLM(EvaluatorChat):
 
         # Make the full prompt
         fullPrompt = confDict['prompt_delimiter'].join(confDict['prompts'])
+        fullPrompt = confDict['prompt_delimiter'].join([fullPrompt, self.context])
 
         if echo:
             print(f'Full prompt: {fullPrompt}')
