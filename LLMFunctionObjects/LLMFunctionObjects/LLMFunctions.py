@@ -21,6 +21,8 @@ def llm_configuration(spec, **kwargs):
         return llm_configuration('openai', **kwargs)
     elif isinstance(spec, Configuration):
         return spec.combine(kwargs)
+    elif isinstance(spec, Evaluator):
+        return llm_configuration(spec.conf, **kwargs)
     elif isinstance(spec, str) and spec.lower() == 'OpenAI'.lower():
         confOpenAI = Configuration(
             name="openai",
@@ -41,7 +43,7 @@ def llm_configuration(spec, **kwargs):
                           "logprobs", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
                           "user"],
             response_value_keys=["choices", 0, "text"],
-            llm_evaluator=Evaluator)
+            llm_evaluator=None)
         if len(kwargs) > 0:
             confOpenAI = confOpenAI.combine(kwargs)
         return confOpenAI
@@ -61,7 +63,7 @@ def llm_configuration(spec, **kwargs):
             confChatGPT = confChatGPT.combine(kwargs)
 
         # Evaluator class
-        confChatGPT.llm_evaluator = EvaluatorChatGPT
+        confChatGPT.llm_evaluator = None
 
         return confChatGPT
     elif isinstance(spec, str) and spec.lower() == 'PaLM'.lower():
@@ -93,7 +95,7 @@ def llm_configuration(spec, **kwargs):
             ],
             response_object_attribute="result",
             response_value_keys=[],
-            llm_evaluator=Evaluator)
+            llm_evaluator=None)
 
         # Modify by additional arguments
         if len(kwargs) > 0:
@@ -128,7 +130,7 @@ def llm_configuration(spec, **kwargs):
         confChatPaLM.response_value_keys = None
 
         # Evaluator class
-        confChatPaLM.llm_evaluator = EvaluatorChatPaLM
+        confChatPaLM.llm_evaluator = None
 
         # Combine with given additional parameters (if any)
         if len(kwargs) > 0:
@@ -136,7 +138,7 @@ def llm_configuration(spec, **kwargs):
 
         return confChatPaLM
     else:
-        warnings.warn("Do not know what to do with given configuration spec.")
+        warnings.warn(f"Do not know what to do with given configuration spec: {spec}. Continuing with \"OpenAI\".")
         return llm_configuration('OpenAI', **kwargs)
     pass
 
@@ -150,7 +152,7 @@ def llm_evaluator(spec, **args):
     if evaluator_class is None:
         evaluator_class = Evaluator
 
-    if not evaluator_class is Evaluator:
+    if evaluator_class is not Evaluator:
         raise ValueError(
             'The value of llm_evaluator_class is expected to be None or of type LLMFunctionObjects.Evaluator.')
 
@@ -168,10 +170,16 @@ def llm_evaluator(spec, **args):
         return llm_evaluator(llm_configuration(spec), **args_evlr,
                              llm_evaluator_class=args.get('llm_evaluator_class', None))
     elif isinstance(spec, Configuration):
-        evaluatorClass = Evaluator
-        if spec.llm_evaluator is not None:
-            evaluatorClass = spec.llm_evaluator
-        return evaluatorClass(conf=spec, **args_evlr)
+        conf = spec.copy()
+        if spec.llm_evaluator is None:
+            return evaluator_class(conf=spec, **args_evlr)
+        else:
+            if not isinstance(conf.llm_evaluator, Evaluator):
+                raise TypeError(
+                    'The configuration attribute evaluator is expected' +
+                    ' to be of type LLMFunctionObjects.Evaluator or None.')
+            conf.llm_evaluator.conf = conf
+            return conf.llm_evaluator
     elif isinstance(spec, Evaluator):
         res = spec.copy()
         conf = spec.conf.copy()
@@ -191,7 +199,8 @@ def llm_evaluator(spec, **args):
 
     else:
         warnings.warn(
-            "The first argument is expected to be None, or one of the types str, LLMFunctionObjects.Evaluator, or LLMFunctionObjects.Configuration.")
+            "The first argument is expected to be None, or one of the types str," +
+            " LLMFunctionObjects.Evaluator, or LLMFunctionObjects.Configuration.")
         return llm_evaluator(None, **args_evlr)
 
 
@@ -262,11 +271,12 @@ def llm_synthesize(prompts, prop=None, **kwargs):
             f"The value of the second argument is expected to be Whatever or one of: {', '.join(expected_props)}.")
 
     # Get evaluator
-    evlr = llm_evaluator(evlrSpec, **kwargs)
+    kwargs2 = {k:v for k,v in kwargs.items() if k not in ["e", "llm_evaluator"]}
+    evalObj = llm_evaluator(evlrSpec, **kwargs2)
 
     # Add configuration prompts
-    promptsLocal = evlr.conf.prompts + promptsLocal
-    evlr.conf.prompts = []
+    promptsLocal = evalObj.conf.prompts + promptsLocal
+    evalObj.conf.prompts = []
 
     # Reduce prompts
     processed = []
@@ -288,17 +298,17 @@ def llm_synthesize(prompts, prop=None, **kwargs):
             processed.append(str(p))
 
     # Find the separator from the configuration
-    sep = evlr.conf.prompt_delimiter
+    sep = evalObj.conf.prompt_delimiter
     prompt_text = sep.join(processed)
 
     # Post process
     if prop == 'FullText':
-        res = llm_function('', e=evlr)(prompt_text)
+        res = llm_function('', e=evalObj)(prompt_text)
         return processed + [res]
     elif prop == 'PromptText':
         return prompt_text
     else:
-        return llm_function('', e=evlr)(prompt_text)
+        return llm_function('', e=evalObj)(prompt_text)
 
 
 # ===========================================================
