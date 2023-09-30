@@ -23,7 +23,7 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
     ],
-    keywords=["llm", "large language models", "openai", "chatgpt", 'palm',
+    keywords=["llm", "llm functions", "llm functors", "large language models", "openai", "chatgpt", 'palm',
               "ml", "machine learning"],
     python_requires='>=3.7',
 )
