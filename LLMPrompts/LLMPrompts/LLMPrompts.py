@@ -202,3 +202,163 @@ def llm_prompt(name=None, warn=True):
 
     # Result
     return resFunc
+
+
+# ===========================================================
+# Prompt function spec
+# ===========================================================
+
+# Match a list of arguments
+_pmt_args_pattern = r"""
+    (?:                                # Start of a non-capture group for arguments
+        [^\s\^|'"]+ |                    # Word without spaces or quotes
+        '(?:\\'|[^'])*' |              # Single-quoted string
+        "(?:\\"|[^"])*"                # Double-quoted string
+    )
+    (?:\|                              # Matches a "|"
+        [^\s|'"]+ |                    # Word without spaces or quotes
+        '(?:\\'|[^'])*' |              # Single-quoted string
+        "(?:\\"|[^"])*"                # Double-quoted string
+    )*
+"""
+
+# Generic pattern
+_pmt_gen_pattern = r"""
+    {0}(?P<name>\w+)                             # @ followed by a word
+    (?:                                        # Start of the optional arguments group
+        \|                                     # Matches a "|"
+        (?P<args>
+            {1}                                # Injecting the pmt_args pattern here
+        )?                                     # End of the optional arguments group
+        \|?
+    )?
+    (?P<end>$)?
+"""
+
+_pmt_persona_pattern = _pmt_gen_pattern.format("^\s*@", _pmt_args_pattern)
+_pmt_modifier_pattern = _pmt_gen_pattern.format("\\#", _pmt_args_pattern)
+_pmt_function_pattern = _pmt_gen_pattern.format("!", _pmt_args_pattern)
+
+_pmt_persona = re.compile(_pmt_persona_pattern, re.VERBOSE)
+_pmt_modifier = re.compile(_pmt_modifier_pattern, re.VERBOSE)
+_pmt_function = re.compile(_pmt_function_pattern, re.VERBOSE)
+
+# ----------------------------------------------------------
+_pmt_function_cell_pattern = r"""
+    !(?P<name>\w+)                             # @ followed by a word
+    (?:                                        # Start of the optional arguments group
+        \|                                     # Matches a "|"
+        (?P<args>
+            {0}                                # Injecting the pmt_args pattern here
+        )?                                     # End of the optional arguments group
+        \|?
+    )?
+    (?:\s+|>)?
+    (?P<cell_arg>.+)$
+"""
+_pmt_function_cell_pattern2 = _pmt_function_cell_pattern.format(_pmt_args_pattern)
+_pmt_function_cell = re.compile(_pmt_function_cell_pattern2, re.VERBOSE)
+
+# ----------------------------------------------------------
+_pmt_function_prior_pattern = r"""
+    !(?P<name>\w+)                             # @ followed by a word
+    (?:                                        # Start of the optional arguments group
+        \|                                     # Matches a "|"
+        (?P<args>
+            {0}                                # Injecting the pmt_args pattern here
+        )?                                     # End of the optional arguments group
+        \|?
+    )?
+    (?P<pointer>\^+)$
+"""
+
+_pmt_function_prior_pattern2 = _pmt_function_prior_pattern.format(_pmt_args_pattern)
+_pmt_function_prior = re.compile(_pmt_function_prior_pattern2, re.VERBOSE)
+
+# ----------------------------------------------------------
+_pmt_any_pattern = (r"(?:" + _pmt_persona.pattern + r"|"
+                    + _pmt_function_prior.pattern + r"|"
+                    + _pmt_function.pattern + r"|"
+                    + _pmt_function_cell.pattern + r"|"
+                    + _pmt_modifier.pattern + r")")
+
+
+# _pmt_any = re.compile(_pmt_any_pattern)
+
+
+# ----------------------------------------------------------
+def _to_unquoted(ss):
+    # Using multiple matches to check and unquote strings
+    for quote_pair in [("'", "'"), ('"', '"'), ('⎡', '⎦')]:
+        if ss.startswith(quote_pair[0]) and ss.endswith(quote_pair[1]):
+            return ss[1:-1]
+    return ss
+
+
+# ----------------------------------------------------------
+def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
+    # for parser in [(_pmt_persona, "persona"),
+    #                (_pmt_function_prior, "function_prior"),
+    #                (_pmt_function_cell, "function_cell"),
+    #                (_pmt_function, "function"),
+    #                (_pmt_modifier, "modifier")]:
+    #     match_obj = parser[0].match(matchObject)
+    #     if match_obj:
+    #         matched_with = parser[1]
+    #         break
+
+    if not match_obj or match_obj.span()[1] == 0:
+        return match_obj.group()
+
+    print(match_obj.groupdict())
+
+    end = sep
+    if matched_with in ["function_prior", "function_cell"]:
+        end = ''
+    elif "end" in match_obj.groupdict():
+        if isinstance(match_obj.group("end"), str) and len(match_obj.group("end").strip()) > 0:
+            end = match_obj.group("end")
+
+    name = match_obj.group('name')
+    p = llm_prompt(name)
+    if not p or p is None:
+        return match_obj.group()
+
+    args = []
+
+    if "args" in match_obj.groupdict() and isinstance(match_obj.group("args"), str):
+        args = match_obj.group("args").split('|')
+        args = [_to_unquoted(arg) for arg in args]
+
+    if "cell_arg" in match_obj.groupdict() and isinstance(match_obj.group("cell_arg"), str):
+        args.append(match_obj.group("cell_arg"))
+
+    if "pointer" in match_obj.groupdict():
+        if len(messages) > 0:
+            if match_obj.group("pointer") == '^':
+                args.append(messages[-1])
+            elif match_obj.group("pointer") == '^^':
+                args.append(sep.join(messages))
+
+    if callable(p):
+        if len(args) < p.__code__.co_argcount:
+            args.extend([''] * (p.__code__.co_argcount - len(args)))
+        args = args[:p.__code__.co_argcount]
+        newPrompt = p(*args) + end
+    else:
+        newPrompt = p + end
+
+    return newPrompt
+
+
+# ===========================================================
+# Prompt expand
+# ===========================================================
+def llm_prompt_expand(spec, messages=[], sep='\n'):
+    res = re.sub(_pmt_persona, lambda x: prompt_function_spec(x, "persona", messages, sep), spec)
+    res = re.sub(_pmt_function_prior, lambda x: prompt_function_spec(x, "function_prior", messages, sep), res)
+    res = re.sub(_pmt_function, lambda x: prompt_function_spec(x, "function", messages, sep), res)
+    res = re.sub(_pmt_function_cell, lambda x: prompt_function_spec(x, "function_cell", messages, sep), res)
+    res = re.sub(_pmt_modifier, lambda x: prompt_function_spec(x, "modifier", messages, sep), res)
+
+    return res
