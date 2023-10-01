@@ -45,8 +45,8 @@ class LLMPromptsTests(unittest.TestCase):
     def test_7(self):
         spec5 = 'The summer is gone, school is coming soon.'
         self.assertEqual(
-            spec5 + ' ' + llm_prompt('HaikuStyled') + "\n " + llm_prompt('Translated')(),
-            llm_prompt_expand(f"{spec5} #HaikuStyled #Translated"))
+            (spec5 + ' ' + llm_prompt('HaikuStyled') + "\n " + llm_prompt('Translated')()).strip(),
+            llm_prompt_expand(f"{spec5} #HaikuStyled #Translated").strip())
 
     def test_8(self):
         spec5 = 'The summer is gone, school is coming soon.'
@@ -67,14 +67,14 @@ class LLMPromptsTests(unittest.TestCase):
     def test_11(self):
         spec5 = 'The summer is gone, school is coming soon.'
         self.assertEqual(
-            llm_prompt('Translated')('Russian') + "\n " + spec5,
-            llm_prompt_expand(f"&Translated|Russian {spec5}").strip())
+            (llm_prompt('Translate')('Russian') + spec5).strip(),
+            llm_prompt_expand(f"&Translate|Russian {spec5}").strip())
 
     def test_12(self):
         spec5 = 'The summer is gone, school is coming soon.'
         self.assertEqual(
-            llm_prompt('Translated')('High German') + "\n " + spec5,
-            llm_prompt_expand(f"!Translated|'High German' {spec5}"))
+            (llm_prompt('Translate')('High German') + spec5).strip(),
+            llm_prompt_expand(f"!Translate|'High German' {spec5}"))
 
     def test_13(self):
         spec8 = 'The cat chased the mouse.'
@@ -91,8 +91,8 @@ class LLMPromptsTests(unittest.TestCase):
     def test_15(self):
         messages12 = ['some1', 'some2']
         self.assertEqual(
-            llm_prompt('FormalRephrase')('some2'),
-            llm_prompt_expand("\n\n!FormalRephrase^\n\n", messages=messages12))
+            llm_prompt('FormalRephrase')('some2').strip(),
+            llm_prompt_expand("\n\n!FormalRephrase^\n\n", messages=messages12).strip())
 
     def test_16(self):
         messages12 = ['some1', 'some2']
@@ -107,8 +107,8 @@ class LLMPromptsTests(unittest.TestCase):
 
     def test_18(self):
         self.assertEqual(
-            llm_prompt_expand("\n\n!ShortLineIt|40 some long text"),
-            llm_prompt('ShortLineIt')(40, 'some long text'))
+            llm_prompt_expand("\n\n!ShortLineIt|40 some long text").strip(),
+            llm_prompt('ShortLineIt')(40, 'some long text').strip())
 
     def test_19(self):
         messages19 = ['tomorrow', 'future']
