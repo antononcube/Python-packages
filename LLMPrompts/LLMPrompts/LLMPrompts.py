@@ -1,9 +1,7 @@
 import random
 from pathlib import Path
 from typing import Optional
-
-import pandas
-import xdg
+import inspect
 import pkg_resources
 import json
 import re
@@ -311,7 +309,7 @@ def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
             end = match_obj.group("end")
 
     name = match_obj.group('name')
-    p = llm_prompt(name)
+    p = llm_prompt(name, warn=False)
     if not p or p is None:
         return match_obj.group()
 
@@ -332,8 +330,16 @@ def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
                 args.append(sep.join(messages))
 
     if callable(p):
+
+        sig = inspect.signature(p)
+        params = sig.parameters
+
         if len(args) < p.__code__.co_argcount:
-            args.extend([''] * (p.__code__.co_argcount - len(args)))
+           #args.extend([''] * (p.__code__.co_argcount - len(args)))
+           for name, param in list(params.items())[len(args):]:
+               if param.default is inspect.Parameter.empty:
+                   args.append('')
+
         args = args[:p.__code__.co_argcount]
         newPrompt = p(*args) + end
     else:
