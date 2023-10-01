@@ -253,7 +253,7 @@ _pmt_function_cell_pattern = r"""
         )?                                     # End of the optional arguments group
         \|?
     )?
-    (?:\s+|>)?
+    (?P<cell_arg_sep>\s+|\>)?
     (?P<cell_arg>.+)$
 """
 _pmt_function_cell_pattern2 = _pmt_function_cell_pattern.format(_pmt_args_pattern)
@@ -269,7 +269,7 @@ _pmt_function_prior_pattern = r"""
         )?                                     # End of the optional arguments group
         \|?
     )?
-    (?P<pointer>\^+)$
+    (?P<pointer>\^+)\s*$
 """
 
 _pmt_function_prior_pattern2 = _pmt_function_prior_pattern.format(_pmt_args_pattern)
@@ -297,20 +297,11 @@ def _to_unquoted(ss):
 
 # ----------------------------------------------------------
 def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
-    # for parser in [(_pmt_persona, "persona"),
-    #                (_pmt_function_prior, "function_prior"),
-    #                (_pmt_function_cell, "function_cell"),
-    #                (_pmt_function, "function"),
-    #                (_pmt_modifier, "modifier")]:
-    #     match_obj = parser[0].match(matchObject)
-    #     if match_obj:
-    #         matched_with = parser[1]
-    #         break
 
     if not match_obj or match_obj.span()[1] == 0:
         return match_obj.group()
 
-    print(match_obj.groupdict())
+    #print(match_obj.groupdict())
 
     end = sep
     if matched_with in ["function_prior", "function_cell"]:
@@ -333,7 +324,10 @@ def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
     if "cell_arg" in match_obj.groupdict() and isinstance(match_obj.group("cell_arg"), str):
         args.append(match_obj.group("cell_arg"))
 
-    if "pointer" in match_obj.groupdict():
+    # if "cell_arg_sep" in match_obj.groupdict() and isinstance(match_obj.group("cell_arg_sep"), str):
+    #     print("HERE :", match_obj.group("cell_arg_sep"))
+
+    if "pointer" in match_obj.groupdict() and isinstance(match_obj.group('pointer'), str):
         if len(messages) > 0:
             if match_obj.group("pointer") == '^':
                 args.append(messages[-1])
