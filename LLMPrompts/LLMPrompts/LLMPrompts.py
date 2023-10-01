@@ -294,7 +294,7 @@ def _to_unquoted(ss):
 
 
 # ----------------------------------------------------------
-def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
+def _prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
 
     if not match_obj or match_obj.span()[1] == 0:
         return match_obj.group()
@@ -330,15 +330,17 @@ def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
                 args.append(sep.join(messages))
 
     if callable(p):
-
-        sig = inspect.signature(p)
-        params = sig.parameters
-
         if len(args) < p.__code__.co_argcount:
-           #args.extend([''] * (p.__code__.co_argcount - len(args)))
-           for name, param in list(params.items())[len(args):]:
-               if param.default is inspect.Parameter.empty:
-                   args.append('')
+            # Get function's signature and parameters
+            sig = inspect.signature(p)
+            params = sig.parameters
+
+            # The first naive "solution":
+            # args.extend([''] * (p.__code__.co_argcount - len(args)))
+
+            for name, param in list(params.items())[len(args):]:
+                if param.default is inspect.Parameter.empty:
+                    args.append('')
 
         args = args[:p.__code__.co_argcount]
         newPrompt = p(*args) + end
@@ -352,10 +354,10 @@ def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
 # Prompt expand
 # ===========================================================
 def llm_prompt_expand(spec, messages=[], sep='\n'):
-    res = re.sub(_pmt_persona, lambda x: prompt_function_spec(x, "persona", messages, sep), spec)
-    res = re.sub(_pmt_function_prior, lambda x: prompt_function_spec(x, "function_prior", messages, sep), res)
-    res = re.sub(_pmt_function_cell, lambda x: prompt_function_spec(x, "function_cell", messages, sep), res)
-    res = re.sub(_pmt_function, lambda x: prompt_function_spec(x, "function", messages, sep), res)
-    res = re.sub(_pmt_modifier, lambda x: prompt_function_spec(x, "modifier", messages, sep), res)
+    res = re.sub(_pmt_persona, lambda x: _prompt_function_spec(x, "persona", messages, sep), spec)
+    res = re.sub(_pmt_function_prior, lambda x: _prompt_function_spec(x, "function_prior", messages, sep), res)
+    res = re.sub(_pmt_function_cell, lambda x: _prompt_function_spec(x, "function_cell", messages, sep), res)
+    res = re.sub(_pmt_function, lambda x: _prompt_function_spec(x, "function", messages, sep), res)
+    res = re.sub(_pmt_modifier, lambda x: _prompt_function_spec(x, "modifier", messages, sep), res)
 
     return res
