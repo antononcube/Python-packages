@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LLMPrompts",
-    version="0.1.1",
+    version="0.1.2",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Facilitating the creation, storage, retrieval, and curation of LLM prompts.",
