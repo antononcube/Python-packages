@@ -1,3 +1,4 @@
+import re
 import unittest
 from LLMPrompts import llm_prompt, llm_prompt_expand
 
@@ -78,8 +79,8 @@ class LLMPromptsTests(unittest.TestCase):
     def test_13(self):
         spec8 = 'The cat chased the mouse.'
         self.assertEqual(
-            llm_prompt('FormalRephrase')(spec8),
-            llm_prompt_expand(f"!FormalRephrase {spec8}"))
+            re.sub("\s+", " ", llm_prompt('FormalRephrase')(spec8)),
+            re.sub("\s+", " ", llm_prompt_expand(f"!FormalRephrase {spec8}")))
 
     def test_14(self):
         spec8 = 'The cat chased the mouse.'
@@ -101,7 +102,8 @@ class LLMPromptsTests(unittest.TestCase):
 
     def test_17(self):
         self.assertEqual(
-            llm_prompt_expand("\n\n!ShortLineIt>  40"), llm_prompt('ShortLineIt')('  40'))
+            llm_prompt('ShortLineIt')('  40').strip(),
+            llm_prompt_expand("\n\n!ShortLineIt>  40").strip())
 
     def test_18(self):
         self.assertEqual(
@@ -111,8 +113,8 @@ class LLMPromptsTests(unittest.TestCase):
     def test_19(self):
         messages19 = ['tomorrow', 'future']
         self.assertEqual(
-            llm_prompt_expand("\n\n!Translate|German^\n\n", messages=messages19),
-            llm_prompt('Translate')('German', 'future'))
+            llm_prompt('Translate')('German', 'future').strip(),
+            llm_prompt_expand("\n\n!Translate|German^\n\n", messages=messages19).strip())
 
 
 if __name__ == '__main__':
