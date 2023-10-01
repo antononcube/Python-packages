@@ -237,7 +237,7 @@ _pmt_gen_pattern = r"""
 
 _pmt_persona_pattern = _pmt_gen_pattern.format("^\s*@", _pmt_args_pattern)
 _pmt_modifier_pattern = _pmt_gen_pattern.format("\\#", _pmt_args_pattern)
-_pmt_function_pattern = _pmt_gen_pattern.format("!", _pmt_args_pattern)
+_pmt_function_pattern = _pmt_gen_pattern.format("[!|&]", _pmt_args_pattern)
 
 _pmt_persona = re.compile(_pmt_persona_pattern, re.VERBOSE)
 _pmt_modifier = re.compile(_pmt_modifier_pattern, re.VERBOSE)
@@ -245,7 +245,7 @@ _pmt_function = re.compile(_pmt_function_pattern, re.VERBOSE)
 
 # ----------------------------------------------------------
 _pmt_function_cell_pattern = r"""
-    !(?P<name>\w+)                             # @ followed by a word
+    [!|&](?P<name>\w+)                             # @ followed by a word
     (?:                                        # Start of the optional arguments group
         \|                                     # Matches a "|"
         (?P<args>
@@ -253,7 +253,7 @@ _pmt_function_cell_pattern = r"""
         )?                                     # End of the optional arguments group
         \|?
     )?
-    (?P<cell_arg_sep>\s+|\>)?
+    (?P<cell_arg_sep>\s+|>)?
     (?P<cell_arg>.+)$
 """
 _pmt_function_cell_pattern2 = _pmt_function_cell_pattern.format(_pmt_args_pattern)
@@ -261,7 +261,7 @@ _pmt_function_cell = re.compile(_pmt_function_cell_pattern2, re.VERBOSE)
 
 # ----------------------------------------------------------
 _pmt_function_prior_pattern = r"""
-    !(?P<name>\w+)                             # @ followed by a word
+    [!|&](?P<name>\w+)                             # @ followed by a word
     (?:                                        # Start of the optional arguments group
         \|                                     # Matches a "|"
         (?P<args>
@@ -278,8 +278,8 @@ _pmt_function_prior = re.compile(_pmt_function_prior_pattern2, re.VERBOSE)
 # ----------------------------------------------------------
 _pmt_any_pattern = (r"(?:" + _pmt_persona.pattern + r"|"
                     + _pmt_function_prior.pattern + r"|"
-                    + _pmt_function.pattern + r"|"
                     + _pmt_function_cell.pattern + r"|"
+                    + _pmt_function.pattern + r"|"
                     + _pmt_modifier.pattern + r")")
 
 
@@ -324,9 +324,6 @@ def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
     if "cell_arg" in match_obj.groupdict() and isinstance(match_obj.group("cell_arg"), str):
         args.append(match_obj.group("cell_arg"))
 
-    # if "cell_arg_sep" in match_obj.groupdict() and isinstance(match_obj.group("cell_arg_sep"), str):
-    #     print("HERE :", match_obj.group("cell_arg_sep"))
-
     if "pointer" in match_obj.groupdict() and isinstance(match_obj.group('pointer'), str):
         if len(messages) > 0:
             if match_obj.group("pointer") == '^':
@@ -351,8 +348,8 @@ def prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
 def llm_prompt_expand(spec, messages=[], sep='\n'):
     res = re.sub(_pmt_persona, lambda x: prompt_function_spec(x, "persona", messages, sep), spec)
     res = re.sub(_pmt_function_prior, lambda x: prompt_function_spec(x, "function_prior", messages, sep), res)
-    res = re.sub(_pmt_function, lambda x: prompt_function_spec(x, "function", messages, sep), res)
     res = re.sub(_pmt_function_cell, lambda x: prompt_function_spec(x, "function_cell", messages, sep), res)
+    res = re.sub(_pmt_function, lambda x: prompt_function_spec(x, "function", messages, sep), res)
     res = re.sub(_pmt_modifier, lambda x: prompt_function_spec(x, "modifier", messages, sep), res)
 
     return res
