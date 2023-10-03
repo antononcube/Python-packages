@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LLMFunctionObjects",
-    version="0.1.3",
+    version="0.1.4",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Large Language Models (LLMs) functions package.",
