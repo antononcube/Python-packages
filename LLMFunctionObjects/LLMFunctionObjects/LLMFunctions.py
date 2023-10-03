@@ -70,6 +70,7 @@ def llm_configuration(spec, **kwargs):
 
         # Set key
         apiKey = os.environ.get("PALM_API_KEY")
+        apiKey = kwargs.get("api_key", apiKey)
         google.generativeai.configure(api_key=apiKey)
 
         # Configuration
