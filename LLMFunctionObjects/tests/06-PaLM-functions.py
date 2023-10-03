@@ -24,6 +24,16 @@ class PaLMExamFuncs(unittest.TestCase):
 
         self.assertTrue(isinstance(rs1, str))
 
+    def test_func1(self):
+        palm_api_key = os.getenv("PALM_API_KEY")
+
+        confPaLM = llm_configuration("PaLM", api_key=palm_api_key)
+
+        text = llm_function('', e=llm_configuration(confPaLM, max_tokens=500))("What is Boris Brejcha's bio and discography?")
+        #print(text)
+
+        self.assertTrue(isinstance(text, str))
+
 
 if __name__ == '__main__':
     unittest.main()
