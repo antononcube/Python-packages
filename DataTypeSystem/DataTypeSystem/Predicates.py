@@ -62,6 +62,12 @@ def is_key_hash_pair(p) -> bool:
     return False
 
 
+def is_array_of_arrays(arr) -> bool:
+    if isinstance(arr, list):
+        return all(isinstance(item, list) for item in arr)
+    return False
+
+
 def is_array_of_hashes(arr) -> bool:
     if isinstance(arr, list):
         return all(isinstance(item, dict) for item in arr)
