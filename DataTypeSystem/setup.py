@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="DataTypeSystem",
-    version="0.1.0",
+    version="0.1.1",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Data type system for different data structures (arrays, lists of dictionaries, etc.).",
