@@ -38,7 +38,7 @@ class Examiner:
         elif is_hash_of_hashes(data):
             types = {k: self.record_types(v) for k, v in data.items()}
         elif isinstance(data, list):
-            types = {type(x) for x in data}
+            types = [type(x) for x in data]
         elif isinstance(data, dict):
             types = {k: type(v) for k, v in data.items()}
         else:
