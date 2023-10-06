@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LLMPrompts",
-    version="0.1.3",
+    version="0.1.4",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Facilitating the creation, storage, retrieval, and curation of LLM prompts.",
@@ -23,7 +23,9 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
     ],
-    keywords=["prompt", "prompts", "large language model", "large language models", "llm"],
+    keywords=["openai", "chatgpt", "palm", "prompt", "prompts",
+              "large language model", "large language models",
+              "llm", "llm prompt", "llm prompts"],
     package_data={'': ['resources/*.json']},
     python_requires='>=3.7',
 )
