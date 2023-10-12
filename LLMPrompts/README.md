@@ -1,5 +1,9 @@
 # LLMPrompts Python package
 
+![PyPI](https://img.shields.io/pypi/v/LLMPrompts?label=pypi%20LLMPrompts)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/LLMPrompts)
+
+
 ## In brief
 
 This Python package provides data and functions for facilitating the creation, storage, retrieval, and curation of 
