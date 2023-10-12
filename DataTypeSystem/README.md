@@ -1,7 +1,10 @@
 # DataTypeSystem
 
+![PyPI](https://img.shields.io/pypi/v/DataTypeSystem?label=pypi%20DataTypeSystem)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/DataTypeSystem)
+
 This Python package provides a type system for different data structures that are 
-coercible to full arrays. It is Python translation of the code of the Raku package
+coercible to full arrays. It is a Python translation of the code of the Raku package
 ["Data::TypeSystem"](https://raku.land/zef:antononcube/Data::TypeSystem), [AAp1].
 
 ------
