@@ -1,5 +1,8 @@
 # Random Mandala Python package
 
+![PyPI](https://img.shields.io/pypi/v/RandomMandala?label=pypi%20RandomMandala)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/RandomMandala)
+
 ***Anton Antonov***    
 [Python-packages at GitHub/antononcube](https://github.com/antononcube/Python-packages)   
 ***November 2021***    

@@ -1,5 +1,8 @@
 # Random Data Generators Python package
 
+![PyPI](https://img.shields.io/pypi/v/RandomDataGenerators?label=pypi%20RandomDataGenerators)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/RandomDataGenerators)
+
 ## Introduction
 
 This Python package has functions for generating random strings, words,

@@ -1,5 +1,8 @@
 # Sparse matrices with named rows and columns
 
+![PyPI](https://img.shields.io/pypi/v/SSparseMatrix?label=pypi%20SSparseMatrix)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/SSparseMatrix)
+
 ## Introduction
 
 This Python package provides the class `SSparseMatrix` the objects of which are sparse matrices with named rows and columns.

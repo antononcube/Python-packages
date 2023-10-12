@@ -1,5 +1,8 @@
 # ChernoffFace Python package
 
+![PyPI](https://img.shields.io/pypi/v/ChernoffFace?label=pypi%20ChernoffFace)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/ChernoffFace)
+
 ## Introduction
 
 This Python package implements the function `chernoff_face` that
