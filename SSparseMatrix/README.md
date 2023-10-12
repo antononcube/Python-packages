@@ -3,6 +3,12 @@
 ![PyPI](https://img.shields.io/pypi/v/SSparseMatrix?label=pypi%20SSparseMatrix)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/SSparseMatrix)
 
+PePy:   
+[![Downloads](https://static.pepy.tech/badge/SSparseMatrix)](https://pepy.tech/project/SSparseMatrix)
+[![Downloads](https://static.pepy.tech/badge/SSparseMatrix/month)](https://pepy.tech/project/SSparseMatrix)
+[![Downloads](https://static.pepy.tech/badge/SSparseMatrix/week)](https://pepy.tech/project/SSparseMatrix)
+
+
 ## Introduction
 
 This Python package provides the class `SSparseMatrix` the objects of which are sparse matrices with named rows and columns.
