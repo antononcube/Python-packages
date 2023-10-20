@@ -1,5 +1,6 @@
 import math
 import pickle
+import warnings
 from typing import Union, Optional
 
 import nimfa
@@ -389,6 +390,14 @@ class LatentSemanticAnalyzer:
             self.set_method("SVD")
 
         elif method.lower() in set([x.lower() for x in ["NMF", "NNMF", "NonNegativeMatrixFactorization"]]):
+
+            minSMat = min(smat.sparse_matrix().data)
+            maxSMat = max(smat.sparse_matrix().data)
+
+            if minSMat < 0:
+                warnings.warn("The weighted document term matrix has negative elements. " +
+                              "Continuing by clipping negative elements (in order to apply NNMF.)")
+                smat = smat.clip(0, maxSMat)
 
             nmf = nimfa.Lsnmf(V=smat.sparse_matrix(),
                               seed='random_vcol',
