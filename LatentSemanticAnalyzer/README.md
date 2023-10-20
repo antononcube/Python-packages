@@ -62,6 +62,11 @@ import snowballstemmer
 # Collection of texts
 dfAbstracts = load_abstracts_data_frame()
 docs = dict(zip(dfAbstracts.ID, dfAbstracts.Abstract))
+print(len(docs))
+
+# Remove non-strings
+docs2 = { k:v for k, v in docs.items() if isinstance(v, str) }
+print(len(docs2))
 
 # Stemmer object (to preprocess words in the pipeline below)
 stemmerObj = snowballstemmer.stemmer("english")
@@ -74,7 +79,7 @@ random.seed(12)
 
 # LSA pipeline
 lsaObj = (LatentSemanticAnalyzer()
-          .make_document_term_matrix(docs=docs,
+          .make_document_term_matrix(docs=docs2,
                                      stop_words=True,
                                      stemming_rules=True,
                                      min_length=3)
