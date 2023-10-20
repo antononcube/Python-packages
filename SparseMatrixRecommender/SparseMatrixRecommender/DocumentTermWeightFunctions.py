@@ -28,11 +28,9 @@ def global_term_function_weights(doc_term_matrix, func="None"):
     """Find the global term function weights for a specified SSparseMatrix object and function name."""
     if not isinstance(doc_term_matrix, SSparseMatrix):
         raise TypeError("The argument docTermMat is expected to be a SSparseMatrix object.")
-        return None
 
     if not isinstance(func, str):
         raise TypeError("The argument func is expected to be a string.")
-        return None
 
     mat = doc_term_matrix.copy()
 
@@ -91,13 +89,10 @@ def global_term_function_weights(doc_term_matrix, func="None"):
         return globalWeights
 
     elif func.lower() == "Entropy".lower():
-
         raise TypeError("Global weight function Entropy is not implemented.")
-        return None
 
     else:
         raise TypeError("Unknown global weight function specification for the argument func.")
-        return None
 
     # Should not be reached
     return globalWeights
@@ -110,15 +105,12 @@ def apply_term_weight_functions(doc_term_matrix,
     """Apply specified LSI functions to the entries of SSparseMatrix object."""
     if not isinstance(doc_term_matrix, SSparseMatrix):
         raise TypeError("The argument docTermMat is expected to be a SSparseMatrix object.")
-        return None
 
     if not isinstance(local_weight_func, str):
         raise TypeError("The argument local_weight_func is expected to be a string.")
-        return None
 
     if not isinstance(normalizer_func, str):
         raise TypeError("The argument normalizer_func is expected to be a string.")
-        return None
 
     # Global weights set-up.
     if isinstance(global_weight_func, str):
@@ -128,7 +120,6 @@ def apply_term_weight_functions(doc_term_matrix,
     else:
         raise TypeError("""The argument global_weight_func is expected to be a string 
         or a numeric vector with length that equals docTermMat.columns_count()""")
-        return None
 
     # Make local copy
     mat = doc_term_matrix.copy()
@@ -144,7 +135,6 @@ def apply_term_weight_functions(doc_term_matrix,
     elif not (local_weight_func.lower() == "TermFrequency".lower() or local_weight_func.lower() == "None".lower()):
         # There is nothing to be done if local_weight_func is "None" or "TermFrequency".
         raise TypeError("Unknown local weight function specification for the argument local_weight_func.")
-        return None
 
     # Multiply with the global weights
     diagMat = scipy.sparse.diags(diagonals=[globalWeights], offsets=[0])
@@ -181,7 +171,6 @@ def apply_term_weight_functions(doc_term_matrix,
     elif normalizer_func.lower() != "None".lower():
         # There is nothing to be done if normalizer_func is "None".
         raise TypeError("Unknown local weight function specification for the argument normalizer_func.")
-        return None
 
     # Result
     return mat
