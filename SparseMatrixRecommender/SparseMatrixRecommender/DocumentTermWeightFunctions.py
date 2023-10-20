@@ -40,7 +40,20 @@ def global_term_function_weights(doc_term_matrix, func="None"):
 
         mat.unitize()
         globalWeights = mat.column_sums()
-        globalWeights = [math.log(mat.rows_count() / (1.0 + x), 2) for x in globalWeights]
+        globalWeights2 = []
+        for x in globalWeights:
+            if x > 0:
+                globalWeights2.append(math.log(mat.rows_count() / x, 2))
+            else:
+                globalWeights2.append(1)
+
+        return globalWeights2
+
+    elif func.lower() == "IDF_smooth".lower():
+
+        mat.unitize()
+        globalWeights = mat.column_sums()
+        globalWeights = [math.log(mat.rows_count() / (1.0 + x), 2) + 1 for x in globalWeights]
 
         return globalWeights
 
