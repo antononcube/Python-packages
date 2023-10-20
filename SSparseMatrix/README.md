@@ -14,9 +14,11 @@ PePy:
 This Python package provides the class `SSparseMatrix` the objects of which are sparse matrices with named rows and columns.
 
 We can say the package attempts to cover as many as possible of the functionalities for 
-sparse matrix objects that are provided by R’s library [Matrix](http://matrix.r-forge.r-project.org). ([R](https://en.wikipedia.org/wiki/R_(programming_language)) is a implementation of [S](https://en.wikipedia.org/wiki/S_(programming_language)). S introduced named data structures for statistical computations, [RB1], hence the name `SSparseMatrix`.)
+sparse matrix objects that are provided by R’s library [Matrix](http://matrix.r-forge.r-project.org). ([R](https://en.wikipedia.org/wiki/R_(programming_language)) is a implementation of [S](https://en.wikipedia.org/wiki/S_(programming_language)). 
+S introduced named data structures for statistical computations, [RB1], hence the name `SSparseMatrix`.)
 
-The package builds on top of the [`scipy` sparse matrices](https://scipy.github.io/devdocs/reference/sparse.html). (The added functionalities though are general -- other sparse matrix implementations could be used.)
+The package builds on top of the [`scipy` sparse matrices](https://scipy.github.io/devdocs/reference/sparse.html). 
+(The added functionalities though are general -- other sparse matrix implementations could be used.)
 
 Here is a list of functionalities provided for `SSparseMatrix`:
 
@@ -50,9 +52,13 @@ file
 
 This package more or less follows the design of the
 Mathematica package
-[SSparseMatrix.m](https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m).
+[SSparseMatrix.m](https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m), [AAp1], and the corresponding paclet [AAp3].
 
 The usage examples below can be also run through the file ["examples.py"](./examples.py).
+
+**Remark:** The functionalities provided by package, "SSparseMatrix", are fundamental for the packages
+["SparseMatrixRecommender"](https://pypi.org/project/SparseMatrixRecommender/), [AAp4], and
+["LatentSemanticAnalyzer"](https://pypi.org/project/LatentSemanticAnalyzer/), [AAp5].
 
 ### Usage in other packages
 
@@ -641,4 +647,19 @@ Similar unit tests are given in [AAp2].
 [SSparseMatrix Mathematica unit tests](https://github.com/antononcube/MathematicaForPrediction/blob/master/UnitTests/SSparseMatrix-tests.wlt),
 (2018),
 [MathematicaForPrediction at GitHub](https://github.com/antononcube/MathematicaForPrediction).
+
+[AAp3] Anton Antonov,
+[SSparseMatrix WL paclet](https://resources.wolframcloud.com/PacletRepository/resources/AntonAntonov/SSparseMatrix/),
+(2023),
+[Wolfram Language Paclet Repository](https://resources.wolframcloud.com/PacletRepository/).
+
+[AAp4] Anton Antonov,
+[SparseMatrixRecommender Python package](https://pypi.org/project/SparseMatrixRecommender/),
+(2021),
+[PyPI.org/antononcube](https://pypi.org/user/antononcube/).
+
+[AAp4] Anton Antonov,
+[LatentSemanticAnalyzer Python package](https://pypi.org/project/LatentSemanticAnalyzer/),
+(2021),
+[PyPI.org/antononcube](https://pypi.org/user/antononcube/).
 
