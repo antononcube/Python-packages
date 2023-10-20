@@ -52,24 +52,22 @@ file
 
 This package more or less follows the design of the
 Mathematica package
-[SSparseMatrix.m](https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m), [AAp1], and the corresponding paclet [AAp3].
+["SSparseMatrix."m"](https://github.com/antononcube/MathematicaForPrediction/blob/master/SSparseMatrix.m), [AAp1], and the corresponding paclet 
+["SSparseMatrix"](https://resources.wolframcloud.com/PacletRepository/resources/AntonAntonov/SSparseMatrix/), [AAp3].
 
 The usage examples below can be also run through the file ["examples.py"](./examples.py).
 
-**Remark:** The functionalities provided by package, "SSparseMatrix", are fundamental for the packages
-["SparseMatrixRecommender"](https://pypi.org/project/SparseMatrixRecommender/), [AAp4], and
-["LatentSemanticAnalyzer"](https://pypi.org/project/LatentSemanticAnalyzer/), [AAp5].
-
 ### Usage in other packages
 
-The class `SSparseMatrix` is foundational in the packages
-[SparseMatrixRecommender](https://github.com/antononcube/Python-packages/tree/main/SparseMatrixRecommender)
+The functionalities provided by "SSparseMatrix" (its class `SSparseMatrix`) 
+are fundamental for the packages
+["SparseMatrixRecommender"](https://github.com/antononcube/Python-packages/tree/main/SparseMatrixRecommender), [AAp4]
 and
-[LatentSemanticAnalyzer](https://github.com/antononcube/Python-packages/tree/main/LatentSemanticAnalyzer).
-(The implementation of those packages was one of the primary motivations to develop `SSparseMatrix`.)
+["LatentSemanticAnalyzer"](https://github.com/antononcube/Python-packages/tree/main/LatentSemanticAnalyzer). [AAp5],
+The implementation of those packages was one of the primary motivations to develop "SSparseMatrix".
 
 The package
-[RandomSparseMatrix](https://github.com/antononcube/Python-packages/tree/main/RandomSparseMatrix)
+["RandomSparseMatrix"](https://github.com/antononcube/Python-packages/tree/main/RandomSparseMatrix)
 can be used to generate random sparse matrices (`SSparseMatrix` objects.)
 
 ------
