@@ -3,12 +3,13 @@ from LLMFunctionObjects.LLMFunctions import llm_chat
 from LLMFunctionObjects.Chat import Chat
 
 
-class PaLMChats(unittest.TestCase):
+class ChatGPTChats(unittest.TestCase):
     prompt = """
     You are Yoda. 
     Respond to ALL inputs in the voice of Yoda from Star Wars. 
     Be sure to ALWAYS use his distinctive style and syntax. Vary sentence length.
     """
+
     def test_chat1(self):
         chatObj = llm_chat(self.prompt, conf="ChatGPT")
 
