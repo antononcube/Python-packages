@@ -30,7 +30,7 @@ def llm_configuration(spec, **kwargs):
             api_user_id='user',
             module='openai',
             model='gpt-3.5-turbo-instruct',  # was 'text-davinci-003'
-            function=openai.Completion.create,
+            function=openai.completions.create,  # was openai.Completion.create
             temperature=0.2,
             max_tokens=300,
             total_probability_cutoff=0.03,
@@ -52,7 +52,7 @@ def llm_configuration(spec, **kwargs):
                                         name="chatgpt",
                                         module='openai',
                                         model='gpt-3.5-turbo-0613',
-                                        function=openai.ChatCompletion.create,
+                                        function=openai.chat.completions.create,  # was openai.ChatCompletion.create,
                                         known_params=["api_key", "model", "messages", "functions", "function_call",
                                                       "temperature", "top_p", "n",
                                                       "stream", "logprobs", "stop", "presence_penalty",
