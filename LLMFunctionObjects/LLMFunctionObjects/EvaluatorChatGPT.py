@@ -13,9 +13,12 @@ class EvaluatorChatGPT(EvaluatorChat):
         # We convert them into records expected by OpenAI.
         # See https://platform.openai.com/docs/api-reference/chat/create?lang=python
         res_messages = []
-
         for d in messages:
             for k, v in d.items():
                 res_messages.append({"role": k, "content": v})
 
         return res_messages
+
+    def result_values(self, res):
+        resLocal = res.choices[0].message.content
+        return resLocal
