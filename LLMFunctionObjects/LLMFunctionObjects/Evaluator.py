@@ -1,11 +1,6 @@
-import pickle
-from collections.abc import Iterable
 from LLMFunctionObjects.Configuration import Configuration
 from LLMFunctionObjects.SubParser import SubParser
 from LLMFunctionObjects.SubParser import sub_parser
-from LLMFunctionObjects.SubParser import exact_parser
-import openai
-
 
 class Evaluator:
     conf: Configuration = None
@@ -52,6 +47,13 @@ class Evaluator:
             return spec
         else:
             return None
+
+    def result_values(self, res):
+        resLocal = res
+        if isinstance(self.conf.response_value_keys, list):
+            for k in self.conf.response_value_keys:
+                resLocal = resLocal[k]
+        return resLocal
 
     def post_process(self, res, form=None):
 
@@ -122,9 +124,7 @@ class Evaluator:
             res = getattr(res, self.conf.response_object_attribute)
 
         # Get result values
-        if isinstance(self.conf.response_value_keys, list):
-            for k in self.conf.response_value_keys:
-                res = res[k]
+        res = self.result_values(res)
 
         # Process the result
         return self.post_process(res, form=args.get('form', None))
@@ -134,15 +134,17 @@ class Evaluator:
     # ------------------------------------------------------------------
     def copy(self):
         """Deep copy."""
-        return pickle.loads(pickle.dumps(self, -1))
+        newObj = type(self)(conf=self.conf.copy(),
+                           formatron=self.formatron)
+        return newObj
 
     def __copy__(self):
         """Deep copy."""
-        return pickle.loads(pickle.dumps(self, -1))
+        return self.copy()
 
-    def __deepcopy__(self, memodict={}):
+    def __deepcopy__(self, **kwargs):
         """Deep copy."""
-        return pickle.loads(pickle.dumps(self, -1))
+        return self.copy()
 
     # ------------------------------------------------------------------
     # Representations
