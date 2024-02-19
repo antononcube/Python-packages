@@ -39,7 +39,7 @@ def llm_configuration(spec, **kwargs):
             stop_tokens=None,
             argument_renames={"stop_tokens": "stop"},
             fmt='values',
-            known_params=["api_key", "model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
+            known_params=["model", "prompt", "suffix", "max_tokens", "temperature", "top_p", "n", "stream",
                           "logprobs", "stop", "presence_penalty", "frequency_penalty", "best_of", "logit_bias",
                           "user"],
             response_value_keys=["choices", 0, "text"],
@@ -48,17 +48,24 @@ def llm_configuration(spec, **kwargs):
             confOpenAI = confOpenAI.combine(kwargs)
         return confOpenAI
     elif isinstance(spec, str) and spec.lower() == 'ChatGPT'.lower():
+
+        # Client and key
+        apiKey = os.environ.get("OPENAI_API_KEY")
+        apiKey = kwargs.get("api_key", apiKey)
+        client = openai.OpenAI(api_key=apiKey)
+
         confChatGPT = llm_configuration("openai",
                                         name="chatgpt",
                                         module='openai',
                                         model='gpt-3.5-turbo-0613',
-                                        function=openai.chat.completions.create,  # was openai.ChatCompletion.create,
-                                        known_params=["api_key", "model", "messages", "functions", "function_call",
+                                        function=client.chat.completions.create,  # was openai.ChatCompletion.create,
+                                        known_params=["model", "messages", "functions", "function_call",
                                                       "temperature", "top_p", "n",
                                                       "stream", "logprobs", "stop", "presence_penalty",
                                                       "frequency_penalty", "logit_bias",
                                                       "user"],
-                                        response_value_keys=["choices", 0, "message", "content"])
+                                        response_value_keys=[])
+
         if len(kwargs) > 0:
             confChatGPT = confChatGPT.combine(kwargs)
 
@@ -151,9 +158,20 @@ def llm_evaluator(spec, **args):
     # Default evaluator class
     evaluator_class = args.get('llm_evaluator_class', None)
     if evaluator_class is None:
-        evaluator_class = Evaluator
+        if isinstance(spec, Configuration):
+            if spec.name.lower() == "ChatGPT".lower():
+                evaluator_class = EvaluatorChatGPT
+            elif spec.name.lower() == "OpenAI".lower():
+                evaluator_class = Evaluator
+            elif spec.name.lower() == "PaLM".lower():
+                evaluator_class = EvaluatorChatPaLM
+            else:
+                raise ValueError(
+                    'Cannot automatically deduce llm_evaluator_class from the given configuration object.')
+        else:
+            evaluator_class = Evaluator
 
-    if evaluator_class is not Evaluator:
+    if not (evaluator_class is Evaluator or issubclass(evaluator_class, Evaluator)):
         raise ValueError(
             'The value of llm_evaluator_class is expected to be None or of type LLMFunctionObjects.Evaluator.')
 
