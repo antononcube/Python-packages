@@ -1,4 +1,5 @@
 import pickle
+from copy import deepcopy
 from typing import List, Callable, Union, Dict
 
 
@@ -107,15 +108,41 @@ class Configuration:
     # ------------------------------------------------------------------
     def copy(self):
         """Deep copy."""
-        return pickle.loads(pickle.dumps(self, -1))
+        newObj = type(self)(
+            name=self.name,
+            api_key=self.api_key,
+            api_user_id=self.api_user_id,
+            module=self.module,
+            model=self.model,
+            function=self.function,
+            temperature=self.temperature,
+            total_probability_cutoff=self.total_probability_cutoff,
+            max_tokens=self.max_tokens,
+            fmt=self.fmt,
+            prompts=self.prompts,
+            prompt_delimiter=self.prompt_delimiter,
+            stop_tokens=self.stop_tokens,
+            tools=self.tools,
+            tool_prompt=self.tool_prompt,
+            tool_request_parser=self.tool_request_parser,
+            tool_response_insertion_function=self.tool_response_insertion_function,
+            argument_renames=self.argument_renames,
+            evaluator=self.evaluator,
+            known_params=self.known_params,
+            response_object_attribute=self.response_object_attribute,
+            response_value_keys=self.response_value_keys,
+            llm_evaluator=self.llm_evaluator
+        )
+
+        return newObj
 
     def __copy__(self):
         """Deep copy."""
-        return pickle.loads(pickle.dumps(self, -1))
+        return self.copy()
 
-    def __deepcopy__(self, memodict={}):
+    def __deepcopy__(self, **kwargs):
         """Deep copy."""
-        return pickle.loads(pickle.dumps(self, -1))
+        return self.copy()
 
     def combine(self, conf):
         if isinstance(conf, Configuration):
