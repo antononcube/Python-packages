@@ -18,7 +18,7 @@ import warnings
 # ===========================================================
 def llm_configuration(spec, **kwargs):
     if spec is None:
-        return llm_configuration('openai', **kwargs)
+        return llm_configuration('chatgpt', **kwargs)
     elif isinstance(spec, Configuration):
         return spec.combine(kwargs)
     elif isinstance(spec, Evaluator):
@@ -169,7 +169,7 @@ def llm_evaluator(spec, **args):
                 raise ValueError(
                     'Cannot automatically deduce llm_evaluator_class from the given configuration object.')
         else:
-            evaluator_class = Evaluator
+            evaluator_class = EvaluatorChatGPT
 
     if not (evaluator_class is Evaluator or issubclass(evaluator_class, Evaluator)):
         raise ValueError(
@@ -184,7 +184,7 @@ def llm_evaluator(spec, **args):
     args_evlr = {**args_evlr, **fd}
 
     if spec is None:
-        return Evaluator(conf=llm_configuration(None, **args_conf), **args_evlr)
+        return evaluator_class(conf=llm_configuration(None, **args_conf), **args_evlr)
     elif isinstance(spec, str):
         return llm_evaluator(llm_configuration(spec), **args_evlr,
                              llm_evaluator_class=args.get('llm_evaluator_class', None))
