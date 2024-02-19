@@ -2,6 +2,7 @@ from LLMFunctionObjects.Configuration import Configuration
 from LLMFunctionObjects.SubParser import SubParser
 from LLMFunctionObjects.SubParser import sub_parser
 
+
 class Evaluator:
     conf: Configuration = None
     formatron = None
@@ -134,8 +135,7 @@ class Evaluator:
     # ------------------------------------------------------------------
     def copy(self):
         """Deep copy."""
-        newObj = type(self)(conf=self.conf.copy(),
-                           formatron=self.formatron)
+        newObj = type(self)(conf=self.conf.copy(), formatron=self.formatron)
         return newObj
 
     def __copy__(self):
