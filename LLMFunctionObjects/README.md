@@ -530,6 +530,9 @@ The LLM frameworks of OpenAI and Google are changed often, which produces proble
 Currently, for Google's PaLM the method "ChatPaLM" and the method "PaLM" does not.
 Note, that PaLM itself is being considered "legacy" by Google. (It is replaced with Gemini, or other.)
 
+Generally, speaking prefer using the "Chat" prefixed methods: "ChatGPT" and "ChatPaLM".
+(OpenAI does/did say that it "simple" text completion models are obsoleted.)
+
 --------
 
 ## References

@@ -5,7 +5,7 @@ print(120 * "=")
 # fPrompt = lambda x1, x2, x3: f'What is the {x1} if {x2} in {x3}?. Give the result as JSON object with name-value pairs.'
 # print(fPrompt("GDP", "top 10 countries", "2020"))
 
-fTxt = llm_function("What is the population of", e=llm_configuration("PaLM"))
+fTxt = llm_function("What is the population of", e=llm_configuration("ChatPaLM"))
 
 print(fTxt)
 
@@ -17,7 +17,7 @@ print(120 * "=")
 
 fPrompt = lambda x1, x2, x3: f'What is the {x1} if {x2} in {x3}?. Give the result as JSON object with name-value pairs.'
 
-fData = llm_function(fPrompt, form=sub_parser("JSON", drop=True), e=llm_configuration("OpenAI"))
+fData = llm_function(fPrompt, form=sub_parser("JSON", drop=True), e=llm_configuration("ChatGPT"))
 
 resData = fData("GDP", "top 10 countries", "2020", echo=False, max_tokens=600)
 
