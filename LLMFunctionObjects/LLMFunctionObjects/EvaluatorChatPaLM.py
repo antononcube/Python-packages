@@ -54,9 +54,18 @@ class EvaluatorChatPaLM(EvaluatorChat):
         for k, v in confDict['argument_renames'].items():
             args2[v] = args2.get(v, args2.get(k, None))
 
+        # Just in case make None object into strings
+        delim = confDict['prompt_delimiter']
+        if delim is None:
+            delim = "\n"
+
+        context = self.context
+        if context is None:
+            context = ""
+
         # Make the full prompt
-        fullPrompt = confDict['prompt_delimiter'].join(confDict['prompts'])
-        fullPrompt = confDict['prompt_delimiter'].join([fullPrompt, self.context])
+        fullPrompt = delim.join(confDict['prompts'])
+        fullPrompt = delim.join([fullPrompt, context])
 
         if echo:
             print(f'Full prompt: {fullPrompt}')
