@@ -19,7 +19,7 @@ def catch_by_pattern(p, s, converter=None, drop: bool = False):
 
 def numify_text(p, text, converter=None, drop: bool = False):
     res = []
-    repl_str = re.compile('^\d+$')
+    repl_str = re.compile(r'^\d+$')
     # t = r'\d+.?\d*'
     line = text.split()
     for word in line:
@@ -50,15 +50,24 @@ def extract_json_objects(text, decoder=JSONDecoder()):
             pos = match + 1
 
 
+def from_json(text):
+    res = text.replace("```json", "").replace("```", "").strip()
+    return json.loads(res)
+
+
 def jsonify_text(text, drop: bool = False):
     line_parts = []
-    for result in extract_json_objects(text):
+    textLocal = text
+    if drop:
+        textLocal = re.sub(r"^```json|```$", "", textLocal)
+    for result in extract_json_objects(textLocal):
         if isinstance(result, dict):  # got a JSON obj
             line_parts.append(result)
         elif not drop:  # got text/non-JSON-obj
             line_parts.append(result)
+    if len(line_parts) == 0:
+        return json.loads(textLocal)
     # (don't make that a list comprehension, quite un-readable)
-
     return line_parts
 
 
@@ -103,7 +112,7 @@ class SubParser:
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'number':
 
-            p = '[+|-]?[\d]+[_.\d]+|[\d]*[.][\d]+|[\d]+'
+            p = r'[+|-]?[\d]+[_.\d]+|[\d]*[.][\d]+|[\d]+'
             return numify_text(p=p, text=inpt, converter=float, drop=self.drop)
 
         elif isinstance(self.spec, str) and self.spec.lower() == 'json':
