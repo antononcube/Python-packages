@@ -211,7 +211,8 @@ def llm_evaluator(spec, **args):
 
         res.conf = conf
 
-        if 'formatron' in args_evlr:
+        # We are not overriding object's formatron in the specified formatron is None
+        if 'formatron' in args_evlr and args_evlr['formatron'] is not None:
             res.formatron = args_evlr['formatron']
 
         return res
