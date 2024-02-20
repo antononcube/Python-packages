@@ -128,7 +128,8 @@ class Evaluator:
         res = self.result_values(res)
 
         # Process the result
-        return self.post_process(res, form=args.get('form', None))
+        formatron = args.get('formatron', args.get('form', None))
+        return self.post_process(res, form=formatron)
 
     # ------------------------------------------------------------------
     # Copying
