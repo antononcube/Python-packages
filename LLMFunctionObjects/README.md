@@ -519,6 +519,19 @@ chat.print()
 
 --------
 
+## Potential and known problems
+
+The LLM frameworks of OpenAI and Google are changed often, which produces problems that are generally three types:
+
+- Implementation based on obsolete design of the corresponding Python packages for accessing LLMs
+- Obsolete models
+- Obsolete signatures
+
+Currently, for Google's PaLM the method "ChatPaLM" and the method "PaLM" does not.
+Note, that PaLM itself is being considered "legacy" by Google. (It is replaced with Gemini, or other.)
+
+--------
+
 ## References
 
 ### Articles
