@@ -233,7 +233,7 @@ _pmt_gen_pattern = r"""
     (?P<end>$)?
 """
 
-_pmt_persona_pattern = _pmt_gen_pattern.format("^\s*@", _pmt_args_pattern)
+_pmt_persona_pattern = _pmt_gen_pattern.format("^\\s*@", _pmt_args_pattern)
 _pmt_modifier_pattern = _pmt_gen_pattern.format("\\#", _pmt_args_pattern)
 _pmt_function_pattern = _pmt_gen_pattern.format("[!|&]", _pmt_args_pattern)
 
