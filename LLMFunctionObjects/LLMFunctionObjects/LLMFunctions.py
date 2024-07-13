@@ -57,7 +57,7 @@ def llm_configuration(spec, **kwargs):
         confChatGPT = llm_configuration("openai",
                                         name="chatgpt",
                                         module='openai',
-                                        model='gpt-3.5-turbo-0613',
+                                        model='gpt-3.5-turbo',
                                         function=client.chat.completions.create,  # was openai.ChatCompletion.create,
                                         known_params=["model", "messages", "functions", "function_call",
                                                       "temperature", "top_p", "n",
