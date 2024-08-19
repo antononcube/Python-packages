@@ -23,7 +23,7 @@ class QuantileRegression:
     def validate_inputs(self, funcs, probs):
         if not (isinstance(self.data, np.ndarray) and self.data.shape[1] >= 2):
             raise ValueError(
-                "The first argument is expected to be a matrix of numbers with two columns, a numeric vector, or a time series.")
+                "The data argument is expected to be a matrix of numbers with two columns, a numeric vector, or a time series.")
         if len(funcs) < 1:
             raise ValueError(
                 "The second argument is expected to be list of functions to be fitted with at least one element.")
@@ -168,17 +168,14 @@ class QuantileRegression:
 def quantile_regression_fit(data, funcs, probs):
     if isinstance(data, (list, np.ndarray)) and len(data) > 0 and isinstance(data[0], (int, float)):
         data = np.column_stack((np.arange(len(data)), data))
-    elif hasattr(data, 'Path'):
-        data = np.array(data.Path)
 
-    qrf = QuantileRegression(data).quantile_regression_fit(funcs, probs)
+    qrf = QuantileRegression(data).quantile_regression_fit(funcs=funcs, probs=probs)
     return qrf.regression_quantiles
 
-def quantile_regression(data, knots, probs = None, order :int = 3):
+
+def quantile_regression(data, knots, probs=None, order: int = 3):
     if isinstance(data, (list, np.ndarray)) and len(data) > 0 and isinstance(data[0], (int, float)):
         data = np.column_stack((np.arange(len(data)), data))
-    elif hasattr(data, 'Path'):
-        data = np.array(data.Path)
 
-    qrf = QuantileRegression(data).quantile_regression(knots, probs = probs, order = order)
+    qrf = QuantileRegression(data).quantile_regression(knots=knots, probs=probs, order=order)
     return qrf.regression_quantiles
