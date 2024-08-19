@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="QuantileRegression",
-    version="0.1.1",
+    version="0.1.2",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="QuantileRegression package based on SciPy optimization routines.",
