@@ -60,5 +60,14 @@ class QuantileRegressionFit(unittest.TestCase):
                         len(q_funcs) == len(probs) and
                         all(isinstance(f(12), float) for f in q_funcs), "test_quantile_regression_fit_4")
 
+    def test_quantile_regression_fit_separation_1(self):
+        probs = np.arange(0.2, 1.0, 0.2)
+        funcs = [(lambda x, i=i: np.cos(x * i)) for i in range(17)]
+        q_funcs = quantile_regression_fit(data = self.dist_data2,
+                                          funcs = funcs,
+                                          probs = probs)
+        sep_tests = [test_approx_under_fraction(q_funcs[i], data = self.dist_data2, frac= probs[i], tol = 0.03) for i in range(len(probs))]
+        self.assertTrue(all(sep_tests), "test_quantile_regression_fit-separation-1")
+
 if __name__ == '__main__':
     unittest.main()
