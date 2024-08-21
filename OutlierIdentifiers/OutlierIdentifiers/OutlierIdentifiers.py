@@ -36,8 +36,9 @@ def splus_quartile_identifier_parameters(data):
 
 
 def outlier_identifier(data, identifier=splus_quartile_identifier_parameters, lower_and_upper_thresholds=None, value=False):
-    if not isinstance(data, (list, np.ndarray)):
+    if not isinstance(data, (list, tuple, np.ndarray)):
         raise ValueError("The argument data is expected to be a numeric vector.")
+    data = np.array(data)
     if lower_and_upper_thresholds is None:
         lower_and_upper_thresholds = identifier(data)
     pred = (data <= lower_and_upper_thresholds[0]) | (data >= lower_and_upper_thresholds[1])
@@ -59,6 +60,9 @@ def bottom_outlier_identifier(data, identifier=splus_quartile_identifier_paramet
 
 
 def outlier_position(data, identifier=splus_quartile_identifier_parameters, lower_and_upper_thresholds=None):
+    if not isinstance(data, (list, tuple, np.ndarray)):
+        raise ValueError("The argument data is expected to be a numeric vector.")
+    data = np.array(data)
     if lower_and_upper_thresholds is None:
         lower_and_upper_thresholds = identifier(data)
     return np.where((data < lower_and_upper_thresholds[0]) | (data > lower_and_upper_thresholds[1]))[0]
