@@ -159,6 +159,18 @@ outlier_identifier(vec, identifier = lambda v: bottom_outliers(quartile_identifi
     array([-30.086588  , -20.02337245, -27.83824691])
 
 
+Here is another way to get the outlier values:
+
+
+```python
+vec[pred]
+```
+
+
+
+    array([-30.086588  , -20.02337245, -27.83824691])
+
+
 
 The available outlier parameters functions are:
 

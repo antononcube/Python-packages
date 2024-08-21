@@ -135,7 +135,8 @@ Find *bottom* outlier positions and values (using quartiles-based identifier):
 
 
 ```python
-outlier_identifier(vec, identifier = lambda v: bottom_outliers(quartile_identifier_parameters(v)))
+pred = outlier_identifier(vec, identifier = lambda v: bottom_outliers(quartile_identifier_parameters(v)))
+pred
 ```
 
 
@@ -151,6 +152,20 @@ outlier_identifier(vec, identifier = lambda v: bottom_outliers(quartile_identifi
 
 ```python
 outlier_identifier(vec, identifier = lambda v: bottom_outliers(quartile_identifier_parameters(v)), value=True)
+```
+
+
+
+
+    array([-30.086588  , -20.02337245, -27.83824691])
+
+
+
+Here is another way to get the outlier values:
+
+
+```python
+vec[pred]
 ```
 
 
