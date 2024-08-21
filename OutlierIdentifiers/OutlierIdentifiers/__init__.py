@@ -1,6 +1,6 @@
 """OutlierIdentifiers package."""
-from OutlierIdentifiers.OutlierIdentifiers import top_outliers_only_thresholds
-from OutlierIdentifiers.OutlierIdentifiers import bottom_outliers_only_thresholds
+from OutlierIdentifiers.OutlierIdentifiers import top_outliers
+from OutlierIdentifiers.OutlierIdentifiers import bottom_outliers
 from OutlierIdentifiers.OutlierIdentifiers import hampel_identifier_parameters
 from OutlierIdentifiers.OutlierIdentifiers import quartile_identifier_parameters
 from OutlierIdentifiers.OutlierIdentifiers import splus_quartile_identifier_parameters

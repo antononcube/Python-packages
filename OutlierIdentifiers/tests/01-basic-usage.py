@@ -60,7 +60,7 @@ class TestOutlierIdentifiers(unittest.TestCase):
 
         self.assertTrue(np.array_equal(
             top_outlier_identifier(data=rand_data, identifier=hampel_identifier_parameters, value=False),
-            outlier_identifier(data=rand_data, identifier=lambda x: top_outliers_only_thresholds(hampel_identifier_parameters(x)), value=False)
+            outlier_identifier(data=rand_data, identifier=lambda x: top_outliers(hampel_identifier_parameters(x)), value=False)
         ))
 
     def test_bottom_outlier_identifier_equivalences(self):
@@ -88,7 +88,7 @@ class TestOutlierIdentifiers(unittest.TestCase):
 
         self.assertTrue(np.array_equal(
             bottom_outlier_identifier(data=rand_data, identifier=hampel_identifier_parameters, value=False),
-            outlier_identifier(data=rand_data, identifier=lambda x: bottom_outliers_only_thresholds(hampel_identifier_parameters(x)), value=False)
+            outlier_identifier(data=rand_data, identifier=lambda x: bottom_outliers(hampel_identifier_parameters(x)), value=False)
         ))
 
     def test_outlier_position_equivalences(self):

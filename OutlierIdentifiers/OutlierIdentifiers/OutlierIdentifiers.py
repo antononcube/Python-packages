@@ -1,13 +1,13 @@
 import numpy as np
 
 
-def top_outliers_only_thresholds(pair):
+def top_outliers(pair):
     if not (isinstance(pair, (list, tuple)) and len(pair) == 2 and all(isinstance(x, (int, float)) for x in pair)):
         raise ValueError("A pair of numbers is expected as a first argument.")
     return (-float('inf'), pair[1])
 
 
-def bottom_outliers_only_thresholds(pair):
+def bottom_outliers(pair):
     if not (isinstance(pair, (list, tuple)) and len(pair) == 2 and all(isinstance(x, (int, float)) for x in pair)):
         raise ValueError("A pair of numbers is expected as a first argument.")
     return (pair[0], float('inf'))
