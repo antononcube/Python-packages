@@ -4,7 +4,6 @@ from scipy.optimize import linprog
 from scipy.sparse import identity, hstack, vstack
 from scipy.interpolate import BSpline
 
-
 def _apply_f(row, f):
     return f(*row[:-1])
 
@@ -163,11 +162,14 @@ class QuantileRegression:
 
 
 # ===================================================================
-# Functions
+# Quantile regression functions
 # ===================================================================
 def quantile_regression_fit(data, funcs, probs):
     if isinstance(data, (list, np.ndarray)) and len(data) > 0 and isinstance(data[0], (int, float)):
         data = np.column_stack((np.arange(len(data)), data))
+
+    if isinstance(probs, float | int):
+        probs = [probs, ]
 
     qrf = QuantileRegression(data).quantile_regression_fit(funcs=funcs, probs=probs)
     return qrf.regression_quantiles
@@ -176,6 +178,9 @@ def quantile_regression_fit(data, funcs, probs):
 def quantile_regression(data, knots, probs=None, order: int = 3):
     if isinstance(data, (list, np.ndarray)) and len(data) > 0 and isinstance(data[0], (int, float)):
         data = np.column_stack((np.arange(len(data)), data))
+
+    if isinstance(probs, float | int):
+        probs = [probs, ]
 
     qrf = QuantileRegression(data).quantile_regression(knots=knots, probs=probs, order=order)
     return qrf.regression_quantiles
