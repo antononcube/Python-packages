@@ -5,6 +5,9 @@
 This a Python package for 1D outlier identifier functions. 
 If follows closely the Wolfram Language (WL) paclet [AAp1], the R package [AAp2], and the Raku package [AAp3].
 
+Here is a Jupyter notebook with usage examples: ["OutlierIdentifiers-guide.ipynb"](https://github.com/antononcube/Python-packages/blob/main/OutlierIdentifiers/docs/OutlierIdentifiers-guide.ipynb);
+[(Markdown version)](https://github.com/antononcube/Python-packages/blob/main/OutlierIdentifiers/docs/OutlierIdentifiers-guide.md).
+
 ------
 
 ## Installation 
