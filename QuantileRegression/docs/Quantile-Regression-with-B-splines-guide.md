@@ -818,7 +818,7 @@ Because of the linear programming formulation for some data and knots specificat
 
 #### Fitting for probabilities 0 and 1
 
-For most data, the quantile regression fitting for probabilities $0$ and $1$ might or might not produce regression quantiles that are "too far away from the data."
+For most data, the quantile regression fitting for probabilities $0$ and $1$ *might or might not* produce regression quantiles that are "too far away from the data."
 
 Find regression quantiles for probabilities $0$ and $0.5$ and plot them:
 
