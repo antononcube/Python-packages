@@ -100,6 +100,11 @@ class QuantileRegression:
 
     def lp_spline_quantile_regression(self, knots, probs, order: int, **opts):
 
+        # Validated probs
+        if not all(0 <= p <= 1 for p in probs):
+            raise ValueError("The argument probs is expected to be a list of numbers representing probabilities.")
+        self.probs = probs
+
         # Knots is an integer
         if isinstance(knots, int):
             min_data = np.min(self.data[:, 0])
