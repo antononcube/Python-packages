@@ -30,17 +30,17 @@ class QuantileRegression:
             raise ValueError("The third argument is expected to be a list of numbers representing probabilities.")
 
     # Function basis
-    def qr_fit(self, funcs, probs=None):
+    def qr_fit(self, funcs, probs=None, **opts):
         if probs is None:
             probs = [0.25, 0, 5, 0.75]
-        return self.quantile_regression_fit(funcs, probs)
+        return self.quantile_regression_fit(funcs, probs, **opts)
 
-    def quantile_regression_fit(self, funcs, probs):
+    def quantile_regression_fit(self, funcs, probs, **opts):
         # It is unlikely that methods other than the LP one will be implemented,
         # but let have this redirection method just in case.
         if probs is None:
             probs = [0.25, 0, 5, 0.75]
-        return self.lp_quantile_regression_fit(funcs, probs)
+        return self.lp_quantile_regression_fit(funcs, probs, **opts)
 
     def lp_quantile_regression_fit(self, funcs, probs, **opts):
 
