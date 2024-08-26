@@ -32,9 +32,9 @@ The function `quantile_regression` computes [Quantile Regression (QR)](https://e
 
 - The regression quantiles corresponding to the specified probabilities are linear combinations of B-splines generated over the specified knots.
 
-- In other words, `quantile_regression` computes fits using a B-spline functions basis. The basis is specified with the knots argument and the option [InterpolationOrder](https://reference.wolfram.com/language/ref/InterpolationOrder).
+- In other words, `quantile_regression` computes fits using a B-spline functions basis. The basis is specified with the `knots` argument and the option `order`.
 
-- `quantile_regression` takes the named arguments option `order` which is 3 by default. 
+- The named argument `order` is 3 by default. 
 
 
 -------
