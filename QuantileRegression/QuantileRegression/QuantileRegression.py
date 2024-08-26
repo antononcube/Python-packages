@@ -13,14 +13,19 @@ def _make_combined_function(funcs, sol, factor=1, shift=0, median=0):
 
 
 class QuantileRegression:
-    def __init__(self, data=[]):
-        self.data = data
-        self.basis_funcs = []
-        self.probs = []  # np.atleast_1d(probs)
-        self.regression_quantiles = []
+    # ------------------------------------------------------------------
+    # Init
+    # ------------------------------------------------------------------
+    def __init__(self, data=None):
+        if data is None:
+            data = []
+        self._data = data
+        self._basis_funcs = []
+        self._probs = []  # np.atleast_1d(probs)
+        self._regression_quantiles = []
 
     def validate_inputs(self, funcs, probs):
-        if not (isinstance(self.data, np.ndarray) and self.data.shape[1] >= 2):
+        if not (isinstance(self._data, np.ndarray) and self._data.shape[1] >= 2):
             raise ValueError(
                 "The data argument is expected to be a matrix of numbers with two columns, a numeric vector, or a time series.")
         if len(funcs) < 1:
@@ -29,7 +34,28 @@ class QuantileRegression:
         if not all(0 <= p <= 1 for p in probs):
             raise ValueError("The third argument is expected to be a list of numbers representing probabilities.")
 
-    # Function basis
+    # ------------------------------------------------------------------
+    # Getters
+    # ------------------------------------------------------------------
+    def take_data(self):
+        """Take the data."""
+        return self._data
+
+    def take_basis_funcs(self):
+        """Take the basis functions."""
+        return self._basis_funcs
+
+    def take_probs(self):
+        """Take the probabilities."""
+        return self._probs
+
+    def take_regression_quantiles(self):
+        """Take the regression quantiles."""
+        return self._regression_quantiles
+
+    # ------------------------------------------------------------------
+    # Fit function basis
+    # ------------------------------------------------------------------
     def qr_fit(self, funcs, probs=None, **opts):
         if probs is None:
             probs = [0.25, 0, 5, 0.75]
@@ -48,9 +74,9 @@ class QuantileRegression:
         self.validate_inputs(funcs, probs)
 
         # Assign for later retrieval / reference
-        data = np.array(self.data)
-        self.basis_funcs = funcs
-        self.probs = probs
+        data = np.array(self._data)
+        self._basis_funcs = funcs
+        self._probs = probs
 
         y_median = 0
         y_factor = 1
@@ -81,15 +107,17 @@ class QuantileRegression:
                 qr_solutions.append(np.zeros(len(funcs)))
 
         if y_median == 0 and y_factor == 1:
-            self.regression_quantiles = [_make_combined_function(funcs, sol) for sol in qr_solutions]
+            self._regression_quantiles = [_make_combined_function(funcs, sol) for sol in qr_solutions]
         else:
-            self.regression_quantiles = [
+            self._regression_quantiles = [
                 _make_combined_function(funcs, sol, factor=y_factor, shift=y_shift, median=y_median)
                 for sol in qr_solutions]
 
         return self
-
-    # B-splines
+    
+    # ------------------------------------------------------------------
+    # Fit with B-splines
+    # -----------------------------------------------------------------
     def qr(self, knots, probs=None, order: int = 3, **opts):
         return self.lp_spline_quantile_regression(knots, probs, order, **opts)
 
@@ -103,17 +131,17 @@ class QuantileRegression:
         # Validated probs
         if not all(0 <= p <= 1 for p in probs):
             raise ValueError("The argument probs is expected to be a list of numbers representing probabilities.")
-        self.probs = probs
+        self._probs = probs
 
         # Knots is an integer
         if isinstance(knots, int):
-            min_data = np.min(self.data[:, 0])
-            max_data = np.max(self.data[:, 0])
+            min_data = np.min(self._data[:, 0])
+            max_data = np.max(self._data[:, 0])
             knots = np.linspace(0, 1, knots + 1) * (max_data - min_data) + min_data
             return self.lp_spline_quantile_regression(knots, probs, order, **opts)
 
         # Knots is an array
-        data = np.array(self.data)
+        data = np.array(self._data)
         knots = np.sort(knots)
         y_median = 0
         y_factor = 1
@@ -157,9 +185,9 @@ class QuantileRegression:
                 qr_solutions.append(np.zeros(len(pFuncs)))
 
         if y_median == 0 and y_factor == 1:
-            self.regression_quantiles = [_make_combined_function(pFuncs, sol) for sol in qr_solutions]
+            self._regression_quantiles = [_make_combined_function(pFuncs, sol) for sol in qr_solutions]
         else:
-            self.regression_quantiles = [
+            self._regression_quantiles = [
                 _make_combined_function(pFuncs, sol, factor=y_factor, shift=y_shift, median=y_median)
                 for sol in qr_solutions]
 
@@ -177,7 +205,7 @@ def quantile_regression_fit(data, funcs, probs):
         probs = [probs, ]
 
     qrf = QuantileRegression(data).quantile_regression_fit(funcs=funcs, probs=probs)
-    return qrf.regression_quantiles
+    return qrf.take_regression_quantiles()
 
 
 def quantile_regression(data, knots, probs=None, order: int = 3):
@@ -188,4 +216,4 @@ def quantile_regression(data, knots, probs=None, order: int = 3):
         probs = [probs, ]
 
     qrf = QuantileRegression(data).quantile_regression(knots=knots, probs=probs, order=order)
-    return qrf.regression_quantiles
+    return qrf.take_regression_quantiles()
