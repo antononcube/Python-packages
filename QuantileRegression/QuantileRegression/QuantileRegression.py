@@ -54,6 +54,10 @@ class QuantileRegression:
         """Take the regression quantiles."""
         return self._regression_quantiles
 
+    def take_lp_solutions(self):
+        """Take the linear programming (LP) solutions."""
+        return self._lp_solutions
+
     # ------------------------------------------------------------------
     # Fit function basis
     # ------------------------------------------------------------------
