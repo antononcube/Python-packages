@@ -23,6 +23,7 @@ class QuantileRegression:
         self._basis_funcs = []
         self._probs = []  # np.atleast_1d(probs)
         self._regression_quantiles = []
+        self._lp_solutions = []
 
     def validate_inputs(self, funcs, probs):
         if not (isinstance(self._data, np.ndarray) and self._data.shape[1] >= 2):
@@ -113,6 +114,7 @@ class QuantileRegression:
                 _make_combined_function(funcs, sol, factor=y_factor, shift=y_shift, median=y_median)
                 for sol in qr_solutions]
 
+        self._lp_solutions = qr_solutions
         return self
     
     # ------------------------------------------------------------------
