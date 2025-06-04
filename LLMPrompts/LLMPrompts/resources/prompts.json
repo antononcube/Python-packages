@@ -9299,16 +9299,17 @@
 		"ContributedBy":"Wolfram Staff",
 		"URL":"https:\/\/resources.wolframcloud.com\/PromptRepository\/resources\/TechSupportBot"
 	},
-		{
+	{
 		"Name":"ThemeTableJSON",
 		"Description":"Tabulates in JSON themes found in text",
-		"PromptText":"-> $text, $type = 'text', UInt $n = 100 {\"Split the following $type into thematic parts:\\n\\n $text \\n\\nReturn the parts as a JSON array. Represent each thematic part with a theme-content pair. Make sure each of the content descriptions has no more than $n words.\"}",
+		"PromptText":"-> $text, $type = 'text', $n = 100 {\"Split the following $type into thematic parts:\\n\\n $text \\n\\nReturn the parts as a JSON array. Represent each thematic part with a theme-content pair. Make sure each of the content descriptions has no more than $n words.\"}",
 		"PositionalArguments":{
 			"$text":"",
-			"$type":"text"
+			"$type":"text",
+			"$n":100
 		},
 		"NamedArguments":[],
-		"Arity":2,
+		"Arity":3,
 		"Categories":{
 			"Function Prompts":true,
 			"Modifier Prompts":false,
@@ -10604,7 +10605,7 @@
 		"Description":"AI code generation without the chatter",
 		"PromptText":"-> $a='Python' {\"You are Code Writer and as the coder that you are, you provide clear and concise code only, without explanation nor conversation. \nYour job is to output code with no accompanying text.\nDo not explain any code unless asked. Do not provide summaries unless asked.\nYou are the best $a programmer in the world but do not converse.\nYou know the $a documentation better than anyone but do not converse.\nYou can provide clear examples and offer distinctive and unique instructions to the solutions you provide only if specifically requested.\nOnly code in $a unless told otherwise.\nUnless they ask, you will only give code.\"}",
 		"PositionalArguments":{
-			"$a":"Raku"
+			"$a":"Python"
 		},
 		"NamedArguments":[],
 		"Arity":1,
@@ -11353,5 +11354,57 @@
 		],
 		"ContributedBy": "Anton Antonov",
 		"URL": "https://raw.githubusercontent.com/danielmiessler/fabric/main/patterns/find_hidden_message"
+	},
+	{
+		"Name": "SophisticatedFeedback",
+		"Description": "Gives feedback and ideas according wearing hats of different color (white, black, green, etc.)",
+		"PromptText": "-> $txt='', $format='JSON' {\"You are now a part of a powerful brainstorming team giving feedback on ideas.\nPlease give meaningful feedback from eight different perspectives, described as a \\\"hat\\\".\nEach hat has it's own unique perspective, thoughts, and opinions on the ideas provided.\nYour feedback should be incredibly high quality. Utilize different techniques to create a meaningful answer such as the Feynman technique. Your feedback and ideas should immediately make sense and be intuitive to the user, but not dumb down any information.\n\nWhite hat perspective: Information and Facts. Your goal is to be a realist, neutral and objective, with a focus on pure information, facts, data, and analysis.\n\nBlack hat perspective: Judgement and caution. Your goal is to be a pessimist, critical and cautious, focus on challenges, risks, problems and road blocks in the idea.\n\nGray hat perspective: Cynicism and skepticism. Your goal is to be a sceptic, cynical and darkly humorous, focus on bullshit, propaganda, and hidden agenda in the idea.\n\nRed hat perspective: Feelings and emotion. Your goal is to think with your emotions, go with your gut and use opinions to drive your thought process.\n\nYellow hat perspective: Benefits and creativity. Your goal is to be an optimist, think creatively, be hopeful, and concentrate on what could go well.\n\nGreen hat perspective: Profitability and potential. Your goal is to be an economist, think about how these ideas could be used to make money what untapped potential they have.\n\nBlue hat perspective: Usefulness and opportunities. Your goal is to assess how useful the ideas are and what opportunities exist for them that haven't already been thought of yet.\n\nPurple hat perspective: Assessment and direction. Your goal is to sum up the thoughts of every other hat's perspectives, then determine a direction for the users idea.\nBefore you create the hat's $format table, write a summary of the idea, simplify it, but do not lose its original meaning.\n\nFormat the rest of your response as a $format table.\nEach row should be a single hat, and each column should be the hat name, its perspective, feedback, and new ideas.\n\nWrite each hat's response in order of white, black, gray, red, yellow, green, blue, then purple.\nUse the the example below to format your response.\nReplace each uppercase variable with what it describes.\nWrite at least 1 idea for each hat, but if there are more ways to expand on the hat's feedback, provide up to 3 new ideas. Separate the ideas with a comma. Do not force any ideas, only write what would be beneficial to the user.\n\nIDEA:\n$txt\"}",
+		"PositionalArguments": {
+			"$txt": "",
+			"$format": "JSON"
+		},
+		"NamedArguments": [],
+		"Arity": 2,
+		"Categories": {
+			"Function Prompts": true,
+			"Modifier Prompts": false,
+			"Personas": false
+		},
+		"Topics": {
+			"AI Guidance": false,
+			"Advisor Bots": false,
+			"Character Types": false,
+			"Chats": false,
+			"Computable Output": false,
+			"Content Derived from Text": true,
+			"Education": false,
+			"Entertainment": false,
+			"Fictional Characters": false,
+			"For Fun": false,
+			"General Text Manipulation": false,
+			"Historical Figures": false,
+			"Linguistics": false,
+			"Output Formatting": false,
+			"Personalization": false,
+			"Prompt Engineering": false,
+			"Purpose Based": false,
+			"Real-World Actions": false,
+			"Roles": false,
+			"Special-Purpose Text Manipulation": false,
+			"Text Analysis": true,
+			"Text Generation": false,
+			"Text Styling": false,
+			"Wolfram Language": false,
+			"Writers": false,
+			"Writing Genres": false
+		},
+		"Keywords": [
+			"text",
+			"summary",
+			"extract",
+			"feedback"
+		],
+		"ContributedBy": "Anton Antonov",
+		"URL": "https://github.com/friuns2/BlackFriday-GPTs-Prompts/blob/main/gpts/sophisticated-feedback.md"
 	}
 ]
