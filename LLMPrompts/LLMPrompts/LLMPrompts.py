@@ -176,7 +176,7 @@ def llm_prompt(name=None, warn=True):
             if len(posArgs) > 0:
                 posArgs = posArgs + ", "
 
-            posArgs = posArgs + re.sub(r'^\$', '', k) + "='" + v + "'"
+            posArgs = posArgs + re.sub(r'^\$', '', k) + "='" + str(v) + "'"
 
     namedArgs = ""
     if len(prompt_record["NamedArguments"]) > 0:
@@ -184,7 +184,7 @@ def llm_prompt(name=None, warn=True):
             if len(namedArgs) > 0:
                 namedArgs = namedArgs + ", "
 
-            namedArgs = namedArgs + re.sub(r'^\$', '', k) + "='" + v + "'"
+            namedArgs = namedArgs + re.sub(r'^\$', '', k) + "='" + str(v) + "'"
 
     # Lambda function code
     lambdaCode = "lambda " + posArgs
