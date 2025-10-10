@@ -43,7 +43,7 @@ Here is narration of a certain workflow scenario:
 1. Get a dataset.
 2. Create contingency matrices for a given identifier column and a set of "tag type" columns.
 3. Examine recommender matrix statistics.
-4. If the assumptoins about the data hold apply LSI functions.
+4. If the assumptions about the data hold apply LSI functions.
    - For example, the "usual trio" IDF, Frequency, Cosine.
 5. Do (verify) example profile recommendations.
 6. If satisfactory results are obtained use the recommender as a nearest neighbors classifier. 
