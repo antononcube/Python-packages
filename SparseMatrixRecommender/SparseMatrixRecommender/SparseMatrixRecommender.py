@@ -514,7 +514,7 @@ class SparseMatrixRecommender:
         :param normalize: Should the result be normalized or not.
 
         :type remove_history: bool
-        :param remove_history: Should the the history be removed from the result recommendations or not?
+        :param remove_history: Should the history be removed from the result recommendations or not?
 
         :rtype SparseMatrixRecommender
         :return self: The object itself or None. The result is stored in self._value.
