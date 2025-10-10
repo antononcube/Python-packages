@@ -1083,7 +1083,7 @@ class SparseMatrixRecommender:
         """
 
         if not is_smat_dict(mats):
-            raise ValueError("The second argument, mats, is expected to be a dictionary of SSparseMatrix.")
+            raise ValueError("The first argument, mats, is expected to be a dictionary of SSparseMatrix.")
 
         smr2 = SparseMatrixRecommender(mats)
         return self.join(smr2=smr2)
