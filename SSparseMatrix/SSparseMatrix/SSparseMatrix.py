@@ -27,14 +27,17 @@ def make_s_sparse_matrix(matrix, rows="", columns=""):
 
 
 def is_int_like(x):
-    return scipy.sparse.sputils.isintlike(x)
-
+    """
+    Checks if a given input x is an integer-like scalar.
+    This replaces the functionality of scipy.sparse.sputils.isintlike.
+    """
+    return isinstance(x, int) or numpy.isscalar(x) and numpy.ndim(x) == 0 and numpy.issubdtype(type(x), numpy.integer)
 
 def is_str_like(x):
     """Is x appropriate as a key into a SSparseMatrix object? Returns True
     if it can be cast safely to a key.
     """
-    if scipy.sparse.sputils.issequence(x):
+    if scipy.sparse.issparse(x):
         return False
     else:
         try:
