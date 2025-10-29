@@ -325,6 +325,71 @@ class SparseMatrixRecommender:
         return self
 
     # ------------------------------------------------------------------
+    # Apply tag weights
+    # ------------------------------------------------------------------
+    def apply_tag_weights(self, weights: list):
+        """
+        Apply weights to the tags of the sparse matrix recommender object.
+
+        :param weights: A list of numbers (tag weights.)
+
+        :return: self: SparseMatrixObject
+        """
+
+        if len(weights) != self.take_M().columns_count():
+            raise TypeError(
+                "The first argument is expected to be a list of numbers of length " + self.take_M().columns_count() + ".")
+
+        W = scipy.sparse.diags(weights)
+        matRes = self.take_M().copy().dot(W)
+
+        # Make sure we have the required row- and column names
+        matRes.set_row_names(self.take_M().row_names())
+        matRes.set_column_names(self.take_M().column_names())
+
+        # Result
+        self.set_M(matRes)
+        return self
+
+    # ------------------------------------------------------------------
+    # Apply tag type weights
+    # ------------------------------------------------------------------
+    def apply_tag_type_weights(self, weights):
+        """
+        Apply tag type weights to the recommender matrices.
+
+        :param weights: Weights to apply, either as a list matching number of matrices, or dict with keys matching matrix names.
+
+        :return: self: SparseMatrixObject
+        """
+        matrices = self.take_matrices()
+        keys = list(matrices.keys())
+
+        weights_list = []
+        if isinstance(weights, list):
+            if len(weights) != len(keys):
+                raise ValueError(f"Length of weights list {len(weights)} does not match number of matrices {len(keys)}.")
+
+            for w, key in zip(weights, keys):
+                mat = matrices[key]
+                weights_list.extend([w] * mat.columns_count())
+
+        elif isinstance(weights, dict):
+            unknown_keys = set(weights.keys()) - set(keys)
+            if unknown_keys:
+                raise ValueError(f"Unknown keys in weights dict: {unknown_keys}.")
+
+            for key in keys:
+                w = weights.get(key, 1)
+                mat = matrices[key]
+                weights_list.extend([w] * mat.columns_count())
+
+        else:
+            raise TypeError("The first argument must be a list or a dictionary.")
+
+        return self.apply_tag_weights(weights_list)
+
+    # ------------------------------------------------------------------
     # To smr vector
     # ------------------------------------------------------------------
     def _to_smr_vector(self, arg, things_dict, thing_name, ref_name, ignore_unknown=False):
