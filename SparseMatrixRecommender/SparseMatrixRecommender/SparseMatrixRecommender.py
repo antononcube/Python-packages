@@ -338,7 +338,7 @@ class SparseMatrixRecommender:
 
         if len(weights) != self.take_M().columns_count():
             raise TypeError(
-                "The first argument is expected to be a list of numbers of length " + self.take_M().columns_count() + ".")
+                "The first, weights argument is expected to be a list of numbers of length " + self.take_M().columns_count() + ".")
 
         W = scipy.sparse.diags(weights)
         matRes = self.take_M().copy().dot(W)
@@ -377,7 +377,7 @@ class SparseMatrixRecommender:
         elif isinstance(weights, dict):
             unknown_keys = set(weights.keys()) - set(keys)
             if unknown_keys:
-                raise ValueError(f"Unknown keys in weights dict: {unknown_keys}.")
+                raise ValueError(f"Unknown keys in weights dictionary: {unknown_keys}.")
 
             for key in keys:
                 w = weights.get(key, 1)
@@ -385,7 +385,7 @@ class SparseMatrixRecommender:
                 weights_list.extend([w] * mat.columns_count())
 
         else:
-            raise TypeError("The first argument must be a list or a dictionary.")
+            raise TypeError("The first, weights argument must be a list or a dictionary.")
 
         return self.apply_tag_weights(weights_list)
 
