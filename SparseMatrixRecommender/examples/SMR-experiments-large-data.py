@@ -31,8 +31,11 @@ print(160 * "=")
 print("Recommend by profile")
 print(160 * "-")
 
+# Give a priority to a certain tag type:
+# smrObj.apply_tag_type_weights({"cap-Shape":5})
+
 recs = (smrObj
-        .recommend_by_profile({"cap-Shape:convex": 1.2, "edibility:poisonous": 1.4}, nrecs=12)
+        .recommend_by_profile({"cap-Shape:convex": 1.2, "edibility:poisonous": 1.4}, nrecs=12, normalize=False)
         .join_across(dfData0, on="id")
         .take_value())
 
