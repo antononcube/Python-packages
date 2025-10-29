@@ -377,7 +377,7 @@ class SparseMatrixRecommender:
         elif isinstance(weights, dict):
             unknown_keys = set(weights.keys()) - set(keys)
             if unknown_keys:
-                raise ValueError(f"Unknown keys in weights dictionary: {unknown_keys}.")
+                raise ValueError(f"Unknown tag types in weights dictionary: {unknown_keys}.")
 
             for key in keys:
                 w = weights.get(key, 1)
