@@ -368,7 +368,7 @@ class SparseMatrixRecommender:
         weights_list = []
         if isinstance(weights, list):
             if len(weights) != len(keys):
-                raise ValueError(f"Length of weights list {len(weights)} does not match number of matrices {len(keys)}.")
+                raise ValueError(f"A list weights argument is expected to match number of sub-matrices {len(keys)}.")
 
             for w, key in zip(weights, keys):
                 mat = matrices[key]
