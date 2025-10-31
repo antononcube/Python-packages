@@ -98,15 +98,14 @@ def AUROC(obj):
         raise TypeError("The first argument is expected to be a list of ROC dictionaries.")
 
     fprs = FPR(obj)
-    fprs.append(1)
-    fprs.insert(0, 0)
     tprs = TPR(obj)
-    tprs.append(1)
-    tprs.insert(0, 0)
 
-    my_sum = 0
-    for i in range(len(fprs) - 1):
-        my_sum += (fprs[i + 1] - fprs[i]) * (tprs[i] + (tprs[i + 1] - tprs[i]) / 2)
+    joined = [(0.0, 0.0)] + [(fprs[i], tprs[i]) for i in range(len(fprs))] + [(1.0, 1.0)]
+    joined.sort(key=lambda x: x[0])
+
+    my_sum = 0.0
+    for (x1, y1), (x2, y2) in zip(joined, joined[1:]):
+        my_sum += (x2 - x1) * (y1 + (y2 - y1) / 2)
 
     return my_sum
 
