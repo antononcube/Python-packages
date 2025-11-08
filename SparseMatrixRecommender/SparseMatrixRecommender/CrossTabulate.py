@@ -35,19 +35,16 @@ def cross_tabulate(data, index, columns, values=None, aggfunc=None, str_nan="Non
         else:
             raise TypeError(
                 "The first argument is expected to be a data frame.")
-            return None
     elif isinstance(columns, list):
-        return dict(zip(columns, [cross_tabulate(data=data, index=index, columns=cn) for cn in columns]))
+        return {cn: cross_tabulate(data=data, index=index, columns=cn) for cn in columns}
     else:
         raise TypeError(
             "The third argument, columns, is expected to be a string or a list of strings.")
-        return None
 
 
 def _cross_tabulate_2(var1, var2):
     if len(var1) != len(var2):
         raise IndexError("The lengths of var1 and var2 are expected to be the same.")
-        return None
     return _cross_tabulate_3(var1=var1, var2=var2, values=[1 for x in range(len(var1))])
 
 
