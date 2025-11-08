@@ -14,6 +14,14 @@ print(dfSMRMatrix.sample(12).to_string())
 # [print("Group :", x, "\n", gb.get_group(x)) for x in gb.groups]
 # [cross_tabulate(gb.get_group(x), index="Item", columns="Value", values="Weight").print_matrix() for x in gb.groups]
 
+# Randomly remove 100 rows from dfSMRMatrix
+print(dfSMRMatrix.shape)
+dfSMRMatrix = dfSMRMatrix.drop(
+    dfSMRMatrix.sample(n=200, random_state=1232).index
+)
+print(dfSMRMatrix.shape)
+
+# Create the recommender
 smrObj = (SparseMatrixRecommender().
           create_from_long_form(dfSMRMatrix,
                                 item_column_name="Item",
@@ -21,6 +29,7 @@ smrObj = (SparseMatrixRecommender().
                                 tag_column_name="Value",
                                 weight_column_name="Weight"))
 
+# Example recommendation by profile
 recs = (smrObj
         .recommend_by_profile({"Word:chemical": 1}, nrecs=12)
         .take_value())
