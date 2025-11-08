@@ -28,10 +28,14 @@ def cross_tabulate(data, index, columns, values=None, aggfunc=None, str_nan="Non
     """
     if isinstance(columns, str):
         if isinstance(data, pandas.core.frame.DataFrame) and isinstance(values, str):
-            return _cross_tabulate_3(var1=data[index], var2=data[columns].fillna(str_nan),
+            # Explicitly cast to 'object' (or str) after fillna if keeping as string type
+            filled_columns = data[columns].fillna(str_nan).astype(str)
+            return _cross_tabulate_3(var1=data[index], var2=filled_columns,
                                      values=numpy.nan_to_num(x=data[values], nan=num_nan))
         elif isinstance(data, pandas.core.frame.DataFrame):
-            return _cross_tabulate_2(var1=data[index], var2=data[columns].fillna(str_nan))
+            # Explicitly cast to 'object' (or str) after fillna if keeping as string type
+            filled_columns = data[columns].fillna(str_nan).astype(str)
+            return _cross_tabulate_2(var1=data[index], var2=filled_columns)
         else:
             raise TypeError(
                 "The first argument is expected to be a data frame.")
