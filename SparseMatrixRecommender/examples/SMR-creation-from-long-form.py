@@ -16,7 +16,7 @@ print(dfSMRMatrix.sample(12).to_string())
 
 smrObj = (SparseMatrixRecommender().
           create_from_long_form(dfSMRMatrix,
-                                item_column_mame="Item",
+                                item_column_name="Item",
                                 tag_type_column_name="TagType",
                                 tag_column_name="Value",
                                 weight_column_name="Weight"))
