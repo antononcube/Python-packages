@@ -9,6 +9,7 @@ import pandas
 import scipy
 import scipy.sparse.linalg
 import stop_words as stop_words_package
+from sklearn.decomposition import NMF
 from LatentSemanticAnalyzer.DocumentTermMatrixConstruction import document_term_matrix
 from SSparseMatrix import SSparseMatrix
 from SSparseMatrix import is_s_sparse_matrix
@@ -389,7 +390,43 @@ class LatentSemanticAnalyzer:
             H = scipy.sparse.diags(diagonals=[s], offsets=[0]).dot(vt)
             self.set_method("SVD")
 
-        elif method.lower() in set([x.lower() for x in ["NMF", "NNMF", "NonNegativeMatrixFactorization"]]):
+        elif method.lower() in {"nmf", "nnmf", "nonnegativematrixfactorization"}:
+
+            sparse_mat = smat.sparse_matrix()
+
+            # Ensure non-negativity for NMF (sklearn requires it)
+            if sparse_mat.nnz > 0:
+                data_min = sparse_mat.data.min()
+            else:
+                data_min = 0.0
+
+            if data_min < 0:
+                warnings.warn(
+                    "The weighted document-term matrix has negative elements. "
+                    "Clipping negative values to zero in order to apply Non-Negative Matrix Factorization (scikit-learn)."
+                )
+                data_max = sparse_mat.data.max()
+                smat = smat.clip(0, data_max)
+                sparse_mat = smat.sparse_matrix()  # updated after clipping
+
+            # scikit-learn NMF (sparse-friendly, Frobenius loss, coordinate descent)
+            nmf_model = NMF(
+                n_components=number_of_topics,
+                init="random",          # matches nimfa's random_vcol spirit
+                solver="cd",            # supports sparse input efficiently
+                max_iter=max_steps,
+                random_state=None,      # change to fixed int if reproducibility needed
+                tol=1e-4,
+                beta_loss="frobenius",  # explicit (default anyway
+                l1_ratio=0.0,
+            )
+
+            W = nmf_model.fit_transform(sparse_mat)   # shape: (n_docs, n_topics)
+            H = nmf_model.components_                 # shape: (n_topics, n_terms)
+
+            self.set_method("NNMF")
+
+        elif method.lower() in set(["nimfa-" + x.lower() for x in ["NMF", "NNMF", "NonNegativeMatrixFactorization"]]):
 
             minSMat = min(smat.sparse_matrix().data)
             maxSMat = max(smat.sparse_matrix().data)
