@@ -8,9 +8,9 @@ import snowballstemmer
 
 dfAbstracts = load_abstracts_data_frame()
 
-# print(dfAbstracts.head())
+print(dfAbstracts.head())
 
-docs = dict(zip(dfAbstracts.ID, dfAbstracts.Abstract))
+docs = dict(zip(dfAbstracts.ID, [str(x) for x in dfAbstracts.Abstract.tolist()]))
 
 lsaObj = (LatentSemanticAnalyzer()
           .make_document_term_matrix(docs=docs,
@@ -23,6 +23,15 @@ lsaObj = (LatentSemanticAnalyzer()
 
 print("Document-term matrix:")
 print(repr(lsaObj.take_doc_term_mat()))
+
+(LatentSemanticAnalyzer(docs)
+ .make_document_term_matrix(stemming_rules=False, stop_words=None)
+ .apply_term_weight_functions(global_weight_func="IDF", local_weight_func="None", normalizer_func="Cosine")
+ .extract_topics(number_of_topics=12,
+                 method="NNMF",
+                 max_steps=12,
+                 min_number_of_documents_per_term=20)
+ .echo_topics_table(number_of_terms=12))
 
 # Further document-term matrix print-outs
 # mat = lsaObj.take_doc_term_mat()
