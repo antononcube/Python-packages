@@ -216,16 +216,17 @@ class DataFrameCategorizer:
 def data_frame_columns_alignment(base: pd.DataFrame, target: pd.DataFrame, default_value=None) -> pd.DataFrame:
     target_aligned = target.copy()
 
-    # Add missing columns from base to target, filled with default_value
-    for col in base.columns:
-        if col not in target_aligned.columns:
-            target_aligned[col] = default_value
+    missing_cols = [c for c in base.columns if c not in target_aligned.columns]
+    if missing_cols:
+        target_aligned = pd.concat(
+            [target_aligned, pd.DataFrame(default_value, index=target_aligned.index, columns=missing_cols)],
+            axis=1
+        )
 
-    # Remove columns in target that are not in base
     extra_cols = [col for col in target_aligned.columns if col not in base.columns]
-    target_aligned = target_aligned.drop(columns=extra_cols)
+    if extra_cols:
+        target_aligned = target_aligned.drop(columns=extra_cols)
 
-    # Reorder columns to match base
     target_aligned = target_aligned[base.columns]
 
     return target_aligned
