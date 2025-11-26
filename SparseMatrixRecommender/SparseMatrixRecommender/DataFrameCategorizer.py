@@ -5,14 +5,14 @@ from typing import Dict, Any, Optional, Tuple, List
 
 class DataFrameCategorizer:
     def __init__(
-        self,
-        n_unique_threshold: int = 5,
-        use_log: bool = True,
-        n_bins: int = 10,
-        use_quantile_bins: bool = False,
-        keep_original_numeric: bool = True,
-        log_threshold: float = 0.0,
-        below_log_threshold_value: Any = np.nan,
+            self,
+            n_unique_threshold: int = 5,
+            use_log: bool = True,
+            n_bins: int = 10,
+            use_quantile_bins: bool = False,
+            keep_original_numeric: bool = True,
+            log_threshold: float = 0.0,
+            below_log_threshold_value: Any = np.nan,
     ):
         self.n_unique_threshold = n_unique_threshold
         self.use_log = use_log
@@ -36,10 +36,10 @@ class DataFrameCategorizer:
         return out
 
     def _fit_numeric_col(
-        self,
-        s: pd.Series,
-        col_name: str
-    ) -> Tuple[Optional[pd.IntervalIndex], bool]:
+            self,
+            s: pd.Series,
+            col_name: str
+    ):
         uniq = s.dropna().unique()
         n_unique = len(uniq)
 
@@ -56,7 +56,6 @@ class DataFrameCategorizer:
                 "as_str": True,
             }
             return None, False
-
 
         if self.use_quantile_bins:
             _, bins = pd.qcut(s, q=self.n_bins, retbins=True, duplicates="drop")
@@ -81,9 +80,9 @@ class DataFrameCategorizer:
         return interval_index, True
 
     def _transform_numeric_col(
-        self,
-        s: pd.Series,
-        col_name: str
+            self,
+            s: pd.Series,
+            col_name: str
     ) -> pd.Series:
         info = self.columns_info_[col_name]
         if info["type"] == "numeric_low_cardinality":
@@ -99,7 +98,7 @@ class DataFrameCategorizer:
 
         return s
 
-    def _fit_log_for_col(self, s: pd.Series, col_name: str) -> Optional[str]:
+    def _fit_log_for_col(self, s: pd.Series, col_name: str):
         if not self.use_log:
             return None
 
@@ -108,46 +107,12 @@ class DataFrameCategorizer:
         uniq = log_s.dropna().unique()
         n_unique = len(uniq)
 
-        if n_unique <= self.n_unique_threshold:
-            self.columns_info_[log_col_name] = {
-                "type": "numeric_low_cardinality",
-                "categories": sorted(map(str, uniq)),
-            }
-            return log_col_name
-
-        if self.n_bins <= 0:
-            self.columns_info_[log_col_name] = {
-                "type": "numeric_as_str",
-                "as_str": True,
-            }
-            return log_col_name
-
-        if self.use_quantile_bins:
-            _, bins = pd.qcut(log_s, q=self.n_bins, retbins=True, duplicates="drop")
-        else:
-            _, bins = pd.cut(log_s, bins=self.n_bins, retbins=True, duplicates="drop")
-
-        if len(bins) <= 1:
-            self.columns_info_[log_col_name] = {
-                "type": "numeric_as_str",
-                "as_str": True,
-            }
-            return log_col_name
-
-        bins = np.concatenate(([-np.inf], bins, [np.inf]))
-        
-        interval_index = pd.IntervalIndex.from_breaks(bins, closed="right")
-        self.bins_[log_col_name] = interval_index
-        self.columns_info_[log_col_name] = {
-            "type": "numeric_binned",
-            "binned": True,
-        }
-        return log_col_name
+        return self._fit_numeric_col(log_s, log_col_name)
 
     def _transform_log_for_col(
-        self,
-        s: pd.Series,
-        col_name: str
+            self,
+            s: pd.Series,
+            col_name: str
     ) -> Optional[pd.Series]:
         if not self.use_log:
             return None
@@ -246,3 +211,21 @@ class DataFrameCategorizer:
     def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
         self.fit(df)
         return self.transform(df)
+
+
+def data_frame_columns_alignment(dfA: pd.DataFrame, dfB: pd.DataFrame, default_value=None) -> pd.DataFrame:
+    dfB_aligned = dfB.copy()
+
+    # Add missing columns from dfA to dfB, filled with default_value
+    for col in dfA.columns:
+        if col not in dfB_aligned.columns:
+            dfB_aligned[col] = default_value
+
+    # Remove columns in dfB that are not in dfA
+    extra_cols = [col for col in dfB_aligned.columns if col not in dfA.columns]
+    dfB_aligned = dfB_aligned.drop(columns=extra_cols)
+
+    # Reorder columns to match dfA
+    dfB_aligned = dfB_aligned[dfA.columns]
+
+    return dfB_aligned
