@@ -213,19 +213,19 @@ class DataFrameCategorizer:
         return self.transform(df)
 
 
-def data_frame_columns_alignment(dfA: pd.DataFrame, dfB: pd.DataFrame, default_value=None) -> pd.DataFrame:
-    dfB_aligned = dfB.copy()
+def data_frame_columns_alignment(base: pd.DataFrame, target: pd.DataFrame, default_value=None) -> pd.DataFrame:
+    target_aligned = target.copy()
 
-    # Add missing columns from dfA to dfB, filled with default_value
-    for col in dfA.columns:
-        if col not in dfB_aligned.columns:
-            dfB_aligned[col] = default_value
+    # Add missing columns from base to target, filled with default_value
+    for col in base.columns:
+        if col not in target_aligned.columns:
+            target_aligned[col] = default_value
 
-    # Remove columns in dfB that are not in dfA
-    extra_cols = [col for col in dfB_aligned.columns if col not in dfA.columns]
-    dfB_aligned = dfB_aligned.drop(columns=extra_cols)
+    # Remove columns in target that are not in base
+    extra_cols = [col for col in target_aligned.columns if col not in base.columns]
+    target_aligned = target_aligned.drop(columns=extra_cols)
 
-    # Reorder columns to match dfA
-    dfB_aligned = dfB_aligned[dfA.columns]
+    # Reorder columns to match base
+    target_aligned = target_aligned[base.columns]
 
-    return dfB_aligned
+    return target_aligned
