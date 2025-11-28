@@ -24,6 +24,7 @@ class DataFrameCategorizer:
 
         self.bins_: Dict[str, Any] = {}
         self.columns_info_: Dict[str, Dict[str, Any]] = {}
+        self.transformation_map_: Dict[str, Any] = {}
         self.fitted_ = False
 
     def _is_numeric(self, s: pd.Series) -> bool:
@@ -151,9 +152,54 @@ class DataFrameCategorizer:
         mask = s_str.isin(cats)
         return s_str.where(mask, np.nan)
 
+    def _serialize_categories(self, cats: pd.Index) -> List[Any]:
+        return [None if pd.isna(cat) else str(cat) for cat in cats]
+
+    def _serialize_intervals(self, intervals: pd.IntervalIndex) -> List[Dict[str, Any]]:
+        serialized = []
+        for interval in intervals:
+            serialized.append({
+                "left": interval.left,
+                "right": interval.right,
+                "closed": interval.closed
+            })
+        return serialized
+
+    def _build_transformation_map(self):
+        transformation_map: Dict[str, Any] = {
+            "config": {
+                "n_unique_threshold": self.n_unique_threshold,
+                "use_log": self.use_log,
+                "n_bins": self.n_bins,
+                "use_quantile_bins": self.use_quantile_bins,
+                "keep_original_numeric": self.keep_original_numeric,
+                "log_threshold": self.log_threshold,
+                "below_log_threshold_value": self.below_log_threshold_value,
+            },
+            "columns": {}
+        }
+
+        for col, info in self.columns_info_.items():
+            col_info = dict(info)
+            if info["type"] in {"string"}:
+                col_info["categories"] = self._serialize_categories(info["categories"])
+            if info["type"] in {"numeric_low_cardinality"}:
+                col_info["categories"] = [None if pd.isna(cat) else str(cat) for cat in info["categories"]]
+            if info["type"] == "numeric_binned":
+                col_info["bins"] = self._serialize_intervals(self.bins_[col])
+            transformation_map["columns"][col] = col_info
+
+        self.transformation_map_ = transformation_map
+
+    def get_transformation_map(self) -> Dict[str, Any]:
+        if not self.fitted_:
+            raise RuntimeError("DataFrameCategorizer must be fitted before accessing the transformation map.")
+        return self.transformation_map_
+
     def fit(self, df: pd.DataFrame) -> "DataFrameCategorizer":
         self.bins_.clear()
         self.columns_info_.clear()
+        self.transformation_map_.clear()
 
         for col in df.columns:
             s = df[col]
@@ -169,6 +215,7 @@ class DataFrameCategorizer:
             else:
                 self._fit_string_col(s, col)
 
+        self._build_transformation_map()
         self.fitted_ = True
         return self
 
