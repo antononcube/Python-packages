@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="LatentSemanticAnalyzer",
-    version="0.2.0",
+    version="0.2.1",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Latent Semantic Analysis package based on \"the standard\" Latent Semantic Indexing theory.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/antononcube/Python-packages/tree/main/LatentSemanticAnalyzer",
-    install_requires=['numpy', 'scipy', 'pandas', 'stop-words', 'snowballstemmer', 'nimfa', 'sklearn',
+    install_requires=['numpy', 'scipy', 'pandas', 'stop-words', 'snowballstemmer', 'nimfa', 'scikit-learn',
                       'SSparseMatrix', 'SparseMatrixRecommender'],
     packages=setuptools.find_packages(),
     classifiers=[
