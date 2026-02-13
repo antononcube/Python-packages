@@ -20,5 +20,14 @@ class EvaluatorChatGPT(EvaluatorChat):
         return res_messages
 
     def result_values(self, res):
-        resLocal = res.choices[0].message.content
-        return resLocal
+        # Support both Chat Completions and Responses API shapes.
+        if hasattr(res, "output_text") and res.output_text is not None:
+            return res.output_text
+        if hasattr(res, "choices"):
+            return res.choices[0].message.content
+        if isinstance(res, dict):
+            if "output_text" in res and res["output_text"] is not None:
+                return res["output_text"]
+            if "choices" in res and res["choices"]:
+                return res["choices"][0]["message"]["content"]
+        return res

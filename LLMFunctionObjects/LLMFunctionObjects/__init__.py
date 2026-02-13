@@ -3,6 +3,10 @@ from LLMFunctionObjects.Configuration import Configuration
 from LLMFunctionObjects.Evaluator import Evaluator
 from LLMFunctionObjects.EvaluatorChat import EvaluatorChat
 from LLMFunctionObjects.EvaluatorChatGPT import EvaluatorChatGPT
+from LLMFunctionObjects.EvaluatorChatGemini import EvaluatorChatGemini
+from LLMFunctionObjects.EvaluatorGemini import EvaluatorGemini
+from LLMFunctionObjects.EvaluatorChatOllama import EvaluatorChatOllama
+from LLMFunctionObjects.EvaluatorOllama import EvaluatorOllama
 from LLMFunctionObjects.EvaluatorChatPaLM import EvaluatorChatPaLM
 from LLMFunctionObjects.Functor import Functor
 from LLMFunctionObjects.Chat import Chat

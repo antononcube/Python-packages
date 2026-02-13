@@ -72,8 +72,7 @@ class Evaluator:
         return resLocal
 
     # This is a generic LLM evaluator method
-    # that works for OpenAI's text completions, and
-    # PaLM's text generation.
+    # that works for OpenAI's text completions.
     # The children classes override this method completely.
     # (instead of reusing it because of logging, etc.)
     def eval(self, texts, **args):

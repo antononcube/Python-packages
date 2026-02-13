@@ -5,12 +5,14 @@ from LLMFunctionObjects.Configuration import Configuration
 from LLMFunctionObjects.Evaluator import Evaluator
 from LLMFunctionObjects.EvaluatorChat import EvaluatorChat
 from LLMFunctionObjects.EvaluatorChatGPT import EvaluatorChatGPT
-from LLMFunctionObjects.EvaluatorChatPaLM import EvaluatorChatPaLM
+from LLMFunctionObjects.EvaluatorChatGemini import EvaluatorChatGemini
+from LLMFunctionObjects.EvaluatorGemini import EvaluatorGemini
+from LLMFunctionObjects.EvaluatorChatOllama import EvaluatorChatOllama
+from LLMFunctionObjects.EvaluatorOllama import EvaluatorOllama
 from LLMFunctionObjects.Functor import Functor
 from LLMFunctionObjects.Chat import Chat
 import openai
-import google.generativeai
-import warnings
+import google.generativeai as genai
 
 
 # ===========================================================
@@ -54,15 +56,21 @@ def llm_configuration(spec, **kwargs):
         apiKey = kwargs.get("api_key", apiKey)
         client = openai.OpenAI(api_key=apiKey)
 
+        default_chat_model = os.environ.get("OPENAI_CHAT_MODEL", os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"))
+
         confChatGPT = llm_configuration("openai",
                                         name="chatgpt",
                                         module='openai',
-                                        model='gpt-3.5-turbo',
+                                        model=default_chat_model,
                                         function=client.chat.completions.create,  # was openai.ChatCompletion.create,
+                                        argument_renames={"max_tokens": "max_completion_tokens"},
                                         known_params=["model", "messages", "functions", "function_call",
-                                                      "temperature", "top_p", "n",
-                                                      "stream", "logprobs", "stop", "presence_penalty",
-                                                      "frequency_penalty", "logit_bias",
+                                                      "tools", "tool_choice", "response_format",
+                                                      "temperature", "top_p", "n", "seed",
+                                                      "stream", "logprobs", "stop",
+                                                      "presence_penalty", "frequency_penalty", "logit_bias",
+                                                      "max_completion_tokens",
+                                                      "max_tokens",
                                                       "user"],
                                         response_value_keys=[])
 
@@ -73,78 +81,99 @@ def llm_configuration(spec, **kwargs):
         confChatGPT.llm_evaluator = None
 
         return confChatGPT
-    elif isinstance(spec, str) and spec.lower() == 'PaLM'.lower():
+    elif isinstance(spec, str) and spec.lower() == 'Gemini'.lower():
 
         # Set key
-        apiKey = os.environ.get("PALM_API_KEY")
+        apiKey = os.environ.get("GEMINI_API_KEY", os.environ.get("GOOGLE_API_KEY"))
         apiKey = kwargs.get("api_key", apiKey)
-        google.generativeai.configure(api_key=apiKey)
+        genai.configure(api_key=apiKey)
 
-        # Configuration
-        confPaLM = Configuration(
-            name="palm",
+        default_gemini_model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+
+        confGemini = Configuration(
+            name="gemini",
             api_key=None,
             api_user_id="user",
             module="google.generativeai",
-            model="models/text-bison-001",
-            function=google.generativeai.generate_text,
+            model=default_gemini_model,
+            function=None,
             temperature=0.2,
             max_tokens=300,
             total_probability_cutoff=0.03,
             prompts=None,
             prompt_delimiter=" ",
             stop_tokens=None,
-            argument_renames={"max_tokens": "max_output_tokens",
-                              "stop_tokens": "stop_sequences"},
+            argument_renames={},
             fmt="values",
             known_params=[
-                "model", "prompt", "temperature", "candidate_count", "max_output_tokens", "top_p", "top_k",
-                "safety_settings", "stop_sequences", "client"
+                "model", "generation_config", "safety_settings", "tools", "tool_config",
+                "stream", "request_options", "system_instruction"
             ],
-            response_object_attribute="result",
+            response_object_attribute=None,
             response_value_keys=[],
             llm_evaluator=None)
 
-        # Modify by additional arguments
         if len(kwargs) > 0:
-            confPaLM = confPaLM.combine(kwargs)
+            confGemini = confGemini.combine(kwargs)
+        return confGemini
 
-        # Result
-        return confPaLM
+    elif isinstance(spec, str) and spec.lower() == 'ChatGemini'.lower():
+
+        confChatGemini = llm_configuration("Gemini")
+        confChatGemini.name = "chatgemini"
+
+        if len(kwargs) > 0:
+            confChatGemini = confChatGemini.combine(kwargs)
+
+        return confChatGemini
+
+    elif isinstance(spec, str) and spec.lower() == 'PaLM'.lower():
+        warnings.warn("PaLM is deprecated; using Gemini instead.", DeprecationWarning)
+        return llm_configuration('Gemini', **kwargs)
 
     elif isinstance(spec, str) and spec.lower() == 'ChatPaLM'.lower():
+        warnings.warn("ChatPaLM is deprecated; using ChatGemini instead.", DeprecationWarning)
+        return llm_configuration('ChatGemini', **kwargs)
 
-        # Start as PaLM text completion configuration
-        confChatPaLM = llm_configuration("PaLM")
+    elif isinstance(spec, str) and spec.lower() == 'Ollama'.lower():
+        default_ollama_model = os.environ.get("OLLAMA_MODEL", "llama3.2")
 
-        # Default PaLM chat model
-        confChatPaLM.model = 'models/chat-bison-001'
+        confOllama = Configuration(
+            name="ollama",
+            api_key=None,
+            api_user_id="user",
+            module="ollama",
+            model=default_ollama_model,
+            function=None,
+            temperature=0.2,
+            max_tokens=300,
+            total_probability_cutoff=0.03,
+            prompts=None,
+            prompt_delimiter=" ",
+            stop_tokens=None,
+            argument_renames={},
+            fmt="values",
+            known_params=[
+                "model", "prompt", "system", "template", "context", "stream",
+                "raw", "format", "options", "keep_alive"
+            ],
+            response_object_attribute=None,
+            response_value_keys=[],
+            llm_evaluator=None)
 
-        # Function
-        confChatPaLM.function = google.generativeai.chat
-
-        # Get result
-        # https://developers.generativeai.google/api/python/google/generativeai/types/ChatResponse
-        confChatPaLM.response_object_attribute = "last"
-
-        # The parameters are taken from here:
-        #   https://github.com/google/generative-ai-python/blob/f370f5ab908a095282a0cdd946385db23c695498/google/generativeai/discuss.py#L210
-        # and used in EvaluatorChatPaLM.eval
-        confChatPaLM.known_params = [
-            "model", "context", "examples", "temperature", "candidate_count", "top_p", "top_k", "prompt"
-        ]
-
-        # Adding it this for consistency
-        confChatPaLM.response_value_keys = None
-
-        # Evaluator class
-        confChatPaLM.llm_evaluator = None
-
-        # Combine with given additional parameters (if any)
         if len(kwargs) > 0:
-            confChatPaLM = confChatPaLM.combine(kwargs)
+            confOllama = confOllama.combine(kwargs)
+        return confOllama
 
-        return confChatPaLM
+    elif isinstance(spec, str) and spec.lower() == 'ChatOllama'.lower():
+        confChatOllama = llm_configuration("Ollama")
+        confChatOllama.name = "chatollama"
+        confChatOllama.known_params = [
+            "model", "messages", "tools", "stream", "format", "options", "keep_alive"
+        ]
+        if len(kwargs) > 0:
+            confChatOllama = confChatOllama.combine(kwargs)
+        return confChatOllama
     else:
         warnings.warn(f"Do not know what to do with given configuration spec: {spec}. Continuing with \"OpenAI\".")
         return llm_configuration('OpenAI', **kwargs)
@@ -163,8 +192,14 @@ def llm_evaluator(spec, **args):
                 evaluator_class = EvaluatorChatGPT
             elif spec.name.lower() == "OpenAI".lower():
                 evaluator_class = Evaluator
-            elif spec.name.lower() == "PaLM".lower():
-                evaluator_class = EvaluatorChatPaLM
+            elif spec.name.lower() in ["Gemini".lower(), "PaLM".lower()]:
+                evaluator_class = EvaluatorGemini
+            elif spec.name.lower() in ["ChatGemini".lower(), "ChatPaLM".lower()]:
+                evaluator_class = EvaluatorChatGemini
+            elif spec.name.lower() == "Ollama".lower():
+                evaluator_class = EvaluatorOllama
+            elif spec.name.lower() == "ChatOllama".lower():
+                evaluator_class = EvaluatorChatOllama
             else:
                 raise ValueError(
                     'Cannot automatically deduce llm_evaluator_class from the given configuration object.')
@@ -335,7 +370,7 @@ def llm_synthesize(prompts, prop=None, **kwargs):
 # Chat object creation
 # ===========================================================
 
-_mustPassConfKeys = ["name", "prompts", "examples", "temperature", "max_tokens",
+_mustPassConfKeys = ["name", "model", "prompts", "examples", "temperature", "max_tokens",
                      "stop_tokens", "api_key", "api_user_id"]
 
 
@@ -366,10 +401,14 @@ def llm_chat(prompt: str = '', **kwargs):
 
         # Obtain Evaluator class
         if evaluator_class is None:
-            if 'palm' in conf.name.lower():
-                conf = llm_configuration('ChatPaLM',
+            if 'gemini' in conf.name.lower() or 'palm' in conf.name.lower():
+                conf = llm_configuration('ChatGemini',
                                          **{k: v for k, v in conf.to_dict().items() if k in _mustPassConfKeys})
-                evaluator_class = EvaluatorChatPaLM
+                evaluator_class = EvaluatorChatGemini
+            elif 'ollama' in conf.name.lower():
+                conf = llm_configuration('ChatOllama',
+                                         **{k: v for k, v in conf.to_dict().items() if k in _mustPassConfKeys})
+                evaluator_class = EvaluatorChatOllama
             else:
                 evaluator_class = EvaluatorChatGPT
 
