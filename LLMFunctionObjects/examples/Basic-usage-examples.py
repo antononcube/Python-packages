@@ -5,7 +5,7 @@ print(120 * "=")
 # fPrompt = lambda x1, x2, x3: f'What is the {x1} if {x2} in {x3}?. Give the result as JSON object with name-value pairs.'
 # print(fPrompt("GDP", "top 10 countries", "2020"))
 
-fTxt = llm_function("What is the population of", e=llm_configuration("ChatPaLM"))
+fTxt = llm_function("What is the population of", e=llm_configuration("ChatGemini"))
 
 print(fTxt)
 
@@ -33,7 +33,7 @@ print(fData.llm_result)
 #                             "34,232,900": "34232900",
 #                             "5.15 trillion": "5.15E12",
 #                             "32.8 trillion USD": "32.8E12"},
-#                            e=llm_configuration("PaLM"))
+#                            e=llm_configuration("Gemini"))
 #
 # print(fEx)
 #

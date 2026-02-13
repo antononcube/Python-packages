@@ -1,4 +1,4 @@
-from LLMFunctions import *
+from LLMFunctionObjects import *
 from LLMPrompts import *
 
 # =====================================================================================================================
@@ -29,10 +29,10 @@ print(fcw("Random walk simulation.", echo=False))
 
 # =====================================================================================================================
 print(120 * "=")
-print('ChatPaLM')
+print('ChatGemini')
 print(120 * "-")
 
-fcw = llm_function(llm_prompt("CodeWriterX")("Python"), e='ChatPaLM')
+fcw = llm_function(llm_prompt("CodeWriterX")("Python"), e='ChatGemini')
 
 print(fcw.prompt)
 # ---------------------------------------------------------------------------------------------------------------------
@@ -42,10 +42,10 @@ print(fcw("Random walk simulation.", echo=False))
 
 # =====================================================================================================================
 print(120 * "=")
-print('PaLM')
+print('Gemini')
 print(120 * "-")
 
-fcw = llm_function(llm_prompt("CodeWriterX")("Python"), e='PaLM')
+fcw = llm_function(llm_prompt("CodeWriterX")("Python"), e='Gemini')
 
 print(fcw.prompt)
 # ---------------------------------------------------------------------------------------------------------------------

@@ -15,6 +15,6 @@ import LLMFunctionObjects
 #
 # print(120 * "=")
 
-s1 = llm_synthesize(["Answer as the character Yoda from Star Wars.", "Who are you?"], e='ChatPaLM')
+s1 = llm_synthesize(["Answer as the character Yoda from Star Wars.", "Who are you?"], e='ChatOllama')
 
 print(s1)
