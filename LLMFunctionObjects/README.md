@@ -1,7 +1,6 @@
 # LLMFunctionObjects
 
 ![PyPI](https://img.shields.io/pypi/v/LLMFunctionObjects?label=pypi%20LLMFunctionObjects)
-
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/LLMFunctionObjects)
 
 ## In brief
