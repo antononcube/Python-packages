@@ -63,7 +63,13 @@ class EvaluatorChatGemini(EvaluatorChat):
         if tool_config is not None:
             model_init_args["tool_config"] = tool_config
 
-        model = genai.GenerativeModel(model_name, **model_init_args)
+        try:
+            model = genai.GenerativeModel(model_name, **model_init_args)
+        except TypeError:
+            # Fallback for older google-generativeai versions
+            model = genai.GenerativeModel(model_name)
+            if system_instruction:
+                res_messages.insert(0, {"role": "user", "parts": [system_instruction]})
 
         model_args = {
             "generation_config": args2.get("generation_config", None),

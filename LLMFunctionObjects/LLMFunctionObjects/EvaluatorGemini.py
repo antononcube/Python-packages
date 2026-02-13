@@ -55,7 +55,13 @@ class EvaluatorGemini(Evaluator):
         if tool_config is not None:
             model_init_args["tool_config"] = tool_config
 
-        model = genai.GenerativeModel(model_name, **model_init_args)
+        try:
+            model = genai.GenerativeModel(model_name, **model_init_args)
+        except TypeError:
+            # Fallback for older google-generativeai versions
+            model = genai.GenerativeModel(model_name)
+            if system_instruction:
+                prompt = f"{system_instruction}\n\n{prompt}"
 
         model_args = {
             "generation_config": args2.get("generation_config", None),
