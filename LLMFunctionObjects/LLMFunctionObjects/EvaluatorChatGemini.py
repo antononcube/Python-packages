@@ -53,16 +53,23 @@ class EvaluatorChatGemini(EvaluatorChat):
             res_messages.append({"role": role, "parts": [content]})
 
         model_name = args2.get("model", self.conf.model)
+        tools = args2.get("tools", None)
+        tool_config = args2.get("tool_config", None)
+        model_init_args = {}
         if system_instruction:
-            model = genai.GenerativeModel(model_name, system_instruction=system_instruction)
-        else:
-            model = genai.GenerativeModel(model_name)
+            model_init_args["system_instruction"] = system_instruction
+        if tools is not None:
+            model_init_args["tools"] = tools
+        if tool_config is not None:
+            model_init_args["tool_config"] = tool_config
+
+        model = genai.GenerativeModel(model_name, **model_init_args)
 
         model_args = {
             "generation_config": args2.get("generation_config", None),
             "safety_settings": args2.get("safety_settings", None),
-            "tools": args2.get("tools", None),
-            "tool_config": args2.get("tool_config", None),
+            "tools": None,
+            "tool_config": None,
             "stream": args2.get("stream", None),
             "request_options": args2.get("request_options", None),
         }
