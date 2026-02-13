@@ -1,10 +1,12 @@
 import random
-from pathlib import Path
-from typing import Optional
 import inspect
-import pkg_resources
 import json
 import re
+
+try:
+    from importlib import resources as importlib_resources
+except ImportError:  # pragma: no cover - fallback for older Python
+    import importlib_resources
 
 
 # ===========================================================
@@ -16,7 +18,10 @@ def ingest_prompt_data():
     # with open("resources/prompts.json", "r") as f:
     #     records = json.load(f)
 
-    with pkg_resources.resource_stream(__name__, 'resources/prompts.json') as stream:
+    # Avoid deprecated pkg_resources; use importlib.resources instead.
+    # open_binary only accepts a file name, so use files() for subdirectories.
+    prompt_path = importlib_resources.files(__package__).joinpath('resources', 'prompts.json')
+    with prompt_path.open('rb') as stream:
         records = json.load(stream)
 
     # Get a list of all unique record fields
@@ -138,7 +143,7 @@ def llm_prompt(name=None, warn=True):
 
     # Failed expectations message
     if not isinstance(name, str):
-        ValueError("The first argument is expected to be a string or None.")
+        raise ValueError("The first argument is expected to be a string or None.")
 
     # If the prompt name does not exist, warn and return None
     if name not in prompts:
@@ -294,7 +299,10 @@ def _to_unquoted(ss):
 
 
 # ----------------------------------------------------------
-def _prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
+def _prompt_function_spec(match_obj, matched_with, messages=None, sep='\n'):
+
+    if messages is None:
+        messages = []
 
     if not match_obj or match_obj.span()[1] == 0:
         return match_obj.group()
@@ -353,7 +361,9 @@ def _prompt_function_spec(match_obj, matched_with, messages=[], sep='\n'):
 # ===========================================================
 # Prompt expand
 # ===========================================================
-def llm_prompt_expand(spec, messages=[], sep='\n'):
+def llm_prompt_expand(spec, messages=None, sep='\n'):
+    if messages is None:
+        messages = []
     res = re.sub(_pmt_persona, lambda x: _prompt_function_spec(x, "persona", messages, sep), spec)
     res = re.sub(_pmt_function_prior, lambda x: _prompt_function_spec(x, "function_prior", messages, sep), res)
     res = re.sub(_pmt_function_cell, lambda x: _prompt_function_spec(x, "function_cell", messages, sep), res)
