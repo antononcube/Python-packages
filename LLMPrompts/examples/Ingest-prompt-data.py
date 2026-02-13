@@ -1,5 +1,5 @@
 from LLMPrompts import *
-from LLMFunctions import *
+from LLMFunctionObjects import *
 import random
 
 # Ingest prompt data
