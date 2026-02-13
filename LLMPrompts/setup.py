@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="LLMPrompts",
-    version="0.1.5",
+    version="0.2.0",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Facilitating the creation, storage, retrieval, and curation of LLM prompts.",
