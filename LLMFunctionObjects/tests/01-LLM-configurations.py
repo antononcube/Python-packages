@@ -31,7 +31,7 @@ class LLMConfigurations(unittest.TestCase):
         c7 = llm_configuration('chatgpt', temperature=1.1)
         self.assertEqual(c7.temperature, 1.1)
         self.assertEqual(c7.name, 'chatgpt')
-        self.assertEqual(c7.model, 'gpt-3.5-turbo')
+        self.assertEqual(c7.model, 'gpt-4.1-mini')
 
 
 if __name__ == '__main__':

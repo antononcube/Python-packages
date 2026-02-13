@@ -24,7 +24,7 @@ class LLMEvaluators(unittest.TestCase):
         self.assertTrue(isinstance(llm_evaluator(llm_configuration('openai', prompts=self.pre3)), Evaluator))
 
     def test_evaluator6(self):
-        self.assertTrue(isinstance(llm_evaluator('PaLM', max_tokens=500), Evaluator))
+        self.assertTrue(isinstance(llm_evaluator('Gemini', max_tokens=500), Evaluator))
 
     def test_evaluator7(self):
         e1 = llm_evaluator(llm_configuration('OpenAI'))

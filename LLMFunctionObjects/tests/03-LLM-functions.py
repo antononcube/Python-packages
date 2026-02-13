@@ -11,12 +11,12 @@ class LLMFunctionsTests(unittest.TestCase):
         self.assertTrue(callable(f1))
 
     def test_func2(self):
-        f2 = llm_function(lambda x: f"What is the short biography and discography of the artist {x}?", e='PaLM')
+        f2 = llm_function(lambda x: f"What is the short biography and discography of the artist {x}?", e='Gemini')
         self.assertTrue(callable(f2))
 
     def test_func3(self):
         f3 = llm_function(lambda x: f"What is the short biography and discography of the artist {x}?",
-                          e=llm_configuration('PaLM', max_tokens=500))
+                          e=llm_configuration('Gemini', max_tokens=500))
         self.assertTrue(callable(f3))
 
     def test_func4(self):

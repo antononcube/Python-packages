@@ -3,7 +3,7 @@ from LLMFunctionObjects.LLMFunctions import llm_chat
 from LLMFunctionObjects.Chat import Chat
 
 
-class PaLMChats(unittest.TestCase):
+class GeminiChats(unittest.TestCase):
     prompt = """
     You are Yoda. 
     Respond to ALL inputs in the voice of Yoda from Star Wars. 
@@ -11,7 +11,7 @@ class PaLMChats(unittest.TestCase):
     """
 
     def test_chat1(self):
-        chatObj = llm_chat(self.prompt, conf="ChatPaLM")
+        chatObj = llm_chat(self.prompt, conf="ChatGemini")
 
         self.assertTrue(chatObj, Chat)
 

@@ -11,7 +11,7 @@ class LLMFunctionsTests(unittest.TestCase):
         self.assertTrue(isinstance(s1, str))
 
     def test_synth2(self):
-        s2 = llm_synthesize([lambda x: f"What is the short biography and discography of the artist {x}?", "Boris Brejcha"], e='PaLM')
+        s2 = llm_synthesize([lambda x: f"What is the short biography and discography of the artist {x}?", "Boris Brejcha"], e='Gemini')
         self.assertTrue(isinstance(s2, str))
 
     def test_synth3(self):
