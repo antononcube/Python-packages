@@ -11,6 +11,8 @@ def _extract_ollama_text(res):
             return res["message"].get("content", res)
     if hasattr(res, "response"):
         return res.response
+    if hasattr(res, "message") and hasattr(res.message, "content"):
+        return res.message.content
     return res
 
 
