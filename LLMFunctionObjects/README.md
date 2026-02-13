@@ -1,42 +1,42 @@
 # LLMFunctionObjects
 
 ![PyPI](https://img.shields.io/pypi/v/LLMFunctionObjects?label=pypi%20LLMFunctionObjects)
+
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/LLMFunctionObjects)
 
 ## In brief
 
 This Python package provides functions and function objects to access, interact, and utilize 
-Large Language Models (LLMs), like OpenAI, [OAI1], and PaLM, [ZG1].
+Large Language Models (LLMs), like OpenAI, [OAI1], and Gemini, [ZG1].
 
 The structure and implementation of this Python package closely follows the design and implementation
 of the Raku package "LLM::Functions", [AAp1], supported by "Text::SubParsers", [AAp4].
 
 *(Here is a [link to the corresponding notebook](https://github.com/antononcube/Python-packages/blob/main/LLMFunctionObjects/docs/LLM-function-objects.ipynb).)*
 
---------
+
+---
 
 ## Installation
 
 ### Install from GitHub
 
-```shell
+```
 pip install -e git+https://github.com/antononcube/Python-packages.git#egg=LLMFunctionObjects-antononcube\&subdirectory=LLMFunctionObjects
 ```
 
 ### From PyPi
 
-```shell
+```
 pip install LLMFunctionObjects
 ```
 
---------
+---
 
 ## Design
 
-"Out of the box"
-["LLMFunctionObjects"](https://pypi.org/project/LLMFunctionObjects) uses
-["openai"](https://pypi.org/project/openai/), [OAIp1], and
-["google-generativeai"](https://pypi.org/project/google-generativeai/), [GAIp1].
+"Out of the box" ["LLMFunctionObjects"](https://pypi.org/project/LLMFunctionObjects) uses ["openai"](https://pypi.org/project/openai/), [OAIp1], and ["google-generativeai"](https://pypi.org/project/google-generativeai/), [GAIp1], and ["ollama"](https://pypi.org/project/ollama/).
+
 Other LLM access packages can be utilized via appropriate LLM configurations.
 
 Configurations:
@@ -47,7 +47,6 @@ Configurations:
 New LLM functions are constructed with the function `llm_function`.
 
 The function `llm_function`:
-
 - Produces objects that are set to be "callable" (i.e. function objects or functors)
 - Has the option "llm_evaluator" that takes evaluators, configurations, or string shorthands as values
 - Returns anonymous functions (that access LLMs via evaluators/configurations.)
@@ -58,10 +57,9 @@ The function `llm_function`:
     - Function with positional arguments
     - Function with named arguments
 
-Here is a sequence diagram that follows the steps of a typical creation procedure of 
-LLM configuration- and evaluator objects, and the corresponding LLM-function that utilizes them:
 
-!
+Here is a sequence diagram that follows the steps of a typical creation procedure of LLM configuration- and evaluator objects, and the corresponding LLM-function that utilizes them:
+
 ```mermaid
 sequenceDiagram
   participant User
@@ -80,8 +78,7 @@ sequenceDiagram
   llmfunc ->> User: handle
 ```
 
-Here is a sequence diagram for making a LLM configuration with a global (engineered) prompt,
-and using that configuration to generate a chat message response:
+Here is a sequence diagram for making a LLM configuration with a global (engineered) prompt, and using that configuration to generate a chat message response:
 
 ```mermaid
 sequenceDiagram
@@ -105,14 +102,13 @@ sequenceDiagram
   WWWOpenAI ->> User: LLM response 
 ```
 
-------
+---
 
 ## Configurations
 
 ### OpenAI-based
 
 Here is the default, OpenAI-based configuration:
-
 
 ```python
 from LLMFunctionObjects import *
@@ -121,63 +117,12 @@ for k, v in llm_configuration('OpenAI').to_dict().items():
     print(f"{k} : {repr(v)}")
 ```
 
-    name : 'openai'
-    api_key : None
-    api_user_id : 'user'
-    module : 'openai'
-    model : 'gpt-3.5-turbo-instruct'
-    function : <bound method Completion.create of <class 'openai.api_resources.completion.Completion'>>
-    temperature : 0.2
-    total_probability_cutoff : 0.03
-    max_tokens : 300
-    fmt : 'values'
-    prompts : []
-    prompt_delimiter : ' '
-    stop_tokens : None
-    tools : []
-    tool_prompt : ''
-    tool_request_parser : None
-    tool_response_insertion_function : None
-    argument_renames : {}
-    evaluator : None
-    known_params : ['api_key', 'model', 'prompt', 'suffix', 'max_tokens', 'temperature', 'top_p', 'n', 'stream', 'logprobs', 'stop', 'presence_penalty', 'frequency_penalty', 'best_of', 'logit_bias', 'user']
-    response_object_attribute : None
-    response_value_keys : ['choices', 0, 'text']
-    llm_evaluator : <class 'LLMFunctionObjects.Evaluator.Evaluator'>
-
-
 Here is the ChatGPT-based configuration:
-
 
 ```python
 for k, v in llm_configuration('ChatGPT').to_dict().items():
     print(f"{k} : {repr(v)}")
 ```
-
-    name : 'chatgpt'
-    api_key : None
-    api_user_id : 'user'
-    module : 'openai'
-    model : 'gpt-3.5-turbo-0613'
-    function : <bound method ChatCompletion.create of <class 'openai.api_resources.chat_completion.ChatCompletion'>>
-    temperature : 0.2
-    total_probability_cutoff : 0.03
-    max_tokens : 300
-    fmt : 'values'
-    prompts : []
-    prompt_delimiter : ' '
-    stop_tokens : None
-    tools : []
-    tool_prompt : ''
-    tool_request_parser : None
-    tool_response_insertion_function : None
-    argument_renames : {}
-    evaluator : None
-    known_params : ['api_key', 'model', 'messages', 'functions', 'function_call', 'temperature', 'top_p', 'n', 'stream', 'logprobs', 'stop', 'presence_penalty', 'frequency_penalty', 'logit_bias', 'user']
-    response_object_attribute : None
-    response_value_keys : ['choices', 0, 'message', 'content']
-    llm_evaluator : <class 'LLMFunctionObjects.EvaluatorChatGPT.EvaluatorChatGPT'>
-
 
 **Remark:** `llm_configuration(None)` is equivalent to `llm_configuration('OpenAI')`.
 
@@ -185,42 +130,25 @@ for k, v in llm_configuration('ChatGPT').to_dict().items():
 The "OpenAI" configuration is for text-completions;
 the "ChatGPT" configuration is for chat-completions. 
 
-### PaLM-based
+### Gemini-based
 
-Here is the default PaLM configuration:
-
+Here is the default Gemini configuration:
 
 ```python
-for k, v in llm_configuration('PaLM').to_dict().items():
+for k, v in llm_configuration('Gemini').to_dict().items():
     print(f"{k} : {repr(v)}")
 ```
 
-    name : 'palm'
-    api_key : None
-    api_user_id : 'user'
-    module : 'google.generativeai'
-    model : 'models/text-bison-001'
-    function : <function generate_text at 0x10a04b6d0>
-    temperature : 0.2
-    total_probability_cutoff : 0.03
-    max_tokens : 300
-    fmt : 'values'
-    prompts : []
-    prompt_delimiter : ' '
-    stop_tokens : None
-    tools : []
-    tool_prompt : ''
-    tool_request_parser : None
-    tool_response_insertion_function : None
-    argument_renames : {}
-    evaluator : None
-    known_params : ['model', 'prompt', 'temperature', 'candidate_count', 'max_output_tokens', 'top_p', 'top_k', 'safety_settings', 'stop_sequences', 'client']
-    response_object_attribute : 'result'
-    response_value_keys : []
-    llm_evaluator : <class 'LLMFunctionObjects.Evaluator.Evaluator'>
+### Ollama-based
 
+Here is the default Ollama configuration:
 
--------
+```python
+for k, v in llm_configuration('Ollama').to_dict().items():
+    print(f"{k} : {repr(v)}")
+```
+
+---
 
 ## Basic usage of LLM functions
 
@@ -228,139 +156,157 @@ for k, v in llm_configuration('PaLM').to_dict().items():
 
 Here we make a LLM function with a simple (short, textual) prompt:
 
-
-
 ```python
 func = llm_function('Show a recipe for:')
 ```
 
 Here we evaluate over a message: 
 
-
 ```python
 print(func('greek salad'))
 ```
 
-    
-    
-    Greek Salad Recipe:
-    
-    Ingredients:
-    - 1 large cucumber, diced
-    - 2 large tomatoes, diced
-    - 1 red onion, thinly sliced
-    - 1 green bell pepper, diced
-    - 1/2 cup Kalamata olives, pitted and halved
-    - 1/2 cup crumbled feta cheese
-    - 1/4 cup extra virgin olive oil
-    - 2 tablespoons red wine vinegar
-    - 1 teaspoon dried oregano
-    - Salt and pepper to taste
-    
-    Instructions:
-    
-    1. In a large bowl, combine the diced cucumber, tomatoes, red onion, bell pepper, and Kalamata olives.
-    
-    2. In a small bowl, whisk together the olive oil, red wine vinegar, dried oregano, and salt and pepper.
-    
-    3. Pour the dressing over the vegetables and toss to combine.
-    
-    4. Sprinkle the crumbled feta cheese over the top of the salad.
-    
-    5. Serve immediately or refrigerate until ready to serve.
-    
-    Optional: You can also add some chopped fresh herbs, such as parsley or dill, for extra flavor and freshness. Enjoy your delicious and refreshing Greek salad!
+```
+# Here's a simple and classic recipe for Greek Salad:
+# 
+# Ingredients:
+# - 3 large tomatoes, cut into wedges
+# - 1 cucumber, sliced
+# - 1 green bell pepper, sliced
+# - 1 red onion, thinly sliced
+# - 200g (about 7 oz) feta cheese, cut into cubes or crumbled
+# - A handful of Kalamata olives
+# - 2 tablespoons extra virgin olive oil
+# - 1 tablespoon red wine vinegar
+# - 1 teaspoon dried oregano
+# - Salt and freshly ground black pepper to taste
+# 
+# Instructions:
+# 1. In a large bowl, combine the tomatoes, cucumber, green bell pepper, and red onion.
+# 2. Add the Kalamata olives and feta cheese on top.
+# 3. In a small bowl, whisk together the olive oil, red wine vinegar, oregano, salt, and pepper.
+# 4. Pour the dressing over the salad and toss gently to combine.
+# 5. Serve immediately, or chill in the refrigerator for 30 minutes to allow the flavors to meld.
+# 
+# Enjoy your fresh and flavorful Greek Salad!
 
+```
+
+Local Ollama example (requires a running Ollama server and a pulled model):
+
+```python
+func_local = llm_function('Answer briefly:', e='Ollama')
+print(func_local('What is the capital of France?'))
+```
+
+```
+# The capital of France is Paris.
+
+```
 
 ### Positional arguments
 
 Here we make a LLM function with a function-prompt and numeric interpreter of the result:
 
+```python
+llm_prompt_data('NumericOnly')
+```
+
+```
+# {'NumericOnly': {'Name': 'NumericOnly',
+   'Description': 'Modify results to give numerical responses only',
+   'PromptText': 'Respond with numerical responses only. Exclude any non-numerical responses. Do not include include any letters. Change words into numbers if possible, for example instead of "1 billion" write "1000000000".',
+   'PositionalArguments': [],
+   'NamedArguments': [],
+   'Arity': 0,
+   'Categories': ['Modifier Prompts'],
+   'Topics': ['Output Formatting'],
+   'Keywords': ['Numbers', 'Rewrite'],
+   'ContributedBy': 'Wolfram Staff',
+   'URL': 'https://resources.wolframcloud.com/PromptRepository/resources/NumericOnly'}}
+```
 
 ```python
 func2 = llm_function(
-    lambda a, b: f"How many {a} can fit inside one {b}?",
+    lambda a, b: f"How many {a} can fit inside one {b}?" + 
+                "Respond with numerical responses only. Do not include include any letters. ",
     form=float,
-    llm_evaluator='palm')
+    llm_evaluator='chatgpt')
 ```
 
 Here were we apply the function:
-
-
 
 ```python
 res2 = func2("tennis balls", "toyota corolla 2010")
 res2
 ```
 
-
-
-
-    350.0
-
-
-
+```
+# 41666.0
+```
 
 Here we show that we got a number:
-
-
 
 ```python
 type(res2)
 ```
 
-
-
-
-    float
-
-
+```
+# float
+```
 
 ### Named arguments
 
 Here the first argument is a template with two named arguments: 
 
-
-
 ```python
-func3 = llm_function(lambda dish, cuisine: f"Give a recipe for {dish} in the {cuisine} cuisine.", llm_evaluator='palm')
+func3 = llm_function(lambda dish, cuisine: f"Give a recipe for {dish} in the {cuisine} cuisine.", llm_evaluator='ollama')
 ```
 
-
 Here is an invocation:
-
-
 
 ```python
 print(func3(dish='salad', cuisine='Russian', max_tokens=300))
 ```
 
-    **Ingredients:**
-    
-    * 1 head of cabbage, shredded
-    * 1 carrot, grated
-    * 1/2 cup of peas, cooked
-    * 1/2 cup of chopped walnuts
-    * 1/2 cup of mayonnaise
-    * 1/4 cup of sour cream
-    * Salt and pepper to taste
-    
-    **Instructions:**
-    
-    1. In a large bowl, combine the cabbage, carrots, and peas.
-    2. In a small bowl, whisk together the mayonnaise, sour cream, salt, and pepper.
-    3. Pour the dressing over the salad and toss to coat.
-    4. Serve immediately or chill for later.
-    
-    **Tips:**
-    
-    * For a more flavorful salad, add some chopped fresh herbs, such as dill or parsley.
-    * You can also add some chopped red onion or celery to the salad.
-    * If you don't have any peas on hand, you can use green beans or corn instead.
-    * The dressing can be made ahead of time and stored in the refrigerator. Just be sure to bring it to room temperature before using it to dress the salad.
+```
+# A classic Russian salad! Here's a simple and delicious recipe for "Salad Olga" or "Russian Salad", also known as "Olivier salad":
+# 
+# **Ingredients:**
+# 
+# * 1 cup cooked beef (boiled, diced)
+# * 1 cup cooked chicken (boiled, diced)
+# * 1/2 cup diced hard-boiled egg
+# * 1/2 cup diced onion
+# * 1/4 cup pickled beets (canned or homemade)
+# * 1/4 cup chopped fresh parsley
+# * 1/4 cup chopped fresh dill
+# * 2 tablespoons Russian mustard (or plain Dijon mustard)
+# * Salt and pepper to taste
+# * 2 tablespoons vegetable oil
+# 
+# **Instructions:**
+# 
+# 1. In a large bowl, combine the cooked beef, chicken, egg, onion, pickled beets, parsley, and dill.
+# 2. In a small bowl, whisk together the Russian mustard and vegetable oil.
+# 3. Pour the dressing over the salad mixture and stir until everything is well combined.
+# 4. Season with salt and pepper to taste.
+# 5. Cover the bowl with plastic wrap and refrigerate for at least 30 minutes to allow the flavors to meld.
+# 
+# **Traditional Variations:**
+# 
+# * Some Russian recipes add diced carrots, potatoes, or peas to the salad.
+# * Others use chopped boiled sausage or capers instead of pickled beets.
+# * You can also add a squeeze of fresh lemon juice for extra brightness.
+# 
+# **Russian Mustard (Moloko-Syre):**
+# If you can't find Russian mustard, you can make your own by mixing equal parts of milk and vinegar. This creates a creamy and tangy dressing that's a hallmark of traditional Russian salads.
+# 
+# Enjoy your delicious and authentic Russian salad!
 
+```
 
---------
+---
 
 ## LLM example functions
 
@@ -369,70 +315,63 @@ to generating results according to the "laws" implied by that training set.
 
 Here a LLM is asked to produce a generalization:
 
-
-
 ```python
 llm_example_function({'finger': 'hand', 'hand': 'arm'})('foot')
 ```
 
-
-
-
-    ' leg'
-
-
+```
+# 'The pattern seems to be related to parts of the body where "hand" corresponds to "arm." Following this pattern, the output for "foot" would be "leg."'
+```
 
 Here is an array of training pairs is used:
 
-
 ```python
- llm_example_function({"Einstein": "14 March 1879", "Pauli": "April 25, 1900"})('Oppenheimer')
+llm_example_function({"Einstein": "14 March 1879", "Pauli": "April 25, 1900"})('Oppenheimer')
 ```
 
-
-
-
-    ' April 22, 1904'
-
-
+```
+# 'The output for the input "Oppenheimer" would be "July 22, 1904".'
+```
 
 Here is defined a LLM function for translating WL associations into Python dictionaries:
-
-
 
 ```python
 fea = llm_example_function(('<| A->3, 4->K1 |>', '{ A:3, 4:K1 }'))
 print(fea('<| 23->3, G->33, T -> R5|>'))
 ```
 
-     { 23:3, G:33, T:R5 }
+```
+# Output: { 23: 3, G: 33, T: R5 }
 
+```
 
 The function `llm_example_function` takes as a first argument:
+
 - Single `tuple` object of two scalars
 - A `dict`
 - A `list` object of pairs (`tuple` objects)
+
 
 **Remark:** The function `llm_example_function` is implemented with `llm_function` and suitable prompt.
 
 Here is an example of using hints:
 
-
-
 ```python
 fec = llm_example_function(
     {"crocodile" : "grasshopper", "fox" : "cardinal"},
-    hint = 'animal colors')
+    hint = 'animal colors', e = 'ollama')
 
 print(fec('raccoon'))
 ```
 
-     cardinal
+```
+# Raccoon - black and white
+
+```
 
 ### Synthesizing responses
 
 Here is an example of prompt synthesis with the function `llm_synthesize` using prompts from the package ["LLMPrompts"](https://pypi.org/project/LLMPrompts/), [AAp8]:
-
 
 ```python
 from LLMPrompts import *
@@ -445,79 +384,70 @@ print(
     ]))
 ```
 
-    
-    
-    Young or old, matters not
-    Age is just a number, hmm
-    The Force is with me.
+```
+# Old, I am, yes.
+# Wisdom deep as stars above,
+# Time flows, I endure.
 
+```
 
---------
+---
 
 ## Using chat-global prompts
 
 The configuration objects can be given prompts that influence the LLM responses 
 "globally" throughout the whole chat. (See the second sequence diagram above.)
 
---------
+---
 
 ## Chat objects
 
 Here we create chat object that uses OpenAI's ChatGPT:
-
-
 
 ```python
 prompt = "You are a gem expert and you give concise answers."
 chat = llm_chat(prompt = prompt, chat_id = 'gem-expert-talk', conf = 'ChatGPT')
 ```
 
-
 ```python
 chat.eval('What is the most transparent gem?')
 ```
 
-
-
-
-    'The most transparent gem is diamond.'
-
-
-
+```
+# 'The most transparent gem is typically considered to be diamond. Diamonds have exceptional clarity and brilliance, making them highly transparent and prized in jewelry.'
+```
 
 ```python
 chat.eval('Ok. What are the second and third most transparent gems?')
 ```
 
-
-
-
-    'The second most transparent gem is sapphire, and the third most transparent gem is emerald.'
-
-
+```
+# 'The second most transparent gem is usually white sapphire, known for its clarity and durability. The third most transparent gem is often zircon, which has high brilliance and good transparency.'
+```
 
 Here are the prompt(s) and all messages of the chat object:
-
 
 ```python
 chat.print()
 ```
 
-    Chat ID: gem-expert-talk
-    ------------------------------------------------------------
-    Prompt:
-    You are a gem expert and you give concise answers.
-    ------------------------------------------------------------
-    {'role': 'user', 'content': 'What is the most transparent gem?', 'timestamp': 1695699574.024279}
-    ------------------------------------------------------------
-    {'role': 'assistant', 'content': 'The most transparent gem is diamond.', 'timestamp': 1695699575.158463}
-    ------------------------------------------------------------
-    {'role': 'user', 'content': 'Ok. What are the second and third most transparent gems?', 'timestamp': 1695699588.455979}
-    ------------------------------------------------------------
-    {'role': 'assistant', 'content': 'The second most transparent gem is sapphire, and the third most transparent gem is emerald.', 'timestamp': 1695699589.6835861}
+```
+# Chat ID: gem-expert-talk
+# ------------------------------------------------------------
+# Prompt:
+# You are a gem expert and you give concise answers.
+# ------------------------------------------------------------
+# {'role': 'user', 'content': 'What is the most transparent gem?', 'timestamp': 1771017949.900129}
+# ------------------------------------------------------------
+# {'role': 'assistant', 'content': 'The most transparent gem is typically considered to be diamond. Diamonds have exceptional clarity and brilliance, making them highly transparent and prized in jewelry.', 'timestamp': 1771017951.720435}
+# ------------------------------------------------------------
+# {'role': 'user', 'content': 'Ok. What are the second and third most transparent gems?', 'timestamp': 1771017951.7310028}
+# ------------------------------------------------------------
+# {'role': 'assistant', 'content': 'The second most transparent gem is usually white sapphire, known for its clarity and durability. The third most transparent gem is often zircon, which has high brilliance and good transparency.', 'timestamp': 1771017953.605421}
 
+```
 
---------
+---
 
 ## Potential and known problems
 
@@ -527,13 +457,14 @@ The LLM frameworks of OpenAI and Google are changed often, which produces proble
 - Obsolete models
 - Obsolete signatures
 
-Currently, for Google's PaLM the method "ChatPaLM" and the method "PaLM" does not.
-Note, that PaLM itself is being considered "legacy" by Google. (It is replaced with Gemini, or other.)
 
-Generally, speaking prefer using the "Chat" prefixed methods: "ChatGPT" and "ChatPaLM".
+Currently, for Google's Gemini the method "ChatGemini" works better than the method "Gemini".
+Note, that PaLM itself is considered legacy by Google and is replaced with Gemini.
+
+Generally, speaking prefer using the "Chat" prefixed methods: "ChatGPT" and "ChatGemini".
 (OpenAI does/did say that it "simple" text completion models are obsoleted.)
 
---------
+---
 
 ## References
 
@@ -544,10 +475,10 @@ Generally, speaking prefer using the "Chat" prefixed methods: "ChatGPT" and "Cha
 (2023),
 [RakuForPrediction at WordPress](https://rakuforprediction.wordpress.com).
 
-[ZG1] Zoubin Ghahramani,
-["Introducing PaLM 2"](https://blog.google/technology/ai/google-palm-2-ai-large-language-model/),
-(2023),
-[Google Official Blog on AI](https://blog.google/technology/ai/).
+[ZG1] Google AI,
+["Gemini models overview"](https://ai.google.dev/gemini-api/docs/models/gemini),
+(2024),
+[Google AI documentation](https://ai.google.dev/).
 
 ### Repositories, sites
 
