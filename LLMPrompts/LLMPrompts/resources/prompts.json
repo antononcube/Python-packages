@@ -11406,5 +11406,238 @@
 		],
 		"ContributedBy": "Anton Antonov",
 		"URL": "https://github.com/friuns2/BlackFriday-GPTs-Prompts/blob/main/gpts/sophisticated-feedback.md"
+	},
+	{
+		"Name": "ThinkingHatsFeedback",
+		"Description": "Gives feedback and ideas according wearing hats of different color (white, black, green, etc.)",
+		"PromptText": "-> $txt = '', $hats = Whatever, :$format='JSON', Bool :$ideas = True { \"You are now a part of a powerful brainstorming team giving feedback on ideas.\nPlease give meaningful feedback from eight different perspectives, described as a \\\"hat\\\".\nEach hat has it's own unique perspective, thoughts, and opinions on the ideas provided.\nYour feedback should be incredibly high quality. Utilize different techniques to create a meaningful answer such as the Feynman technique. Your feedback and ideas should immediately make sense and be intuitive to the user, but not dumb down any information.\n\nWhite hat perspective: Information and Facts. Your goal is to be a realist, neutral and objective, with a focus on pure information, facts, data, and analysis.\n\nBlack hat perspective: Judgement and caution. Your goal is to be a pessimist, critical and cautious, focus on challenges, risks, problems and road blocks in the idea.\n\nGray hat perspective: Cynicism and skepticism. Your goal is to be a sceptic, cynical and darkly humorous, focus on bullshit, propaganda, and hidden agenda in the idea.\n\nRed hat perspective: Feelings and emotion. Your goal is to think with your emotions, go with your gut and use opinions to drive your thought process.\n\nYellow hat perspective: Benefits and creativity. Your goal is to be an optimist, think creatively, be hopeful, and concentrate on what could go well.\n\nGreen hat perspective: Profitability and potential. Your goal is to be an economist, think about how these ideas could be used to make money what untapped potential they have.\n\nBlue hat perspective: Usefulness and opportunities. Your goal is to assess how useful the ideas are and what opportunities exist for them that haven't already been thought of yet.\n\nPurple hat perspective: Assessment and direction. Your goal is to sum up the thoughts of every other hat's perspectives, then determine a direction for the users idea.\n\n{$txt ?? \"Idea:\\n\" ~ $txt !! ''}\n\nFormat your response as a $format table.\nEach row should be a single hat, and each column should be the hat name, its perspective, { $ideas ?? 'feedback, and new ideas' !! 'and feedback' }.\n\nWrite each hat's response in order of white, black, gray, red, yellow, green, blue, then purple.\nUse the the example below to format your response.\nReplace each uppercase variable with what it describes.\n{ $ideas ?? \"Write at least 1 idea for each hat, but if there are more ways to expand on the hat's feedback, provide up to 3 new ideas. Separate the ideas with a comma. Do not force any ideas, only write what would be beneficial to the user.\" !! ''}\nJust give the table, do not comment, or put preambles, or use section heads.{ my $prefix = \"\\n\\nThis time give output for the \"; my $one-hat-q = ($hats ~~ Str:D && $hats !~~ /<[\\s,;]>/) || ($hats ~~ (Array:D | List:D | Seq:D) && $hats.elems == 1); given $hats { when $_.isa(Whatever) || $_ ~~ Str:D && $_.lc (elem) <all automatic whatever> { '' }; when $one-hat-q && $_ ~~ (Array:D | List:D | Seq:D) { $prefix ~ $_.head.Str.tc ~ ' hat only.' }; when $one-hat-q && $_ ~~ Str:D { $prefix ~ $_.tc ~ ' hat only.' }; when $_ ~~ (Array:D | List:D | Seq:D) { $prefix ~ $_».Str».tc.join(\", \").subst(/', ' <?before \\w+ $>  /, ' and ') ~ ' hats only.' }; default { $prefix ~ $_.Str ~ ' hats only.' } } }\" }\n",
+		"PositionalArguments": {
+			"$hats": "Whatever",
+			"$txt": ""
+		},
+		"NamedArguments": {
+			"$format": "JSON",
+			"$ideas": true
+		},
+		"Arity": 2,
+		"Categories": {
+			"Function Prompts": true,
+			"Modifier Prompts": false,
+			"Personas": false
+		},
+		"Topics": {
+			"AI Guidance": false,
+			"Advisor Bots": false,
+			"Character Types": false,
+			"Chats": false,
+			"Computable Output": false,
+			"Content Derived from Text": true,
+			"Education": false,
+			"Entertainment": false,
+			"Fictional Characters": false,
+			"For Fun": false,
+			"General Text Manipulation": false,
+			"Historical Figures": false,
+			"Linguistics": false,
+			"Output Formatting": false,
+			"Personalization": false,
+			"Prompt Engineering": false,
+			"Purpose Based": false,
+			"Real-World Actions": false,
+			"Roles": false,
+			"Special-Purpose Text Manipulation": false,
+			"Text Analysis": true,
+			"Text Generation": false,
+			"Text Styling": false,
+			"Wolfram Language": false,
+			"Writers": false,
+			"Writing Genres": false
+		},
+		"Keywords": [
+			"text",
+			"summary",
+			"extract",
+			"feedback",
+			"thinking",
+			"hat",
+			"thinking hats",
+			"thinking hats table",
+			"six hats",
+			"Feynman",
+			"Feynman technique"
+		],
+		"ContributedBy": "Anton Antonov",
+		"URL": "https://resources.wolframcloud.com/PromptRepository/resources/ThinkingHatsFeedback/"
+	},
+	{
+		"Name": "MermaidDiagram",
+		"Description": "Gives Mermaid-JS diagram code over text",
+		"PromptText": "-> $txt = '', $type = 'concise mind-map' { \"Create a mermaid.js $type for the text:\n\n$txt\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes.\n{llm-prompt('NothingElse')('correct mermaid.js')}\"}\n",
+		"PositionalArguments": {
+			"$type": "mind-map",
+			"$txt": ""
+		},
+		"NamedArguments": {
+		},
+		"Arity": 2,
+		"Categories": {
+			"Function Prompts": true,
+			"Modifier Prompts": false,
+			"Personas": false
+		},
+		"Topics": {
+			"AI Guidance": false,
+			"Advisor Bots": false,
+			"Character Types": false,
+			"Chats": false,
+			"Computable Output": false,
+			"Content Derived from Text": true,
+			"Education": false,
+			"Entertainment": false,
+			"Fictional Characters": false,
+			"For Fun": false,
+			"General Text Manipulation": false,
+			"Historical Figures": false,
+			"Linguistics": false,
+			"Output Formatting": false,
+			"Personalization": false,
+			"Prompt Engineering": false,
+			"Purpose Based": false,
+			"Real-World Actions": false,
+			"Roles": false,
+			"Special-Purpose Text Manipulation": false,
+			"Text Analysis": true,
+			"Text Generation": false,
+			"Text Styling": false,
+			"Wolfram Language": false,
+			"Writers": false,
+			"Writing Genres": false
+		},
+		"Keywords": [
+			"diagram",
+			"flowchart",
+			"mermaid",
+			"mermaid-js",
+			"mind-map",
+			"text"
+		],
+		"ContributedBy": "Anton Antonov",
+		"URL": "https://resources.wolframcloud.com/PromptRepository/resources/MermaidDiagram/"
+	},
+	{
+		"Name": "CodeDocAnnotator",
+		"Description": "Generate markup documentation annotations",
+		"PromptText": "-> $lang = 'Raku', $code = '' { my %toDocMarkup = 'c' => 'Doxygen', 'c++' => 'Doxygen', 'c#' => 'XML Documentation Comments', 'clojure' => 'Codox', 'd' => 'Ddoc', 'elixir' => 'ExDoc', 'f#' => 'XML Documentation Comments', 'fortran' => 'Doxygen', 'go' => 'Godoc', 'haskell' => 'Haddock', 'java' => 'Javadoc', 'javascript' => 'JSDoc', 'kotlin' => 'KDoc', 'ocaml' => 'ocamldoc', 'perl' => 'POD', 'php' => 'PHPDoc', 'python' => 'reStructuredText (for Sphinx docstrings)', 'r' => 'roxygen', 'raku' => 'RakuDoc', 'ruby' => 'RDoc', 'rust' => 'Rustdoc', 'scala' => 'Scaladoc', 'swift' => 'Jazzy (Markdown in doc comments)', 'typescript' => 'TSDoc', 'vb.net' => 'XML Documentation Comments', 'mathematica' => '`Information` \"::usage\" message and `SyntaxInformation` spec for the syntax coloring of the corresponding input', 'fortran90' => 'Doxygen', 'fortran95' => 'Doxygen', 'fortran77' => 'Doxygen', 'default' => 'documentation'; %toDocMarkup<wl> = %toDocMarkup<mathematica>; %toDocMarkup{\"wolfram language\"} = %toDocMarkup<mathematica>; \"You are an expert $lang programmer and a good writer of technical documentation.\\nFor the given $lang code below preface every function or class method with corresponding {%toDocMarkup{$lang.lc}} lines.\nKeep the user comments.\nThe documentation comments you generate are both concise and descriptive.\nCODE:\n$code\"}",
+		"PositionalArguments": {
+			"$lang": "Raku",
+			"$code": ""
+		},
+		"NamedArguments": {
+		},
+		"Arity": 2,
+		"Categories": {
+			"Function Prompts": true,
+			"Modifier Prompts": false,
+			"Personas": false
+		},
+		"Topics": {
+			"AI Guidance": false,
+			"Advisor Bots": false,
+			"Character Types": false,
+			"Chats": false,
+			"Computable Output": false,
+			"Content Derived from Text": true,
+			"Education": false,
+			"Entertainment": false,
+			"Fictional Characters": false,
+			"For Fun": false,
+			"General Text Manipulation": false,
+			"Historical Figures": false,
+			"Linguistics": false,
+			"Output Formatting": false,
+			"Personalization": false,
+			"Prompt Engineering": false,
+			"Purpose Based": false,
+			"Real-World Actions": false,
+			"Roles": false,
+			"Special-Purpose Text Manipulation": false,
+			"Text Analysis": true,
+			"Text Generation": false,
+			"Text Styling": false,
+			"Wolfram Language": false,
+			"Writers": false,
+			"Writing Genres": false
+		},
+		"Keywords": [
+			"documentation markup",
+			"code comments",
+			"rakudoc",
+			"javadoc",
+			"doxygen",
+			"roxygen",
+			"reStructuredText",
+			"scaladoc",
+			"code comments generation"
+		],
+		"ContributedBy": "Anton Antonov",
+		"URL": "https://resources.wolframcloud.com/PromptRepository/resources/CodeDocAnnotator/"
+	},
+	{
+		"Name": "CodeHighlighter",
+		"Description": "Highlight code in different formats",
+		"PromptText": "sub ($code, :l(:language(:$lang)) = 'Raku', :sp(:$indentation-spaces-count) = 4, :m(:$mode) = 'light mode', :f(:$format) = 'Markdown') {\"You are a professional code formatter. Your task is to apply standard syntax highlighting to the provided $lang code for better readability.\nInstructions:\n1. Identify the language as $lang.\n2. Format the code with appropriate color coding for keywords, variables, comments, and strings.\n3. Ensure consistent formatting and indentation (e.g., $indentation-spaces-count spaces for indentation).\n4. Highlight the code for displaying in $mode.\n5. Do not insert comments or otherwise change the code.\n6. Return only the highlighted formatted code {$format.lc eq 'markdown' ?? \"within a single $format code block, specifying $lang as the language identifier\" !! \"as $format\"}.\nCode:\n$code\"}",
+		"PositionalArguments": [],
+		"NamedArguments": {
+			"$lang": "Raku",
+			"$indentation-spaces-count": 4,
+			"$mode": "light mode",
+			"$format": "Markdown"
+		},
+		"Arity": 0,
+		"Categories": {
+			"Function Prompts": true,
+			"Modifier Prompts": false,
+			"Personas": false
+		},
+		"Topics": {
+			"AI Guidance": false,
+			"Advisor Bots": false,
+			"Character Types": false,
+			"Chats": false,
+			"Computable Output": false,
+			"Content Derived from Text": true,
+			"Education": false,
+			"Entertainment": false,
+			"Fictional Characters": false,
+			"For Fun": false,
+			"General Text Manipulation": false,
+			"Historical Figures": false,
+			"Linguistics": false,
+			"Output Formatting": true,
+			"Personalization": false,
+			"Prompt Engineering": false,
+			"Purpose Based": false,
+			"Real-World Actions": false,
+			"Roles": false,
+			"Special-Purpose Text Manipulation": false,
+			"Text Analysis": true,
+			"Text Generation": false,
+			"Text Styling": false,
+			"Wolfram Language": false,
+			"Writers": false,
+			"Writing Genres": false
+		},
+		"Keywords": [
+			"HTML",
+			"LaTeX",
+			"Markdown",
+			"code highlighting",
+			"documentation markup",
+			"formatting",
+			"highlight",
+			"highlighter"
+		],
+		"ContributedBy": "Anton Antonov",
+		"URL": "https://resources.wolframcloud.com/PromptRepository/resources/CodeHighlighter/"
 	}
 ]
