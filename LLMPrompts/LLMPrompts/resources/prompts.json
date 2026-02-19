@@ -11472,7 +11472,7 @@
 	{
 		"Name": "MermaidDiagram",
 		"Description": "Gives Mermaid-JS diagram code over text",
-		"PromptText": "lambda txt = '', type = 'mind-map': f\"\"\"Create a mermaid.js {type} for the text:\n\n{txt}\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes. Do not comment and do not explain -- return only correct mermaid.js code, nothing else.\"\"\"",
+		"PromptText": "lambda txt = '', type = 'mind-map': f\"\"\"Create a mermaid.js {type} for the text:\n\n{txt}\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes.\n{llm_prompt('NothingElse')('correct mermaid.js code')}\"\"\"",
 		"PositionalArguments": {
 			"txt": "",
 			"type": "mind-map"
