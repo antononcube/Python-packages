@@ -198,7 +198,7 @@ def llm_prompt(name=None, warn=True):
             lambdaCode = lambdaCode + ", "
         lambdaCode = lambdaCode + namedArgs
 
-    lambdaCode = lambdaCode + ': f""' + prompt_code + '""'
+    lambdaCode = lambdaCode + ': f""' + prompt_code.strip() + '""'
 
     # Make the function
     resFunc = eval(lambdaCode)
