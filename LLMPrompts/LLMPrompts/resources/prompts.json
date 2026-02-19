@@ -11472,10 +11472,10 @@
 	{
 		"Name": "MermaidDiagram",
 		"Description": "Gives Mermaid-JS diagram code over text",
-		"PromptText": "-> $txt = '', $type = 'mind-map' { \"Create a mermaid.js $type for the text:\n\n$txt\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes.\n{llm-prompt('NothingElse')('correct mermaid.js')}\"}\n",
+		"PromptText": "-> $txt = '', $type = 'mind-map' { \"Create a mermaid.js $type for the text:\n\n$txt\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes. Do not comment and do not explain -- return only correct mermaid.js code, nothing else.\" }",
 		"PositionalArguments": {
-			"$type": "mind-map",
-			"$txt": ""
+			"$txt": "",
+			"$type": "mind-map"
 		},
 		"NamedArguments": {
 		},
@@ -11527,8 +11527,10 @@
 	{
 		"Name": "CodeHighlighter",
 		"Description": "Highlight code in different formats",
-		"PromptText": "-> $code, :$lang = 'Python', :$indent = 4, :$mode = 'light mode', :$format = 'Markdown' {\"You are a professional code formatter. Your task is to apply standard syntax highlighting to the provided $lang code for better readability.\nInstructions:\n1. Identify the language as $lang.\n2. Format the code with appropriate color coding for keywords, variables, comments, and strings.\n3. Ensure consistent formatting and indentation (e.g., $indentation-spaces-count spaces for indentation).\n4. Highlight the code for displaying in $mode.\n5. Do not insert comments or otherwise change the code.\n6. Return only the highlighted formatted code as $format.\nCODE:\n$code\"}",
-		"PositionalArguments": [],
+		"PromptText": "-> $code = '', :$lang = 'Python', :$indent = 4, :$mode = 'light mode', :$format = 'Markdown' {\"You are a professional code formatter. Your task is to apply standard syntax highlighting to the provided $lang code for better readability.\nInstructions:\n1. Identify the language as $lang.\n2. Format the code with appropriate color coding for keywords, variables, comments, and strings.\n3. Ensure consistent formatting and indentation (e.g., $indentation-spaces-count spaces for indentation).\n4. Highlight the code for displaying in $mode.\n5. Do not insert comments or otherwise change the code.\n6. Return only the highlighted formatted code as $format.\nCODE:\n$code\"}",
+		"PositionalArguments": {
+			"$code": ""
+		},
 		"NamedArguments": {
 			"$lang": "Python",
 			"$indent": 4,
