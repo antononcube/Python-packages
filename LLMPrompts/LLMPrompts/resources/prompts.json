@@ -11472,7 +11472,7 @@
 	{
 		"Name": "MermaidDiagram",
 		"Description": "Gives Mermaid-JS diagram code over text",
-		"PromptText": "-> $txt = '', $type = 'concise mind-map' { \"Create a mermaid.js $type for the text:\n\n$txt\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes.\n{llm-prompt('NothingElse')('correct mermaid.js')}\"}\n",
+		"PromptText": "-> $txt = '', $type = 'mind-map' { \"Create a mermaid.js $type for the text:\n\n$txt\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes.\n{llm-prompt('NothingElse')('correct mermaid.js')}\"}\n",
 		"PositionalArguments": {
 			"$type": "mind-map",
 			"$txt": ""
@@ -11525,71 +11525,13 @@
 		"URL": "https://resources.wolframcloud.com/PromptRepository/resources/MermaidDiagram/"
 	},
 	{
-		"Name": "CodeDocAnnotator",
-		"Description": "Generate markup documentation annotations",
-		"PromptText": "-> $lang = 'Raku', $code = '' { my %toDocMarkup = 'c' => 'Doxygen', 'c++' => 'Doxygen', 'c#' => 'XML Documentation Comments', 'clojure' => 'Codox', 'd' => 'Ddoc', 'elixir' => 'ExDoc', 'f#' => 'XML Documentation Comments', 'fortran' => 'Doxygen', 'go' => 'Godoc', 'haskell' => 'Haddock', 'java' => 'Javadoc', 'javascript' => 'JSDoc', 'kotlin' => 'KDoc', 'ocaml' => 'ocamldoc', 'perl' => 'POD', 'php' => 'PHPDoc', 'python' => 'reStructuredText (for Sphinx docstrings)', 'r' => 'roxygen', 'raku' => 'RakuDoc', 'ruby' => 'RDoc', 'rust' => 'Rustdoc', 'scala' => 'Scaladoc', 'swift' => 'Jazzy (Markdown in doc comments)', 'typescript' => 'TSDoc', 'vb.net' => 'XML Documentation Comments', 'mathematica' => '`Information` \"::usage\" message and `SyntaxInformation` spec for the syntax coloring of the corresponding input', 'fortran90' => 'Doxygen', 'fortran95' => 'Doxygen', 'fortran77' => 'Doxygen', 'default' => 'documentation'; %toDocMarkup<wl> = %toDocMarkup<mathematica>; %toDocMarkup{\"wolfram language\"} = %toDocMarkup<mathematica>; \"You are an expert $lang programmer and a good writer of technical documentation.\\nFor the given $lang code below preface every function or class method with corresponding {%toDocMarkup{$lang.lc}} lines.\nKeep the user comments.\nThe documentation comments you generate are both concise and descriptive.\nCODE:\n$code\"}",
-		"PositionalArguments": {
-			"$lang": "Raku",
-			"$code": ""
-		},
-		"NamedArguments": {
-		},
-		"Arity": 2,
-		"Categories": {
-			"Function Prompts": true,
-			"Modifier Prompts": false,
-			"Personas": false
-		},
-		"Topics": {
-			"AI Guidance": false,
-			"Advisor Bots": false,
-			"Character Types": false,
-			"Chats": false,
-			"Computable Output": false,
-			"Content Derived from Text": true,
-			"Education": false,
-			"Entertainment": false,
-			"Fictional Characters": false,
-			"For Fun": false,
-			"General Text Manipulation": false,
-			"Historical Figures": false,
-			"Linguistics": false,
-			"Output Formatting": false,
-			"Personalization": false,
-			"Prompt Engineering": false,
-			"Purpose Based": false,
-			"Real-World Actions": false,
-			"Roles": false,
-			"Special-Purpose Text Manipulation": false,
-			"Text Analysis": true,
-			"Text Generation": false,
-			"Text Styling": false,
-			"Wolfram Language": false,
-			"Writers": false,
-			"Writing Genres": false
-		},
-		"Keywords": [
-			"documentation markup",
-			"code comments",
-			"rakudoc",
-			"javadoc",
-			"doxygen",
-			"roxygen",
-			"reStructuredText",
-			"scaladoc",
-			"code comments generation"
-		],
-		"ContributedBy": "Anton Antonov",
-		"URL": "https://resources.wolframcloud.com/PromptRepository/resources/CodeDocAnnotator/"
-	},
-	{
 		"Name": "CodeHighlighter",
 		"Description": "Highlight code in different formats",
-		"PromptText": "sub ($code, :l(:language(:$lang)) = 'Raku', :sp(:$indentation-spaces-count) = 4, :m(:$mode) = 'light mode', :f(:$format) = 'Markdown') {\"You are a professional code formatter. Your task is to apply standard syntax highlighting to the provided $lang code for better readability.\nInstructions:\n1. Identify the language as $lang.\n2. Format the code with appropriate color coding for keywords, variables, comments, and strings.\n3. Ensure consistent formatting and indentation (e.g., $indentation-spaces-count spaces for indentation).\n4. Highlight the code for displaying in $mode.\n5. Do not insert comments or otherwise change the code.\n6. Return only the highlighted formatted code {$format.lc eq 'markdown' ?? \"within a single $format code block, specifying $lang as the language identifier\" !! \"as $format\"}.\nCode:\n$code\"}",
+		"PromptText": "-> $code, :$lang = 'Python', :$indent = 4, :$mode = 'light mode', :$format = 'Markdown' {\"You are a professional code formatter. Your task is to apply standard syntax highlighting to the provided $lang code for better readability.\nInstructions:\n1. Identify the language as $lang.\n2. Format the code with appropriate color coding for keywords, variables, comments, and strings.\n3. Ensure consistent formatting and indentation (e.g., $indentation-spaces-count spaces for indentation).\n4. Highlight the code for displaying in $mode.\n5. Do not insert comments or otherwise change the code.\n6. Return only the highlighted formatted code as $format.\nCODE:\n$code\"}",
 		"PositionalArguments": [],
 		"NamedArguments": {
-			"$lang": "Raku",
-			"$indentation-spaces-count": 4,
+			"$lang": "Python",
+			"$indent": 4,
 			"$mode": "light mode",
 			"$format": "Markdown"
 		},
