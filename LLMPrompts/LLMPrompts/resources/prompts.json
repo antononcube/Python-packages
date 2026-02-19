@@ -11472,10 +11472,10 @@
 	{
 		"Name": "MermaidDiagram",
 		"Description": "Gives Mermaid-JS diagram code over text",
-		"PromptText": "-> $txt = '', $type = 'mind-map' { \"Create a mermaid.js $type for the text:\n\n$txt\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes. Do not comment and do not explain -- return only correct mermaid.js code, nothing else.\" }",
+		"PromptText": "lambda txt = '', type = 'mind-map': f\"\"\"Create a mermaid.js {type} for the text:\n\n{txt}\n\nAll Mermaid node messages should be in quotes.\nDo not use special symbols inside the messages like parenthesis, square brackets, or slashes. Do not comment and do not explain -- return only correct mermaid.js code, nothing else.\"\"\"",
 		"PositionalArguments": {
-			"$txt": "",
-			"$type": "mind-map"
+			"txt": "",
+			"type": "mind-map"
 		},
 		"NamedArguments": {
 		},
