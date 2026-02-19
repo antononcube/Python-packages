@@ -166,39 +166,42 @@ def llm_prompt(name=None, warn=True):
     prompt_code = re.sub(r'^->.*?\{', '', prompt_code)
     prompt_code = re.sub(r'}$', '', prompt_code)
 
-    # Replace arguments
-    for pa in prompt_record["PositionalArguments"]:
-        prompt_code = prompt_code.replace(pa, "{" + re.sub(r'^\$', '', pa) + "}")
+    if prompt_code.startswith("lambda"):
+        lambdaCode = prompt_code
+    else:
+        # Replace arguments
+        for pa in prompt_record["PositionalArguments"]:
+            prompt_code = prompt_code.replace(pa, "{" + re.sub(r'^\$', '', pa) + "}")
 
-    for pa in prompt_record["NamedArguments"]:
-        prompt_code = prompt_code.replace(pa, "{" + re.sub(r'^\$', '', pa) + "}")
+        for pa in prompt_record["NamedArguments"]:
+            prompt_code = prompt_code.replace(pa, "{" + re.sub(r'^\$', '', pa) + "}")
 
-    # Otherwise, return a pure function that takes the positional and named arguments
-    # of the prompt and returns the evaluated prompt code
-    posArgs = ""
-    if len(prompt_record["PositionalArguments"]) > 0:
-        for k, v in prompt_record["PositionalArguments"].items():
+        # Otherwise, return a pure function that takes the positional and named arguments
+        # of the prompt and returns the evaluated prompt code
+        posArgs = ""
+        if len(prompt_record["PositionalArguments"]) > 0:
+            for k, v in prompt_record["PositionalArguments"].items():
+                if len(posArgs) > 0:
+                    posArgs = posArgs + ", "
+
+                posArgs = posArgs + re.sub(r'^\$', '', k) + "='" + str(v) + "'"
+
+        namedArgs = ""
+        if len(prompt_record["NamedArguments"]) > 0:
+            for k, v in prompt_record["NamedArguments"].items():
+                if len(namedArgs) > 0:
+                    namedArgs = namedArgs + ", "
+
+                namedArgs = namedArgs + re.sub(r'^\$', '', k) + "='" + str(v) + "'"
+
+        # Lambda function code
+        lambdaCode = "lambda " + posArgs
+        if len(namedArgs) > 0:
             if len(posArgs) > 0:
-                posArgs = posArgs + ", "
+                lambdaCode = lambdaCode + ", "
+            lambdaCode = lambdaCode + namedArgs
 
-            posArgs = posArgs + re.sub(r'^\$', '', k) + "='" + str(v) + "'"
-
-    namedArgs = ""
-    if len(prompt_record["NamedArguments"]) > 0:
-        for k, v in prompt_record["NamedArguments"].items():
-            if len(namedArgs) > 0:
-                namedArgs = namedArgs + ", "
-
-            namedArgs = namedArgs + re.sub(r'^\$', '', k) + "='" + str(v) + "'"
-
-    # Lambda function code
-    lambdaCode = "lambda " + posArgs
-    if len(namedArgs) > 0:
-        if len(posArgs) > 0:
-            lambdaCode = lambdaCode + ", "
-        lambdaCode = lambdaCode + namedArgs
-
-    lambdaCode = lambdaCode + ': f""' + prompt_code.strip() + '""'
+        lambdaCode = lambdaCode + ': f""' + prompt_code.strip() + '""'
 
     # Make the function
     resFunc = eval(lambdaCode)
