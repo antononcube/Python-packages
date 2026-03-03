@@ -34,7 +34,7 @@ pip install LLMFunctionObjects
 
 ## Design
 
-"Out of the box" ["LLMFunctionObjects"](https://pypi.org/project/LLMFunctionObjects) uses ["openai"](https://pypi.org/project/openai/), [OAIp1], and ["google-generativeai"](https://pypi.org/project/google-generativeai/), [GAIp1], and ["ollama"](https://pypi.org/project/ollama/).
+"Out of the box" ["LLMFunctionObjects"](https://pypi.org/project/LLMFunctionObjects) uses ["openai"](https://pypi.org/project/openai/), [OAIp1], and ["google-genai"](https://pypi.org/project/google-genai/), [GAIp1], and ["ollama"](https://pypi.org/project/ollama/).
 
 Other LLM access packages can be utilized via appropriate LLM configurations.
 
@@ -529,7 +529,7 @@ Generally, speaking prefer using the "Chat" prefixed methods: "ChatGPT" and "Cha
 [PyPI.org/antononcube](https://pypi.org/user/antononcube/).
 
 [GAIp1] Google AI,
-[google-generativeai (Google Generative AI Python Client)](https://pypi.org/project/google-generativeai/),
+[google-genai (Google Gen AI Python SDK)](https://pypi.org/project/google-genai/),
 (2023),
 [PyPI.org/google-ai](https://pypi.org/user/google-ai/).
 
