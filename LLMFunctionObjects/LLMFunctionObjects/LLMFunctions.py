@@ -12,7 +12,6 @@ from LLMFunctionObjects.EvaluatorOllama import EvaluatorOllama
 from LLMFunctionObjects.Functor import Functor
 from LLMFunctionObjects.Chat import Chat
 import openai
-import google.generativeai as genai
 
 
 # ===========================================================
@@ -84,18 +83,17 @@ def llm_configuration(spec, **kwargs):
         return confChatGPT
     elif isinstance(spec, str) and spec.lower() == 'Gemini'.lower():
 
-        # Set key
+        # Resolve key eagerly but configure clients lazily in evaluators.
         apiKey = os.environ.get("GEMINI_API_KEY", os.environ.get("GOOGLE_API_KEY"))
         apiKey = kwargs.get("api_key", apiKey)
-        genai.configure(api_key=apiKey)
 
         default_gemini_model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
         confGemini = Configuration(
             name="gemini",
-            api_key=None,
+            api_key=apiKey,
             api_user_id="user",
-            module="google.generativeai",
+            module="google.genai",
             model=default_gemini_model,
             function=None,
             temperature=0.2,

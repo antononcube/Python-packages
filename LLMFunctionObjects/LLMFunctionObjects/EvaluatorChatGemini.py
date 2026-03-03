@@ -1,7 +1,8 @@
-import google.generativeai as genai
-
 from LLMFunctionObjects.EvaluatorChat import EvaluatorChat
-from LLMFunctionObjects.EvaluatorGemini import _extract_gemini_text
+from LLMFunctionObjects.EvaluatorGemini import (
+    _generate_with_google_genai,
+    _generate_with_google_generativeai,
+)
 
 
 class EvaluatorChatGemini(EvaluatorChat):
@@ -55,37 +56,30 @@ class EvaluatorChatGemini(EvaluatorChat):
         model_name = args2.get("model", self.conf.model)
         tools = args2.get("tools", None)
         tool_config = args2.get("tool_config", None)
-        model_init_args = {}
-        if system_instruction:
-            model_init_args["system_instruction"] = system_instruction
-        if tools is not None:
-            model_init_args["tools"] = tools
-        if tool_config is not None:
-            model_init_args["tool_config"] = tool_config
-
-        try:
-            model = genai.GenerativeModel(model_name, **model_init_args)
-        except TypeError:
-            # Fallback for older google-generativeai versions
-            model = genai.GenerativeModel(model_name)
-            if system_instruction:
-                res_messages.insert(0, {"role": "user", "parts": [system_instruction]})
-
-        model_args = {
-            "generation_config": args2.get("generation_config", None),
-            "safety_settings": args2.get("safety_settings", None),
-            "tools": None,
-            "tool_config": None,
-            "stream": args2.get("stream", None),
-            "request_options": args2.get("request_options", None),
-        }
-        model_args = {k: v for k, v in model_args.items() if v is not None}
 
         self.llm_result = None
-        res = model.generate_content(res_messages, **model_args)
+        res, text = _generate_with_google_genai(
+            model_name=model_name,
+            contents=res_messages,
+            args2=args2,
+            system_instruction=system_instruction,
+            tools=tools,
+            tool_config=tool_config,
+        )
+        if res is None:
+            if system_instruction:
+                res_messages.insert(0, {"role": "user", "parts": [system_instruction]})
+            res, text = _generate_with_google_generativeai(
+                model_name=model_name,
+                contents=res_messages,
+                args2=args2,
+                system_instruction=None,
+                tools=tools,
+                tool_config=tool_config,
+            )
         self.llm_result = res
 
         if echo:
             print(f"LLM result: {res}")
 
-        return self.post_process(_extract_gemini_text(res), form=args.get("form", None))
+        return self.post_process(text, form=args.get("form", None))
