@@ -7,6 +7,7 @@ class Configuration:
     def __init__(self,
                  name: str,
                  api_key: Union[str, None] = None,
+                 base_url: Union[str, None] = None,
                  api_user_id: Union[str, None] = None,
                  module: str = '',
                  model: str = '',
@@ -41,6 +42,7 @@ class Configuration:
         #    stop_tokens = ['.', '?', '!']
         self.name = name
         self.api_key = api_key
+        self.base_url = base_url
         self.api_user_id = api_user_id
         self.module = module
         self.model = model
@@ -111,6 +113,7 @@ class Configuration:
         newObj = type(self)(
             name=self.name,
             api_key=self.api_key,
+            base_url=self.base_url,
             api_user_id=self.api_user_id,
             module=self.module,
             model=self.model,
@@ -161,6 +164,7 @@ class Configuration:
         return {
             'name': self.name,
             'api_key': self.api_key,
+            'base_url': self.base_url,
             'api_user_id': self.api_user_id,
             'module': self.module,
             'model': self.model,

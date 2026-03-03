@@ -28,6 +28,7 @@ def llm_configuration(spec, **kwargs):
         confOpenAI = Configuration(
             name="openai",
             api_key=None,
+            base_url=None,
             api_user_id='user',
             module='openai',
             model='gpt-3.5-turbo-instruct',  # was 'text-davinci-003'
@@ -53,7 +54,11 @@ def llm_configuration(spec, **kwargs):
         # Client and key
         apiKey = os.environ.get("OPENAI_API_KEY")
         apiKey = kwargs.get("api_key", apiKey)
-        client = openai.OpenAI(api_key=apiKey)
+        baseUrl = kwargs.get("base_url", os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"))
+        client_kwargs = {"api_key": apiKey}
+        if baseUrl is not None:
+            client_kwargs["base_url"] = baseUrl
+        client = openai.OpenAI(**client_kwargs)
 
         default_chat_model = os.environ.get("OPENAI_CHAT_MODEL", os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"))
 
@@ -73,6 +78,8 @@ def llm_configuration(spec, **kwargs):
                                                       "max_tokens",
                                                       "user"],
                                         response_value_keys=[])
+
+        # Apparently, base_url cannot be included in known_params -- it is for the client object only.
 
         if len(kwargs) > 0:
             confChatGPT = confChatGPT.combine(kwargs)
