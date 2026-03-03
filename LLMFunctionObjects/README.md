@@ -128,6 +128,8 @@ for k, v in llm_configuration('ChatGPT').to_dict().items():
 **Remark:** Both the "OpenAI" and "ChatGPT" configuration use functions of the package "openai", [OAIp1].
 The "OpenAI" configuration is for text-completions;
 the "ChatGPT" configuration is for chat-completions. 
+To use an OpenAI-compatible local server, pass `base_url` (or set `OPENAI_BASE_URL`), e.g.
+`llm_configuration("ChatGPT", base_url="http://127.0.0.1:8080/v1")`.
 
 ### Gemini-based
 
