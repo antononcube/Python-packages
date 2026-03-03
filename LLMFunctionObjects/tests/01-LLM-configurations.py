@@ -33,6 +33,11 @@ class LLMConfigurations(unittest.TestCase):
         self.assertEqual(c7.name, 'chatgpt')
         self.assertEqual(c7.model, 'gpt-4.1-mini')
 
+    def test_config8(self):
+        base_url = 'http://127.0.0.1:8080/v1'
+        conf_llama = llm_configuration("ChatGPT", base_url=base_url)
+        self.assertEqual(conf_llama.base_url, base_url)
+
 
 if __name__ == '__main__':
     unittest.main()
