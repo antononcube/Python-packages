@@ -31,10 +31,10 @@ def llm_configuration(spec, **kwargs):
             base_url=None,
             api_user_id='user',
             module='openai',
-            model='gpt-3.5-turbo-instruct',  # was 'text-davinci-003'
+            model='gpt-4.1-mini',  # was 'text-davinci-003'
             function=openai.completions.create,  # was openai.Completion.create
-            temperature=0.2,
-            max_tokens=512,
+            temperature=0.4,
+            max_tokens=4096,
             total_probability_cutoff=0.03,
             prompts=None,
             prompt_delimiter=' ',
@@ -61,28 +61,59 @@ def llm_configuration(spec, **kwargs):
         client = openai.OpenAI(**client_kwargs)
 
         default_chat_model = os.environ.get("OPENAI_CHAT_MODEL", os.environ.get("OPENAI_MODEL", "gpt-4.1-mini"))
+        chat_model = kwargs.get("model", default_chat_model)
+
+        def _chatgpt_param_settings(model_name):
+            model_name_local = str(model_name or "").lower()
+            is_gpt5 = bool(re.match(r"^gpt[-=]?5", model_name_local))
+
+            if is_gpt5:
+                temperature = 1
+                argument_renames = {
+                    "max_tokens": "max_output_tokens"
+                }
+                known_params = ["model", "messages", "functions", "function_call",
+                                "tools", "tool_choice", "response_format",
+                                "temperature", "top_p", "n", "seed",
+                                "reasoning_effort", "verbosity",
+                                "stream", "logprobs", "stop",
+                                "presence_penalty", "frequency_penalty", "logit_bias",
+                                "max_completion_tokens",
+                                "user"]
+            else:
+                temperature = 0.4
+                argument_renames = {"max_tokens": "max_completion_tokens"}
+                known_params = ["model", "messages", "functions", "function_call",
+                                "tools", "tool_choice", "response_format",
+                                "temperature", "top_p", "n", "seed",
+                                "stream", "logprobs", "stop",
+                                "presence_penalty", "frequency_penalty", "logit_bias",
+                                "max_completion_tokens",
+                                "max_tokens",
+                                "user"]
+            return argument_renames, known_params, temperature
+
+        argument_renames, known_params, temperature = _chatgpt_param_settings(chat_model)
 
         confChatGPT = llm_configuration("openai",
                                         name="chatgpt",
                                         module='openai',
-                                        model=default_chat_model,
+                                        model=chat_model,
                                         function=client.chat.completions.create,  # was openai.ChatCompletion.create,
+                                        temperature=temperature,
                                         max_tokens=8192,
-                                        argument_renames={"max_tokens": "max_completion_tokens"},
-                                        known_params=["model", "messages", "functions", "function_call",
-                                                      "tools", "tool_choice", "response_format",
-                                                      "temperature", "top_p", "n", "seed",
-                                                      "stream", "logprobs", "stop",
-                                                      "presence_penalty", "frequency_penalty", "logit_bias",
-                                                      "max_completion_tokens",
-                                                      "max_tokens",
-                                                      "user"],
+                                        argument_renames=argument_renames,
+                                        known_params=known_params,
                                         response_value_keys=[])
 
         # Apparently, base_url cannot be included in known_params -- it is for the client object only.
 
         if len(kwargs) > 0:
             confChatGPT = confChatGPT.combine(kwargs)
+            argument_renames, known_params, temperature = _chatgpt_param_settings(confChatGPT.model)
+            confChatGPT.argument_renames = argument_renames
+            confChatGPT.known_params = known_params
+            confChatGPT.temperature = temperature
 
         # Evaluator class
         confChatGPT.llm_evaluator = None
