@@ -165,7 +165,7 @@ class LatentSemanticAnalyzer:
         if _is_str_list(arg) or _is_str_dict(arg):
             self._documents = arg
         else:
-            raise TypeError("The first argument is expected to be a list of strings or a dictionary of strings.")
+            raise TypeError("The first argument is expected to be a list of strings or a dictionary of strings to strings.")
         return self
 
     def set_document_term_matrix(self, arg):
@@ -300,7 +300,7 @@ class LatentSemanticAnalyzer:
             aTexts = docs
         else:
             raise TypeError(
-                "The argument 'docs' is expected to be a list of strings, a dictionary of strings, or None.")
+                "The argument 'docs' is expected to be a list of strings, a dictionary of strings to strings, or None.")
 
         mstop_words = stop_words
         if isinstance(stop_words, bool) and stop_words:
