@@ -1,5 +1,9 @@
 import pandas
-import pkg_resources
+
+try:
+    from importlib.resources import files
+except ImportError:
+    raise "Cannot use importlib_resources to import package files."
 
 
 # ===========================================================
@@ -21,9 +25,7 @@ def load_abstracts_data_frame():
     :field Abstract: Abstract of the presentation.
     :field Track: Presentation track.
     """
-    # This is a stream-like object. If you want the actual info, call
-    # stream.read()
-    with pkg_resources.resource_stream(__name__, 'resources/dfAbstracts.csv.gz') as stream:
+    resource = files("LatentSemanticAnalyzer").joinpath("resources", "dfAbstracts.csv.gz")
+    with resource.open("rb") as stream:
         dfData = pandas.read_csv(stream, compression="gzip", encoding='latin-1')
     return dfData
-
