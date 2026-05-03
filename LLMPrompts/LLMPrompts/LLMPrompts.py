@@ -65,7 +65,7 @@ aRecordsData = ingest_prompt_data()
 # Get prompt
 # ===========================================================
 
-def _llm_prompt_data_simple(fields=None):
+def _llm_prompt_data_simple(fields=None, pairs=False):
     # Get the prompts database
     prompts = aRecordsData["records"].copy()
 
@@ -78,15 +78,24 @@ def _llm_prompt_data_simple(fields=None):
 
     # Handle fields spec
     fieldsLocal = fields
-
     if isinstance(fieldsLocal, str) and fieldsLocal.lower() in ['any', 'whatever', 'automatic']:
         fieldsLocal = "Description"
+
+    if (isinstance(fieldsLocal, str) and fieldsLocal.lower() in ['default', 'info'] or
+            isinstance(fieldsLocal, list) and ('default' in fieldsLocal or 'info' in fieldsLocal)):
+        fieldsLocal = ["Name", "Description", "NamedArguments", "PositionalArguments"]
+
+    if isinstance(fieldsLocal, str) and fieldsLocal.lower() == 'all' or isinstance(fieldsLocal, list) and 'all' in fieldsLocal:
+        return prompts
 
     if isinstance(fieldsLocal, str):
         fieldsLocal = [fieldsLocal]
 
     # Filter the prompts database by fields if specified
-    prompts = {k: [v1 for k1, v1 in v.items() if k1 in fieldsLocal] for k, v in prompts.items()}
+    if pairs:
+        prompts = {k: {k1:v1 for k1, v1 in v.items() if k1 in fieldsLocal} for k, v in prompts.items()}
+    else:
+        prompts = {k: [v1 for k1, v1 in v.items() if k1 in fieldsLocal] for k, v in prompts.items()}
 
     # Just one field
     if len(fieldsLocal) == 1:
@@ -96,14 +105,14 @@ def _llm_prompt_data_simple(fields=None):
     return prompts
 
 
-def _llm_prompt_data_by_name(name, fields='Description'):
-    prompts = _llm_prompt_data_simple(fields)
+def _llm_prompt_data_by_name(name, fields='Description', pairs=False):
+    prompts = _llm_prompt_data_simple(fields, pairs=pairs)
     prompts = {k: v for k, v in prompts.items() if re.match(name, k)}
 
     return prompts
 
 
-def llm_prompt_data(name=None, fields=None):
+def llm_prompt_data(name=None, fields=None, pairs=False):
     """Gets the prompts database as a dictionary with the keys being the prompt titles, filtered by name.
 
     Args:
@@ -115,8 +124,8 @@ def llm_prompt_data(name=None, fields=None):
     """
 
     if name is None:
-        return _llm_prompt_data_simple(fields=fields)
-    return _llm_prompt_data_by_name(name=name, fields=fields)
+        return _llm_prompt_data_simple(fields=fields, pairs=pairs)
+    return _llm_prompt_data_by_name(name=name, fields=fields, pairs=pairs)
 
 
 # ===========================================================
