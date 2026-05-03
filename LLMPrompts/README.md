@@ -377,6 +377,25 @@ See ["JupyterChatbook"](https://pypi.org/project/JupyterChatbook/), [AAp3].
 
 -----
 
+## CLI
+
+The package provides the Command Line Interface (CLI) script `llm_prompt` that can be used to query the prompts or 
+concretize them as texts. 
+For example, here is retrieved information of the prompts with names that adhere to the regex `/Code/`:
+
+```
+llm_prompt rx/Code/ --fields=info
+llm_prompt rx/Code/ --fields=PositionalArguments,NamedArguments --pairs
+```
+
+Here the prompt "CodeHighlighter" is concretized with its arguments "lang" and "format":
+
+```
+llm_prompt CodeHighlighter --lang=Raku --format=HTML
+```
+
+-----
+
 ## Implementation notes
 
 ### Following Raku implementations
