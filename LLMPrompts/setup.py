@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="LLMPrompts",
-    version="0.2.1",
+    version="0.3.0",
     author="Anton Antonov",
     author_email="antononcube@posteo.net",
     description="Facilitating the creation, storage, retrieval, and curation of LLM prompts.",
@@ -23,6 +23,11 @@ setuptools.setup(
               "large language model", "large language models",
               "llm", "llm prompt", "llm prompts"],
     package_data={'LLMPrompts': ['resources/*.json']},
+    entry_points={
+        "console_scripts": [
+            "llm_prompt=LLMPrompts.cli:main",
+        ]
+    },
     python_requires='>=3.7',
     license="BSD-3-Clause"
 )
