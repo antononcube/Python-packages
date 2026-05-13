@@ -2,8 +2,11 @@ import random
 import pandas
 import numpy
 import warnings
+from pathlib import Path
 from strgen import StringGenerator
-import pkg_resources
+
+
+_RESOURCES_DIR = Path(__file__).resolve().parent / "resources"
 
 
 # ===========================================================
@@ -18,11 +21,7 @@ def load_words_data_frame():
         KnownWordQ    is a known word True/False
         KnownWordQ    is a known word True/False
     """
-    # This is a stream-like object. If you want the actual info, call
-    # stream.read()
-    with pkg_resources.resource_stream(__name__, 'resources/dfEnglishWords.csv') as stream:
-        dfRes = pandas.read_csv(stream, encoding='latin-1')
-        stream.close()
+    dfRes = pandas.read_csv(_RESOURCES_DIR / "dfEnglishWords.csv", encoding='latin-1')
 
     return dfRes
 
@@ -38,13 +37,9 @@ def load_pet_names_data_frame():
         Name          pet name
         Count         how many licenses with that specie-name pair
     """
-    # This is a stream-like object. If you want the actual info, call
-    # stream.read()
-    with pkg_resources.resource_stream(__name__, 'resources/dfPetNameCounts.csv') as stream:
-        dfData = pandas.read_csv(stream, encoding='latin-1')
-        stream.close()
-        wsum = sum(dfData.Count)
-        dfData["Weight"] = [x / wsum for x in dfData.Count]
+    dfData = pandas.read_csv(_RESOURCES_DIR / "dfPetNameCounts.csv", encoding='latin-1')
+    wsum = sum(dfData.Count)
+    dfData["Weight"] = [x / wsum for x in dfData.Count]
     return dfData
 
 
